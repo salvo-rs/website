@@ -1,0 +1,36 @@
+# Meta Data for SEO
+
+## Homepage
+title = "Salvo"
+titleSeparator = "-"
+titleAddition = "Modern Documentation Theme"
+description = "Salvo is website framework"
+
+## JSON-LD
+schemaType = "Organization"
+schemaLogo = "logo.png"
+schemaSection = "blog"
+
+## Sitelinks Search Box
+siteLinksSearchBox = false
+
+## Chrome Browser
+themeColor = "#fff"
+
+# Images
+quality = 85
+bgColor = "#fff"
+landscapePhotoWidths = [900, 800, 700, 600, 500]
+portraitPhotoWidths = [800, 700, 600, 500]
+lqipWidth = "20x"
+
+# Footer
+footer = "Copyright (c) 2019-present Chrislearn and Contributors. Salvo is free and open-source software licensed under the MIT License."
+
+# Alert
+alert = false
+alertText = "Like Salvo? <a class=\"alert-link\" href=\"https://github.com/salvo-rs/salvo\">Star on GitHub</a>. Thanks!</a>"
+
+# Edit Page
+docsRepo = "https://github.com/salvo-rs/salvo"
+editPage = false

@@ -1,0 +1,88 @@
+.window {
+    border-radius: 3px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .3);
+    text-align: left;
+    position: relative;
+    font-size: 0;
+
+    &.dark {
+        background: #183055;
+    }
+
+    header {
+        height: 40px;
+        box-sizing: border-box;
+        line-height: 0;
+        text-align: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: $gray-700;
+
+        .actions {
+            padding: 12px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            list-style-type: none;
+            font-size: 0;
+
+            .button {
+                position: absolute;
+                display: block;
+                width: 12px;
+                height: 12px;
+                border-radius: 100%;
+                margin-right: 8px;
+            }
+
+            .close {
+                background: #fe5f56;
+            }
+
+            .maximize {
+                left: 32px;
+                background: #febd2e;
+            }
+
+            .minimize {
+                left: 56px;
+                background: #27c93f;
+            }
+        }
+
+        .location {
+            background: #fff;
+            line-height: 1;
+            padding: 5px;
+            width: 50%;
+            color: #777;
+            margin: 6px auto auto auto;
+            border-radius: 4px;
+
+            p {
+                font-size: 1rem;
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    .content {
+        font-size: 1rem;
+        margin-top: 40px;
+
+        pre {
+            margin:0;
+        }
+    }
+}
+
+.browser-window {
+    .content {
+        height: 17rem;
+        pre {
+            background: none;;
+        }
+    }
+}
