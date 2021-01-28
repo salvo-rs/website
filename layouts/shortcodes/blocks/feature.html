@@ -1,0 +1,10 @@
+{{ $_hugo_config := `{ "version": 1 }` }}
+{{ $bg_id := .Get "background" | default "faint" }}
+{{ $type   := .Get "type" | default "" }} 
+<section class="feature {{$bg_id}}">
+	{{ if eq .Page.File.Ext "md" }}
+		{{ .Inner | markdownify }}
+	{{ else }}
+		{{ .Inner | htmlUnescape | safeHTML }}
+	{{ end }}
+</section>

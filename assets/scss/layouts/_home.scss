@@ -3,8 +3,10 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 1260px;
+    max-width: 1600px;
     margin: auto;
+    padding-left: 24px;
+    padding-right: 24px;
 }
 .hello-show {
     padding-bottom: 3rem;
@@ -55,7 +57,10 @@
     padding-top:3rem;
     padding-bottom: 3rem;
     .code-window, .intro {
-        width: 47%;
+        width: 57%;
+    }
+    .intro {
+        width: 40%;
     }
 }
 .reverse{
