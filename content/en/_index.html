@@ -9,18 +9,17 @@ linkTitle = "Salvo"
 	</h1>
 	<div class="hello-show">
 		{{< blocks/code-window>}}
-			{{<highlight rust>}}
+{{<highlight rust>}}
 use salvo::prelude::*;
 #[fn_handler]
 async fn hello_world(res: &mut Response) {
-res.render_plain_text("Hello World!");
+	res.render_plain_text("Hello World!");
 }
 #[tokio::main]
 async fn main() {
-let router = Router::new().get(hello_world);
-Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
-}
-				{{</highlight>}}
+	let router = Router::new().get(hello_world);
+	Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+}{{</highlight>}}
 			{{< /blocks/code-window>}}
 				<div class="trans-arrow">
 					<svg xmlns="http://www.w3.org/2000/svg" width="40" viewBox="0 0 448 512" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun">
@@ -44,20 +43,12 @@ Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
 					{{<highlight rust>}}
 let debug_mode = true;
 let admin_mode = true;
-let router = Router::new()
-.get(handle)
-.push(
-Router::new()
-.path("users")
-.before(auth)
-.post(handle)
-.push(Router::new().path(r"&ltid:/\d+/&gt").post(handle).delete(handle)),
-)
-.push(
-Router::new()
-.path("users")
-.get(handle)
-.push(Router::new().path(r"&ltid:/\d+/&gt").get(handle)),
+let router = Router::new().get(handle).push(
+	Router::new().path("users").before(auth).post(handle)
+		.push(Router::new().path("&lt; id:/\d+/&gt;").post(handle).delete(handle)),
+).push(Router::new().path("users").get(handle).push(
+	Router::new().path("&lt; id:/\d+/&gt;").get(handle)
+	),
 ).push_when(|_|if debug_mode {
 Some(Router::new().path("debug").get(handle))
 } else {
@@ -68,8 +59,7 @@ parent.push(Router::new().path("admin").get(handle))
 } else {
 parent
 }
-});
-						{{</highlight>}}
+});{{</highlight>}}
 					{{< /blocks/code-window>}}
 					<div class="intro">
 						<h3>Tree-like Routing System</h3>

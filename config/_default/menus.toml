@@ -1,7 +1,7 @@
-# [[main]]
-#   name = "Book"
-#   url = "/book/quick-start/"
-#   weight = 10
+[[main]]
+  name = "Book"
+  url = "/book/quick-start/"
+  weight = 10
 
 # [[social]]
 #   name = "Twitter"
