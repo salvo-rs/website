@@ -8,6 +8,13 @@ languageCode = "en-US"
 paginate = 7
 rssLimit = 10
 
+# Language settings
+contentDir = "content/en"
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+# Useful when translating.
+enableMissingTranslationPlaceholders = true
+
 # add redirects/headers
 [outputs]
 home = ["HTML", "RSS", "REDIRECTS", "HEADERS"]
@@ -41,6 +48,21 @@ isPlainText = true
 noUgly = true
 rel  = "sitemap"
 
+[languages]
+[languages.en]
+title = "Salvo"
+description = "Salvo is a easy to use web framework written by rust"
+languageName ="English"
+# Weight used for sorting.
+weight = 1
+[languages.zh]
+title = "Salvo"
+description = "Salvo 是一个简单易用的 Rust Web 后端框架"
+languageName ="中文"
+contentDir = "content/zh"
+time_format_default = "2006/02/01"
+time_format_blog = "2006/02/01"
+
 [markup]
   [markup.goldmark]
     [markup.goldmark.extensions]
@@ -54,7 +76,7 @@ rel  = "sitemap"
     lineNoStart = 1
     lineNos = false
     lineNumbersInTable = true
-    noClasses = false
+    noClasses = true
     style = "dracula"
     tabWidth = 4
 
@@ -62,12 +84,6 @@ rel  = "sitemap"
   changefreq = "weekly"
   filename = "sitemap.xml"
   priority = 0.5
-
-[taxonomies]
-  contributor = "contributors"
-
-[permalinks]
-  blog = "/blog/:title/"
 
 [module]
   [[module.mounts]]
