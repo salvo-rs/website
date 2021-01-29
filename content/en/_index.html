@@ -5,8 +5,9 @@ linkTitle = "Salvo"
 +++
 
 {{< blocks/lead>}}
-    <h1>Welcome to Salvo: A easy to use web framework written by rust!
+    <h1>A easy to use web framework written by rust!
     </h1>
+    <p>Salvo is a rust web frame work built on top of tokio and hyper.</p>
     <div class="code-trans">
         {{< blocks/code-window>}}
 {{<highlight rust>}}
@@ -75,10 +76,9 @@ let router = Router::new().get(handle).push(
         <h3>Serve Static Files</h3>
         <p>
             Serve your static HTML, CSS, and JavaScript files with ease by defining static routes.
-            You can also serve the contents of multiple directories on the same route!
+            You can also serve the contents of multiple directories in the same router!
         </p>
     </div>
-
     {{< blocks/code-window>}}
         {{<highlight rust>}}
 let router = Router::new()
@@ -100,7 +100,6 @@ let router = Router::new()
     </div>
     {{< blocks/code-window>}}
         {{<highlight rust>}}
-use salvo_extra::compression::*;
 let router = Router::new().push(
     Router::new().path("ws_chat")
         .get(StaticFile::new("examples/ws_chat.rs"))

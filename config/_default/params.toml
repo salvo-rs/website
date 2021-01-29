@@ -3,8 +3,8 @@
 ## Homepage
 title = "Salvo"
 titleSeparator = "-"
-titleAddition = "Modern Documentation Theme"
-description = "Salvo is website framework"
+titleAddition = "Rust Web Framework"
+description = "Salvo is a rust website framework"
 
 ## JSON-LD
 schemaType = "Organization"
