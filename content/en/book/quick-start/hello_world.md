@@ -8,8 +8,7 @@ menu:
 ---
 
 
-## test 1
-新建一个 Rust 项目:
+Create a new rust project:
 ```bash
 cargo new salvo_taste --bin
 ```

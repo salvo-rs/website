@@ -1,6 +1,6 @@
 [[main]]
   name = "Book"
-  url = "/book/"
+  url = "/book/quick-start"
   weight = 10
 
 # [[book]]

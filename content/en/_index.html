@@ -7,7 +7,7 @@ linkTitle = "Salvo"
 {{< blocks/lead>}}
     <h1>A easy to use web framework written by rust!
     </h1>
-    <p>Salvo is a rust web frame work built on top of tokio and hyper.</p>
+    <p>Salvo is a rust web framework built on top of tokio and hyper.</p>
     <div class="code-trans">
         {{< blocks/code-window>}}
 {{<highlight rust>}}
@@ -42,7 +42,7 @@ async fn main() {
     <div class="intro">
         <h3>Tree-like Routing System</h3>
         <p>
-            Tree-like routing system let you write routing rule easily and chains.
+            Tree-like routing system let you write routing rules easily and chains. You can use regex to constraint parameters.
         </p>
     </div>
     {{< blocks/code-window>}}
@@ -75,7 +75,7 @@ let router = Router::new().get(handle).push(
     <div class="intro">
         <h3>Serve Static Files</h3>
         <p>
-            Serve your static HTML, CSS, and JavaScript files with ease by defining static routes.
+            Serve your static HTML, CSS, and JavaScript files with ease by defining static routers.
             You can also serve the contents of multiple directories in the same router!
         </p>
     </div>
@@ -93,9 +93,9 @@ let router = Router::new()
     <div class="intro">
         <h3>Flexible Middleware Support</h3>
         <p>
-            Choose from a number of already existing middleware or create your own! Use them
+            Choose from a number of already existing middlewares or create your own! Use them
             to verify and manipulate certain requests in your app before they reach your
-            controller.
+            handler or after handler.
         </p>
     </div>
     {{< blocks/code-window>}}
@@ -120,7 +120,7 @@ let router = Router::new().push(
     <div class="intro">
         <h3>WebSocket Support</h3>
         <p>
-            Use the power of WebSockets in your Fiber app! Build fast interactive
+            Use the power of WebSocket in your Salvo app! Build fast interactive
             user experiences with performance and scalability guaranteed.
         </p>
     </div>
