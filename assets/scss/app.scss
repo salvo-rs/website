@@ -8,7 +8,6 @@
 @import "bootstrap/scss/bootstrap";
 
 /** Import theme styles */
-@import "common/syntax";
 @import "common/fonts";
 @import "common/global";
 @import "common/dark";
@@ -16,7 +15,7 @@
 @import "components/alerts";
 @import "components/buttons";
 @import "components/code";
-// @import "components/syntax";
+@import "components/syntax";
 @import "components/comments";
 @import "components/forms";
 @import "components/images";

@@ -77,7 +77,7 @@ time_format_blog = "2006/02/01"
     lineNumbersInTable = true
     noClasses = false
     style = "dracula"
-    tabWidth = 2
+    tabWidth = 1
 
 [sitemap]
   changefreq = "weekly"

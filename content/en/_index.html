@@ -7,18 +7,18 @@ linkTitle = "Salvo"
 {{< blocks/lead>}}
 	<h1>Welcome to Salvo: A easy to use web framework written by rust!
 	</h1>
-	<div class="hello-show">
+	<div class="code-trans">
 		{{< blocks/code-window>}}
 {{<highlight rust>}}
 use salvo::prelude::*;
 #[fn_handler]
 async fn hello_world(res: &mut Response) {
-	res.render_plain_text("Hello World!");
+    res.render_plain_text("Hello World!");
 }
 #[tokio::main]
 async fn main() {
-	let router = Router::new().get(hello_world);
-	Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    let router = Router::new().get(hello_world);
+    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
 }{{</highlight>}}
 		{{< /blocks/code-window>}}
 		<div class="trans-arrow">
@@ -38,6 +38,12 @@ async fn main() {
 {{< /blocks/lead>}}
 
 {{< blocks/feature background="reverse">}}
+	<div class="intro">
+		<h3>Tree-like Routing System</h3>
+		<p>
+			Tree-like routing system let you write routing rule easily and chains.
+		</p>
+	</div>
 	{{< blocks/code-window>}}
 		{{<highlight rust>}}
 let debug_mode = true;
@@ -61,12 +67,6 @@ let router = Router::new().get(handle).push(
 	}
 });{{</highlight>}}
 	{{< /blocks/code-window>}}
-	<div class="intro">
-		<h3>Tree-like Routing System</h3>
-		<p>
-			Tree-like routing system let you write routing rule easily and chains.
-		</p>
-	</div>
 </div>
 {{< /blocks/feature>}}
 
@@ -90,8 +90,16 @@ let router = Router::new()
 
 
 {{< blocks/feature background="reverse">}}
-		{{< blocks/code-window>}}
-			{{<highlight rust>}}
+	<div class="intro">
+		<h3>Flexible Middleware Support</h3>
+		<p>
+			Choose from a number of already existing middleware or create your own! Use them
+			to verify and manipulate certain requests in your app before they reach your
+			controller.
+		</p>
+	</div>
+	{{< blocks/code-window>}}
+		{{<highlight rust>}}
 use salvo_extra::compression::*;
 let router = Router::new().push(
 	Router::new().path("ws_chat")
@@ -106,15 +114,7 @@ let router = Router::new().push(
 	Router::new().after(gzip()).path("<*path>")
 		.get(StaticDir::new("examples/"))
 );{{</highlight>}}
-		{{< /blocks/code-window>}}
-		<div class="intro">
-			<h3>Flexible Middleware Support</h3>
-			<p>
-				Choose from a number of already existing middleware or create your own! Use them
-				to verify and manipulate certain requests in your app before they reach your
-				controller.
-			</p>
-		</div>
+	{{< /blocks/code-window>}}
 {{< /blocks/feature>}}
 
 {{< blocks/feature>}}
