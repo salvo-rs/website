@@ -1,7 +1,10 @@
 ---
-title: "Quick Start"
-linkTitle: "Quick Start"
+title: "Hello World"
+linkTitle: "Hello World"
 weight: 2
+menu:
+  book:
+    parent: "quick start"
 ---
 
 

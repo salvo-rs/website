@@ -93,7 +93,7 @@ Source:
       },
     {{ end -}}
   ];
-
+console.log(book);
   index.add(book);
 
   userinput.addEventListener('input', show_results, true);
