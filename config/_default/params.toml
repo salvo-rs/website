@@ -32,5 +32,5 @@ alert = false
 alertText = "Like Salvo? <a class=\"alert-link\" href=\"https://github.com/salvo-rs/salvo\">Star on GitHub</a>. Thanks!</a>"
 
 # Edit Page
-docsRepo = "https://github.com/salvo-rs/salvo"
+websiteRepo = "https://github.com/salvo-rs/website"
 editPage = false

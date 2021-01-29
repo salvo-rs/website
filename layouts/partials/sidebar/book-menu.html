@@ -4,7 +4,7 @@
   {{ if .HasChildren -}}
   <ul class="list-unstyled">
     {{ range .Children -}}
-      {{- $active := or ($currentPage.IsMenuCurrent "docs" .) ($currentPage.HasMenuCurrent "docs" .) -}}
+      {{- $active := or ($currentPage.IsMenuCurrent "book" .) ($currentPage.HasMenuCurrent "book" .) -}}
       {{- $active = or $active (eq .Name $currentPage.Title) -}}
       <li><a class="book-link{{ if $active }} active{{ end }}" href="{{ .URL | absURL }}">{{ .Name }}</a></li>
     {{ end -}}
