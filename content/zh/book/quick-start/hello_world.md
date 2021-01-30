@@ -3,7 +3,7 @@ title: "世界, 你好!"
 weight: 2
 menu:
   book:
-    parent: "快速开始"
+    parent: "quick-start"
 ---
 
 

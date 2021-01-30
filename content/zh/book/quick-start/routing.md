@@ -4,7 +4,7 @@ linkTitle: "Routing System"
 weight: 2
 menu:
   book:
-    parent: "快速开始"
+    parent: "quick-start"
 ---
 
 

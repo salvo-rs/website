@@ -4,7 +4,7 @@ linkTitle: "Hello World"
 weight: 2
 menu:
   book:
-    parent: "quick start"
+    parent: "quick-start"
 ---
 
 

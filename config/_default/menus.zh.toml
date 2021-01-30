@@ -1,7 +1,33 @@
 [[main]]
-  name = "Book"
+  name = "教程"
   url = "/book/"
   weight = 10
+
+[[main]]
+  name = "文档"
+  url = "https://docs.rs/salvo/"
+  weight = 20
+
+[[main]]
+  name = "Github"
+  url = "https://github.com/salvo-rs/salvo"
+  weight = 30
+
+[[book]]
+  name = "快速开始"
+  identifier = "quick-start"
+  weight = 10
+
+
+[[book]]
+  name = "相关概念"
+  identifier = "concepts"
+  weight = 20
+
+[[book]]
+  name = "高级主题"
+  identifier = "advanced-topics"
+  weight = 30
 
 # [[book]]
 #   weight = 1
