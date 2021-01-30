@@ -1,0 +1,153 @@
++++
+title = "Salvo"
+linkTitle = "Salvo"
+
++++
+
+{{< blocks/lead>}}
+    <h1>一个基于 Rust 开发的简单易用的 Web 后端框架!
+    </h1>
+    <p>Salvo 是构建于 tokio 和 hyper 之上.</p>
+    <div class="code-trans">
+        {{< blocks/code-window>}}
+{{<highlight rust>}}
+use salvo::prelude::*;
+#[fn_handler]
+async fn hello_world(res: &mut Response) {
+    res.render_plain_text("Hello World!");
+}
+#[tokio::main]
+async fn main() {
+    let router = Router::new().get(hello_world);
+    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+}{{</highlight>}}
+        {{< /blocks/code-window>}}
+        <div class="trans-arrow">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" viewBox="0 0 448 512" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun">
+                <path fill="currentColor" d="M190.5 66.9l22.2-22.2c9.4-9.4 24.6-9.4 33.9 0L441 239c9.4 9.4 9.4 24.6 0 33.9L246.6 467.3c-9.4 9.4-24.6 9.4-33.9 0l-22.2-22.2c-9.5-9.5-9.3-25 .4-34.3L311.4 296H24c-13.3 0-24-10.7-24-24v-32c0-13.3 10.7-24 24-24h287.4L190.9 101.2c-9.8-9.3-10-24.8-.4-34.3z"></path>
+            </svg>
+        </div>
+        {{< blocks/browser-window location="http://localhost:7878">}}
+            <pre>Hello World!</pre>
+            {{< /blocks/browser-window>}}
+    </div>
+    <div class="mx-auto link-buttons">
+        <a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref " /book">}}">
+            快速开始 <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+        </a>
+    </div>
+{{< /blocks/lead>}}
+
+{{< blocks/feature background="reverse">}}
+    <div class="intro">
+        <h3>树状路由系统</h3>
+        <p>
+            树状路由系统允许你非常方便地写出链式表达式. 通过筛选器可以设置路由的具体匹配规则. 在路径选择器中支持正则表达式约束.
+        </p>
+    </div>
+    {{< blocks/code-window>}}
+        {{<highlight rust>}}
+let debug_mode = true;
+let admin_mode = true;
+let router = Router::new().get(handle).push(
+    Router::new().path("users").before(auth).post(handle).push(
+        Router::new().path("&lt; id:/\d+/&gt;").post(handle).delete(handle)
+    ),
+).push(Router::new().path("users").get(handle).push(
+        Router::new().path("&lt; id:/\d+/&gt;").get(handle)
+    ),
+).push_when(|_|if debug_mode {
+        Some(Router::new().path("debug").get(handle))
+    } else {
+        None
+}).visit(|parent|{
+    if admin_mode {
+        parent.push(Router::new().path("admin").get(handle))
+    } else {
+        parent
+    }
+});{{</highlight>}}
+    {{< /blocks/code-window>}}
+</div>
+{{< /blocks/feature>}}
+
+{{< blocks/feature>}}
+    <div class="intro">
+        <h3>静态文件托管</h3>
+        <p>
+            可以定义静态文件或者文件夹句柄托管静态文件, 比如: HTML, CSS, and JavaScript. 支持将多个物理目录映射为同一个路径提供服务.
+        </p>
+    </div>
+    {{< blocks/code-window>}}
+        {{<highlight rust>}}
+let router = Router::new()
+    .path("files/<*path>")
+    .get(StaticDir::new(vec!["static/body", "static/girl"]));
+        {{</highlight>}}
+    {{< /blocks/code-window>}}
+{{< /blocks/feature>}}
+
+
+{{< blocks/feature background="reverse">}}
+    <div class="intro">
+        <h3>中间件系统</h3>
+        <p>
+            可以从预置的中间件中选择, 也可以创建自己的中间件. 中间件可以被添加到路由中, 在请求到达 Handler 之前或者之后作一些处理工作, 比如: 验证用户登录状态, 压缩输出结果等.
+        </p>
+    </div>
+    {{< blocks/code-window>}}
+        {{<highlight rust>}}
+let router = Router::new().push(
+    Router::new().path("ws_chat")
+        .get(StaticFile::new("examples/ws_chat.rs"))
+).push(
+    Router::new().after(deflate()).path("sse_chat")
+        .get(StaticFile::new("sse_chat.rs"))
+).push(
+    Router::new().after(brotli()).path("todos")
+        .get(StaticFile::new("todos.rs"))
+).push(
+    Router::new().after(gzip()).path("<*path>")
+        .get(StaticDir::new("examples/"))
+);{{</highlight>}}
+    {{< /blocks/code-window>}}
+{{< /blocks/feature>}}
+
+{{< blocks/feature>}}
+    <div class="intro">
+        <h3>支持 WebSocket</h3>
+        <p>
+            Salvo 支持 WebSocket!
+        </p>
+    </div>
+    {{< blocks/code-window>}}
+        {{<highlight rust>}}
+use futures::{FutureExt, StreamExt};
+use tokio;
+use salvo::prelude::*;
+use salvo_extra::ws::WsHandler;
+#[fn_handler]
+async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError> {
+    let fut = WsHandler::new().handle(req, res)?;
+    let fut = async move {
+        if let Some(ws) = fut.await {
+            let (tx, rx) = ws.split();
+            let fut = rx.forward(tx).map(|result| {
+                if let Err(e) = result {
+                    eprintln!("websocket error: {:?}", e);
+                }
+            });
+            tokio::task::spawn(fut);
+        }
+    };
+    tokio::task::spawn(fut);
+    Ok(())
+}
+#[tokio::main]
+async fn main() {
+    let router = Router::new().handle(connect);
+    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+}
+        {{</highlight>}}
+    {{< /blocks/code-window>}}
+{{< /blocks/feature>}}
