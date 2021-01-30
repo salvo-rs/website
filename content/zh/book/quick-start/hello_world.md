@@ -1,6 +1,5 @@
 ---
-title: "Hello World"
-linkTitle: "Hello World"
+title: "世界, 你好!"
 weight: 2
 menu:
   book:

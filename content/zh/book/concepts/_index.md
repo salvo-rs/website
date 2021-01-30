@@ -1,10 +1,6 @@
 ---
-title: "Hello World"
-linkTitle: "Hello World"
+title: "相关概念"
 weight: 2
-menu:
-  book:
-    parent: "quick start"
 ---
 
 
