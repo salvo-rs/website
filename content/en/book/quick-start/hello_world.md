@@ -10,7 +10,7 @@ menu:
 
 Create a new rust project:
 ```bash
-cargo new salvo_taste --bin
+cargo new hello --bin
 ```
 
 Add this to `Cargo.toml`

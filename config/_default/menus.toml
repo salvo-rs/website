@@ -1,13 +1,15 @@
 [[main]]
   name = "Book"
-  url = "/book/quick-start"
+  url = "/book/"
   weight = 10
 
 # [[book]]
-#   name = "Prologue"
-#   weight = 10
-#   identifier = "book"
-#   url = "/book"
+#   weight = 1
+#   identifier = "quick-start"
+
+# [[book]]
+#   weight = 20
+#   identifier = "concepts"
 
 # [[social]]
 #   name = "Twitter"
