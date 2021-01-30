@@ -2,6 +2,9 @@
 title: "Routing System"
 linkTitle: "Routing System"
 weight: 2
+menu:
+  book:
+    parent: "快速开始"
 ---
 
 
