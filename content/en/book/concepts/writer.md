@@ -5,3 +5,5 @@ menu:
   book:
     parent: "concepts"
 ---
+
+Writer is used to write data to response.

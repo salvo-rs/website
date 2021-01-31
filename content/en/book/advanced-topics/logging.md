@@ -5,3 +5,5 @@ menu:
   book:
     parent: "advanced-topics"
 ---
+
+Use tracing to logging.

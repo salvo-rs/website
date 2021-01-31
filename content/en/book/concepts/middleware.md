@@ -6,8 +6,10 @@ menu:
     parent: "concepts"
 ---
 
+Middleware is handler, they can be used to process the request before or after the request handled by actual handler. For example: user auth, compress the responsed data.
 
-中间件其实也是handler，它们可以对请求到达 handler 之前或者之后作一些处理 比如：登录验证，数据压缩等。
+
+
 中间件是通过 before 和 after添加到router上面。被添加的中间件会影响router和它内部所有子孙 routers.
 需要说明的是，网站的网址集合是一个树状结构，这个结构并不等同于router的树状结构。网址的某个节点可能会对应于多个router。比如说，users/ 路径下有些路径是需要登录的，有些路径是无需登录的。所以，可以将同样有登录需求的放在一个router下面，并且在它们的顶层router上添加验证中间件。而另外不需要登录就能访问的放到另外一个没有验证中间件的路由下面。
 

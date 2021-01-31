@@ -5,3 +5,5 @@ menu:
   book:
     parent: "concepts"
 ---
+
+Catcher is used when server response has error.
