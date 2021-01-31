@@ -38,7 +38,7 @@ use salvo::prelude::*;
 
 #[fn_handler]
 async fn hello_world(res: &mut Response) {
-    res.render_plain_text("Hello World");
+    res.render_plain_text("Hello World!");
 }
 
 #[tokio::main]

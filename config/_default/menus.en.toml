@@ -19,11 +19,15 @@
   identifier = "quick-start"
   weight = 10
 
-
 [[book]]
   name = "Concepts"
   identifier = "concepts"
   weight = 20
+
+[[book]]
+  name = "Middlewares"
+  identifier = "middlewares"
+  weight = 25
 
 [[book]]
   name = "Advanced topics"

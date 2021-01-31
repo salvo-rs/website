@@ -1,6 +1,6 @@
 ---
 title: "Middleware"
-weight: 2
+weight: 90
 menu:
   book:
     parent: "concepts"
