@@ -7,19 +7,19 @@ menu:
 ---
 
 
-Create a new rust project:
+创建一个新的 rust 项目:
 ```bash
 cargo new salvo_taste --bin
 ```
 
-Add this to `Cargo.toml`
+添加 ```salvo``` 依赖至 `Cargo.toml`
 ```toml
 [dependencies]
 salvo = "0.5"
 tokio = { version = "1.0", features = ["full"] }
 ```
 
-Create a simple function handler in the main.rs file, we call it `hello_world`, this function just render plain text "Hello World".
+在 ```main.rs``` 文件中创建一个简单的函数句柄, 函数名为 `hello_world`, 这个函数句柄只是简单地输出纯文本 "Hello World".
 
 ```rust
 use salvo::prelude::*;
@@ -30,7 +30,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-In the main function, we need to create a root Router first, and then create a server and call it's serve function:
+在 ```main``` 函数中, 需要创建一个根路由, 并且创建一个 ```Server``` 实例, 并启动:
 
 ```rust
 use salvo::prelude::*;
