@@ -1,5 +1,5 @@
 ---
-title : "Quick Start"
+title : "快速开始"
 linktitle: Quick Start Overview
 lead: ""
 draft: false
