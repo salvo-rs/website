@@ -1,6 +1,6 @@
 [[main]]
   name = "教程"
-  url = "/book/"
+  url = "/book/quick-start/hello_world/"
   weight = 10
 
 [[main]]
