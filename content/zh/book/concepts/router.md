@@ -7,6 +7,10 @@ menu:
 ---
 
 
-handler 是一个trait，内部包含一个个异步方法，handle。但很多时候只是希望通过函数作为处理函数。可以添加fnhandle将普通函数转为处理函数。
-处理函数默认签名包含三个参数，依次是，request，depot. response. depot 是一个临时存储，可以存储本次请求相关的数据。如果不需要，可以直接省略。另外一个可以省略的参数是 request.
+Router 用于过滤请求, 然后将请求发送给不同的 Handler 处理.
+最常用的过滤是 path 和 method. path 匹配路径信息; method 匹配请求的 Method.
+过滤条件之间可以使用 and, or 连接, 比如:
 
+```rust
+Router::new().filter(filter::path("hello").and(filter::get()));
+```
