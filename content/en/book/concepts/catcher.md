@@ -1,6 +1,6 @@
 ---
 title: "Catcher"
-weight: 60
+weight: 600
 menu:
   book:
     parent: "concepts"
