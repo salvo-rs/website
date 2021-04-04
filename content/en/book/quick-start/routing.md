@@ -8,78 +8,65 @@ menu:
 ---
 ---
 
-In previous section, we created a simple hello world example. Maybe we want to say hello to somebody. When you typed ```http://localhost:7878/Chris``` then the server response "Hello Chris!".
+Normally we write routing like this：
 
 ```rust
-use salvo::prelude::*;
-
-#[fn_handler]
-async fn hello_world(req: &mut Request, res: &mut Response) {
-    let name = res.get_param::<String>("name").unwrap_or("World".into());
-    res.render_plain_text(&format!("Hello {}!", name));
-}
-
-#[tokio::main]
-async fn main() {
-    let router = Router::new().path("<name>").get(hello_world);
-    let server = Server::new(router);
-    server.bind(([0, 0, 0, 0], 7878)).await;
-}
+Router::new().path("articles").get(list_articles).post(create_article);
+Router::new()
+    .path("articles/<id>")
+    .get(show_article)
+    .patch(edit_article)
+    .delete(delete_article);
 ```
 
-In this source code, we use get_param function defined in Request to get the ```name``` param user typed in browser.
+Often viewing articles and article lists does not require user login, but creating, editing, deleting articles, etc. require user login authentication permissions. The tree-like routing system in Salvo can meet this demand. We can write routers without user login together: 
 
 ```rust
-let name = res.get_param::<String>("name").unwrap_or("World".into());
+Router::new()
+    .path("articles")
+    .get(list_articles)
+    .push(Router::new().path("<id>").get(show_article));
 ```
 
-We also add a path filter to Router, this path filter will catch the first url segment in url can named it as ```name```.
-
+Then write the routers that require the user to login together, and use the corresponding middleware to verify whether the user is logged in: 
 ```rust
-let router = Router::new().path("<name>").get(hello_world);
+Router::new()
+    .path("articles")
+    .before(auth_check)
+    .post(list_articles)
+    .push(Router::new().path("<id>").patch(edit_article).delete(delete_article));
 ```
 
-In many web applications, they use ```id``` as params. Id always number, we can use regex to constraint it, like this:
+Although these two routes have the same ```path("articles")```, they can still be added to the same parent route at the same time, so the final route looks like this: 
 
 ```rust
-let router = Router::new().path(r"<id:/\d+/>").get(hello_world);
+Router::new()
+    .push(
+        Router::new()
+            .path("articles")
+            .get(list_articles)
+            .push(Router::new().path("<id>").get(show_article)),
+    )
+    .push(
+        Router::new()
+            .path("articles")
+            .before(auth_check)
+            .post(list_articles)
+            .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
+    );
 ```
 
-Salvo use Tree-like routing system. You constructed your routers as a tree. Each node is a router and you can attach handler to these routers. You can also add middlewares before or after request routed to the actual handler. Middlewares added in router will affected itself and it's descendants.
+```<id>``` matches a fragment in the path, under normal circumstances, the article ```id``` is just a number, which we can use regular expressions to restrict ```id``` matching rules, ```r"<id:/\d+/>"```.
 
-```rust
-use salvo::prelude::*;
+For numeric characters there is an easier way to use ```<id:num>```, the specific writing is:
+- ```<id:num>```, matches any number of numeric characters;
+- ```<id:num[10]>```, only matches a certain number of numeric characters, where 10 means that the match only matches 10 numeric characters;
+-```<id:num(..10)>``` means matching 1 to 9 numeric characters;
+- ```<id:num(3..10)>``` means matching 3 to 9 numeric characters;
+- ```<id:num(..=10)>``` means matching 1 to 10 numeric characters;
+- ```<id:num(3..=10)>``` means match 3 to 10 numeric characters;
+- ```<id:num(10..)>``` means to match at least 10 numeric characters.
 
-#[tokio::main]
-async fn main() {
-    let debug_mode = true;
-    let admin_mode = true;
-    let router = Router::new()
-        .get(index)
-        .push(
-            Router::new()
-                .path("users")
-                .before(auth)
-                .post(create_user)
-                .push(Router::new().path("<id:/\\d+/>").post(update_user).delete(delete_user)),
-        )
-        .push(
-            Router::new()
-                .path("users")
-                .get(list_users)
-                .push(Router::new().path("<id:/\\d+/>").get(show_user)),
-        ).push_when(|_|if debug_mode {
-            Some(Router::new().path("debug").get(debug))
-        } else {
-            None
-        }).visit(|parent|{
-            if admin_mode {
-                parent.push(Router::new().path("admin").get(admin))
-            } else {
-                parent
-            }
-        });
+You can also use ```<*>``` or ```<**>``` to match all remaining path fragments. In order to make the code more readable, you can also add appropriate name to make the path semantics more clear, for example: ```<**file_path>```.
 
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
-}
-````
+It is allowed to combine multiple expressions to match the same path segment, such as ```/articles/article_<id:num>/```. 
