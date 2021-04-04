@@ -2,7 +2,7 @@
 	<div class="book-navigation d-flex justify-content-between">
 	<!-- https://www.feliciano.tech/blog/custom-sort-hugo-single-pages/ -->
 	{{ $pages := where site.RegularPages "Section" .Section -}}
-	{{ with $pages.Next . -}}
+	{{ with $pages.ByWeight.Next . -}}
 		<a href="{{ .Permalink }}">
 			<div class="card my-1">
 				<div class="card-body py-2">
@@ -11,7 +11,7 @@
 			</div>
 		</a>
 	{{ end -}}
-	{{ with $pages.Prev . -}}
+	{{ with $pages.ByWeight.Prev . -}}
 		<a class="ml-auto" href="{{ .Permalink }}">
 			<div class="card my-1">
 				<div class="card-body py-2">

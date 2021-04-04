@@ -4,7 +4,7 @@ disableHugoGeneratorInject = true
 enableEmoji = true
 enableGitInfo = false
 enableRobotsTXT = true
-languageCode = "zh-CN"
+languageCode = "en"
 paginate = 7
 rssLimit = 10
 
@@ -51,7 +51,7 @@ rel  = "sitemap"
 [languages]
 [languages.en]
 title = "Salvo"
-description = "Salvo is a easy to use web framework written by rust"
+description = "Salvo is a web server framework written in Rust"
 languageName ="English"
 contentDir = "content/en"
 # Weight used for sorting.

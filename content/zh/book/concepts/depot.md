@@ -1,6 +1,6 @@
 ---
 title: "Depot"
-weight: 2
+weight: 220
 menu:
   book:
     parent: "concepts"
