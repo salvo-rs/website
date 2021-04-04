@@ -1,6 +1,6 @@
 ---
 title: "Custom error pages"
-weight: 2
+weight: 5020
 menu:
   book:
     parent: "advanced-topics"

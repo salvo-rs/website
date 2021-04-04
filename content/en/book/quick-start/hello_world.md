@@ -1,7 +1,7 @@
 ---
 title: "Hello World"
 linkTitle: "Hello World"
-weight: 2
+weight: 1010
 menu:
   book:
     parent: "quick-start"

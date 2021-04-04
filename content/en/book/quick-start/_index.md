@@ -1,7 +1,7 @@
 ---
 title : "Quick Start"
 lead: ""
-weight: 1
+weight: 1000
 draft: false
 images: []
 ---

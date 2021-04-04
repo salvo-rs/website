@@ -1,6 +1,6 @@
 ---
 title: "Writer"
-weight: 250
+weight: 2050
 menu:
   book:
     parent: "concepts"

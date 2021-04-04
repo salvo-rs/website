@@ -1,7 +1,7 @@
 ---
 title: "Routing System"
 linkTitle: "Routing System"
-weight: 50
+weight: 1020
 menu:
   book:
     parent: "quick-start"

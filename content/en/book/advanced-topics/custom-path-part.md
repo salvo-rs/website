@@ -1,6 +1,6 @@
 ---
-title: "自定义错误页面"
-weight: 5020
+title: "Custom Path Part"
+weight: 5030
 menu:
   book:
     parent: "advanced-topics"
