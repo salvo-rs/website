@@ -1,5 +1,5 @@
 ---
-title: "WS"
+title: "WebSocket"
 weight: 3090
 menu:
   book:
