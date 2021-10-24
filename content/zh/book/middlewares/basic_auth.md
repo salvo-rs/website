@@ -15,6 +15,8 @@ use salvo::Server;
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt().init();
+    
     let validator = |user_name, password| -> bool {
         user_name == "root" && password == "pwd"
     };
