@@ -6,6 +6,7 @@ menu:
     parent: "middlewares"
 ---
 
+CORS 中间件可以用于 [跨域资源共享](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS).
 
 ```rust
 use salvo::prelude::*;

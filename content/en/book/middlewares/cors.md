@@ -6,6 +6,7 @@ menu:
     parent: "middlewares"
 ---
 
+CORS middleware can be used to enable [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) with various options.
 
 ```rust
 use salvo::prelude::*;
