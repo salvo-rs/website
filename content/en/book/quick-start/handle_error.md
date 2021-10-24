@@ -18,7 +18,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-For custom error types, you can output different error pages according to your needs, which completely depends on your needs. 
+For custom error types, you can output different error pages according to your needs. 
 
 ```rust
 use salvo::anyhow;
