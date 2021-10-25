@@ -1,9 +1,9 @@
 ---
 title: "Catcher"
-weight: 2030
+weight: 5030
 menu:
   book:
-    parent: "concepts"
+    parent: "advanced"
 ---
 
 Catcher is used when server response has error.

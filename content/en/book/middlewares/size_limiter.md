@@ -1,6 +1,6 @@
 ---
 title: "Size Limiter"
-weight: 3070
+weight: 8070
 menu:
   book:
     parent: "middlewares"

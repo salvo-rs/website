@@ -1,9 +1,9 @@
 ---
 title: "Writer"
-weight: 2050
+weight: 5050
 menu:
   book:
-    parent: "concepts"
+    parent: "advanced"
 ---
 
 Writer is used to write data to response.

@@ -20,19 +20,24 @@
   weight = 10
 
 [[book]]
-  name = "Concepts"
-  identifier = "concepts"
+  name = "Basics"
+  identifier = "basics"
   weight = 20
+
+[[book]]
+  name = "Advanced"
+  identifier = "advanced"
+  weight = 30
 
 [[book]]
   name = "Middlewares"
   identifier = "middlewares"
-  weight = 25
+  weight = 50
 
 [[book]]
-  name = "Advanced topics"
-  identifier = "advanced-topics"
-  weight = 30
+  name = "Recipes"
+  identifier = "recipes"
+  weight = 60
 
 # [[book]]
 #   weight = 20

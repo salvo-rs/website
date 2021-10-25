@@ -1,6 +1,6 @@
 ---
 title: "Compression"
-weight: 3020
+weight: 8020
 menu:
   book:
     parent: "middlewares"

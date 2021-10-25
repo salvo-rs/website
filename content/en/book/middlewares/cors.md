@@ -1,6 +1,6 @@
 ---
 title: "CORS"
-weight: 3030
+weight: 8030
 menu:
   book:
     parent: "middlewares"

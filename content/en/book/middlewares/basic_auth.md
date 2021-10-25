@@ -1,6 +1,6 @@
 ---
 title: "Basic Auth"
-weight: 3010
+weight: 8010
 menu:
   book:
     parent: "middlewares"
