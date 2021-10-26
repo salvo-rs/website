@@ -21,14 +21,21 @@ async fn hello(req: &mut Request) -> String {
 We can get query string from request object:
 
 ```rust
-req.get_query::<String>("id")
+req.get_query::<String>("id");
 ```
 
 ## About form
 
 
 ```rust
-req.get_form::<String>("id")
+req.get_form::<String>("id").await;
+```
+
+
+## About json payload
+
+```rust
+req.read::<User>().await;
 ```
 
 ## File uploading
