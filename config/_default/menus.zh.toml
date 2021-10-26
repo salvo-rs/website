@@ -20,14 +20,24 @@
 
 
 [[book]]
-  name = "相关概念"
+  name = "基础"
   identifier = "concepts"
   weight = 20
 
 [[book]]
-  name = "高级主题"
+  name = "高级"
   identifier = "advanced-topics"
   weight = 30
+
+[[book]]
+  name = "中间件"
+  identifier = "middlewares"
+  weight = 50
+
+[[book]]
+  name = "示例代码"
+  identifier = "recipes"
+  weight = 60
 
 # [[book]]
 #   weight = 1

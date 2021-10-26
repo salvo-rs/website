@@ -12,6 +12,11 @@
   name = "Github"
   url = "https://github.com/salvo-rs/salvo"
   weight = 30
+  
+[[main]]
+  name = "Buy a Coffee"
+  url = "https://www.buymeacoffee.com/chrislearn"
+  weight = 40
 
 
 [[book]]

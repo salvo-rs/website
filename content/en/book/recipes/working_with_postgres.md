@@ -1,6 +1,6 @@
 ---
-title: "Custom error pages"
-weight: 6020
+title: "Working with postgres"
+weight: 6030
 menu:
   book:
     parent: "recipes"
