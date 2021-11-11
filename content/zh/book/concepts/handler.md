@@ -75,6 +75,6 @@ async fn main() {
     let router = Router::new()
         .push(Router::new().path("anyhow").get(handle_anyhow))
         .push(Router::new().path("custom").get(handle_custom));
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::bind(&"127.0.0.1:7878".parse().unwrap()).serve(Service::new(router)).await.unwrap();
 }
 ```

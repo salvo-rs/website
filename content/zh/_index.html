@@ -19,7 +19,7 @@ async fn hello_world(res: &mut Response) {
 #[tokio::main]
 async fn main() {
     let router = Router::new().get(hello_world);
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::bind(&"127.0.0.1:7878".parse().unwrap()).serve(Service::new(router)).await.unwrap();
 }{{</highlight>}}
         {{< /blocks/code-window>}}
         <div class="trans-arrow">
@@ -146,7 +146,7 @@ async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError>
 #[tokio::main]
 async fn main() {
     let router = Router::new().handle(connect);
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::bind(&"127.0.0.1:7878".parse().unwrap()).serve(Service::new(router)).await.unwrap();
 }
         {{</highlight>}}
     {{< /blocks/code-window>}}

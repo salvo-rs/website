@@ -19,6 +19,6 @@ async fn main() {
     let router = Router::new()
         .path("<**path>")
         .get(StaticDir::new(vec!["examples/static/body", "examples/static/girl"]));
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::bind(&"127.0.0.1:7878".parse().unwrap()).serve(Service::new(router)).await.unwrap();
 }
 ```
