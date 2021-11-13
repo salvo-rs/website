@@ -72,7 +72,9 @@ async fn hello_world() -> &'static str {
 #[tokio::main]
 async fn main() {
     let router = Router::new().get(hello_world);
-    let server = Server::new(router);
-    server.bind(([0, 0, 0, 0], 7878)).await;
+    Server::builder(TcpListener::bind(([0, 0, 0, 0], 7878)).unwrap())
+        .serve(Service::new(router))
+        .await
+        .unwrap();
 }
 ```

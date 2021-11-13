@@ -50,7 +50,10 @@ async fn main() {
                 .post(upload),
         )
         .push(Router::new().path("unlimit").post(upload));
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::builder(TcpListener::bind(([0, 0, 0, 0], 7878)).unwrap())
+        .serve(Service::new(router))
+        .await
+        .unwrap();
 }
 
 static INDEX_HTML: &str = r#"<!DOCTYPE html>

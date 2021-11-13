@@ -19,6 +19,9 @@ async fn main() {
     let router = Router::new()
         .path("<**path>")
         .get(StaticDir::new(vec!["examples/static/body", "examples/static/girl"]));
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::builder(TcpListener::bind(([0, 0, 0, 0], 7878)).unwrap())
+        .serve(Service::new(router))
+        .await
+        .unwrap();
 }
 ```

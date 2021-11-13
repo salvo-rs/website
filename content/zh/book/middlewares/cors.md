@@ -27,6 +27,9 @@ async fn main() {
         .build();
 
     let router = Router::with_before(cors_handler).get(hello);
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::builder(TcpListener::bind(([0, 0, 0, 0], 7878)).unwrap())
+        .serve(Service::new(router))
+        .await
+        .unwrap();
 }
 ```

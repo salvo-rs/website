@@ -40,6 +40,9 @@ async fn main() {
                 .path("examples/<*path>")
                 .get(StaticDir::new("examples/")),
         );
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::builder(TcpListener::bind(([0, 0, 0, 0], 7878)).unwrap())
+        .serve(Service::new(router))
+        .await
+        .unwrap();
 }
 ```

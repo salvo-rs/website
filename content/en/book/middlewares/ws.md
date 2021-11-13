@@ -34,7 +34,10 @@ async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError>
 async fn main() {
     tracing_subscriber::fmt().init();
     let router = Router::new().handle(connect);
-    Server::new(router).bind(([0, 0, 0, 0], 7878)).await;
+    Server::builder(TcpListener::bind(([0, 0, 0, 0], 7878)).unwrap())
+        .serve(Service::new(router))
+        .await
+        .unwrap();
 }
 
 ```
