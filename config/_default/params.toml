@@ -4,7 +4,7 @@
 title = "Salvo"
 titleSeparator = "-"
 titleAddition = "Rust Web Framework"
-description = "Salvo is a rust website framework"
+description = "Salvo is a powerful and simplest web server framework in Rust world."
 
 ## JSON-LD
 schemaType = "Organization"
