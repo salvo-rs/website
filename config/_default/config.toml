@@ -51,7 +51,7 @@ rel  = "sitemap"
 [languages]
 [languages.en]
 title = "Salvo"
-description = "Salvo is a web server framework written in Rust"
+description = "Salvo is a powerful and simplest web server framework in Rust world"
 languageName ="English"
 contentDir = "content/en"
 # Weight used for sorting.
