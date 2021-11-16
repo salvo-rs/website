@@ -26,6 +26,6 @@ async fn main() {
                 .path("baidu/<**rest>")
                 .handle(ProxyHandler::new(vec!["https://www.baidu.com".into()])),
         );
-    Server::new(TcpListener::bind(([0, 0, 0, 0], 7878))).serve(router).await.unwrap();
+    Server::new(TcpListener::bind("0.0.0.0:7878")).serve(router).await.unwrap();
 }
 ```

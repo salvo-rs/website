@@ -92,7 +92,7 @@ async fn main() {
     let router = Router::new()
         .push(Router::new().path("anyhow").get(handle_anyhow))
         .push(Router::new().path("custom").get(handle_custom));
-    Server::new(TcpListener::bind(([0, 0, 0, 0], 7878))).serve(router).await.unwrap();
+    Server::new(TcpListener::bind("0.0.0.0:7878")).serve(router).await.unwrap();
 }
 ```
 
