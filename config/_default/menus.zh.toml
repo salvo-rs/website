@@ -21,12 +21,12 @@
 
 [[book]]
   name = "基础"
-  identifier = "concepts"
+  identifier = "basics"
   weight = 20
 
 [[book]]
   name = "高级"
-  identifier = "advanced-topics"
+  identifier = "advanced"
   weight = 30
 
 [[book]]

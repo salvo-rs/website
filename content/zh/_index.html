@@ -19,14 +19,7 @@ async fn hello_world(res: &mut Response) {
 #[tokio::main]
 async fn main() {
     let router = Router::new().get(hello_world);
-<<<<<<< HEAD
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
-=======
-    Server::builder(TcpListener::bind("127.0.0.1:7878").unwrap())
-        .serve(Service::new(router))
-        .await
-        .unwrap();
->>>>>>> e46244f1546e51baddab37409a9e3f55462dd74e
 }{{</highlight>}}
         {{< /blocks/code-window>}}
         <div class="trans-arrow">

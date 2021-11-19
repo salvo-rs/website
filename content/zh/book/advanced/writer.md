@@ -3,7 +3,7 @@ title: "Writer"
 weight: 2050
 menu:
   book:
-    parent: "concepts"
+    parent: "advanced"
 ---
 
 ```Writer``` 用于写入内容到 ```Response```:
