@@ -28,7 +28,7 @@ async fn hello_world(req: &mut Request, depot: &mut Depot, res: &mut Response) {
 }
 ```
 
-The default signature of the processing function contains three parameters, followed by ```&mut Request, &mut Depot, &mut Response```. Depot is a temporary storage that can store data related to this request.
+The default signature of the processing function contains four parameters, followed by ```&mut Request, &mut Depot, &mut Response, &mut FlowCtrl```. Depot is a temporary storage that can store data related to this request.
 
 Middleware is actually a ```Handler```, they can do some processing before or after the request arrives at the ```Handler``` that officially processes the request, such as login verification, data compression, etc.
 
@@ -92,7 +92,7 @@ async fn main() {
     let router = Router::new()
         .push(Router::new().path("anyhow").get(handle_anyhow))
         .push(Router::new().path("custom").get(handle_custom));
-    Server::new(TcpListener::bind("0.0.0.0:7878")).serve(router).await.unwrap();
+    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
 }
 ```
 

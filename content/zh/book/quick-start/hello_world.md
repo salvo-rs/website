@@ -6,6 +6,14 @@ menu:
     parent: "quick-start"
 ---
 
+## 安装 Rust
+
+如果呢还没有安装 Rust, 你可以使用官方提供的 ```rustup``` 安装 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有包含如何安装的介绍.
+
+当前 Salvo 支持的最小 Rust 为 1.56. 运行 ```rustup update``` 确认您已经安装了最新的 Rust.
+
+## 编写第一个 Salvo 程序
+
 创建一个全新的项目:
 
 ```bash
@@ -26,15 +34,32 @@ tokio = { version = "1", features = ["full"] }
 use salvo::prelude::*;
 
 #[fn_handler]
-async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-    res.render_plain_text("Hello World");
+async fn hello_world() -> &'static str {
+    "Hello World"
+}
+#[tokio::main]
+async fn main() {
+    let router = Router::new().get(hello_world);
+    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
 }
 ```
 
-对于 fn_handler，可以根据需求和喜好有不同种写法.
+恭喜你, 你的一个 Salvo 程序已经完成. 只需要在命令行下运行 ```cargo run```, 然后在浏览器里打开 ```http://127.0.0.1:7878``` 即可.
 
-- 可以将一些没有用到的参数省略掉, 比如这里的 ```_req```, ```_depot```.
+## 详细解读
 
+这里的 ```hello_world``` 是一个 ```Handler```, 用于处理用户请求. ```#[fn_handler]``` 可以让一个函数方便实现 ```Handler``` trait. 并且, 它允许我们用不同的方式简写函数的参数.
+
+- 原始形式:
+    ```rust
+    #[fn_handler]
+    async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
+        res.render_plain_text("Hello World");
+    }
+    ```
+
+- 您可以省略调函数中参数中你用不着的, 比如这里面的 ``_req```, ```_depot```, ```_ctrl```.
+  
     ``` rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) {
@@ -42,36 +67,31 @@ async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response)
     }
     ```
 
-- 对于任何实现 Writer 的类型都是可以直接作为函数返回值. 比如, ```&str``` 实现了 ```Writer```, 会直接按纯文本输出:
+- 任何类型都可以作为函数的返回类型, 只要它实现了 ```Writer``` trait. 比如 ```&str``` 实现了 ```Writer```, 当它被作为返回值时, 就打印纯文本:
 
     ```rust
     #[fn_handler]
-    async fn hello_world(res: &mut Response) -> &'static str {
+    async fn hello_world(res: &mut Response) -> &'static str {// just return &str
         "Hello World"
     }
     ```
 
-- 更常见的情况是, 我们需要通过返回一个 ```Result<T, E>``` 来简化程序中的错误处理. 如果 ```Result<T, E>``` 中 ```T``` 和 ```E``` 都实现 ```Writer```, 则 ```Result<T, E>``` 可以直接作为函数返回类型:
-
+- 更普遍的情况是, 我们需要在将 ```Result<T, E>``` 作为返回类型, 以便处理函数执行过程中的错误. 如果 ```T``` 和 ```E``` 都实现了 ```Writer```, 那么 ```Result<T, E>``` 就可以作为返回值:
+  
     ```rust
     #[fn_handler]
-    async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {
+    async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {// return Result
         Ok("Hello World")
     }
     ```
 
-在 ```main``` 函数中, 我们需要首先创建一个根路由, 然后创建一个 Server 并且调用它的 ```bind``` 函数:
+## 更多示例
+建议直接克隆 Salvo 仓库, 然后允许 examples 目录下的示例. 比如下面的命令可以运行 ```hello_world``` 的例子:
 
-```rust
-use salvo::prelude::*;
-
-#[fn_handler]
-async fn hello_world() -> &'static str {
-    "Hello World"
-}
-#[tokio::main]
-async fn main() {
-    let router = Router::new().get(hello_world);
-    Server::new(TcpListener::bind("0.0.0.0:7878")).serve(router).await.unwrap();
-}
+```sh
+git clone https://github.com/salvo-rs/salvo
+cd salvo
+cargo run --example hello_world
 ```
+
+examples 目录下有很多的例子. 都可以通过类似 ```cargo run --example <name>``` 的命令运行.

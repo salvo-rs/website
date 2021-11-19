@@ -1,10 +1,12 @@
 ---
 title: "Handler"
-weight: 2010
+weight: 1010
 menu:
   book:
-    parent: "concepts"
+    parent: "basics"
 ---
+
+## 什么是 Handler
 
 Handler 是负责负责处理 Request 请求的具体对象.  Hander 本身是一个 Trait, 内部包含一个 ```handle``` 的异步方法:
 
@@ -15,9 +17,11 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
+## 函数式 Handler
+
 很多时候只是希望通过函数作为 ```Handler``` 处理请求. 可以添加 ```fn_handler``` 将普通函数转为 ```Handler```.
 
-处理函数默认签名包含三个参数, 依次是, ```&mut Request, &mut Depot. &mut Response```. Depot 是一个临时存储, 可以存储本次请求相关的数据. 
+处理函数默认签名包含四个参数, 依次是, ```&mut Request, &mut Depot. &mut Response, &mut FlowCtrl```. Depot 是一个临时存储, 可以存储本次请求相关的数据. 
 
 中间件其实也是 ```Handler```, 它们可以对请求到达正式处理请求的 ```Handler``` 之前或者之后作一些处理 比如：登录验证, 数据压缩等.
 
@@ -46,7 +50,22 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-Salvo 中的 ```fn_handler``` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的类型都实现 ```Writer``` trait:
+### 处理错误
+
+Salvo 中的 ```fn_handler``` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的类型都实现 ```Writer``` trait.
+考虑到 anyow 的使用比较广泛, 在开启 ```anyhow``` 功能后, ```anyhow::Error``` 会实现 ```Writer``` trait. ```anyhow::Error``` 会被映射为 ```InternalServerError```. 
+
+```rust
+#[cfg(feature = "anyhow")]
+#[async_trait]
+impl Writer for ::anyhow::Error {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.set_http_error(crate::http::errors::InternalServerError());
+    }
+}
+```
+
+对于自定义错误类型, 你可以根据需要输出不同的错误页面.
 
 ```rust
 use salvo::anyhow;
@@ -75,6 +94,22 @@ async fn main() {
     let router = Router::new()
         .push(Router::new().path("anyhow").get(handle_anyhow))
         .push(Router::new().path("custom").get(handle_custom));
-    Server::new(TcpListener::bind("0.0.0.0:7878")).serve(router).await.unwrap();
+    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
+}
+```
+
+## 直接实现 Handler trait
+
+```rust
+pub struct MaxSizeHandler(u64);
+#[async_trait]
+impl Handler for MaxSizeHandler {
+    async fn handle(&self, req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {
+            if upper > self.0 {
+                res.set_http_error(PayloadTooLarge());
+            }
+        }
+    }
 }
 ```

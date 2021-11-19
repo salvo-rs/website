@@ -35,7 +35,7 @@ Router::with_path("writers").get(list_writers).post(create_writer).push(
 
 ## Get param in routers
 
-In previous source code, ```<id>``` is a param definition. You can access it's value via Request instance:
+In previous source code, ```<id>``` is a param definition. We can access it's value via Request instance:
 
 ```rust
 #[fn_handler]
@@ -61,11 +61,11 @@ It is allowed to combine multiple expressions to match the same path segment, su
 
 ## Add middlewares
 
-Middleware can be added via ```before``` or ```after``` method.
+Middleware can be added via ```hoop``` method.
 
 ```rust
 Router::new()
-    .before(check_authed)
+    .hoop(check_authed)
     .path("writers")
     .get(list_writers)
     .post(create_writer)
@@ -103,6 +103,7 @@ Router::new()
 Although there are two routers have the same ```path("articles")```, they can still be added to the same parent route at the same time.
 
 ## Filters
+
 Many methods in ```Router``` return to themselves in order to easily implement chain writing. Sometimes, in some cases, you need to judge based on conditions before you can add routing. Routing also provides some convenience Method, simplify code writing.
 
 ```Router``` uses the filter to determine whether the route matches. The filter supports logical operations and or. Multiple filters can be added to a route. When all the added filters match, the route is matched successfully.

@@ -6,7 +6,7 @@ menu:
     parent: "basics"
 ---
 
-We can get response reference as function handler paramer:
+在 ```Handler``` 中, ```Response``` 会被作为参数传入:
 
 ```rust
 #[fn_handler]
@@ -15,7 +15,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-When server get a client request and in it's whole process cycle, any handler or middlewares can write to response object. In middleware, you may want to skip all reset middlewares and handler, you can use ```FlowCtrl```:
+```Response``` 在服务器接收到客户端请求后, 任何匹配到的 ```Handler``` 和中间件都可以向里面写入数据. 在某些情况下, 比如某个中间件希望阻止后续的中间件和 ```Handler``` 执行, 您可以使用 ```FlowCtrl```:
 
 ```rust
 #[fn_handler]
@@ -25,17 +25,17 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 }
 ```
 
-## Write content
+## 写入内容
 
-Write content is straightforward:
+向 ```Response``` 中写入数据是非常简单的:
 
-- Write plain text
+- 写入纯文本数据
 
     ```rust
     res.render_plain_text("hello world!");
     ``` 
 
-- Write serializable type as json format
+- 写入 JSON 序列化数据
     
     ```rust
     #[derive(Serialize, Debug)]
@@ -46,22 +46,23 @@ Write content is straightforward:
     res.render_json(&user);
     ```
 
-- Write html text
+- 写入 HTML
     
     ```rust
     res.render_html("<html><body>hello</body></html>");
     ```
 
-## Write http error
+## 写入 HTTP 错误
 
-- Use ```set_http_error``` can write a http error to response.
+
+- 使用 ```set_http_error``` 可以向 ```Response``` 写入详细错误信息.
 
     ```rust
     use salvo::http::errors::*;
     res.set_http_error(InternalServerError().with_summary("error when serialize object to json"))
     ```
 
-- If we don't want to customize error message, just use ```set_http_code```.
+- 如果您不需要自定义错误信息, 可以直接调用 ```set_http_code```.
 
     ```rust
     use salvo::http::StatusCode;
