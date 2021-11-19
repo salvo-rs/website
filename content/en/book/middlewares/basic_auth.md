@@ -8,23 +8,29 @@ menu:
 
 
 ```rust
-use salvo::extra::basic_auth::BasicAuthHandler;
-use salvo::extra::serve::StaticDir;
-use salvo::routing::Router;
-use salvo::Server;
+use salvo::extra::basic_auth::{BasicAuthHandler, BasicAuthValidator};
+use salvo::prelude::*;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt().init();
-    
-    let validator = |user_name, password| -> bool {
-        user_name == "root" && password == "pwd"
-    };
-    let auth_handler = BasicAuthHandler::new(validator);
 
-    let router = Router::new()
-        .before(auth_handler)
-        .get(StaticDir::new(vec!["examples/static/boy", "examples/static/girl"]));
-    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
+    let auth_handler = BasicAuthHandler::new(Validator);
+    tracing::info!("Listening on http://127.0.0.1:7878");
+    Server::new(TcpListener::bind("127.0.0.1:7878"))
+        .serve(Router::with_hoop(auth_handler).handle(hello))
+        .await;
+}
+#[fn_handler]
+async fn hello() -> &'static str {
+    "Hello"
+}
+
+struct Validator;
+#[async_trait]
+impl BasicAuthValidator for Validator {
+    async fn validate(&self, username: &str, password: &str) -> bool {
+        username == "root" && password == "pwd"
+    }
 }
 ```

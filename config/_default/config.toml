@@ -58,7 +58,7 @@ contentDir = "content/en"
 weight = 1
 [languages.zh]
 title = "Salvo"
-description = "Salvo 是一个简单易用的 Rust Web 后端框架"
+description = "Salvo 是一个简单易用的 Rust Web 后端框架. 仅仅需要基本的 Rust 基础即可写成功能强大的后端服务器, 我们的目标是: 编码很简单, 功能不缺失, 性能有保障."
 languageName ="中文"
 contentDir = "content/zh"
 time_format_default = "2006/02/01"

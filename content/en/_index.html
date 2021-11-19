@@ -19,7 +19,8 @@ async fn hello_world(res: &mut Response) {
 #[tokio::main]
 async fn main() {
     let router = Router::new().get(hello_world);
-    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
+    let listener = TcpListener::bind("127.0.0.1:7878");
+    Server::new(listener).serve(router).await.unwrap();
 }{{</highlight>}}
         {{< /blocks/code-window>}}
         <div class="trans-arrow">
@@ -32,7 +33,7 @@ async fn main() {
             {{< /blocks/browser-window>}}
     </div>
     <div class="mx-auto link-buttons">
-        <a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref " /book/quick-start">}}">
+        <a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref " /book/quick-start/hello_world">}}">
             Get Started <i class="fas fa-arrow-alt-circle-right ml-2"></i>
         </a>
     </div>
@@ -50,19 +51,19 @@ async fn main() {
 let debug_mode = true;
 let admin_mode = true;
 let router = Router::new().get(handle).push(
-    Router::new().path("users").before(auth).post(handle).push(
-        Router::new().path("&lt; id:/\d+/&gt;").post(handle).delete(handle)
+    Router::with_path("users").before(auth).post(handle).push(
+        Router::with_path("&lt; id:/\d+/&gt;").post(handle).delete(handle)
     ),
-).push(Router::new().path("users").get(handle).push(
-        Router::new().path("&lt; id:/\d+/&gt;").get(handle)
+).push(Router::with_path("users").get(handle).push(
+        Router::with_path("&lt; id:/\d+/&gt;").get(handle)
     ),
 ).push_when(|_|if debug_mode {
-        Some(Router::new().path("debug").get(handle))
+        Some(Router::with_path("debug").get(handle))
     } else {
         None
 }).visit(|parent|{
     if admin_mode {
-        parent.push(Router::new().path("admin").get(handle))
+        parent.push(Router::with_path("admin").get(handle))
     } else {
         parent
     }
@@ -101,7 +102,7 @@ let router = Router::new()
     {{< blocks/code-window>}}
         {{<highlight rust>}}
 let router = Router::new().push(
-    Router::new().path("ws_chat")
+    Router::with_path("ws_chat")
         .get(StaticFile::new("examples/ws_chat.rs"))
 ).push(
     Router::new().after(deflate()).path("sse_chat")
