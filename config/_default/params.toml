@@ -3,7 +3,7 @@
 ## Homepage
 title = "Salvo"
 titleSeparator = "-"
-titleAddition = "Rust Web Framework"
+titleAddition = "Simplest Rust Web Framework"
 description = "Salvo is a powerful and simplest web server framework in Rust world."
 
 ## JSON-LD
