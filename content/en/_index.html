@@ -51,7 +51,7 @@ async fn main() {
 let debug_mode = true;
 let admin_mode = true;
 let router = Router::new().get(handle).push(
-    Router::with_path("users").before(auth).post(handle).push(
+    Router::with_path("users").hoop(auth).post(handle).push(
         Router::with_path("&lt; id:/\d+/&gt;").post(handle).delete(handle)
     ),
 ).push(Router::with_path("users").get(handle).push(

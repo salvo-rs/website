@@ -54,7 +54,7 @@ Router::new()
 ```rust
 Router::new()
     .path("articles")
-    .before(auth_check)
+    .hoop(auth_check)
     .post(list_articles)
     .push(Router::new().path("<id>").patch(edit_article).delete(delete_article));
 ```
@@ -72,7 +72,7 @@ Router::new()
     .push(
         Router::new()
             .path("articles")
-            .before(auth_check)
+            .hoop(auth_check)
             .post(list_articles)
             .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
     );

@@ -86,7 +86,7 @@ If we don't want to check user is authed when current user view writer informati
 Router::new()
     .push(
         Router::new()
-            .before(check_authed)
+            .hoop(check_authed)
             .path("writers")
             .post(create_writer)
             .push(Router::with_path("<id>").patch(edit_writer).delete(delete_writer)),
@@ -121,7 +121,7 @@ Router::new()
     .push(
         Router::new()
             .path("articles")
-            .before(auth_check)
+            .hoop(auth_check)
             .post(list_articles)
             .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
     );
