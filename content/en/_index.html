@@ -95,8 +95,7 @@ let router = Router::new()
         <h3>Flexible Middleware Support</h3>
         <p>
             Choose from a number of already existing middlewares or create your own! Use them
-            to verify and manipulate certain requests in your app before they reach your
-            handler or after handler.
+            to verify and manipulate certain requests in your app.
         </p>
     </div>
     {{< blocks/code-window>}}
@@ -105,13 +104,13 @@ let router = Router::new().push(
     Router::with_path("ws_chat")
         .get(StaticFile::new("examples/ws_chat.rs"))
 ).push(
-    Router::new().after(deflate()).path("sse_chat")
+    Router::new().hoop(deflate()).path("sse_chat")
         .get(StaticFile::new("sse_chat.rs"))
 ).push(
-    Router::new().after(brotli()).path("todos")
+    Router::new().hoop(brotli()).path("todos")
         .get(StaticFile::new("todos.rs"))
 ).push(
-    Router::new().after(gzip()).path("<*path>")
+    Router::new().hoop(gzip()).path("<*path>")
         .get(StaticDir::new("examples/"))
 );{{</highlight>}}
     {{< /blocks/code-window>}}

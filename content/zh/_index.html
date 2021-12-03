@@ -93,7 +93,7 @@ let router = Router::new()
     <div class="intro">
         <h3>中间件系统</h3>
         <p>
-            可以从预置的中间件中选择, 也可以创建自己的中间件. 中间件可以被添加到路由中, 在请求到达 Handler 之前或者之后作一些处理工作, 比如: 验证用户登录状态, 压缩输出结果等.
+            可以从预置的中间件中选择, 也可以创建自己的中间件. 中间件可以被添加到路由中, 比如: 验证用户登录状态, 压缩输出结果等.
         </p>
     </div>
     {{< blocks/code-window>}}
@@ -102,13 +102,13 @@ let router = Router::new().push(
     Router::with_path("ws_chat")
         .get(StaticFile::new("examples/ws_chat.rs"))
 ).push(
-    Router::new().after(deflate()).path("sse_chat")
+    Router::new().hoop(deflate()).path("sse_chat")
         .get(StaticFile::new("sse_chat.rs"))
 ).push(
-    Router::new().after(brotli()).path("todos")
+    Router::new().hoop(brotli()).path("todos")
         .get(StaticFile::new("todos.rs"))
 ).push(
-    Router::new().after(gzip()).path("<*path>")
+    Router::new().hoop(gzip()).path("<*path>")
         .get(StaticDir::new("examples/"))
 );{{</highlight>}}
     {{< /blocks/code-window>}}
