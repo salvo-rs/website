@@ -50,13 +50,13 @@ async fn upload(req: &mut Request, res: &mut Response) {
         println!("{}", dest);
         if let Err(e) = std::fs::copy(&file.path(), Path::new(&dest)) {
             res.set_status_code(StatusCode::INTERNAL_SERVER_ERROR);
-            res.render_plain_text(&format!("file not found in request: {}", e.to_string()));
+            res.render(Text::Plain(format!("file not found in request: {}", e.to_string())));
         } else {
-            res.render_plain_text(&format!("File uploaded to {}", dest));
+            res.render(Text::Plain(format!("File uploaded to {}", dest)));
         }
     } else {
         res.set_status_code(StatusCode::BAD_REQUEST);
-        res.render_plain_text("file not found in request");
+        res.render(Text::Plain("file not found in request"));
     }
 }
 ```

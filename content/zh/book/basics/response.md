@@ -11,7 +11,7 @@ menu:
 ```rust
 #[fn_handler]
 async fn hello_world(res: &mut Response) {
-    res.render_plain_text("hello world!");
+    res.render(Text::Plain("hello world!"));
 }
 ```
 
@@ -21,7 +21,7 @@ async fn hello_world(res: &mut Response) {
 #[fn_handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ctrl.skip_reset();
-    res.render_plain_text("hello world!");
+    res.render(Text::Plain("hello world!"));
 }
 ```
 
@@ -32,7 +32,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 - 写入纯文本数据
 
     ```rust
-    res.render_plain_text("hello world!");
+    res.render(Text::Plain("hello world!"));
     ``` 
 
 - 写入 JSON 序列化数据
@@ -43,13 +43,13 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
         name: String,
     }
     let user = User{name: "jobs"};
-    res.render_json(&user);
+    res.render(Text::Json(user));
     ```
 
 - 写入 HTML
     
     ```rust
-    res.render_html("<html><body>hello</body></html>");
+    res.render(Text::Html("<html><body>hello</body></html>"));
     ```
 
 ## 写入 HTTP 错误

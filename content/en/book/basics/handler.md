@@ -24,7 +24,7 @@ In many cases, we just want to use functions as ```Handler``` to process request
 ```rust
 #[fn_handler]
 async fn hello_world(req: &mut Request, depot: &mut Depot, res: &mut Response) {
-    res.render_plain_text("Hello World");
+    res.render(Text::Plain("Hello World"));
 }
 ```
 
@@ -73,7 +73,7 @@ struct CustomError;
 #[async_trait]
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        res.render_plain_text("custom error");
+        res.render(Text::Plain("custom error"));
         res.set_http_error(InternalServerError());
     }
 }

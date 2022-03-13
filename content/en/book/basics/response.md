@@ -11,7 +11,7 @@ We can get response reference as function handler paramer:
 ```rust
 #[fn_handler]
 async fn hello_world(res: &mut Response) {
-    res.render_plain_text("hello world!");
+    res.render(Text::Plain("hello world!"));
 }
 ```
 
@@ -21,7 +21,7 @@ When server get a client request and in it's whole process cycle, any handler or
 #[fn_handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ctrl.skip_reset();
-    res.render_plain_text("hello world!");
+    res.render(Text::Plain("hello world!"));
 }
 ```
 
@@ -32,7 +32,7 @@ Write content is straightforward:
 - Write plain text
 
     ```rust
-    res.render_plain_text("hello world!");
+    res.render(Text::Plain("hello world!"));
     ``` 
 
 - Write serializable type as json format
@@ -43,13 +43,13 @@ Write content is straightforward:
         name: String,
     }
     let user = User{name: "jobs"};
-    res.render_json(&user);
+    res.render(Text::Json(user));
     ```
 
 - Write html text
     
     ```rust
-    res.render_html("<html><body>hello</body></html>");
+    res.render(Text::Html("<html><body>hello</body></html>"));
     ```
 
 ## Write http error

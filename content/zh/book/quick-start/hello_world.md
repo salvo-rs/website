@@ -24,7 +24,7 @@ cargo new hello_salvo --bin
 
 ```toml
 [dependencies]
-salvo = "0.16"
+salvo = "0.17"
 tokio = { version = "1", features = ["full"] }
 ```
 
@@ -54,7 +54,7 @@ async fn main() {
     ```rust
     #[fn_handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
-        res.render_plain_text("Hello World");
+        res.render(Text::Plain("Hello World"));
     }
     ```
 
@@ -63,7 +63,7 @@ async fn main() {
     ``` rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) {
-        res.render_plain_text("Hello World");
+        res.render(Text::Plain("Hello World"));
     }
     ```
 

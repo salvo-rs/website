@@ -25,7 +25,7 @@ Add this to `Cargo.toml`
 
 ```toml
 [dependencies]
-salvo = "0.16"
+salvo = "0.17"
 tokio = { version = "1", features = ["full"] }
 ```
 
@@ -55,7 +55,7 @@ There are many ways to write function handler.
     ```rust
     #[fn_handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
-        res.render_plain_text("Hello World");
+        res.render(Text::Plain("Hello World"));
     }
     ```
 
@@ -64,7 +64,7 @@ There are many ways to write function handler.
     ``` rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) {
-        res.render_plain_text("Hello World");
+        res.render(Text::Plain("Hello World"));
     }
     ```
 
