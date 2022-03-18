@@ -14,7 +14,7 @@ linkTitle = "Salvo"
 use salvo::prelude::*;
 #[fn_handler]
 async fn hello_world(res: &mut Response) {
-    res.render(Text::Plain("Hello World!"));
+    res.render("Hello world!");
 }
 #[tokio::main]
 async fn main() {
@@ -29,7 +29,7 @@ async fn main() {
             </svg>
         </div>
         {{< blocks/browser-window location="http://localhost:7878">}}
-            <pre>Hello World!</pre>
+            <pre>Hello world!</pre>
             {{< /blocks/browser-window>}}
     </div>
     <div class="mx-auto link-buttons">
@@ -135,7 +135,7 @@ async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError>
             let (tx, rx) = ws.split();
             let fut = rx.forward(tx).map(|result| {
                 if let Err(e) = result {
-                    eprintln!("websocket error: {:?}", e);
+                    println!("websocket error: {:?}", e);
                 }
             });
             tokio::task::spawn(fut);

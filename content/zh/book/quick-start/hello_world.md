@@ -28,14 +28,14 @@ salvo = "0.17"
 tokio = { version = "1", features = ["full"] }
 ```
 
-在 `main.rs` 中创建一个简单的函数句柄, 命名为`hello_world`, 这个函数只是简单地打印文本 ```"Hello World"```.
+在 `main.rs` 中创建一个简单的函数句柄, 命名为`hello_world`, 这个函数只是简单地打印文本 ```"Hello world"```.
 
 ```rust
 use salvo::prelude::*;
 
 #[fn_handler]
 async fn hello_world() -> &'static str {
-    "Hello World"
+    "Hello world"
 }
 #[tokio::main]
 async fn main() {
@@ -54,7 +54,7 @@ async fn main() {
     ```rust
     #[fn_handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
-        res.render(Text::Plain("Hello World"));
+        res.render("Hello world");
     }
     ```
 
@@ -63,7 +63,7 @@ async fn main() {
     ``` rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) {
-        res.render(Text::Plain("Hello World"));
+        res.render("Hello world");
     }
     ```
 
@@ -72,7 +72,7 @@ async fn main() {
     ```rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) -> &'static str {// just return &str
-        "Hello World"
+        "Hello world"
     }
     ```
 
@@ -81,7 +81,7 @@ async fn main() {
     ```rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {// return Result
-        Ok("Hello World")
+        Ok("Hello world")
     }
     ```
 

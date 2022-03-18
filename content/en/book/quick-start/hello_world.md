@@ -1,6 +1,6 @@
 ---
-title: "Hello World"
-linkTitle: "Hello World"
+title: "Hello world"
+linkTitle: "Hello world"
 weight: 1010
 menu:
   book:
@@ -29,14 +29,14 @@ salvo = "0.17"
 tokio = { version = "1", features = ["full"] }
 ```
 
-Create a simple function handler in the main.rs file, we call it `hello_world`, this function just render plain text ```"Hello World"```. In the ```main``` function, we need to create a root Router first, and then create a server and call it's ```bind``` function:
+Create a simple function handler in the main.rs file, we call it `hello_world`, this function just render plain text ```"Hello world"```. In the ```main``` function, we need to create a root Router first, and then create a server and call it's ```bind``` function:
 
 ```rust
 use salvo::prelude::*;
 
 #[fn_handler]
 async fn hello_world() -> &'static str {
-    "Hello World"
+    "Hello world"
 }
 #[tokio::main]
 async fn main() {
@@ -55,7 +55,7 @@ There are many ways to write function handler.
     ```rust
     #[fn_handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
-        res.render(Text::Plain("Hello World"));
+        res.render("Hello world");
     }
     ```
 
@@ -64,7 +64,7 @@ There are many ways to write function handler.
     ``` rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) {
-        res.render(Text::Plain("Hello World"));
+        res.render("Hello world");
     }
     ```
 
@@ -73,7 +73,7 @@ There are many ways to write function handler.
     ```rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) -> &'static str {// just return &str
-        "Hello World"
+        "Hello world"
     }
     ```
 
@@ -82,7 +82,7 @@ There are many ways to write function handler.
     ```rust
     #[fn_handler]
     async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {// return Result
-        Ok("Hello World")
+        Ok("Hello world")
     }
     ```
 

@@ -16,11 +16,11 @@ use Salvo::prelude::*;
 
 #[fn_handler]
 async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-    res.render(Text::Plain("Hello World"));
+    res.render("Hello world");
 }
 #[fn_handler]
 async fn hello_world2(res: &mut Response) {
-    res.render(Text::Plain("Hello World"));
+    res.render("Hello world");
 }
 ```
 

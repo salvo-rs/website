@@ -11,7 +11,7 @@ menu:
 ```rust
 #[fn_handler]
 async fn hello_world(res: &mut Response) {
-    res.render(Text::Plain("hello world!"));
+    res.render("Hello world!");
 }
 ```
 
@@ -21,7 +21,7 @@ async fn hello_world(res: &mut Response) {
 #[fn_handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ctrl.skip_reset();
-    res.render(Text::Plain("hello world!"));
+    res.render("Hello world!");
 }
 ```
 
@@ -32,7 +32,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 - 写入纯文本数据
 
     ```rust
-    res.render(Text::Plain("hello world!"));
+    res.render("Hello world!");
     ``` 
 
 - 写入 JSON 序列化数据
