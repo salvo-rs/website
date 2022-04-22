@@ -94,8 +94,8 @@ For instance, the following set of commands runs the `hello_world` example:
 ```sh
 git clone https://github.com/salvo-rs/salvo.git
 cd salvo
-cargo run --example hello_world
+cargo run --bin example-hello_world
 ```
 
 There are numerous examples in the `examples/` directory. They can all be run
-with `cargo run --example <name>`.
+with `cargo run --bin example-<name>`.
