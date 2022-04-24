@@ -84,7 +84,7 @@ let router = Router::new().get(handle).push(
         {{<highlight rust>}}
 let router = Router::new()
     .path("files/<*path>")
-    .get(StaticDir::new(vec!["static/body", "static/girl"]));
+    .get(DirHandler::new(vec!["static/body", "static/girl"]));
         {{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}
@@ -102,16 +102,16 @@ let router = Router::new()
         {{<highlight rust>}}
 let router = Router::new().push(
     Router::with_path("ws_chat")
-        .get(StaticFile::new("examples/ws_chat.rs"))
+        .get(FileHandler::new("examples/ws_chat.rs"))
 ).push(
     Router::new().hoop(deflate()).path("sse_chat")
-        .get(StaticFile::new("sse_chat.rs"))
+        .get(FileHandler::new("sse_chat.rs"))
 ).push(
     Router::new().hoop(brotli()).path("todos")
-        .get(StaticFile::new("todos.rs"))
+        .get(FileHandler::new("todos.rs"))
 ).push(
     Router::new().hoop(gzip()).path("<*path>")
-        .get(StaticDir::new("examples/"))
+        .get(DirHandler::new("examples/"))
 );{{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}

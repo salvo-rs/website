@@ -20,25 +20,25 @@ async fn main() {
         .push(
             Router::new()
                 .path("ws_chat")
-                .get(StaticFile::new("examples/ws_chat.rs")),
+                .get(FileHandler::new("examples/ws_chat.rs")),
         )
         .push(
             Router::new()
                 .hoop(compression::deflate())
                 .path("sse_chat")
-                .get(StaticFile::new("examples/sse_chat.rs")),
+                .get(FileHandler::new("examples/sse_chat.rs")),
         )
         .push(
             Router::new()
                 .hoop(compression::brotli())
                 .path("todos")
-                .get(StaticFile::new("examples/todos.rs")),
+                .get(FileHandler::new("examples/todos.rs")),
         )
         .push(
             Router::new()
                 .hoop(compression::gzip())
                 .path("examples/<*path>")
-                .get(StaticDir::new("examples/")),
+                .get(DirHandler::new("examples/")),
         );
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
 }
