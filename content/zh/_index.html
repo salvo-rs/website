@@ -57,15 +57,15 @@ let router = Router::new().get(handle).push(
 ).push(Router::with_path("users").get(handle).push(
         Router::with_path("&lt; id:/\d+/&gt;").get(handle)
     ),
-).push_when(|_|if debug_mode {
-        Some(Router::with_path("debug").get(handle))
+).then(|router|if debug_mode {
+        router.push(Router::with_path("debug").get(handle))
     } else {
-        None
-}).visit(|parent|{
+        router
+}).then(|router|{
     if admin_mode {
         parent.push(Router::with_path("admin").get(handle))
     } else {
-        parent
+        router
     }
 });{{</highlight>}}
     {{< /blocks/code-window>}}
