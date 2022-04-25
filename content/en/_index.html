@@ -129,7 +129,7 @@ let router = Router::new().push(
 use futures::{FutureExt, StreamExt};
 use tokio;
 use salvo::prelude::*;
-use salvo_extra::ws::WsHandler;
+use salvo::extra::ws::WsHandler;
 #[fn_handler]
 async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError> {
     let fut = WsHandler::new().handle(req, res)?;
