@@ -1,5 +1,5 @@
 ---
-title: "Serve"
+title: "Serve Static"
 weight: 3060
 menu:
   book:
@@ -10,7 +10,7 @@ menu:
 ```rust
 use salvo_core::routing::Router;
 use salvo_core::Server;
-use salvo_extra::serve::StaticDir;
+use salvo_extra::serve::DirHandler;
 
 #[tokio::main]
 async fn main() {
