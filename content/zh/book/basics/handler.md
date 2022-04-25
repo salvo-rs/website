@@ -98,16 +98,19 @@ async fn main() {
 }
 ```
 
-## 直接实现 Handler trait
+## 直接实现 Handler Trait
 
 ```rust
 pub struct MaxSizeHandler(u64);
 #[async_trait]
 impl Handler for MaxSizeHandler {
-    async fn handle(&self, req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl) {
         if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {
             if upper > self.0 {
-                res.set_http_error(StatusError::payload_too_large());
+                res.set_status_error(StatusError::payload_too_large());
+                ctrl.skip_reset();
+            } else {
+                ctrl.call_next(req, depot, res).await;
             }
         }
     }
