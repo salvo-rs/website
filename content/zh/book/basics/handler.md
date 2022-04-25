@@ -25,7 +25,7 @@ pub trait Handler: Send + Sync + 'static {
 
 中间件其实也是 ```Handler```, 它们可以对请求到达正式处理请求的 ```Handler``` 之前或者之后作一些处理 比如：登录验证, 数据压缩等.
 
-中间件是通过 ```Router``` 的 ```before``` 和 ```after``` 函数添加的. 被添加的中间件会影响当前的 ```Router``` 和它内部所有子孙 ```Router```.
+中间件是通过 ```Router``` 的 ```hoop``` 函数添加的. 被添加的中间件会影响当前的 ```Router``` 和它内部所有子孙 ```Router```.
 
 正常项目中使用得最多的应该是 ```fn_handler```, 它是一个 ```proc macro```, 加在函数上可以将函数转变成一个 ```Handler```:
 
@@ -60,7 +60,7 @@ Salvo 中的 ```fn_handler``` 可以返回 ```Result```, 只需要 ```Result``` 
 #[async_trait]
 impl Writer for ::anyhow::Error {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        res.set_http_error(crate::http::errors::InternalServerError());
+        res.set_http_error(StatusError:internal_server_error());
     }
 }
 ```
@@ -76,7 +76,7 @@ struct CustomError;
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.render("custom error");
-        res.set_http_error(InternalServerError());
+        res.set_http_error(StatusError:internal_server_error());
     }
 }
 
@@ -107,7 +107,7 @@ impl Handler for MaxSizeHandler {
     async fn handle(&self, req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {
             if upper > self.0 {
-                res.set_http_error(PayloadTooLarge());
+                res.set_http_error(StatusError::payload_too_large());
             }
         }
     }

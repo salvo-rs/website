@@ -58,7 +58,7 @@ Write content is straightforward:
 
     ```rust
     use salvo::http::errors::*;
-    res.set_http_error(InternalServerError().with_summary("error when serialize object to json"))
+    res.set_http_error(StatusError:internal_server_error().with_summary("error when serialize object to json"))
     ```
 
 - If we don't want to customize error message, just use ```set_http_code```.

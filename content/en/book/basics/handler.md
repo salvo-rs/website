@@ -32,7 +32,7 @@ The default signature of the processing function contains four parameters, follo
 
 Middleware is actually a ```Handler```, they can do some processing before or after the request arrives at the ```Handler``` that officially processes the request, such as login verification, data compression, etc.
 
-Middlewares is added through the ```before``` and ```after``` functions of the ```Router```. The added middleware will affect the current ```Router``` and its internal all descendants of ```Router```.
+Middlewares is added through the ```hoop``` function of the ```Router```. The added middleware will affect the current ```Router``` and its internal all descendants of ```Router```.
 
 If some parameters are not needed, they can be omitted directly. In fact, the order of these three parameters can be adjusted freely according to your preference, or any one or more parameters can be omitted. The following writing methods are all possible:
 
@@ -58,7 +58,7 @@ Taking into account the widespread use of ```anyhow```, the ```Writer``` impleme
 #[async_trait]
 impl Writer for ::anyhow::Error {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        res.set_http_error(crate::http::errors::InternalServerError());
+        res.set_http_error(StatusError:internal_server_error());
     }
 }
 ```
@@ -74,7 +74,7 @@ struct CustomError;
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.render("custom error");
-        res.set_http_error(InternalServerError());
+        res.set_http_error(StatusError:internal_server_error());
     }
 }
 
@@ -107,7 +107,7 @@ impl Handler for MaxSizeHandler {
     async fn handle(&self, req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {
             if upper > self.0 {
-                res.set_http_error(PayloadTooLarge());
+                res.set_http_error(StatusError::payload_too_large());
             }
         }
     }
