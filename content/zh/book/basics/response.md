@@ -20,7 +20,7 @@ async fn hello_world(res: &mut Response) {
 ```rust
 #[fn_handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
-    ctrl.skip_reset();
+    ctrl.skip_rest();
     res.render("Hello world!");
 }
 ```

@@ -20,7 +20,7 @@ When server get a client request and in it's whole process cycle, any handler or
 ```rust
 #[fn_handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
-    ctrl.skip_reset();
+    ctrl.skip_rest();
     res.render("hello world!");
 }
 ```
