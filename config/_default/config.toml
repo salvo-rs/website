@@ -56,11 +56,18 @@ languageName ="English"
 contentDir = "content/en"
 # Weight used for sorting.
 weight = 1
-[languages.zh]
+[languages.zh-hans]
 title = "Salvo"
 description = "Salvo 是一个简单易用的 Rust Web 后端框架. 仅仅需要基本的 Rust 基础即可写成功能强大的后端服务器, 我们的目标是: 编码很简单, 功能不缺失, 性能有保障."
-languageName ="中文"
-contentDir = "content/zh"
+languageName ="简体中文"
+contentDir = "content/zh-hans"
+time_format_default = "2006/02/01"
+time_format_blog = "2006/02/01"
+[languages.zh-hant]
+title = "Salvo"
+description = "Salvo 是一個簡單易用的 Rust Web 後端框架. 僅僅需要基本的 Rust 基礎即可寫成功能強大的後端服務器, 我們的目標是: 編碼很簡單, 功能不缺失, 性能有保障."
+languageName ="繁体中文"
+contentDir = "content/zh-hant"
 time_format_default = "2006/02/01"
 time_format_blog = "2006/02/01"
 
