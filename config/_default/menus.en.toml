@@ -39,10 +39,10 @@
   identifier = "middlewares"
   weight = 50
 
-[[book]]
-  name = "Recipes"
-  identifier = "recipes"
-  weight = 60
+# [[book]]
+#   name = "Recipes"
+#   identifier = "recipes"
+#   weight = 60
 
 # [[book]]
 #   weight = 20

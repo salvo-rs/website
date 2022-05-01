@@ -34,10 +34,10 @@
   identifier = "middlewares"
   weight = 50
 
-[[book]]
-  name = "示例代码"
-  identifier = "recipes"
-  weight = 60
+# [[book]]
+#   name = "示例代码"
+#   identifier = "recipes"
+#   weight = 60
 
 # [[book]]
 #   weight = 1
