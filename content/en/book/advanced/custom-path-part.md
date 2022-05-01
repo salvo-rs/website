@@ -28,4 +28,4 @@ async fn main() {
 }
 ````
 
-You only need to register once, and then you can directly match the GUID through the simple writing method such as ``<id:guid>```, which simplifies the writing of the code.
+You only need to register once, and then you can directly match the GUID through the simple writing method as ``<id:guid>```, which simplifies the writing of the code.
