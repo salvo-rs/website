@@ -5,9 +5,8 @@ linkTitle = "Salvo"
 +++
 
 {{< blocks/lead>}}
-    <h1>一個使用 Rust 編寫的簡單實用的 Web 後端框架!
-    </h1>
-    <h3>Salvo 是構建於 tokio 和 hyper 之上. 僅僅需要基本的 Rust 基礎知識即可寫成功能強大的後端服務器. <br>我們的目標是: 編碼最簡單, 功能不缺失, 性能有保障.</h3>
+    <h1>Rust 編寫的簡單實用的 Web 後端框架</h1>
+    <h3>Salvo 構建於 tokio 和 hyper 之上. 僅僅需要 Rust 基礎知識即可開發功能強大的後端服務. <br>我們的目標是: 編碼最簡單, 功能不缺失, 性能有保障.</h3>
     <div class="code-trans">
         {{< blocks/code-window>}}
 {{<highlight rust>}}
@@ -50,24 +49,34 @@ async fn main() {
         {{<highlight rust>}}
 let debug_mode = true;
 let admin_mode = true;
-let router = Router::new().get(handle).push(
-    Router::with_path("users").hoop(auth).post(handle).push(
-        Router::with_path("&lt; id:/\d+/&gt;").post(handle).delete(handle)
-    ),
-).push(Router::with_path("users").get(handle).push(
-        Router::with_path("&lt; id:/\d+/&gt;").get(handle)
-    ),
-).then(|router|if debug_mode {
-        router.push(Router::with_path("debug").get(handle))
-    } else {
-        router
-}).then(|router|{
-    if admin_mode {
-        parent.push(Router::with_path("admin").get(handle))
-    } else {
-        router
-    }
-});{{</highlight>}}
+let router = Router::new()
+    .get(handle)
+    .push(
+        Router::with_path("users").hoop(auth).post(handle).push(
+            Router::with_path("&lt; id&gt;")
+                .post(handle)
+                .delete(handle),
+        ),
+    )
+    .push(
+        Router::with_path("users")
+            .get(handle)
+            .push(Router::with_path("&lt; id&gt;").get(handle)),
+    )
+    .then(|router| {
+        if debug_mode {
+            router.push(Router::with_path("debug").get(handle))
+        } else {
+            router
+        }
+    })
+    .then(|router| {
+        if admin_mode {
+            parent.push(Router::with_path("admin").get(handle))
+        } else {
+            router
+        }
+    });{{</highlight>}}
     {{< /blocks/code-window>}}
 </div>
 {{< /blocks/feature>}}
