@@ -1,6 +1,6 @@
 ---
 title: "Router"
-weight: 2005
+weight: 1005
 menu:
   book:
     parent: "basics"
@@ -33,6 +33,27 @@ Router::with_path("writers").get(list_writers).post(create_writer).push(
         .push(Router::with_path("articles").get(list_writer_articles)),
 );
 ```
+这种形式的定义对于复杂项目, 可以让 Router 的定义变得层次清晰简单.
+
+在 ```Router``` 中有许多方法调用后会返回自己(Self), 以便于链式书写代码. 有时候, 你需要根据某些条件决定如何路由, 路由系统也提供了 ```then``` 函数, 也很容易使用:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::with_path("<id>").get(show_article)),
+    ).then(|router|{
+        if admin_mode() {
+            router.post(create_article).push(
+                Router::with_path("<id>").patch(update_article).delete(delete_writer)
+            )
+        } else {
+            router
+        }
+    });
+```
+该示例代表仅仅当服务器在 ```admin_mode``` 时, 才会添加创建文章, 编辑删除文章等路由.
 
 ## 从路由中获取参数
 
@@ -56,9 +77,9 @@ async fn show_writer(req: &mut Request) {
 - ```<id:num(3..=10)>```, 代表匹配 3 到 10 个数字字符;
 - ```<id:num(10..)>```, 代表匹配至少 10 个数字字符.
 
-还可以通过 ```<*>``` 或者 ```<**>``` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: ```<**file_path>```.
+还可以通过 ```<*>``` 或者 ```<**>``` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: ```<**file_path>```. ```<*>``` 与 ```<**>``` 的区别是, 如果路径是 ```/files/<*rest_path>```, 不会匹配 ```/files```, 而路径 ```/files/<**rest_path>``` 则可以匹配 ```/files```.
 
-允许组合使用多个表达式匹配同一个路径片段, 比如 ```/articles/article_<id:num>/```.
+允许组合使用多个表达式匹配同一个路径片段, 比如 ```/articles/article_<id:num>/```, ```/images/<name>.<ext>```.
 
 ## 添加中间件
 
@@ -93,7 +114,7 @@ Router::new()
             .push(Router::with_path("<id>").patch(edit_writer).delete(delete_writer)),
     )
     .push(
-        Router::new().path("writers").get(list_writers).push(
+        Router::with_path("writers").get(list_writers).push(
             Router::with_path("<id>")
                 .get(show_writer)
                 .push(Router::with_path("articles").get(list_writer_articles)),
@@ -105,8 +126,6 @@ Router::new()
 
 ## 过滤器
 
-在 ```Router``` 中有许多方法调用后会返回自己, 以便于链式书写代码. 有时候, 你需要根据某些条件决定如何路由, 路由系统也提供了一些判断的方式, 也很容易使用.
-
 ```Router``` 内部都是通过过滤器来确定路由是否匹配. 过滤器支持使用 ```or``` 或者 ```and``` 做基本逻辑运算. 一个路由可以包含多个过滤器, 当所有的过滤器都匹配成功时, 路由匹配成功.
 
 网站的路径信息是一个树状机构, 这个树状机构并不等同于组织路由的树状结构. 网站的一个路径可能对于多个路由节点. 比如, 在 ```articles/``` 这个路径下的某些内容需要登录才可以查看, 而某些有不需要登录. 我们可以把需要登录查看的子路径组织到一个包含登录验证的中间件的路由下面. 不需要登录验证的组织到另一个没有登录验证的路由下面:
@@ -115,14 +134,12 @@ Router::new()
 ```rust
 Router::new()
     .push(
-        Router::new()
-            .path("articles")
+        Router::with_path("articles")
             .get(list_articles)
             .push(Router::new().path("<id>").get(show_article)),
     )
     .push(
-        Router::new()
-            .path("articles")
+        Router::with_path("articles")
             .hoop(auth_check)
             .post(list_articles)
             .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
@@ -136,12 +153,5 @@ Router::new()
 我们可以使用 ```and```, ```or ``` 连接路由的过滤器:
 
 ```rust
-Router::new().filter(filter::path("hello").and(filter::get()));
+Router::with_filter(filter::path("hello").and(filter::get()));
 ```
-
-### Path filter
-The Path filter supports regular expression matching.
-You can use <*rest> or <**rest> to match all remaining paths.
-
-### Method filter
-Comming soon...

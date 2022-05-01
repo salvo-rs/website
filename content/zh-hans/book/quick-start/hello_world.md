@@ -58,7 +58,7 @@ async fn main() {
     }
     ```
 
-- 您可以省略调函数中参数中你用不着的, 比如这里面的 ``_req```, ```_depot```, ```_ctrl```.
+- 您可以省略调函数中参数中你用不着的, 比如这里面的 ``_req```, ```_depot```, ```_ctrl``` 都用不着, 可以直接不写.
   
     ``` rust
     #[fn_handler]
@@ -86,7 +86,7 @@ async fn main() {
     ```
 
 ## 更多示例
-建议直接克隆 Salvo 仓库, 然后允许 examples 目录下的示例. 比如下面的命令可以运行 ```hello_world``` 的例子:
+建议直接克隆 Salvo 仓库, 然后运行 examples 目录下的示例. 比如下面的命令可以运行 ```hello_world``` 的例子:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo
