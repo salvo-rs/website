@@ -1,6 +1,6 @@
 ---
 title: "自定义 Path Part"
-weight: 6110
+weight: 2110
 menu:
   book:
     parent: "advanced"

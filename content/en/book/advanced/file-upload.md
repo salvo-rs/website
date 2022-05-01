@@ -1,12 +1,12 @@
 ---
-title: "文件上传"
+title: "File Upload"
 weight: 2060
 menu:
   book:
     parent: "advanced"
 ---
 
-Salvo 处理文件上传也是相当简单的, 比如处理单个文件的上传:
+Salvo Handle file uploads is also fairly straightforward, such as handling single file uploads::
 
 ```rust
 #[fn_handler]
@@ -29,7 +29,7 @@ async fn upload(req: &mut Request, res: &mut Response) {
 }
 ```
 
-处理多个文件的上传:
+Handling multiple file uploads:
 
 ```rust
 #[fn_handler]

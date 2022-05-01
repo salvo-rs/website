@@ -29,7 +29,7 @@ async fn upload(req: &mut Request, res: &mut Response) {
 }
 ```
 
-處理多個文件的上傳:
+處理多個文件上傳:
 
 ```rust
 #[fn_handler]

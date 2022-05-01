@@ -1,6 +1,6 @@
 ---
 title: "Custom Path Part"
-weight: 6110
+weight: 2110
 menu:
   book:
     parent: "advanced"
@@ -28,4 +28,4 @@ async fn main() {
 }
 ````
 
-You only need to register once, and then you can directly match the GUID through the simple writing method as ``<id:guid>```, which simplifies the writing of the code.
+You only need to register once, and then you can directly match the GUID through the simple writing method as ```<id:guid>```, which simplifies the writing of the code.

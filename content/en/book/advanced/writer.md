@@ -1,6 +1,6 @@
 ---
 title: "Writer"
-weight: 5050
+weight: 2050
 menu:
   book:
     parent: "advanced"

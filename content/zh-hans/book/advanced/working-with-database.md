@@ -1,6 +1,6 @@
 ---
 title: "使用数据库"
-weight: 6030
+weight: 2080
 menu:
   book:
     parent: "advanced"
