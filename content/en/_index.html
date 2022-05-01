@@ -50,24 +50,34 @@ async fn main() {
         {{<highlight rust>}}
 let debug_mode = true;
 let admin_mode = true;
-let router = Router::new().get(handle).push(
-    Router::with_path("users").hoop(auth).post(handle).push(
-        Router::with_path("&lt; id:/\d+/&gt;").post(handle).delete(handle)
-    ),
-).push(Router::with_path("users").get(handle).push(
-        Router::with_path("&lt; id:/\d+/&gt;").get(handle)
-    ),
-).then(|router|if debug_mode {
-        router.push(Router::with_path("debug").get(handle))
-    } else {
-        router
-}).then(|router|{
-    if admin_mode {
-        parent.push(Router::with_path("admin").get(handle))
-    } else {
-        router
-    }
-});{{</highlight>}}
+let router = Router::new()
+    .get(handle)
+    .push(
+        Router::with_path("users").hoop(auth).post(handle).push(
+            Router::with_path("&lt; id&gt;")
+                .post(handle)
+                .delete(handle),
+        ),
+    )
+    .push(
+        Router::with_path("users")
+            .get(handle)
+            .push(Router::with_path("&lt; id&gt;").get(handle)),
+    )
+    .then(|router| {
+        if debug_mode {
+            router.push(Router::with_path("debug").get(handle))
+        } else {
+            router
+        }
+    })
+    .then(|router| {
+        if admin_mode {
+            parent.push(Router::with_path("admin").get(handle))
+        } else {
+            router
+        }
+    });{{</highlight>}}
     {{< /blocks/code-window>}}
 </div>
 {{< /blocks/feature>}}
