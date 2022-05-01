@@ -1,6 +1,6 @@
 ---
 title: "Router"
-weight: 1020
+weight: 1005
 menu:
   book:
     parent: "basics"

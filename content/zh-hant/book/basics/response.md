@@ -15,7 +15,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-```Response``` 在服務器接收到客戶端請求後, 任何匹配到的 ```Handler``` 和中間件都可以嚮裏麵寫入數據. 在某些情況下, 比如某個中間件希望阻止後續的中間件和 ```Handler``` 執行, 您可以使用 ```FlowCtrl```:
+```Response``` 在服務器接收到客戶端請求後, 任何匹配到的 ```Handler``` 和中間件都可以向裏面寫入數據. 在某些情況下, 比如某個中間件希望阻止後續的中間件和 ```Handler``` 執行, 您可以使用 ```FlowCtrl```:
 
 ```rust
 #[fn_handler]
@@ -27,7 +27,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
 ## 寫入內容
 
-嚮 ```Response``` 中寫入數據是非常簡單的:
+向 ```Response``` 中寫入數據是非常簡單的:
 
 - 寫入純文本數據
 
@@ -55,7 +55,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 ## 寫入 HTTP 錯誤
 
 
-- 使用 ```set_http_error``` 可以嚮 ```Response``` 寫入詳細錯誤信息.
+- 使用 ```set_http_error``` 可以向 ```Response``` 寫入詳細錯誤信息.
 
     ```rust
     use salvo::http::errors::*;

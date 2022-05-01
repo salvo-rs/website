@@ -8,7 +8,7 @@ menu:
 
 ## 安裝 Rust
 
-如果呢還冇有安裝 Rust, 你可以使用官方提供的 ```rustup``` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有包含如何安裝的介紹.
+如果呢還沒有安裝 Rust, 你可以使用官方提供的 ```rustup``` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有包含如何安裝的介紹.
 
 當前 Salvo 支持的最小 Rust 為 1.56. 運行 ```rustup update``` 確認您已經安裝了最新的 Rust.
 
@@ -28,7 +28,7 @@ salvo = "0.21"
 tokio = { version = "1", features = ["full"] }
 ```
 
-在 `main.rs` 中創建一個簡單的函數句柄, 命名為`hello_world`, 這個函數隻是簡單地打印文本 ```"Hello world"```.
+在 `main.rs` 中創建一個簡單的函數句柄, 命名為`hello_world`, 這個函數只是簡單地打印文本 ```"Hello world"```.
 
 ```rust
 use salvo::prelude::*;
@@ -44,7 +44,7 @@ async fn main() {
 }
 ```
 
-恭喜你, 你的一個 Salvo 程序已經完成. 隻需要在命令行下運行 ```cargo run```, 然後在瀏覽器裏打開 ```http://127.0.0.1:7878``` 即可.
+恭喜你, 你的一個 Salvo 程序已經完成. 只需要在命令行下運行 ```cargo run```, 然後在瀏覽器裏打開 ```http://127.0.0.1:7878``` 即可.
 
 ## 詳細解讀
 
@@ -58,7 +58,7 @@ async fn main() {
     }
     ```
 
-- 您可以省略調函數中參數中你用不著的, 比如這裏麵的 ``_req```, ```_depot```, ```_ctrl```.
+- 您可以省略調函數中參數中你用不著的, 比如這裏面的 ``_req```, ```_depot```, ```_ctrl``` 都用不著, 可以直接不寫.
   
     ``` rust
     #[fn_handler]
@@ -67,7 +67,7 @@ async fn main() {
     }
     ```
 
-- 任何類型都可以作為函數的返回類型, 隻要它實現了 ```Writer``` trait. 比如 ```&str``` 實現了 ```Writer```, 當它被作為返回值時, 就打印純文本:
+- 任何類型都可以作為函數的返回類型, 只要它實現了 ```Writer``` trait. 比如 ```&str``` 實現了 ```Writer```, 當它被作為返回值時, 就打印純文本:
 
     ```rust
     #[fn_handler]
@@ -76,7 +76,7 @@ async fn main() {
     }
     ```
 
-- 更普遍的情況是, 我們需要在將 ```Result<T, E>``` 作為返回類型, 以便處理函數執行過程中的錯誤. 如果 ```T``` 和 ```E``` 都實現了 ```Writer```, 那麼 ```Result<T, E>``` 就可以作為返回值:
+- 更普遍的情況是, 我們需要在將 ```Result<T, E>``` 作為返回類型, 以便處理函數執行過程中的錯誤. 如果 ```T``` 和 ```E``` 都實現了 ```Writer```, 那麽 ```Result<T, E>``` 就可以作為返回值:
   
     ```rust
     #[fn_handler]
@@ -86,7 +86,7 @@ async fn main() {
     ```
 
 ## 更多示例
-建議直接克隆 Salvo 倉庫, 然後允許 examples 目錄下的示例. 比如下麵的命令可以運行 ```hello_world``` 的例子:
+建議直接克隆 Salvo 倉庫, 然後運行 examples 目錄下的示例. 比如下面的命令可以運行 ```hello_world``` 的例子:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo

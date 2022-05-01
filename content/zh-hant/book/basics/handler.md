@@ -6,7 +6,7 @@ menu:
     parent: "basics"
 ---
 
-## 什麼是 Handler
+## 什麽是 Handler
 
 Handler 是負責負責處理 Request 請求的具體對象.  Hander 本身是一個 Trait, 內部包含一個 ```handle``` 的異步方法:
 
@@ -19,7 +19,7 @@ pub trait Handler: Send + Sync + 'static {
 
 ## 函數式 Handler
 
-很多時候隻是希望通過函數作為 ```Handler``` 處理請求. 可以添加 ```fn_handler``` 將普通函數轉為 ```Handler```.
+很多時候只是希望通過函數作為 ```Handler``` 處理請求. 可以添加 ```fn_handler``` 將普通函數轉為 ```Handler```.
 
 處理函數默認簽名包含四個參數, 依次是, ```&mut Request, &mut Depot. &mut Response, &mut FlowCtrl```. Depot 是一個臨時存儲, 可以存儲本次請求相關的數據. 
 
@@ -36,7 +36,7 @@ async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response)
 }
 ```
 
-某些參數如果不需要, 可以直接省略. 事實上, 這三個參數的順序可以按喜好自由調整, 也可以省略任何一個或者多個參數. 下麵這些寫法都是可以的:
+某些參數如果不需要, 可以直接省略. 事實上, 這三個參數的順序可以按喜好自由調整, 也可以省略任何一個或者多個參數. 下面這些寫法都是可以的:
 
 ```rust
 #[fn_handler]
@@ -52,8 +52,8 @@ async fn hello_world(res: &mut Response) {
 
 ## 處理錯誤
 
-Salvo 中的 ```fn_handler``` 可以返回 ```Result```, 隻需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的類型都實現 ```Writer``` trait.
-考慮到 anyow 的使用比較廣泛, 在開啓 ```anyhow``` 功能後, ```anyhow::Error``` 會實現 ```Writer``` trait. ```anyhow::Error``` 會被映射為 ```InternalServerError```. 
+Salvo 中的 ```fn_handler``` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的類型都實現 ```Writer``` trait.
+考慮到 anyow 的使用比較廣泛, 在開啟 ```anyhow``` 功能後, ```anyhow::Error``` 會實現 ```Writer``` trait. ```anyhow::Error``` 會被映射為 ```InternalServerError```. 
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -65,7 +65,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-對於自定義錯誤類型, 你可以根據需要輸出不同的錯誤頁麵.
+對於自定義錯誤類型, 你可以根據需要輸出不同的錯誤頁面.
 
 ```rust
 use salvo::anyhow;

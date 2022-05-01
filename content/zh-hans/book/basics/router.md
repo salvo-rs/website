@@ -6,7 +6,7 @@ menu:
     parent: "basics"
 ---
 
-## 什么是 Router
+## 什么是路由
 
 ```Router``` 定义了一个 HTTP 请求会被哪些中间件和 ```Handler``` 处理. 这个是 Salvo 里面最基础也是最核心的功能.
 
@@ -154,4 +154,47 @@ Router::new()
 
 ```rust
 Router::with_filter(filter::path("hello").and(filter::get()));
+```
+
+### 路径过滤器
+
+基于请求路径的过滤器是使用最频繁的. 路径过滤器中可以定义参数, 比如:
+```rust
+Router::with_path("articles/<id>").get(show_article);
+Router::with_path("files/<**rest_path>").get(serve_file)
+```
+在 ```Handler``` 中, 可以通过 ```Request``` 对象的 ```get_param``` 函数获取:
+
+```rust
+#[fn_handler]
+pub async fn show_article(req: &mut Request) {
+    let article_id = req.get_param::<i64>("id");
+}
+
+#[fn_handler]
+pub async fn serve_file(req: &mut Request) {
+    let rest_path = req.get_param::<i64>("**rest_path");
+}
+```
+
+### Method 过滤器
+
+根据 ```HTTP``` 请求的 ```Method``` 过滤请求, 比如:
+
+```rust
+Router::new().get(show_article).patch(update_article).delete(delete_article);
+```
+
+这里的 ```get```, ```patch```, ```delete``` 都是 Method 过滤器. 实际等价于:
+
+```rust
+use salvo::routing::filter;
+
+let mut root_router = Router::new();
+let show_router = Router::with_filter(filter::get()).handle(show_article);
+let update_router = Router::with_filter(filter::patch()).handle(update_article);
+let delete_router = Router::with_filter(filter::get()).handle(delete_article);
+root_router.push(show_router);
+root_router.push(update_router);
+root_router.push(delete_router);
 ```
