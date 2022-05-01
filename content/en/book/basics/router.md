@@ -20,7 +20,7 @@ Router::with_path("writers/<id>/articles").get(list_writer_articles);
 ```
 
 ## Write in tree way
-We can write router like a tree:
+We can write router like a tree, this is also the recommended way:
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer).push(
@@ -31,7 +31,27 @@ Router::with_path("writers").get(list_writers).post(create_writer).push(
         .push(Router::with_path("articles").get(list_writer_articles)),
 );
 ```
+This form of definition can make the definition of router clear and simple for complex projects.
 
+There are many methods in ```Router``` that will return to ```Self``` after being called, so as to write code in a chain. Sometimes, you need to decide how to route according to certain conditions, and the ```Router``` also provides ```then ``` function, which is also easy to use:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::with_path("<id>").get(show_article)),
+    ).then(|router|{
+        if admin_mode() {
+            router.post(create_article).push(
+                Router::with_path("<id>").patch(update_article).delete(delete_writer)
+            )
+        } else {
+            router
+        }
+    });
+```
+This example represents that only when the server is in ```admin_mode```, routers such as creating articles, editing and deleting articles will be added.
 
 ## Get param in routers
 
@@ -57,7 +77,7 @@ For numeric characters there is an easier way to use ```<id:num>```, the specifi
 
 You can also use ```<*>``` or ```<**>``` to match all remaining path fragments. In order to make the code more readable, you can also add appropriate name to make the path semantics more clear, for example: ```<**file_path>```.
 
-It is allowed to combine multiple expressions to match the same path segment, such as ```/articles/article_<id:num>/```. 
+It is allowed to combine multiple expressions to match the same path segment, such as ```/articles/article_<id:num>/```, ```/images/<name>.<ext>```.
 
 ## Add middlewares
 
@@ -138,8 +158,46 @@ Router::new().filter(filter::path("hello").and(filter::get()));
 ```
 
 ### Path filter
-The Path filter supports regular expression matching.
-We can use <*rest> or <**rest> to match all remaining paths.
+
+The filter based on the request path is the most frequently used. Parameters can be defined in the path filter, such as:
+
+```rust
+Router::with_path("articles/<id>").get(show_article);
+Router::with_path("files/<**rest_path>").get(serve_file)
+```
+
+In ```Handler```, it can be obtained through the ```get_param``` function of the ```Request``` object:
+
+```rust
+#[fn_handler]
+pub async fn show_article(req: &mut Request) {
+    let article_id = req.get_param::<i64>("id");
+}
+
+#[fn_handler]
+pub async fn serve_file(req: &mut Request) {
+    let rest_path = req.get_param::<i64>("**rest_path");
+}
+```
 
 ### Method filter
-Comming soon...
+
+Filter requests based on the ````HTTP``` request's ````Method```, for example:
+
+```rust
+Router::new().get(show_article).patch(update_article).delete(delete_article);
+```
+
+Here ```get```, ```patch```, ```delete``` are all Method filters. It is actually equivalent to:
+
+```rust
+use salvo::routing::filter;
+
+let mut root_router = Router::new();
+let show_router = Router::with_filter(filter::get()).handle(show_article);
+let update_router = Router::with_filter(filter::patch()).handle(update_article);
+let delete_router = Router::with_filter(filter::get()).handle(delete_article);
+root_router.push(show_router);
+root_router.push(update_router);
+root_router.push(delete_router);
+```

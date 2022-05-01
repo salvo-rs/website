@@ -159,10 +159,12 @@ Router::with_filter(filter::path("hello").and(filter::get()));
 ### 路径过滤器
 
 基于请求路径的过滤器是使用最频繁的. 路径过滤器中可以定义参数, 比如:
+
 ```rust
 Router::with_path("articles/<id>").get(show_article);
 Router::with_path("files/<**rest_path>").get(serve_file)
 ```
+
 在 ```Handler``` 中, 可以通过 ```Request``` 对象的 ```get_param``` 函数获取:
 
 ```rust
