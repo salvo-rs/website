@@ -20,7 +20,7 @@ type PgPool = Pool<ConnectionManager<PgConnection>>;
 static DB_POOL: OnceCell<PgPool> = OnceCell::new();
 
 fn connect() -> Result<PooledConnection<ConnectionManager<PgConnection>>, PoolError> {
-    unsafe { DB_POOL.get_unchecked().get() }
+    DB_POOL.get().unwrap().get()
 }
 fn build_pool(database_url: &str, size: u32) -> Result<PgPool, PoolError> {
     let manager = ConnectionManager::<PgConnection>::new(database_url);
@@ -31,6 +31,12 @@ fn build_pool(database_url: &str, size: u32) -> Result<PgPool, PoolError> {
         .idle_timeout(None)
         .max_lifetime(None)
         .build(manager)
+}
+
+fn main() {
+    DB_POOL
+        .set(build_pool(&DB_URL, 10).expect(&format!("Error connecting to {}", &DB_URL)))
+        .ok();
 }
 
 #[fn_handler]
