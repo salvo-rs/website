@@ -5,9 +5,9 @@ linkTitle = "Salvo"
 +++
 
 {{< blocks/lead>}}
-    <h1>一個基於 Rust 界最簡單的 Web 後端框架!
+    <h1>一個使用 Rust 編寫的簡單實用的 Web 後端框架!
     </h1>
-    <h3>Salvo 是構建於 tokio 和 hyper 之上. 僅僅需要基本的 Rust 基礎即可寫成功能強大的後端服務器. 我們的目標是: 編碼最簡單, 功能不缺失, 性能有保障.</h3>
+    <h3>Salvo 是構建於 tokio 和 hyper 之上. 僅僅需要基本的 Rust 基礎知識即可寫成功能強大的後端服務器. <br>我們的目標是: 編碼最簡單, 功能不缺失, 性能有保障.</h3>
     <div class="code-trans">
         {{< blocks/code-window>}}
 {{<highlight rust>}}
@@ -41,12 +41,12 @@ async fn main() {
 
 {{< blocks/feature background="reverse">}}
     <div class="intro">
-        <h3>樹狀路由系統</h3>
+        <h3>鏈式樹狀路由系統</h3>
         <p>
-            樹狀路由系統允許你非常方便地寫出鏈式表達式. 通過篩選器可以設置路由的具體匹配規則. 在路徑選擇器中支持正則表達式約束.
+            鏈式樹狀路由系統允許你非常方便地寫出鏈式表達式. 通過篩選器可以設置路由的具體匹配規則. 在路徑選擇器中支持正則表達式約束.
         </p>
     </div>
-    {{< blocks/code-window>}}
+    {{<blocks/code-window>}}
         {{<highlight rust>}}
 let debug_mode = true;
 let admin_mode = true;

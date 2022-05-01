@@ -60,7 +60,7 @@ Salvo 中的 ```fn_handler``` 可以返回 ```Result```, 只需要 ```Result``` 
 #[async_trait]
 impl Writer for ::anyhow::Error {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        res.set_http_error(StatusError:internal_server_error());
+        res.set_http_error(StatusError::internal_server_error());
     }
 }
 ```
@@ -76,7 +76,7 @@ struct CustomError;
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.render("custom error");
-        res.set_http_error(StatusError:internal_server_error());
+        res.set_http_error(StatusError::internal_server_error());
     }
 }
 

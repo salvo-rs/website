@@ -52,13 +52,13 @@ Write content is straightforward:
     res.render(Text::Html("<html><body>hello</body></html>"));
     ```
 
-## Write http error
+## Write status error
 
 - Use ```set_http_error``` can write a http error to response.
 
     ```rust
     use salvo::http::errors::*;
-    res.set_http_error(StatusError:internal_server_error().with_summary("error when serialize object to json"))
+    res.set_http_error(StatusError::internal_server_error().with_summary("error when serialize object to json"))
     ```
 
 - If we don't want to customize error message, just use ```set_http_code```.

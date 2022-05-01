@@ -58,7 +58,7 @@ Taking into account the widespread use of ```anyhow```, the ```Writer``` impleme
 #[async_trait]
 impl Writer for ::anyhow::Error {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        res.set_http_error(StatusError:internal_server_error());
+        res.set_http_error(StatusError::internal_server_error());
     }
 }
 ```
@@ -74,7 +74,7 @@ struct CustomError;
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.render("custom error");
-        res.set_http_error(StatusError:internal_server_error());
+        res.set_http_error(StatusError::internal_server_error());
     }
 }
 

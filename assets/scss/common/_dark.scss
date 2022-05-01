@@ -10,8 +10,8 @@ $dots-dark: darken($body-color-dark, 50%);
 
 $link-color-dark: $red-300;
 $button-color-dark: $link-color-dark;
-$focus-color-dark: lighten($link-color-dark, 2.5%);
-$selection-color-dark: lighten($link-color-dark, 2.5%);
+$focus-color-dark: $link-color-dark;
+$selection-color-dark: lighten($link-color-dark, 15%);
 
 $navbar-dark-color: $body-color-dark;
 $navbar-dark-hover-color: $link-color-dark;

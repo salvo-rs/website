@@ -159,10 +159,12 @@ Router::with_filter(filter::path("hello").and(filter::get()));
 ### 路徑過濾器
 
 基於請求路徑的過濾器是使用最頻繁的. 路徑過濾器中可以定義參數, 比如:
+
 ```rust
 Router::with_path("articles/<id>").get(show_article);
 Router::with_path("files/<**rest_path>").get(serve_file)
 ```
+
 在 ```Handler``` 中, 可以通過 ```Request``` 對象的 ```get_param``` 函數獲取:
 
 ```rust

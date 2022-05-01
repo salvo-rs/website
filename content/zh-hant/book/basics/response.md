@@ -59,7 +59,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
     ```rust
     use salvo::http::errors::*;
-    res.set_http_error(StatusError:internal_server_error().with_summary("error when serialize object to json"))
+    res.set_http_error(StatusError::internal_server_error().with_summary("error when serialize object to json"))
     ```
 
 - 如果您不需要自定義錯誤信息, 可以直接調用 ```set_http_code```.
