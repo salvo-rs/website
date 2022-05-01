@@ -1,6 +1,6 @@
 ---
 title: "Custom Path Part"
-weight: 6030
+weight: 6110
 menu:
   book:
     parent: "advanced"
