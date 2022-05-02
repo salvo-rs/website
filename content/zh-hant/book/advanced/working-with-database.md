@@ -48,3 +48,26 @@ async fn show_article(req: &mut Request, res: &mut Response) -> Result<(), Error
     Ok(())
 }
 ```
+
+### Sqlx
+
+```rust
+use sqlx::{Pool, PgPool};
+use once_cell::sync::OnceCell;
+
+pub static DB_POOL: OnceCell<PgPool> = OnceCell::new();
+
+pub fn db_pool() -> &PgPool {
+    DB_POOL.get().unwrap()
+}
+
+pub async fn make_db_pool(db_url: &str) -> PgPool {
+    Pool::connect(&db_url).await.unwrap()
+}
+
+#[tokio::main]
+async fn main() {
+    let pool = make_db_pool().await;
+    DB_POOL.set(pool).unwrap();
+}
+```
