@@ -49,4 +49,6 @@ async fn main() {
 }
 ```
 
-When there is an error in the website request result, first try to set the error page through the ```Catcher``` set by the user. If the ```Catcher``` catches the error, it will return ```true```. If your custom catchers does not capture this error, then the system uses the default ```CatcherImpl``` to capture processing errors and send the default error page. The default error implementation ```CatcherImpl``` supports sending error pages in ```XML```, ```JSON```, ```HTML```, ```Text``` formats.
+When there is an error in the website request result, first try to set the error page through the ```Catcher``` set by the user. If the ```Catcher``` catches the error, it will return ```true```. 
+
+If your custom catchers does not capture this error, then the system uses the default ```CatcherImpl``` to capture processing errors and send the default error page. The default error implementation ```CatcherImpl``` supports sending error pages in ```XML```, ```JSON```, ```HTML```, ```Text``` formats.
