@@ -25,13 +25,16 @@ Router::with_path("writers/<id>/articles").get(list_writer_articles);
 我們也可以把路由定義成樹狀, 這也是推薦的定義方式:
 
 ```rust
-Router::with_path("writers").get(list_writers).post(create_writer).push(
-    Router::with_path("<id>")
-        .get(show_writer)
-        .patch(edit_writer)
-        .delete(delete_writer)
-        .push(Router::with_path("articles").get(list_writer_articles)),
-);
+Router::with_path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("<id>")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
 ```
 這種形式的定義對於復雜項目, 可以讓 Router 的定義變得層次清晰簡單.
 

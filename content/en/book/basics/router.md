@@ -23,13 +23,16 @@ Router::with_path("writers/<id>/articles").get(list_writer_articles);
 We can write router like a tree, this is also the recommended way:
 
 ```rust
-Router::with_path("writers").get(list_writers).post(create_writer).push(
-    Router::with_path("<id>")
-        .get(show_writer)
-        .patch(edit_writer)
-        .delete(delete_writer)
-        .push(Router::with_path("articles").get(list_writer_articles)),
-);
+Router::with_path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("<id>")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
 ```
 This form of definition can make the definition of router clear and simple for complex projects.
 
