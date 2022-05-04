@@ -20,7 +20,7 @@ async fn index(res: &mut Response) {
 }
 #[fn_handler]
 async fn upload(req: &mut Request, res: &mut Response) {
-    let file = req.get_file("file").await;
+    let file = req.file("file").await;
     if let Some(file) = file {
         let dest = format!("temp/{}", file.filename().unwrap_or_else(|| "file".into()));
         tracing::debug!(dest = %dest, "upload file");

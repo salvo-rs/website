@@ -65,7 +65,7 @@ Router::new()
 ```rust
 #[fn_handler]
 async fn show_writer(req: &mut Request) {
-    let id = req.get_param::<i64>("id").unwrap();
+    let id = req.param::<i64>("id").unwrap();
 }
 ```
 
@@ -173,12 +173,12 @@ Router::with_path("files/<**rest_path>").get(serve_file)
 ```rust
 #[fn_handler]
 pub async fn show_article(req: &mut Request) {
-    let article_id = req.get_param::<i64>("id");
+    let article_id = req.param::<i64>("id");
 }
 
 #[fn_handler]
 pub async fn serve_file(req: &mut Request) {
-    let rest_path = req.get_param::<i64>("**rest_path");
+    let rest_path = req.param::<i64>("**rest_path");
 }
 ```
 

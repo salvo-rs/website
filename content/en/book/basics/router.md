@@ -63,7 +63,7 @@ In previous source code, ```<id>``` is a param definition. We can access it's va
 ```rust
 #[fn_handler]
 async fn show_writer(req: &mut Request) {
-    let id = req.get_param::<i64>("id").unwrap();
+    let id = req.param::<i64>("id").unwrap();
 }
 ```
 
@@ -174,12 +174,12 @@ In ```Handler```, it can be obtained through the ```get_param``` function of the
 ```rust
 #[fn_handler]
 pub async fn show_article(req: &mut Request) {
-    let article_id = req.get_param::<i64>("id");
+    let article_id = req.param::<i64>("id");
 }
 
 #[fn_handler]
 pub async fn serve_file(req: &mut Request) {
-    let rest_path = req.get_param::<i64>("**rest_path");
+    let rest_path = req.param::<i64>("**rest_path");
 }
 ```
 

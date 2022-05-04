@@ -11,7 +11,7 @@ Salvo 处理文件上传也是相当简单的, 比如处理单个文件的上传
 ```rust
 #[fn_handler]
 async fn upload(req: &mut Request, res: &mut Response) {
-    let file = req.get_file("file").await;
+    let file = req.file("file").await;
     if let Some(file) = file {
         let dest = format!("temp/{}", file.file_name().unwrap_or("file"));
         println!("{}", dest);
@@ -34,7 +34,7 @@ async fn upload(req: &mut Request, res: &mut Response) {
 ```rust
 #[fn_handler]
 async fn upload(req: &mut Request, res: &mut Response) {
-    let files = req.get_files("files").await;
+    let files = req.files("files").await;
     if let Some(files) = files {
         let mut msgs = Vec::with_capacity(files.len());
         for file in files {

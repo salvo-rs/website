@@ -12,7 +12,7 @@ menu:
 ```rust
 #[fn_handler]
 async fn hello(req: &mut Request) -> String {
-    req.get_param::<String>("id")
+    req.param::<String>("id")
 }
 ```
 
@@ -21,7 +21,7 @@ async fn hello(req: &mut Request) -> String {
 可以通過 ```get_query``` 獲取查詢參數:
 
 ```rust
-req.get_query::<String>("id");
+req.query::<String>("id");
 ```
 
 ## 獲取 Form 數據
@@ -29,7 +29,7 @@ req.get_query::<String>("id");
 可以通過 ```get_form``` 獲取查詢參數, 此函數為異步函數:
 
 ```rust
-req.get_form::<String>("id").await;
+req.form::<String>("id").await;
 ```
 
 
@@ -44,7 +44,7 @@ req.read::<User>().await;
 ```rust
 #[fn_handler]
 async fn upload(req: &mut Request, res: &mut Response) {
-    let file = req.get_file("file").await;
+    let file = req.file("file").await;
     if let Some(file) = file {
         let dest = format!("temp/{}", file.file_name().unwrap_or_else(|| "file".into()));
         println!("{}", dest);

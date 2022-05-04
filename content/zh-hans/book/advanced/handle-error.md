@@ -42,7 +42,7 @@ impl Writer for Error {
 ```rust
 #[fn_handler]
 async fn show_article(req: &mut Request, res: &mut Response) -> AppResult<()> {
-    let id = req.get_param("id").unwrap_or_default();
+    let id = req.param("id").unwrap_or_default();
     let article = articles::table.find(id).get_result::<Article>()?;
     res.render(Json(article));
     Ok(())
