@@ -25,8 +25,8 @@ Add this to `Cargo.toml`
 
 ```toml
 [dependencies]
-salvo = "0.22"
-tokio = { version = "1", features = ["full"] }
+salvo = "0.23"
+tokio = "1"
 ```
 
 Create a simple function handler in the main.rs file, we call it `hello_world`, this function just render plain text ```"Hello world"```. In the ```main``` function, we need to create a root Router first, and then create a server and call it's ```bind``` function:
