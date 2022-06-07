@@ -91,7 +91,7 @@ async fn main() {
 ```sh
 git clone https://github.com/salvo-rs/salvo
 cd salvo
-cargo run --bin example-hello_world
+cargo run --bin example-hello-world
 ```
 
 examples 目录下有很多的例子. 都可以通过类似 ```cargo run --bin example-<name>``` 的命令运行.
