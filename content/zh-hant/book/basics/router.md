@@ -10,6 +10,33 @@ menu:
 
 ```Router``` 定義了一個 HTTP 請求會被哪些中間件和 ```Handler``` 處理. 這個是 Salvo 裏面最基礎也是最核心的功能.
 
+```Router``` 內部實際上是有一系列過濾器(Filter) 組成, 當所有的過濾器都匹配時, 就認為匹配成功, 如果當前 ```Router``` 有對應的 ```Handler```, 則依次執行 路由上的中間件和 ```Handler```. 如果匹配成功而當前路由又不存在 ```Handler```, 則繼續配置當前 ```Router``` 的子路由, 如此一直下去...
+
+比如:
+
+```rust
+Router::with_path("articles").get(list_articles).post(create_article);
+```
+
+實際上等同於:
+
+```rust
+let mut root = Router::new();
+// PathFilter 可以過濾請求路徑, 只有請求路徑裏包含 articles 片段時才會匹配成功, 否則匹配失敗.
+// 比如: /articles/123 是匹配成功的, 而 /articles_list/123 雖然裏面包含了 articles, 但是因為後面
+// 還有 _list, 是匹配不成功的.
+root.filter(PathFilter::new("articles"));
+
+// 在 root 匹配成功的情況下, 如果請求的 method 是 get, 則內部的子路由可以匹配成功, 
+// 並且由 list_articles 處理請求.
+root.push(Router::new().filter(filter::get()).handle(list_articles));
+
+// 在 root 匹配成功的情況下, 如果請求的 method 是 post, 則內部的子路由可以匹配成功, 
+// 並且由 create_article 處理請求.
+root.push(Router::new().filter(filter::post()).handle(create_article));
+```
+
+
 ## 扁平式定義
 
 我們可以用扁平式的風格定義路由:
