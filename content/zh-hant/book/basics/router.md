@@ -22,9 +22,9 @@ Router::with_path("articles").get(list_articles).post(create_article);
 
 ```rust
 let mut root = Router::new();
-// PathFilter 可以過濾請求路徑, 只有請求路徑裏包含 articles 片段時才會匹配成功, 否則匹配失敗.
-// 比如: /articles/123 是匹配成功的, 而 /articles_list/123 雖然裏面包含了 articles, 但是因為後面
-// 還有 _list, 是匹配不成功的.
+// PathFilter 可以過濾請求路徑, 只有請求路徑裏包含 articles 片段時才會匹配成功, 
+// 否則匹配失敗. 比如: /articles/123 是匹配成功的, 而 /articles_list/123 
+// 雖然裏面包含了 articles, 但是因為後面還有 _list, 是匹配不成功的.
 root.filter(PathFilter::new("articles"));
 
 // 在 root 匹配成功的情況下, 如果請求的 method 是 get, 則內部的子路由可以匹配成功, 
