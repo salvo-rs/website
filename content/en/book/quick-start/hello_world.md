@@ -25,7 +25,7 @@ Add this to `Cargo.toml`
 
 ```toml
 [dependencies]
-salvo = "0.24"
+salvo = "0.25"
 tokio = { version = "1", features = ["macros"] }
 ```
 
@@ -41,7 +41,7 @@ async fn hello_world() -> &'static str {
 #[tokio::main]
 async fn main() {
     let router = Router::new().get(hello_world);
-    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
+    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
 ```
 Congratulations! Your first app has done! Just run ```cargo run``` to run this app.

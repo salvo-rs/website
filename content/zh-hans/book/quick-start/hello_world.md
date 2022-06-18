@@ -24,7 +24,7 @@ cargo new hello_salvo --bin
 
 ```toml
 [dependencies]
-salvo = "0.24"
+salvo = "0.25"
 tokio = { version = "1", features = ["macros"] }
 ```
 
@@ -40,7 +40,7 @@ async fn hello_world() -> &'static str {
 #[tokio::main]
 async fn main() {
     let router = Router::new().get(hello_world);
-    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await.unwrap();
+    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
 ```
 
@@ -91,7 +91,7 @@ async fn main() {
 ```sh
 git clone https://github.com/salvo-rs/salvo
 cd salvo
-cargo run --bin example-hello_world
+cargo run --bin example-hello-world
 ```
 
 examples 目录下有很多的例子. 都可以通过类似 ```cargo run --bin example-<name>``` 的命令运行.
