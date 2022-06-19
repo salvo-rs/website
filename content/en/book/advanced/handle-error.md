@@ -23,7 +23,7 @@ pub enum Error {
 }
 
 pub type AppResult<T> = Result<T, Error>;
-````
+```
 
 Implement ```Writer``` for this custom error type:
 
@@ -33,7 +33,7 @@ impl Writer for Error {
     async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
     }
 }
-````
+```
 
 In the ```write``` method, you can even display different error pages for different current users, for example, for administrators, display the full error message, and for normal users, display a very simple error message.
 
@@ -47,4 +47,4 @@ async fn show_article(req: &mut Request, res: &mut Response) -> AppResult<()> {
     res.render(Json(article));
     Ok(())
 }
-````
+```
