@@ -42,7 +42,6 @@
     "fs-extra": "^10.1.0",
     "glob": "^8.0.1",
     "hugo-bin": "^0.68.0",
-    // "instant.page": "^5.1",
     "lazysizes": "^5.3",
     "markdownlint-cli": "^0.31.1",
     "netlify-lambda": "^2.0",
