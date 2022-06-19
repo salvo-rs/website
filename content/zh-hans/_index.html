@@ -47,36 +47,35 @@ async fn main() {
     </div>
     {{<blocks/code-window>}}
         {{<highlight rust>}}
-let debug_mode = true;
-let admin_mode = true;
-let router = Router::new()
-    .get(handle)
-    .push(
-        Router::with_path("users").hoop(auth).post(handle).push(
-            Router::with_path("&lt; id&gt;")
-                .post(handle)
-                .delete(handle),
-        ),
-    )
-    .push(
-        Router::with_path("users")
+        let debug_mode = true;
+        let admin_mode = true;
+        let router = Router::new()
             .get(handle)
-            .push(Router::with_path("&lt; id&gt;").get(handle)),
-    )
-    .then(|router| {
-        if debug_mode {
-            router.push(Router::with_path("debug").get(handle))
-        } else {
-            router
-        }
-    })
-    .then(|router| {
-        if admin_mode {
-            parent.push(Router::with_path("admin").get(handle))
-        } else {
-            router
-        }
-    });{{</highlight>}}
+            .push(
+                Router::with_path("users")
+                    .hoop(auth)
+                    .post(handle)
+                    .push(Router::with_path("< id>").post(handle).delete(handle)),
+            )
+            .push(
+                Router::with_path("users")
+                    .get(handle)
+                    .push(Router::with_path("< id>").get(handle)),
+            )
+            .then(|router| {
+                if debug_mode {
+                    router.push(Router::with_path("debug").get(handle))
+                } else {
+                    router
+                }
+            })
+            .then(|router| {
+                if admin_mode {
+                    parent.push(Router::with_path("admin").get(handle))
+                } else {
+                    router
+                }
+            });{{</highlight>}}
     {{< /blocks/code-window>}}
 </div>
 {{< /blocks/feature>}}
@@ -90,9 +89,8 @@ let router = Router::new()
     </div>
     {{< blocks/code-window>}}
         {{<highlight rust>}}
-let router = Router::new()
-    .path("files/<*path>")
-    .get(DirHandler::new(vec!["static/body", "static/girl"]));
+        let router = Router::with_path("files/<*path>")
+            .get(DirHandler::new(vec!["static/body", "static/girl"]));
         {{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}
@@ -107,19 +105,19 @@ let router = Router::new()
     </div>
     {{< blocks/code-window>}}
         {{<highlight rust>}}
-let router = Router::new().push(
-    Router::with_path("ws_chat")
-        .get(FileHandler::new("examples/ws_chat.rs"))
-).push(
-    Router::new().hoop(deflate()).path("sse_chat")
-        .get(FileHandler::new("sse_chat.rs"))
-).push(
-    Router::new().hoop(brotli()).path("todos")
-        .get(FileHandler::new("todos.rs"))
-).push(
-    Router::new().hoop(gzip()).path("<*path>")
-        .get(DirHandler::new("examples/"))
-);{{</highlight>}}
+        let router = Router::new().push(
+            Router::with_path("ws_chat")
+                .get(FileHandler::new("examples/ws_chat.rs"))
+        ).push(
+            Router::new().hoop(deflate()).path("sse_chat")
+                .get(FileHandler::new("sse_chat.rs"))
+        ).push(
+            Router::new().hoop(brotli()).path("todos")
+                .get(FileHandler::new("todos.rs"))
+        ).push(
+            Router::new().hoop(gzip()).path("<*path>")
+                .get(DirHandler::new("examples/"))
+        );{{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}
 
@@ -132,32 +130,32 @@ let router = Router::new().push(
     </div>
     {{< blocks/code-window>}}
         {{<highlight rust>}}
-use futures::{FutureExt, StreamExt};
-use tokio;
-use salvo::prelude::*;
-use salvo::extra::ws::WsHandler;
-#[fn_handler]
-async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError> {
-    let fut = WsHandler::new().handle(req, res)?;
-    let fut = async move {
-        if let Some(ws) = fut.await {
-            let (tx, rx) = ws.split();
-            let fut = rx.forward(tx).map(|result| {
-                if let Err(e) = result {
-                    println!("websocket error: {:?}", e);
+        use futures::{FutureExt, StreamExt};
+        use tokio;
+        use salvo::prelude::*;
+        use salvo::extra::ws::WsHandler;
+        #[fn_handler]
+        async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError> {
+            let fut = WsHandler::new().handle(req, res)?;
+            let fut = async move {
+                if let Some(ws) = fut.await {
+                    let (tx, rx) = ws.split();
+                    let fut = rx.forward(tx).map(|result| {
+                        if let Err(e) = result {
+                            println!("websocket error: {:?}", e);
+                        }
+                    });
+                    tokio::task::spawn(fut);
                 }
-            });
+            };
             tokio::task::spawn(fut);
+            Ok(())
         }
-    };
-    tokio::task::spawn(fut);
-    Ok(())
-}
-#[tokio::main]
-async fn main() {
-    let router = Router::new().handle(connect);
-    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
-}
-        {{</highlight>}}
+        #[tokio::main]
+        async fn main() {
+            let router = Router::new().handle(connect);
+            Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
+        }
+    {{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}
