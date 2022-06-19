@@ -185,7 +185,7 @@ pub async fn serve_file(req: &mut Request) {
 
 ### Method filter
 
-Filter requests based on the ````HTTP``` request's ````Method```, for example:
+Filter requests based on the ```HTTP``` request's ```Method```, for example:
 
 ```rust
 Router::new().get(show_article).patch(update_article).delete(delete_article);
