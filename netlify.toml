@@ -3,11 +3,11 @@
   functions = "functions"
 
 [build.environment]
-  HUGO_VERSION = "0.97.3"
+  HUGO_VERSION = "0.101.0"
   HUGO_ENABLEGITINFO = "true"
   HUGO_ENV = "production"
-  NODE_VERSION = "16.14.2"
-  NPM_VERSION = "8.7.0"
+  NODE_VERSION = "16.15.1"
+  NPM_VERSION = "8.11.0"
 
 [context.production]
   command = "hugo -b $URL --gc --minify && npm run build:functions"
