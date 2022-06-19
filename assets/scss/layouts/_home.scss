@@ -6,8 +6,6 @@
   width: 100%;
   max-width: 1400px;
   margin: auto;
-  padding-left: 24px;
-  padding-right: 24px;
 }
 
 .hello-show {
@@ -59,6 +57,8 @@
 .feature {
   padding-top: 3rem;
   padding-bottom: 3rem;
+  padding-right: 24px;
+  padding-left: 24px;
 
   .code-window,
   .intro {
