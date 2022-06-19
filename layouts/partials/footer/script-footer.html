@@ -12,7 +12,7 @@
 <script src="{{ $index.Permalink }}" defer></script>
 {{ else -}}
 {{ $app := resources.Get "js/app.js" | minify -}}
-{{ $js := slice $jquery $bootstrap $lazysizes $clipboard $flexsearch $instantPage $app | resources.Concat "main.js" -}}
+{{ $js := slice $jquery $bootstrap $lazysizes $clipboard $flexsearch $app | resources.Concat "main.js" -}}
 {{ $jsProd := $js | resources.Fingerprint "sha512" -}}
 {{ $indexProd := $index | resources.Minify | resources.Fingerprint "sha512" -}}
 <script src="{{ $jsProd.Permalink }}" integrity="{{ $jsProd.Data.Integrity }}" crossorigin="anonymous" defer></script>
