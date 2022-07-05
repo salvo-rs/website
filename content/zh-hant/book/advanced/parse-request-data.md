@@ -17,13 +17,13 @@ menu:
 
 可以通過 ```Request``` 提供多個方法將這些數據解析為強類型結構.
 
-* ```parse_params```: 將請求的 router params 解析為特定的數據類型;
-* ```parse_queries```: 將請求的 URL queries 解析為特定的數據類型;
-* ```parse_headers```: 將請求的 HTTP headers 解析為特定的數據類型;
-* ```parse_json```: 將請求的 HTTP body 部分的數據當作 JSON 格式解析到特定的類型;
-* ```parse_form```: 將請求的 HTTP body 部分的數據當作 Form 表單解析到特定的類型;
-* ```parse_body```: 根據請求的 ```content-type``` 的類型, 將 HTTP body 部分的數據解析為特定類型. 
-* ```parse_data```: 可以合並不同的數據源解析出特定的類型, 可以接受的數據源有: router params, URL queries, HTTP headers, ```Form```. 為了防止出現意外錯誤, 各個數據源不能存在相同的鍵名. 比如: ```http://localhost/users/<id>?id=123```, ```<id>``` 代表路由匹配得到的 ```id```,  URL queries 部分也存在一個 ```id=123```, 此時就不能合並 router params 和 URL queries 解析為特定類型.
+* ```extract_params```: 將請求的 router params 解析為特定的數據類型;
+* ```extract_queries```: 將請求的 URL queries 解析為特定的數據類型;
+* ```extract_headers```: 將請求的 HTTP headers 解析為特定的數據類型;
+* ```extract_json```: 將請求的 HTTP body 部分的數據當作 JSON 格式解析到特定的類型;
+* ```extract_form```: 將請求的 HTTP body 部分的數據當作 Form 表單解析到特定的類型;
+* ```extract_body```: 根據請求的 ```content-type``` 的類型, 將 HTTP body 部分的數據解析為特定類型. 
+* ```extract```: 可以合並不同的數據源解析出特定的類型.
 
 ### 解析原理
 
@@ -41,7 +41,7 @@ struct User {
 則第一個 ```id=123``` 會被解析, ```id=234``` 則被丟棄:
 
 ```rust
-let user: User = req.parse_queries().unwrap();
+let user: User = req.extract_queries().unwrap();
 assert_eq!(user.id, 123);
 ```
 
@@ -57,7 +57,7 @@ struct Users {
 則 ```id=123&id=234``` 都會被解析:
 
 ```rust
-let users: Users = req.parse_queries().unwrap();
+let users: Users = req.extract_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
 
@@ -69,4 +69,4 @@ use enumflags2::make_bitflags;
 let source = make_bitflags!(ParseSource::{Queries|Form});
 ```
 
-此處合並了 ```URL queries``` 和 ```Form``` 部分的數據, 然後調用 ```parse_data``` 解析即可. 具體實例參見: [parse-data](https://github.com/salvo-rs/salvo/blob/main/examples/parse-data/src/main.rs).
+此處合並了 ```URL queries``` 和 ```Form``` 部分的數據, 然後調用 ```extract_data``` 解析即可. 具體實例參見: [parse-data](https://github.com/salvo-rs/salvo/blob/main/examples/parse-data/src/main.rs).
