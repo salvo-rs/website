@@ -1,21 +1,12 @@
 ---
-title: "解析 Request 数据"
+title: "提取 Request 数据"
 weight: 2101
 menu:
   book:
     parent: "advanced"
 ---
 
-### 解析的数据源
-
-一个请求中的数据包含以下几个部分:
-
-* ```router params```: 指路由路径匹配中的得到的参数列表。 比如： ```Router::with_path("/users/<id>/")``` 中的 ```id```.
-* ```URL queries```: 从 URL 的查询字符串中解析道的参数列表. 比如 ```http://localhost/user_id=123``` 中的 ```123```.
-* ```HTTP headers```: 请求头部的参数列表.
-* ```Form```: 以 ```POST``` 形式提交的参数列表.
-
-可以通过 ```Request``` 提供多个方法将这些数据解析为强类型结构.
+```Request``` 提供多个方法将这些数据解析为强类型结构.
 
 * ```extract_params```: 将请求的 router params 解析为特定的数据类型;
 * ```extract_queries```: 将请求的 URL queries 解析为特定的数据类型;
@@ -27,9 +18,9 @@ menu:
 
 ### 解析原理
 
-此处通过自定义的 ```serde::Deserializer``` 将类似 ```HashMap<String, String>``` 和 ```HashMap<String, Vec<String>>``` 的数据解析为特定的数据类型.
+此处通过自定义的 ```serde::Deserializer``` 将类似 ```HashMap<String, String>``` 和 ```HashMap<String, Vec<String>>``` 的数据提取为特定的数据类型.
 
-比如: ```URL queries``` 实际上被解析为一个 [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) 类型, ```MultiMap``` 可以认为就是一个类似 ```HashMap<String, Vec<String>>``` 的数据结构. 如果请求的 URL 是 ```http://localhost/users?id=123&id=234```, 我们提供的目标类型是:
+比如: ```URL queries``` 实际上被提取为一个 [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) 类型, ```MultiMap``` 可以认为就是一个类似 ```HashMap<String, Vec<String>>``` 的数据结构. 如果请求的 URL 是 ```http://localhost/users?id=123&id=234```, 我们提供的目标类型是:
 
 ```rust
 #[derive(Deserialize)]

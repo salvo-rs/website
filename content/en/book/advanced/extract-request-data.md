@@ -1,21 +1,12 @@
 ---
-title: "Parse Request Data"
+title: "Extract Request Data"
 weight: 2101
 menu:
   book:
     parent: "advanced"
 ---
 
-### parsed data source
-
-The data in a request contains the following parts:
-
-* ```Router params```: Refers to the obtained parameter list in routing path matching. For example: ```id``` in ```Router::with_path("/users/<id>/")```.
-* ```URL queries```: List of parameters to parse from the URL's query string. For example ```123``` in ```http://localhost/user_id=123```.
-* ```Headers```: The list of parameters in the request header.
-* ```Form```: A list of parameters to submit as ```POST```.
-
-This data can be parsed into strongly typed structures by providing several functions through ```Request```.
+Request can be parsed into strongly typed structures by providing several functions through ```Request```.
 
 * ```extract_params```: parse the requested router params into a specific data type;
 * ```extract_queries```: parse the requested URL queries into a specific data type;
@@ -27,9 +18,9 @@ This data can be parsed into strongly typed structures by providing several func
 
 ### Parsing principle
 
-The customized ```serde::Deserializer``` will be pase data similar to ```HashMap<String, String>``` and ```HashMap<String, Vec<String>>``` into a specific data type.
+The customized ```serde::Deserializer``` will be extract data similar to ```HashMap<String, String>``` and ```HashMap<String, Vec<String>>``` into a specific data type.
 
-For example: ```URL queries``` is actually parsed as a [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) type, ```MultiMap``` can think of it as a data structure like ```HashMap<String, Vec<String>>```. If the requested URL is ```http://localhost/users?id=123&id=234```, we provide The target type is:
+For example: ```URL queries``` is actually extracted as a [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) type, ```MultiMap``` can think of it as a data structure like ```HashMap<String, Vec<String>>```. If the requested URL is ```http://localhost/users?id=123&id=234```, we provide The target type is:
 
 ```rust
 #[derive(Deserialize)]
@@ -62,7 +53,6 @@ assert_eq!(user.ids, vec![123, 234]);
 ```
 
 Multiple data sources can be merged to parse out a specific type. You can define a custom type first, for example:
-
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
@@ -130,4 +120,4 @@ struct Nested<'a> {
 }
 ```
 
-For specific examples, see: [extract-nested]([https:/ /github.com/salvo-rs/salvo/blob/main/examples/parse-data/src/main.rs](https://github.com/salvo-rs/salvo/blob/main/examples/extract-nested/src/main.rs)).
+For specific examples, see: [extract-nested](https://github.com/salvo-rs/salvo/blob/main/examples/extract-nested/src/main.rs).
