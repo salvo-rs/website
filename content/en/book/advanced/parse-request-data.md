@@ -61,12 +61,73 @@ let users: Users = req.extract_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
 
-Multiple data sources can be merged to parse out a specific type. The first is to define the data source:
+Multiple data sources can be merged to parse out a specific type. You can define a custom type first, for example:
+
 
 ```rust
-use enumflags2::make_bitflags;
-
-let source = make_bitflags!(ParseSource::{Queries|Form});
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+/// Get the data field value from the body by default.
+#[extract(default_source(from = "body"))]
+struct GoodMan<'a> {
+    /// The id number is obtained from the request path parameter, and the data is automatically parsed as i64 type.
+    #[extract(source(from = "param"))]
+    id: i64,
+    /// Reference types can be used to avoid memory copying.
+    username: &'a str,
+    first_name: String,
+    last_name: String,
+}
 ```
 
-The data parts of ```URL queries``` and ```Form``` are combined here, and then call ```extract_data``` to parse. For specific examples, see: [parse-data](https:/ /github.com/salvo-rs/salvo/blob/main/examples/parse-data/src/main.rs).
+Then in ```Handler``` you can get the data like this:
+
+```rust
+#[handler]
+async fn edit(req: &mut Request) -> String {
+    let good_man: GoodMan<'_> = req.extract().await.unwrap();
+}
+```
+
+You can even pass the type directly to the function as a parameter, like this:
+
+```rust
+#[handler]
+async fn edit<'a>(good_man: GoodMan<'a>) -> String {
+    res.render(Json(good_man));
+}
+```
+
+There is considerable flexibility in the definition of data types, and can even be resolved into nested structures as needed:
+
+```rust
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[extract(default_source(from = "body", format = "json"))]
+struct GoodMan<'a> {
+    #[extract(source(from = "param"))]
+    id: i64,
+    #[extract(source(from = "query"))]
+    username: &'a str,
+    first_name: String,
+    last_name: String,
+    lovers: Vec<String>,
+    /// The nested field is completely reparsed from Request.
+    #[extract(source(from = "request"))]
+    nested: Nested<'a>,
+}
+
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[extract(default_source(from = "body", format = "json"))]
+struct Nested<'a> {
+    #[extract(source(from = "param"))]
+    id: i64,
+    #[extract(source(from = "query"))]
+    username: &'a str,
+    first_name: String,
+    last_name: String,
+    #[extract(rename = "lovers")]
+    #[serde(default)]
+    pets: Vec<String>,
+}
+```
+
+For specific examples, see: [extract-nested]([https:/ /github.com/salvo-rs/salvo/blob/main/examples/parse-data/src/main.rs](https://github.com/salvo-rs/salvo/blob/main/examples/extract-nested/src/main.rs)).

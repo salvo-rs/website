@@ -61,12 +61,73 @@ let users: Users = req.extract_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
 
-可以合並多個數據源, 解析出特定類型, 首先是定義數據源:
+可以合並多個數據源, 解析出特定類型, 可以先定義一個自定義的類型, 比如: 
 
 ```rust
-use enumflags2::make_bitflags;
-
-let source = make_bitflags!(ParseSource::{Queries|Form});
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+/// 默認從 body 中獲取數據字段值
+#[extract(default_source(from = "body"))]
+struct GoodMan<'a> {
+    /// 其中, id 號從請求路徑參數中獲取, 並且自動解析數據為 i64 類型.
+    #[extract(source(from = "param"))]
+    id: i64,
+    /// 可以使用引用類型, 避免內存復制.
+    username: &'a str,
+    first_name: String,
+    last_name: String,
+}
 ```
 
-此處合並了 ```URL queries``` 和 ```Form``` 部分的數據, 然後調用 ```extract_data``` 解析即可. 具體實例參見: [parse-data](https://github.com/salvo-rs/salvo/blob/main/examples/parse-data/src/main.rs).
+然後在 ```Handler``` 中可以這樣獲取數據:
+
+```rust
+#[handler]
+async fn edit(req: &mut Request) -> String {
+    let good_man: GoodMan<'_> = req.extract().await.unwrap();
+}
+```
+
+甚至於可以直接把類型作為參數傳入函數, 像這樣:
+
+
+```rust
+#[handler]
+async fn edit<'a>(good_man: GoodMan<'a>) -> String {
+    res.render(Json(good_man));
+}
+```
+
+數據類型的定義有相當大的靈活性, 甚至可以根據需要解析為嵌套的結構:
+
+```rust
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[extract(default_source(from = "body", format = "json"))]
+struct GoodMan<'a> {
+    #[extract(source(from = "param"))]
+    id: i64,
+    #[extract(source(from = "query"))]
+    username: &'a str,
+    first_name: String,
+    last_name: String,
+    lovers: Vec<String>,
+    /// 這個 nested 字段完全是從 Request 重新解析.
+    #[extract(source(from = "request"))]
+    nested: Nested<'a>,
+}
+
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[extract(default_source(from = "body", format = "json"))]
+struct Nested<'a> {
+    #[extract(source(from = "param"))]
+    id: i64,
+    #[extract(source(from = "query"))]
+    username: &'a str,
+    first_name: String,
+    last_name: String,
+    #[extract(rename = "lovers")]
+    #[serde(default)]
+    pets: Vec<String>,
+}
+```
+
+具體實例參見: [extract-nested](https://github.com/salvo-rs/salvo/blob/main/examples/extract-nested/src/main.rs).
