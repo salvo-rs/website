@@ -21,7 +21,7 @@ async fn main() {
         .serve(Router::with_hoop(auth_handler).handle(hello))
         .await;
 }
-#[fn_handler]
+#[handler]
 async fn hello() -> &'static str {
     "Hello"
 }

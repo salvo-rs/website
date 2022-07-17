@@ -12,7 +12,7 @@ CORS middleware can be used to enable [Cross-Origin Resource Sharing](https://de
 use salvo::prelude::*;
 use salvo_extra::cors::CorsHandler;
 
-#[fn_handler]
+#[handler]
 async fn hello() -> &'static str {
     "hello"
 }

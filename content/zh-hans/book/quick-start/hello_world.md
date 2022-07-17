@@ -24,7 +24,7 @@ cargo new hello_salvo --bin
 
 ```toml
 [dependencies]
-salvo = "0.26"
+salvo = "0.27"
 tokio = { version = "1", features = ["macros"] }
 ```
 
@@ -33,7 +33,7 @@ tokio = { version = "1", features = ["macros"] }
 ```rust
 use salvo::prelude::*;
 
-#[fn_handler]
+#[handler]
 async fn hello_world() -> &'static str {
     "Hello world"
 }
@@ -48,11 +48,11 @@ async fn main() {
 
 ## 详细解读
 
-这里的 ```hello_world``` 是一个 ```Handler```, 用于处理用户请求. ```#[fn_handler]``` 可以让一个函数方便实现 ```Handler``` trait. 并且, 它允许我们用不同的方式简写函数的参数.
+这里的 ```hello_world``` 是一个 ```Handler```, 用于处理用户请求. ```#[handler]``` 可以让一个函数方便实现 ```Handler``` trait. 并且, 它允许我们用不同的方式简写函数的参数.
 
 - 原始形式:
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
         res.render("Hello world");
     }
@@ -61,7 +61,7 @@ async fn main() {
 - 您可以省略调函数中参数中你用不着的, 比如这里面的 ```_req```, ```_depot```, ```_ctrl``` 都用不着, 可以直接不写.
   
     ``` rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) {
         res.render("Hello world");
     }
@@ -70,7 +70,7 @@ async fn main() {
 - 任何类型都可以作为函数的返回类型, 只要它实现了 ```Writer``` trait. 比如 ```&str``` 实现了 ```Writer```, 当它被作为返回值时, 就打印纯文本:
 
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) -> &'static str {// just return &str
         "Hello world"
     }
@@ -79,7 +79,7 @@ async fn main() {
 - 更普遍的情况是, 我们需要在将 ```Result<T, E>``` 作为返回类型, 以便处理函数执行过程中的错误. 如果 ```T``` 和 ```E``` 都实现了 ```Writer```, 那么 ```Result<T, E>``` 就可以作为返回值:
   
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {// return Result
         Ok("Hello world")
     }

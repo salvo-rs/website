@@ -14,11 +14,11 @@ Salvo 裏統一了 Handler 和 Middleware. Middleware 就是 Handler. 通過路�
 ```rust
 use Salvo::prelude::*;
 
-#[fn_handler]
+#[handler]
 async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
     res.render("Hello world");
 }
-#[fn_handler]
+#[handler]
 async fn hello_world2(res: &mut Response) {
     res.render("Hello world");
 }

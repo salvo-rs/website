@@ -9,7 +9,7 @@ menu:
 在 ```Handler``` 中, ```Response``` 会被作为参数传入:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(res: &mut Response) {
     res.render("Hello world!");
 }
@@ -18,7 +18,7 @@ async fn hello_world(res: &mut Response) {
 ```Response``` 在服务器接收到客户端请求后, 任何匹配到的 ```Handler``` 和中间件都可以向里面写入数据. 在某些情况下, 比如某个中间件希望阻止后续的中间件和 ```Handler``` 执行, 您可以使用 ```FlowCtrl```:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ctrl.skip_rest();
     res.render("Hello world!");

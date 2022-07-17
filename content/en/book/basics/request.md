@@ -10,7 +10,7 @@ menu:
 For web applications it’s crucial to react to the data a client sends to the server. In Salvo this information is provided by the request:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello(req: &mut Request) -> String {
     req.param::<String>("id")
 }
@@ -41,7 +41,7 @@ req.read::<User>().await;
 ## File uploading
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn upload(req: &mut Request, res: &mut Response) {
     let file = req.file("file").await;
     if let Some(file) = file {

@@ -61,7 +61,7 @@ This example represents that only when the server is in ```admin_mode```, router
 In previous source code, ```<id>``` is a param definition. We can access it's value via Request instance:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn show_writer(req: &mut Request) {
     let id = req.param::<i64>("id").unwrap();
 }
@@ -172,12 +172,12 @@ Router::with_path("files/<**rest_path>").get(serve_file)
 In ```Handler```, it can be obtained through the ```get_param``` function of the ```Request``` object:
 
 ```rust
-#[fn_handler]
+#[handler]
 pub async fn show_article(req: &mut Request) {
     let article_id = req.param::<i64>("id");
 }
 
-#[fn_handler]
+#[handler]
 pub async fn serve_file(req: &mut Request) {
     let rest_path = req.param::<i64>("**rest_path");
 }

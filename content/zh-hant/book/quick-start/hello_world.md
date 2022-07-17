@@ -24,7 +24,7 @@ cargo new hello_salvo --bin
 
 ```toml
 [dependencies]
-salvo = "0.26"
+salvo = "0.27"
 tokio = { version = "1", features = ["macros"] }
 ```
 
@@ -33,7 +33,7 @@ tokio = { version = "1", features = ["macros"] }
 ```rust
 use salvo::prelude::*;
 
-#[fn_handler]
+#[handler]
 async fn hello_world() -> &'static str {
     "Hello world"
 }
@@ -48,11 +48,11 @@ async fn main() {
 
 ## 詳細解讀
 
-這裏的 ```hello_world``` 是一個 ```Handler```, 用於處理用戶請求. ```#[fn_handler]``` 可以讓一個函數方便實現 ```Handler``` trait. 並且, 它允許我們用不同的方式簡寫函數的參數.
+這裏的 ```hello_world``` 是一個 ```Handler```, 用於處理用戶請求. ```#[handler]``` 可以讓一個函數方便實現 ```Handler``` trait. 並且, 它允許我們用不同的方式簡寫函數的參數.
 
 - 原始形式:
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
         res.render("Hello world");
     }
@@ -61,7 +61,7 @@ async fn main() {
 - 您可以省略調函數中參數中你用不著的, 比如這裏面的 ```_req```, ```_depot```, ```_ctrl``` 都用不著, 可以直接不寫.
   
     ``` rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) {
         res.render("Hello world");
     }
@@ -70,7 +70,7 @@ async fn main() {
 - 任何類型都可以作為函數的返回類型, 只要它實現了 ```Writer``` trait. 比如 ```&str``` 實現了 ```Writer```, 當它被作為返回值時, 就打印純文本:
 
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) -> &'static str {// just return &str
         "Hello world"
     }
@@ -79,7 +79,7 @@ async fn main() {
 - 更普遍的情況是, 我們需要在將 ```Result<T, E>``` 作為返回類型, 以便處理函數執行過程中的錯誤. 如果 ```T``` 和 ```E``` 都實現了 ```Writer```, 那麽 ```Result<T, E>``` 就可以作為返回值:
   
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {// return Result
         Ok("Hello world")
     }

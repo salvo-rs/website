@@ -19,10 +19,10 @@ pub trait Handler: Send + Sync + 'static {
 
 ## Function handler
 
-In many cases, we just want to use functions as ```Handler``` to process requests. We can add ```fn_handler``` to convert ordinary functions to ```Handler```. The most commonly used in normal projects should be ```fn_handler```, it is a ```proc macro```, adding to the function can turn the function into a ```Handler```: 
+In many cases, we just want to use functions as ```Handler``` to process requests. We can add ```handler``` to convert ordinary functions to ```Handler```. The most commonly used in normal projects should be ```handler```, it is a ```proc macro```, adding to the function can turn the function into a ```Handler```: 
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(req: &mut Request, depot: &mut Depot, res: &mut Response) {
     res.render("Hello world");
 }
@@ -37,20 +37,20 @@ Middlewares is added through the ```hoop``` function of the ```Router```. The ad
 If some parameters are not needed, they can be omitted directly. In fact, the order of these three parameters can be adjusted freely according to your preference, or any one or more parameters can be omitted. The following writing methods are all possible:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(req: &mut Request, res: &mut Response) {
 }
-#[fn_handler]
+#[handler]
 async fn hello_world(depot: &mut Depot) {
 }
-#[fn_handler]
+#[handler]
 async fn hello_world(res: &mut Response) {
 }
 ```
 
 ## Handle errors
 
-```fn_handler``` in Salvo can return ```Result```, only the types of ```Ok``` and ```Err``` in ```Result``` are implemented ```Writer``` trait. 
+```handler``` in Salvo can return ```Result```, only the types of ```Ok``` and ```Err``` in ```Result``` are implemented ```Writer``` trait. 
 Taking into account the widespread use of ```anyhow```, the ```Writer``` implementation of ```anyhow::Error``` is provided by default, and ```anyhow::Error``` is Mapped to ```InternalServerError```. 
 
 ```rust
@@ -78,11 +78,11 @@ impl Writer for CustomError {
     }
 }
 
-#[fn_handler]
+#[handler]
 async fn handle_anyhow() -> Result<(), anyhow::Error> {
     Err(anyhow::anyhow!("anyhow error"))
 }
-#[fn_handler]
+#[handler]
 async fn handle_custom() -> Result<(), CustomError> {
     Err(CustomError)
 }

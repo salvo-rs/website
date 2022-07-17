@@ -9,7 +9,7 @@ menu:
 Salvo Handle file uploads is also fairly straightforward, such as handling single file uploads::
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn upload(req: &mut Request, res: &mut Response) {
     let file = req.file("file").await;
     if let Some(file) = file {
@@ -32,7 +32,7 @@ async fn upload(req: &mut Request, res: &mut Response) {
 Handling multiple file uploads:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn upload(req: &mut Request, res: &mut Response) {
     let files = req.files("files").await;
     if let Some(files) = files {

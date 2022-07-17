@@ -37,10 +37,10 @@ impl Writer for Error {
 
 在 ```write``` 方法中, 可以甚至可以對於不同的當前用戶展示不同的錯誤頁面, 比如, 對於管理員, 顯示完整的錯誤信息, 而對於普通用戶, 則展示非常簡單的錯誤信息.
 
-有了這個自定義的錯誤類型後, 後面對於 ```fn_handler``` 的錯誤就會變得很簡單:
+有了這個自定義的錯誤類型後, 後面對於 ```handler``` 的錯誤就會變得很簡單:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn show_article(req: &mut Request, res: &mut Response) -> AppResult<()> {
     let id = req.param("id").unwrap_or_default();
     let article = articles::table.find(id).get_result::<Article>()?;

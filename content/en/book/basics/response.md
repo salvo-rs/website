@@ -9,7 +9,7 @@ menu:
 We can get response reference as function handler paramer:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(res: &mut Response) {
     res.render("hello world!");
 }
@@ -18,7 +18,7 @@ async fn hello_world(res: &mut Response) {
 When server get a client request and in it's whole process cycle, any handler or middlewares can write to response object. In middleware, you may want to skip all reset middlewares and handler, you can use ```FlowCtrl```:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ctrl.skip_rest();
     res.render("hello world!");

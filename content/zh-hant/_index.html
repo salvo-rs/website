@@ -11,7 +11,7 @@ linkTitle = "Salvo"
         {{< blocks/code-window>}}
 {{<highlight rust>}}
 use salvo::prelude::*;
-#[fn_handler]
+#[handler]
 async fn hello_world(res: &mut Response) {
     res.render("Hello world!");
 }
@@ -134,7 +134,7 @@ use futures::{FutureExt, StreamExt};
 use tokio;
 use salvo::prelude::*;
 use salvo::extra::ws::WsHandler;
-#[fn_handler]
+#[handler]
 async fn connect(req: &mut Request, res: &mut Response) -> Result<(), HttpError> {
     let fut = WsHandler::new().handle(req, res)?;
     let fut = async move {

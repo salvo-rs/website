@@ -37,10 +37,10 @@ impl Writer for Error {
 
 In the ```write``` method, you can even display different error pages for different current users, for example, for administrators, display the full error message, and for normal users, display a very simple error message.
 
-With this custom error type, handle errors for ```fn_handler``` become very simple:
+With this custom error type, handle errors for ```handler``` become very simple:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn show_article(req: &mut Request, res: &mut Response) -> AppResult<()> {
     let id = req.param("id").unwrap_or_default();
     let article = articles::table.find(id).get_result::<Article>()?;

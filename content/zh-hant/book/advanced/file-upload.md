@@ -9,7 +9,7 @@ menu:
 Salvo 處理文件上傳也是相當簡單的, 比如處理單個文件的上傳:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn upload(req: &mut Request, res: &mut Response) {
     let file = req.file("file").await;
     if let Some(file) = file {
@@ -32,7 +32,7 @@ async fn upload(req: &mut Request, res: &mut Response) {
 處理多個文件上傳:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn upload(req: &mut Request, res: &mut Response) {
     let files = req.files("files").await;
     if let Some(files) = files {

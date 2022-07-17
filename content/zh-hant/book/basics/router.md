@@ -90,7 +90,7 @@ Router::new()
 在上面的代碼中, ```<id>``` 定義了一個參數. 我們可以通過 ```Request``` 實例獲取到它的值:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn show_writer(req: &mut Request) {
     let id = req.param::<i64>("id").unwrap();
 }
@@ -198,12 +198,12 @@ Router::with_path("files/<**rest_path>").get(serve_file)
 在 ```Handler``` 中, 可以通過 ```Request``` 對象的 ```get_param``` 函數獲取:
 
 ```rust
-#[fn_handler]
+#[handler]
 pub async fn show_article(req: &mut Request) {
     let article_id = req.param::<i64>("id");
 }
 
-#[fn_handler]
+#[handler]
 pub async fn serve_file(req: &mut Request) {
     let rest_path = req.param::<i64>("**rest_path");
 }

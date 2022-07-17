@@ -25,7 +25,7 @@ Add this to `Cargo.toml`
 
 ```toml
 [dependencies]
-salvo = "0.26"
+salvo = "0.27"
 tokio = { version = "1", features = ["macros"] }
 ```
 
@@ -34,7 +34,7 @@ Create a simple function handler in the main.rs file, we call it `hello_world`, 
 ```rust
 use salvo::prelude::*;
 
-#[fn_handler]
+#[handler]
 async fn hello_world() -> &'static str {
     "Hello world"
 }
@@ -53,7 +53,7 @@ There are many ways to write function handler.
 - The orginal format is:
 
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
         res.render("Hello world");
     }
@@ -62,7 +62,7 @@ There are many ways to write function handler.
 - You can omit function arguments if they do not used, like ```_req```, ```_depot```, ```_ctrl``` in this example:
 
     ``` rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) {
         res.render("Hello world");
     }
@@ -71,7 +71,7 @@ There are many ways to write function handler.
 - Any type can be function handler's return value if it implements ```Writer```. For example ```&str``` implements ```Writer``` and it will render string as plain text:
 
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) -> &'static str {// just return &str
         "Hello world"
     }
@@ -80,7 +80,7 @@ There are many ways to write function handler.
 - The more common situation is we want to return a ```Result<T, E>``` to implify error handling. If ```T``` and ```E``` implements ```Writer```, ```Result<T, E>``` can be function handler's return type:
   
     ```rust
-    #[fn_handler]
+    #[handler]
     async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {// return Result
         Ok("Hello world")
     }

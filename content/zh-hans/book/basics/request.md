@@ -10,7 +10,7 @@ menu:
 在 Salvo 中可以通过 ```Request``` 获取用户请求的数据:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello(req: &mut Request) -> String {
     req.param::<String>("id")
 }
@@ -42,7 +42,7 @@ req.read::<User>().await;
 ## File uploading
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn upload(req: &mut Request, res: &mut Response) {
     let file = req.file("file").await;
     if let Some(file) = file {

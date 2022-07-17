@@ -19,7 +19,7 @@ pub trait Handler: Send + Sync + 'static {
 
 ## 函数式 Handler
 
-很多时候只是希望通过函数作为 ```Handler``` 处理请求. 可以添加 ```fn_handler``` 将普通函数转为 ```Handler```.
+很多时候只是希望通过函数作为 ```Handler``` 处理请求. 可以添加 ```handler``` 将普通函数转为 ```Handler```.
 
 处理函数默认签名包含四个参数, 依次是, ```&mut Request, &mut Depot. &mut Response, &mut FlowCtrl```. Depot 是一个临时存储, 可以存储本次请求相关的数据. 
 
@@ -27,10 +27,10 @@ pub trait Handler: Send + Sync + 'static {
 
 中间件是通过 ```Router``` 的 ```hoop``` 函数添加的. 被添加的中间件会影响当前的 ```Router``` 和它内部所有子孙 ```Router```.
 
-正常项目中使用得最多的应该是 ```fn_handler```, 它是一个 ```proc macro```, 加在函数上可以将函数转变成一个 ```Handler```:
+正常项目中使用得最多的应该是 ```handler```, 它是一个 ```proc macro```, 加在函数上可以将函数转变成一个 ```Handler```:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
     res.render("Hello world");
 }
@@ -39,20 +39,20 @@ async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response)
 某些参数如果不需要, 可以直接省略. 事实上, 这三个参数的顺序可以按喜好自由调整, 也可以省略任何一个或者多个参数. 下面这些写法都是可以的:
 
 ```rust
-#[fn_handler]
+#[handler]
 async fn hello_world(req: &mut Request, res: &mut Response) {
 }
-#[fn_handler]
+#[handler]
 async fn hello_world(depot: &mut Depot) {
 }
-#[fn_handler]
+#[handler]
 async fn hello_world(res: &mut Response) {
 }
 ```
 
 ## 处理错误
 
-Salvo 中的 ```fn_handler``` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的类型都实现 ```Writer``` trait.
+Salvo 中的 ```handler``` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的类型都实现 ```Writer``` trait.
 考虑到 anyow 的使用比较广泛, 在开启 ```anyhow``` 功能后, ```anyhow::Error``` 会实现 ```Writer``` trait. ```anyhow::Error``` 会被映射为 ```InternalServerError```. 
 
 ```rust
@@ -80,11 +80,11 @@ impl Writer for CustomError {
     }
 }
 
-#[fn_handler]
+#[handler]
 async fn handle_anyhow() -> Result<(), anyhow::Error> {
     Err(anyhow::anyhow!("anyhow error"))
 }
-#[fn_handler]
+#[handler]
 async fn handle_custom() -> Result<(), CustomError> {
     Err(CustomError)
 }

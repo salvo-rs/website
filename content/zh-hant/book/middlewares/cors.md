@@ -12,7 +12,7 @@ CORS 中間件可以用於 [跨域資源共享](https://developer.mozilla.org/zh
 use salvo::prelude::*;
 use salvo_extra::cors::CorsHandler;
 
-#[fn_handler]
+#[handler]
 async fn hello() -> &'static str {
     "hello"
 }
