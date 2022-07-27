@@ -38,12 +38,15 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 - 寫入 JSON 序列化數據
     
     ```rust
+    use serde::Serialize;
+    use salvo::prelude::Json;
+
     #[derive(Serialize, Debug)]
     struct User {
         name: String,
     }
     let user = User{name: "jobs"};
-    res.render(Text::Json(user));
+    res.render(Json(user));
     ```
 
 - 寫入 HTML
