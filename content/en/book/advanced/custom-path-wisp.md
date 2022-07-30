@@ -6,7 +6,7 @@ menu:
     parent: "advanced"
 ---
 
-For some frequently-occurring matching expressions, we can name a short name by ```PathFilter::register_part_regex``` or ```PathFilter::register_part_builder```. For example, GUID format is often used in paths appears, normally written like this every time a match is required:
+For some frequently-occurring matching expressions, we can name a short name by ```PathFilter::register_wisp_regex``` or ```PathFilter::register_wisp_builder```. For example, GUID format is often used in paths appears, normally written like this every time a match is required:
 
 ```rust
 Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA -F]{12}/>");
@@ -21,7 +21,7 @@ use salvo::routing::filter::PathFilter;
 #[tokio::main]
 async fn main() {
     let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA- F]{12}").unwrap();
-    PathFilter::register_part_regex("guid", guid);
+    PathFilter::register_wisp_regex("guid", guid);
     Router::new()
         .push(Router::with_path("/articles/<id:guid>").get(show_article))
         .push(Router::with_path("/users/<id:guid>").get(show_user));
