@@ -8,9 +8,9 @@ menu:
 
 ## 安裝 Rust
 
-如果呢還沒有安裝 Rust, 你可以使用官方提供的 ```rustup``` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有包含如何安裝的介紹.
+如果呢還沒有安裝 Rust, 你可以使用官方提供的 ```rustup``` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有如何安裝的詳細介紹.
 
-當前 Salvo 支持的最小 Rust 為 1.56. 運行 ```rustup update``` 確認您已經安裝了最新的 Rust.
+當前 Salvo 支持的最低 Rust 版本為 1.59. 運行 ```rustup update``` 確認您已經安裝了符合要求的 Rust.
 
 ## 編寫第一個 Salvo 程序
 
@@ -51,6 +51,7 @@ async fn main() {
 這裏的 ```hello_world``` 是一個 ```Handler```, 用於處理用戶請求. ```#[handler]``` 可以讓一個函數方便實現 ```Handler``` trait. 並且, 它允許我們用不同的方式簡寫函數的參數.
 
 - 原始形式:
+  
     ```rust
     #[handler]
     async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
@@ -58,7 +59,7 @@ async fn main() {
     }
     ```
 
-- 您可以省略調函數中參數中你用不著的, 比如這裏面的 ```_req```, ```_depot```, ```_ctrl``` 都用不著, 可以直接不寫.
+- 您可以省略函數中某些用不著的參數, 比如這裏面的 ```_req```, ```_depot```, ```_ctrl``` 都沒有被使用, 可以直接不寫:
   
     ``` rust
     #[handler]
