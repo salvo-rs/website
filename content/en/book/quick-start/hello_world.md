@@ -11,7 +11,7 @@ menu:
 
 If you don’t have Rust yet, we recommend you use ```rustup``` to manage your Rust installation. The [official rust guide](https://doc.rust-lang.org/book/ch01-01-installation.html) has a wonderful section on getting started.
 
-Salvo currently has a minimum supported Rust version 1.56. Running ```rustup update``` will ensure you have the latest and greatest Rust version available. As such, this guide assumes you are running Rust 1.56 or later.
+Salvo currently has a minimum supported Rust version 1.59. Running ```rustup update``` will ensure you have the latest and greatest Rust version available. As such, this guide assumes you are running Rust 1.59 or later.
 
 ## Write first app
 
