@@ -42,7 +42,7 @@ With this custom error type, handle errors for ```handler``` become very simple:
 ```rust
 #[handler]
 async fn show_article(req: &mut Request, res: &mut Response) -> AppResult<()> {
-    let id = req.param("id").unwrap_or_default();
+    let id: i64 = req.param("id").unwrap_or_default();
     let article = articles::table.find(id).get_result::<Article>()?;
     res.render(Json(article));
     Ok(())

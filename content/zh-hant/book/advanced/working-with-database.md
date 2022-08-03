@@ -41,7 +41,7 @@ fn main() {
 
 #[handler]
 async fn show_article(req: &mut Request, res: &mut Response) -> Result<(), Error> {
-    let id = req.param::<i64>("id").unwrap_or_default();
+    let id: i64 = req.param::<i64>("id").unwrap_or_default();
     let conn = connect()?;
     let article = articles::table.find(id).first::<Article>(&conn)?;
     res.render(Json(row));

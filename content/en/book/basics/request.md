@@ -12,7 +12,7 @@ For web applications it’s crucial to react to the data a client sends to the s
 ```rust
 #[handler]
 async fn hello(req: &mut Request) -> String {
-    req.param::<String>("id").unwrap_or_default()
+    req.params().get("id").cloned().unwrap_or_default()
 }
 ```
 
