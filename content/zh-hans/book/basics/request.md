@@ -12,7 +12,7 @@ menu:
 ```rust
 #[handler]
 async fn hello(req: &mut Request) -> String {
-    req.param::<String>("id")
+    req.param::<String>("id").unwrap_or_default()
 }
 ```
 
