@@ -36,7 +36,7 @@ req.form::<String>("id").await;
 ## 獲取 JSON 反序列化數據
 
 ```rust
-req.read::<User>().await;
+req.extract_json::<User>().await;
 ```
 
 ## File uploading
