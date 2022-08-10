@@ -71,3 +71,69 @@ async fn main() {
     DB_POOL.set(pool).unwrap();
 }
 ```
+
+### rbatis
+
+```toml
+[dependencies]
+async-std = "1.11.0"
+fast_log = "1.5.24"
+log = "0.4.17"
+once_cell = "1.12.0"
+rbatis = "4.0.7"
+rbdc = "0.1.2"
+rbdc-mysql = "0.1.7"
+rbs = "0.1.2"
+salvo = { path = "../../salvo" }
+serde = { version = "1.0.143", features = ["derive"] }
+tokio = { version = "1.20.1", features = ["macros"] }
+tracing = "0.1.36"
+tracing-subscriber = "0.3.15"
+serde_json = "1.0"
+```
+
+```rust
+#[macro_use]
+extern crate rbatis;
+extern crate rbdc;
+
+use once_cell::sync::Lazy;
+use rbatis::Rbatis;
+use salvo::prelude::*;
+use serde::{Serialize, Deserialize};
+use rbdc_mysql::driver::MysqlDriver;
+
+pub static RB: Lazy<Rbatis> = Lazy::new(|| Rbatis::new());
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct User {
+    pub id: i64,
+    pub username: String,
+    pub password: String,
+}
+
+impl_select!(User{select_by_id(id:String) -> Option => "`where id = #{id} limit 1`"});
+#[handler]
+pub async fn get_user(req: &mut Request, res: &mut Response) {
+    let uid = req.query::<i64>("uid").unwrap();
+    let data = User::select_by_id(&mut RB.clone(), uid.to_string()).await.unwrap();
+    println!("{:?}", data);
+    res.render(serde_json::to_string(&data).unwrap());
+}
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+
+    // mysql connect info
+    let mysql_uri = "mysql://root:123456@localhost/test";
+    RB.link(MysqlDriver {}, mysql_uri).await.unwrap();
+
+    // router
+    let router = Router::with_path("users").get(get_user);
+
+    tracing::info!("Listening on http://127.0.0.1:7878");
+    Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
+}
+
+```
