@@ -8,12 +8,12 @@ menu:
 
 Request can be parsed into strongly typed structures by providing several functions through ```Request```.
 
-* ```extract_params```: parse the requested router params into a specific data type;
-* ```extract_queries```: parse the requested URL queries into a specific data type;
-* ```extract_headers```: parse the requested HTTP haders into a specific data type;
-* ```extract_json```: Parse the data in the HTTP body part of the request as JSON format to a specific type;
-* ```extract_form```: Parse the data in the HTTP body part of the request as a Form form to a specific type;
-* ```extract_body```: Parse the data in the HTTP body section to a specific type according to the type of the requested ```content-type```.
+* ```parse_params```: parse the requested router params into a specific data type;
+* ```parse_queries```: parse the requested URL queries into a specific data type;
+* ```parse_headers```: parse the requested HTTP haders into a specific data type;
+* ```parse_json```: Parse the data in the HTTP body part of the request as JSON format to a specific type;
+* ```parse_form```: Parse the data in the HTTP body part of the request as a Form form to a specific type;
+* ```parse_body```: Parse the data in the HTTP body section to a specific type according to the type of the requested ```content-type```.
 * ```extract```: can combine different data sources to parse a specific type.
 
 ### Parsing principle
@@ -32,7 +32,7 @@ struct User {
 Then the first ```id=123``` will be parsed, and ```id=234``` will be discarded:
 
 ```rust
-let user: User = req.extract_queries().unwrap();
+let user: User = req.parse_queries().unwrap();
 assert_eq!(user.id, 123);
 ```
 
@@ -48,7 +48,7 @@ struct Users {
 Then ```id=123&id=234``` will be parsed:
 
 ```rust
-let users: Users = req.extract_queries().unwrap();
+let users: Users = req.parse_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
 

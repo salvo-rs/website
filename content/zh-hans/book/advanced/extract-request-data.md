@@ -8,12 +8,12 @@ menu:
 
 ```Request``` 提供多个方法将这些数据解析为强类型结构.
 
-* ```extract_params```: 将请求的 router params 解析为特定的数据类型;
-* ```extract_queries```: 将请求的 URL queries 解析为特定的数据类型;
-* ```extract_headers```: 将请求的 HTTP headers 解析为特定的数据类型;
-* ```extract_json```: 将请求的 HTTP body 部分的数据当作 JSON 格式解析到特定的类型;
-* ```extract_form```: 将请求的 HTTP body 部分的数据当作 Form 表单解析到特定的类型;
-* ```extract_body```: 根据请求的 ```content-type``` 的类型, 将 HTTP body 部分的数据解析为特定类型. 
+* ```parse_params```: 将请求的 router params 解析为特定的数据类型;
+* ```parse_queries```: 将请求的 URL queries 解析为特定的数据类型;
+* ```parse_headers```: 将请求的 HTTP headers 解析为特定的数据类型;
+* ```parse_json```: 将请求的 HTTP body 部分的数据当作 JSON 格式解析到特定的类型;
+* ```parse_form```: 将请求的 HTTP body 部分的数据当作 Form 表单解析到特定的类型;
+* ```parse_body```: 根据请求的 ```content-type``` 的类型, 将 HTTP body 部分的数据解析为特定类型. 
 * ```extract```: 可以合并不同的数据源解析出特定的类型.
 
 ### 解析原理
@@ -32,7 +32,7 @@ struct User {
 则第一个 ```id=123``` 会被解析, ```id=234``` 则被丢弃:
 
 ```rust
-let user: User = req.extract_queries().unwrap();
+let user: User = req.parse_queries().unwrap();
 assert_eq!(user.id, 123);
 ```
 
@@ -48,7 +48,7 @@ struct Users {
 则 ```id=123&id=234``` 都会被解析:
 
 ```rust
-let users: Users = req.extract_queries().unwrap();
+let users: Users = req.parse_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
 

@@ -35,7 +35,7 @@ req.form::<String>("id").await;
 ## About json payload
 
 ```rust
-req.extract_json::<User>().await;
+req.parse_json::<User>().await;
 ```
 
 ## File uploading
