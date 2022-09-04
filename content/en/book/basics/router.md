@@ -196,11 +196,8 @@ Here ```get```, ```patch```, ```delete``` are all Method filters. It is actually
 ```rust
 use salvo::routing::filter;
 
-let mut root_router = Router::new();
 let show_router = Router::with_filter(filter::get()).handle(show_article);
 let update_router = Router::with_filter(filter::patch()).handle(update_article);
 let delete_router = Router::with_filter(filter::get()).handle(delete_article);
-root_router.push(show_router);
-root_router.push(update_router);
-root_router.push(delete_router);
+Router::new().push(show_router).push(update_router).push(delete_router);
 ```

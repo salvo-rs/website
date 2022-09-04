@@ -21,19 +21,19 @@ Router::with_path("articles").get(list_articles).post(create_article);
 实际上等同于:
 
 ```rust
-let mut root = Router::new();
-// PathFilter 可以过滤请求路径, 只有请求路径里包含 articles 片段时才会匹配成功, 
-// 否则匹配失败. 比如: /articles/123 是匹配成功的, 而 /articles_list/123 
-// 虽然里面包含了 articles, 但是因为后面还有 _list, 是匹配不成功的.
-root.filter(PathFilter::new("articles"));
+Router::new()
+    // PathFilter 可以过滤请求路径, 只有请求路径里包含 articles 片段时才会匹配成功, 
+    // 否则匹配失败. 比如: /articles/123 是匹配成功的, 而 /articles_list/123 
+    // 虽然里面包含了 articles, 但是因为后面还有 _list, 是匹配不成功的.
+    .filter(PathFilter::new("articles"))
 
-// 在 root 匹配成功的情况下, 如果请求的 method 是 get, 则内部的子路由可以匹配成功, 
-// 并且由 list_articles 处理请求.
-root.push(Router::new().filter(filter::get()).handle(list_articles));
+    // 在 root 匹配成功的情况下, 如果请求的 method 是 get, 则内部的子路由可以匹配成功, 
+    // 并且由 list_articles 处理请求.
+    .push(Router::new().filter(filter::get()).handle(list_articles))
 
-// 在 root 匹配成功的情况下, 如果请求的 method 是 post, 则内部的子路由可以匹配成功, 
-// 并且由 create_article 处理请求.
-root.push(Router::new().filter(filter::post()).handle(create_article));
+    // 在 root 匹配成功的情况下, 如果请求的 method 是 post, 则内部的子路由可以匹配成功, 
+    // 并且由 create_article 处理请求.
+    .push(Router::new().filter(filter::post()).handle(create_article));
 ```
 
 
@@ -226,7 +226,5 @@ let mut root_router = Router::new();
 let show_router = Router::with_filter(filter::get()).handle(show_article);
 let update_router = Router::with_filter(filter::patch()).handle(update_article);
 let delete_router = Router::with_filter(filter::get()).handle(delete_article);
-root_router.push(show_router);
-root_router.push(update_router);
-root_router.push(delete_router);
+Router::new().push(show_router).push(update_router).push(delete_router);
 ```
