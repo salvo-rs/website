@@ -43,7 +43,7 @@ Write content is straightforward:
         name: String,
     }
     let user = User{name: "jobs"};
-    res.render(Text::Json(user));
+    res.render(Json(user));
     ```
 
 - Write html text
