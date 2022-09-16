@@ -6,7 +6,7 @@ menu:
     parent: "middlewares"
 ---
 
-Affix 中间件用于往 Depot 中添加共享数据.
+Affix 中間件用於往 Depot 中添加共享數據.
 
 ```rust
 use salvo::extra::affix;

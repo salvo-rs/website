@@ -222,6 +222,7 @@ Router::new().get(show_article).patch(update_article).delete(delete_article);
 ```rust
 use salvo::routing::filter;
 
+let mut root_router = Router::new();
 let show_router = Router::with_filter(filter::get()).handle(show_article);
 let update_router = Router::with_filter(filter::patch()).handle(update_article);
 let delete_router = Router::with_filter(filter::get()).handle(delete_article);
