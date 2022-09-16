@@ -1,6 +1,6 @@
 ---
 title: "Serve Static"
-weight: 3060
+weight: 8060
 menu:
   book:
     parent: "middlewares"

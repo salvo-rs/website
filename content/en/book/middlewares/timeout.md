@@ -1,6 +1,6 @@
 ---
-title: "SSE"
-weight: 8080
+title: "Timeout"
+weight: 8081
 menu:
   book:
     parent: "middlewares"

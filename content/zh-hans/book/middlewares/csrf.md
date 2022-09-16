@@ -1,6 +1,6 @@
 ---
-title: "SSE"
-weight: 8080
+title: "CSRF"
+weight: 8031
 menu:
   book:
     parent: "middlewares"

@@ -1,6 +1,6 @@
 ---
 title: "Proxy"
-weight: 3050
+weight: 8050
 menu:
   book:
     parent: "middlewares"

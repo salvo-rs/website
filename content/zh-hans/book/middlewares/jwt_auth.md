@@ -1,6 +1,6 @@
 ---
 title: "JWT Auth"
-weight: 3040
+weight: 8040
 menu:
   book:
     parent: "middlewares"

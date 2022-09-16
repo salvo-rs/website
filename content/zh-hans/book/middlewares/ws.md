@@ -1,6 +1,6 @@
 ---
 title: "WebSocket"
-weight: 3090
+weight: 8090
 menu:
   book:
     parent: "middlewares"
