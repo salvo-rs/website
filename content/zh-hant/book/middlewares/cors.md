@@ -10,7 +10,7 @@ CORS 中間件可以用於 [跨域資源共享](https://developer.mozilla.org/zh
 
 ```rust
 use salvo::prelude::*;
-use salvo_extra::cors::CorsHandler;
+use salvo_extra::cors::Cors;
 
 #[handler]
 async fn hello() -> &'static str {
@@ -21,7 +21,7 @@ async fn hello() -> &'static str {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    let cors_handler = CorsHandler::builder()
+    let cors_handler = Cors::builder()
         .with_allow_origin("https://salvo.rs")
         .with_allow_methods(vec!["GET", "POST", "DELETE"])
         .build();

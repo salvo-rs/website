@@ -12,10 +12,17 @@ use salvo::extra::ws::WebSocketUpgrade;
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+struct User {
+    id: usize,
+    name: String,
+}
 #[handler]
 async fn connect(req: &mut Request, res: &mut Response) -> Result<(), StatusError> {
+    let user = req.parse_queries::<User>();
     WebSocketUpgrade::new()
         .upgrade(req, res, |mut ws| async move {
+            println!("{:#?} ", user);
             while let Some(msg) = ws.recv().await {
                 let msg = if let Ok(msg) = msg {
                     msg
@@ -69,5 +76,4 @@ static INDEX_HTML: &str = r#"<!DOCTYPE html>
     </body>
 </html>
 "#;
-
 ```

@@ -10,7 +10,7 @@ menu:
 ```rust
 use salvo_core::routing::Router;
 use salvo_core::Server;
-use salvo_extra::serve::DirHandler;
+use salvo_extra::serve::StaticDir;
 
 #[tokio::main]
 async fn main() {
@@ -18,7 +18,7 @@ async fn main() {
     
     let router = Router::new()
         .path("<**path>")
-        .get(DirHandler::new(vec!["examples/static/body", "examples/static/girl"]));
+        .get(StaticDir::new(vec!["examples/static/body", "examples/static/girl"]));
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
 ```

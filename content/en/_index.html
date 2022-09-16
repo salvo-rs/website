@@ -93,7 +93,7 @@ let router = Router::new()
     {{< blocks/code-window>}}
 {{<highlight rust>}}
 let router = Router::with_path("files/<*path>")
-    .get(DirHandler::new(vec!["static/body", "static/girl"]));
+    .get(StaticDir::new(vec!["static/body", "static/girl"]));
 {{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}
@@ -120,7 +120,7 @@ let router = Router::new().push(
         .get(FileHandler::new("todos.rs"))
 ).push(
     Router::new().hoop(gzip()).path("<*path>")
-        .get(DirHandler::new("examples/"))
+        .get(StaticDir::new("examples/"))
 );{{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}

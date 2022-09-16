@@ -8,38 +8,43 @@ menu:
 
 
 ```rust
-use salvo_core::prelude::*;
-use salvo_extra::compression;
-use salvo_extra::serve::*;
+use salvo::extra::compression::{Compression, CompressionAlgo};
+use salvo::extra::serve_static::*;
+use salvo::prelude::*;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt().init();
 
+    let base_dir = std::env::current_exe()
+        .unwrap()
+        .join("../../../examples/compression/static")
+        .canonicalize()
+        .unwrap();
+    println!("Base Dir: {:?}", base_dir);
+
     let router = Router::new()
         .push(
-            Router::new()
+            Router::with_hoop(Compression::new().with_force_priority(true))
                 .path("ws_chat")
-                .get(FileHandler::new("examples/ws_chat.rs")),
+                .get(StaticFile::new(base_dir.join("ws_chat.txt"))),
         )
         .push(
-            Router::new()
-                .hoop(compression::deflate())
+            Router::with_hoop(Compression::new().with_algos(&[CompressionAlgo::Brotli]))
                 .path("sse_chat")
-                .get(FileHandler::new("examples/sse_chat.rs")),
+                .get(StaticFile::new(base_dir.join("sse_chat.txt"))),
         )
         .push(
-            Router::new()
-                .hoop(compression::brotli())
+            Router::with_hoop(Compression::new().with_algos(&[CompressionAlgo::Deflate]))
                 .path("todos")
-                .get(FileHandler::new("examples/todos.rs")),
+                .get(StaticFile::new(base_dir.join("todos.txt"))),
         )
         .push(
-            Router::new()
-                .hoop(compression::gzip())
-                .path("examples/<*path>")
-                .get(DirHandler::new("examples/")),
+            Router::with_hoop(Compression::new().with_algos(&[CompressionAlgo::Gzip]))
+                .path("<*path>")
+                .get(StaticDir::new(base_dir)),
         );
+    tracing::info!("Listening on http://127.0.0.1:7878");
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
 ```
