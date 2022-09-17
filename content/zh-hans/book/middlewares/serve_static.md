@@ -6,6 +6,7 @@ menu:
     parent: "middlewares"
 ---
 
+将静态文件或者内嵌的文件作为服务提供.
 
 ```rust
 use salvo_core::routing::Router;
