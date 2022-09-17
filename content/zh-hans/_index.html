@@ -84,13 +84,26 @@ let router = Router::new()
     <div class="intro">
         <h3>静态文件托管</h3>
         <p>
-            可以定义静态文件或者文件夹句柄托管静态文件, 比如: HTML, CSS, and JavaScript. 支持将多个物理目录映射为同一个路径提供服务.
+            非常简单地实现本地静态文件托管, 同事提供对 rust_embed 的支持.
         </p>
     </div>
     {{< blocks/code-window>}}
 {{<highlight rust>}}
-let router = Router::with_path("files/<*path>")
-    .get(StaticDir::new(vec!["static/body", "static/girl"]));
+#[derive(RustEmbed)]
+#[folder = "test/static"]
+struct Assets;
+
+let router = Router::new()
+    .push(Router::with_path("dir1/<*path>").get(StaticDir::new("static/body")))
+    .push(Router::with_path("test1.txt").get(
+        StaticFile::new("test/static/test1.txt").chunk_size(1024))
+    )
+    .push(Router::with_path("test2.txt").get(
+        Assets::get("test1.txt").unwrap().into_handler())
+    )
+    .push(Router::with_path("dir2/<**path>").get(
+        static_embed::<Assets>().with_fallback("index.html"))
+    );
 {{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}

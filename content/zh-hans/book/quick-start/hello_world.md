@@ -24,7 +24,7 @@ cargo new hello_salvo --bin
 
 ```toml
 [dependencies]
-salvo = "0.34"
+salvo = "0.35"
 tokio = { version = "1", features = ["macros"] }
 ```
 

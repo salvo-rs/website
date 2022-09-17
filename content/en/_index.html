@@ -86,14 +86,26 @@ let router = Router::new()
     <div class="intro">
         <h3>Serve Static Files</h3>
         <p>
-            Serve your static HTML, CSS, and JavaScript files with ease by defining static routers.
-            You can also serve the contents of multiple directories in the same router!
+            Very simple to implement local static file hosting, provide supports for rust_embed natively.
         </p>
     </div>
     {{< blocks/code-window>}}
 {{<highlight rust>}}
-let router = Router::with_path("files/<*path>")
-    .get(StaticDir::new(vec!["static/body", "static/girl"]));
+#[derive(RustEmbed)]
+#[folder = "test/static"]
+struct Assets;
+
+let router = Router::new()
+    .push(Router::with_path("dir1/<*path>").get(StaticDir::new("static/body")))
+    .push(Router::with_path("test1.txt").get(
+        StaticFile::new("test/static/test1.txt").chunk_size(1024))
+    )
+    .push(Router::with_path("test2.txt").get(
+        Assets::get("test1.txt").unwrap().into_handler())
+    )
+    .push(Router::with_path("dir2/<**path>").get(
+        static_embed::<Assets>().with_fallback("index.html"))
+    );
 {{</highlight>}}
     {{< /blocks/code-window>}}
 {{< /blocks/feature>}}
