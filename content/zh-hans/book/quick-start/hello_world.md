@@ -1,6 +1,6 @@
 ---
 title: "世界, 你好!"
-weight: 1010
+weight: 110
 menu:
   book:
     parent: "quick-start"
