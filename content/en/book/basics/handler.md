@@ -8,7 +8,7 @@ menu:
 
 ## What is handler
 
-Handler is the specific object responsible for processing Request requests. Hander is a Trait, which contains an asynchronous method of ```handle```: 
+Handler is the specific object responsible for processing Request requests. Handler is a Trait, which contains an asynchronous method of ```handle```: 
 
 ```rust
 #[async_trait]
