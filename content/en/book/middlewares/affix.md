@@ -9,7 +9,7 @@ menu:
 Affix middleware is used for share data between handlers.
 
 ```rust
-use salvo::extra::affix;
+use salvo::affix;
 use salvo::prelude::*;
 
 #[handler]

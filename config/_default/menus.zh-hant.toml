@@ -1,6 +1,6 @@
 [[main]]
   name = "教程"
-  url = "/zh-hant/book/quick-start/hello_world/"
+  url = "/zh-hans/book/guid/hello_world/"
   weight = 10
 
 [[main]]
@@ -15,33 +15,29 @@
 
 [[book]]
   name = "快速開始"
-  identifier = "quick-start"
+  identifier = "guid"
   weight = 10
 
 
 [[book]]
-  name = "基礎"
-  identifier = "basics"
+  name = "核心功能"
+  identifier = "core"
   weight = 20
-
-[[book]]
-  name = "高級"
-  identifier = "advanced"
-  weight = 30
 
 [[book]]
   name = "中間件"
   identifier = "middlewares"
   weight = 50
+  
+[[book]]
+  name = "FAQs"
+  identifier = "faqs"
+  weight = 60
 
 # [[book]]
 #   name = "示例代碼"
 #   identifier = "recipes"
 #   weight = 60
-
-# [[book]]
-#   weight = 1
-#   identifier = "quick-start"
 
 # [[book]]
 #   weight = 20

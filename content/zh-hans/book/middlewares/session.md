@@ -8,7 +8,7 @@ menu:
 
 
 ```rust
-use salvo::extra::session::{MemoryStore, Session, SessionDepotExt, SessionHandler};
+use salvo::session::{MemoryStore, Session, SessionDepotExt, SessionHandler};
 use salvo::prelude::*;
 
 #[tokio::main]

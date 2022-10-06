@@ -8,7 +8,7 @@ menu:
 
 
 ```rust
-use salvo::extra::logging::Logger;
+use salvo::logging::Logger;
 use salvo::prelude::*;
 
 #[handler]

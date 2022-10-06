@@ -11,7 +11,7 @@ menu:
 use chrono::{Duration, Utc};
 use jsonwebtoken::{self, EncodingKey};
 use salvo::anyhow;
-use salvo::extra::jwt_auth::{JwtAuthDepotExt, JwtAuth, JwtAuthState, QueryExtractor};
+use salvo::jwt_auth::{JwtAuthDepotExt, JwtAuth, JwtAuthState, QueryExtractor};
 use salvo::http::errors::*;
 use salvo::http::Method;
 use salvo::prelude::*;

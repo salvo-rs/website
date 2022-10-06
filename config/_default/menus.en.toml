@@ -1,6 +1,6 @@
 [[main]]
   name = "Book"
-  url = "/book/quick-start/hello_world/"
+  url = "/book/guid/hello_world/"
   weight = 10
 
 [[main]]
@@ -21,18 +21,13 @@
 
 [[book]]
   name = "Quick Start"
-  identifier = "quick-start"
+  identifier = "guid"
   weight = 10
 
 [[book]]
-  name = "Basics"
-  identifier = "basics"
+  name = "Core"
+  identifier = "core"
   weight = 20
-
-[[book]]
-  name = "Advanced"
-  identifier = "advanced"
-  weight = 30
 
 [[book]]
   name = "Middlewares"

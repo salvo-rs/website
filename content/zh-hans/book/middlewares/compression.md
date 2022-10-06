@@ -8,8 +8,8 @@ menu:
 
 
 ```rust
-use salvo::extra::compression::{Compression, CompressionAlgo};
-use salvo::extra::serve_static::*;
+use salvo::compression::{Compression, CompressionAlgo};
+use salvo::serve_static::*;
 use salvo::prelude::*;
 
 #[tokio::main]

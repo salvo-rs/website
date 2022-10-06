@@ -9,7 +9,7 @@ menu:
 Affix 中间件用于往 Depot 中添加共享数据.
 
 ```rust
-use salvo::extra::affix;
+use salvo::affix;
 use salvo::prelude::*;
 
 #[handler]

@@ -33,7 +33,7 @@ async fn main() {
             {{< /blocks/browser-window>}}
     </div>
     <div class="mx-auto link-buttons">
-        <a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref " /book/quick-start/hello_world">}}">
+        <a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref " /book/guid/hello_world">}}">
             Get Started <i class="fas fa-arrow-alt-circle-right ml-2"></i>
         </a>
     </div>
@@ -149,7 +149,7 @@ let router = Router::new().push(
 {{<highlight rust>}}
 use futures::{FutureExt, StreamExt};
 use salvo::prelude::*;
-use salvo::extra::ws::WsHandler;
+use salvo::ws::WsHandler;
 #[handler]
 async fn connect(req: &mut Request, res: &mut Response) -> Result<(), StatusError> {
     WebSocketUpgrade::new()
