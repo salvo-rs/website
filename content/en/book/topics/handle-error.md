@@ -3,7 +3,7 @@ title: "Handle Error"
 weight: 7032
 menu:
   book:
-    parent: "core"
+    parent: "topics"
 ---
 
 In Salvo, the normal way of error handling is to define a custom error type:

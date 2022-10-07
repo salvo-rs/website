@@ -3,7 +3,7 @@ title: "File Upload"
 weight: 7060
 menu:
   book:
-    parent: "core"
+    parent: "topics"
 ---
 
 Salvo Handle file uploads is also fairly straightforward, such as handling single file uploads::
