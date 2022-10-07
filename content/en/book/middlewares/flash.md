@@ -6,17 +6,17 @@ menu:
     parent: "middlewares"
 ---
 
-提供 Flash Message 的功能的中間件.
+Middleware that provides the functionality of Flash Message.
 
-`FlashStore` 提供對數據的存取操作. `CookieStore` 會在 `Cookie` 中存儲數據. 而 `SessionStore` 把數據存儲在 `Session` 中, `SessionStore` 必須和 `session` 功能一起使用.
+`FlashStore` provides access to data. `CookieStore` stores data in `Cookie`. While `SessionStore` stores data in `Session`, `SessionStore` must be used with the `session` middleware.
 
-## 配置 Cargo.toml
+## Config Cargo.toml
 
 ```toml
 salvo = { version = "*", features = ["flash"] }
 ```
 
-## 示例代碼
+## Sample Code
 
 ```rust
 use std::fmt::Write;

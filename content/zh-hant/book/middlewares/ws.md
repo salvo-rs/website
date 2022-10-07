@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+提供對 `WebSocket` 支持的中間件.
+
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["ws"] }
+```
+
+## 示例代碼
 
 ```rust
 use salvo::ws::WebSocketUpgrade;

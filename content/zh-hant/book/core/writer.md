@@ -1,6 +1,6 @@
 ---
 title: "Writer"
-weight: 2050
+weight: 2022
 menu:
   book:
     parent: "core"

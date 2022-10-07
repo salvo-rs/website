@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+Middleware that provides reverse proxy functionality.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["proxy"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::prelude::*;
@@ -14,7 +23,7 @@ use salvo_extra::proxy::ProxyHandler;
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt().init();
-
+    
     let router = Router::new()
         .push(
             Router::new()

@@ -6,7 +6,17 @@ menu:
     parent: "middlewares"
 ---
 
-CORS middleware can be used to enable [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) with various options.
+CORS middleware can be used for [Cross-Origin Resource Sharing](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS).
+
+Since the browser will send `Method::OPTIONS` requests, it is necessary to increase the handling of such requests. You can add `empty_handler` to the root `Router` to handle this situation once and for all.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["cors"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::prelude::*;
@@ -26,7 +36,7 @@ async fn main() {
         .with_allow_methods(vec!["GET", "POST", "DELETE"])
         .build();
 
-    let router = Router::with_hoop(cors_handler).get(hello);
+    let router = Router::with_hoop(cors_handler).get(hello).options(empty_handler);
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
 ```

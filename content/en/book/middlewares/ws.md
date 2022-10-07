@@ -1,10 +1,20 @@
 ---
-title: "WS"
+title: "WebSocket"
 weight: 8090
 menu:
   book:
     parent: "middlewares"
 ---
+
+Middleware that provides support for `WebSocket`.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["ws"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::ws::WebSocketUpgrade;
@@ -75,6 +85,4 @@ static INDEX_HTML: &str = r#"<!DOCTYPE html>
     </body>
 </html>
 "#;
-
-
 ```

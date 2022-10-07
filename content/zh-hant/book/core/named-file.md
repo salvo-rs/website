@@ -6,9 +6,9 @@ menu:
     parent: "core"
 ---
 
-Salvo 提供了 ```salvo::fs::NamedFile```, 可以用它高效地发送文件到客户端. 它并不会把文件都加载入缓存, 而是根据请求的 `Range` 加载部分内容发送至客户端.
+Salvo 提供了 ```salvo::fs::NamedFile```, 可以用它高效地發送文件到客戶端. 它並不會把文件都加載入緩存, 而是根據請求的 `Range` 加載部分內容發送至客戶端.
 
-## 示例代码
+## 示例代碼
 
 ```rust
 #[handler]

@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+提供對請求上傳文件大小限制的中間件.
+
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["size-limit"] }
+```
+
+## 示例代碼
 
 ```rust
 use std::fs::create_dir_all;

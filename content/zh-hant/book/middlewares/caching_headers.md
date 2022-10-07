@@ -1,11 +1,22 @@
 ---
 title: "Caching Headers"
-weight: 8011
+weight: 8012
 menu:
   book:
     parent: "middlewares"
 ---
 
+提供對緩存頭配置支持的中間件.
+
+實際上實現內部包含了 `CachingHeaders`, `Modified`, `ETag` 三個 `Handler` 的實現, `CachingHeaders` 是後兩者的組合. 正常情況下使用 `CachingHeaders`.
+
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["caching-headers"] }
+```
+
+## 示例代碼
 
 ```rust
 use salvo::prelude::*;

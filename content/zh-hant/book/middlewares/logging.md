@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+提供基本的 Log 功能的中間件.
+
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["logging"] }
+```
+
+## 示例代碼
 
 ```rust
 use salvo::logging::Logger;

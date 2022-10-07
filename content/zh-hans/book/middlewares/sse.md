@@ -6,8 +6,17 @@ menu:
     parent: "middlewares"
 ---
 
-```rust
+提供对 `SSE` 支持的中间件.
 
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["sse"] }
+```
+
+## 示例代码
+
+```rust
 use std::convert::Infallible;
 use std::time::Duration;
 

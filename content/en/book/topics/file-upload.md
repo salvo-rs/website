@@ -1,6 +1,6 @@
 ---
 title: "File Upload"
-weight: 2060
+weight: 7060
 menu:
   book:
     parent: "core"

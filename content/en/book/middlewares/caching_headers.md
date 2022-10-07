@@ -1,11 +1,22 @@
 ---
 title: "Caching Headers"
-weight: 8011
+weight: 8012
 menu:
   book:
     parent: "middlewares"
 ---
 
+Middleware that provides support for cache header configuration.
+
+In fact, the implementation contains three `Handler` implementations of `CachingHeaders`, `Modified`, `ETag`, and `CachingHeaders` is a combination of the latter two. Normally, `CachingHeaders` is used.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["caching-headers"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::prelude::*;

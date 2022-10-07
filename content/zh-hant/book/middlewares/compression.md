@@ -6,6 +6,17 @@ menu:
     parent: "middlewares"
 ---
 
+對 `Response` 內容壓縮處理的中間件.
+
+提供對三種壓縮格式的支持: `br`, `gzip`, `deflate`. 可以根據需求配置各個壓縮方式的優先度等.
+
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["compression"] }
+```
+
+## 示例代碼
 
 ```rust
 use salvo::compression::{Compression, CompressionAlgo};

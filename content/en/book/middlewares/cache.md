@@ -6,20 +6,22 @@ menu:
     parent: "middlewares"
 ---
 
-提供缓存功能的中间件. 
+Middleware that provides caching functionality.
 
-Cache 中间件可以对 `Response` 中的 `StatusCode`, `Headers`, `Body` 提供缓存功能. 对于已经缓存的内容, 当下次处理请求时, Cache 中间件会直接把缓存在内存中的内容发送给客户端.
+Cache middleware can provide caching function for `StatusCode`, `Headers`, `Body` in `Response`. For the content that has been cached, when processing the request next time, Cache middleware will directly send the content cached in memory to the client.
 
-注意, 此插件不会缓存 `Body` 是 `ResBody::Stream` 的 `Response`. 如果应用到了这一类型的 `Response`, Cache 不会处理这些请求, 也不会引起错误.
+Note that this plugin will not cache `Response` whose `Body` is a `ResBody::Stream`. If applied to a `Response` of this type, the Cache will not process these requests and will not cause error.
 
-## 主要功能
-* `CacheIssuer` 提供了对分配的缓存键值的抽象. `RequestIssuer` 是它的一个实现, 可以定义依据请求的 URL 的哪些部分以及请求的 `Method` 生成缓存的键. 你也可以定义你自己的缓存键生成的逻辑. 缓存的键不一定是字符串类型, 任何满足 `Hash + Eq + Send + Sync + 'static` 约束的类型都可以作为键.
+## Main Features
 
-* `CacheStore` 提供对数据的存取操作. `MemoryStore` 是内置的基于 `moka` 的一个内存的缓存实现. 你也可以定义自己的实现方式.
-
-* `Cache` 是实现了 `Handler` 的结构体, 内部还有一个 `skipper` 字段, 可以指定跳过某些不需要缓存的请求. 默认情况下, 会使用 `MethodSkipper` 跳过除了 `Method::GET` 以外的所有请求.
+* `CacheIssuer` provides an abstraction over the assigned cache keys. `RequestIssuer` is an implementation of it that defines which parts of the requested URL and the requested `Method` to generate a cache key. You can also define your own The logic of cache key generation. The cache key does not have to be a string type, any type that satisfies the constraints of `Hash + Eq + Send + Sync + 'static` can be used as a key.
   
-  内部实现示例代码:
+* `CacheStore` provides access to data. `MemoryStore` is a built-in `moka`-based memory cache implementation. You can also define your own implementation.
+  
+* `Cache` is a structure that implements `Handler`, and there is a `skipper` field inside, which can be specified to skip certain requests that do not need to be cached. By default, `MethodSkipper` will be used to skip all request except `Method::GET`.
+  
+  Internal implementation sample code:
+
   ```rust
   impl<S, I> Cache<S, I> {
     pub fn new(store: S, issuer: I) -> Self {
@@ -33,13 +35,13 @@ Cache 中间件可以对 `Response` 中的 `StatusCode`, `Headers`, `Body` 提�
   }
   ```
 
-## 配置 Cargo.toml
+## Config Cargo.toml
 
 ```toml
 salvo = { version = "*", features = ["cache"] }
 ```
 
-## 示例代码
+## Sample Code
 
 ```rust
 use std::time::Duration;

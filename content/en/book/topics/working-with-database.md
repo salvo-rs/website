@@ -1,9 +1,9 @@
 ---
 title: "Working With Database"
-weight: 2080
+weight: 7080
 menu:
   book:
-    parent: "core"
+    parent: "topics"
 ---
 
 ### Diesel

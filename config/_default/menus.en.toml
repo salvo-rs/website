@@ -30,6 +30,11 @@
   weight = 20
 
 [[book]]
+  name = "Topics"
+  identifier = "topics"
+  weight = 40
+
+[[book]]
   name = "Middlewares"
   identifier = "middlewares"
   weight = 50

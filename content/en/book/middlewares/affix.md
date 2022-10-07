@@ -6,7 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
-Affix middleware is used for share data between handlers.
+Affix middleware for adding shared data to Depot.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["affix"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::affix;

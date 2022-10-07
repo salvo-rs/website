@@ -6,6 +6,17 @@ menu:
     parent: "middlewares"
 ---
 
+Middleware for `Response` content compression processing.
+
+Provides support for three compression formats: `br`, `gzip`, `deflate`. You can configure the priority of each compression method according to your needs.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["compression"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::compression::{Compression, CompressionAlgo};

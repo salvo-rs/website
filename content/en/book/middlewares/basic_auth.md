@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+Middleware that provides support for Basic Auth.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["basic-auth"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::basic_auth::{BasicAuth, BasicAuthValidator};

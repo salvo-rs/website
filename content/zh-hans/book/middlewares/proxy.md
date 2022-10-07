@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+提供反向代理功能的中间件.
+
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["proxy"] }
+```
+
+## 示例代码
 
 ```rust
 use salvo::prelude::*;

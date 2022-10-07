@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+Middleware that provides basic Log functionality.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["logging"] }
+```
+
+## Sample Code
 
 ```rust
 use salvo::logging::Logger;

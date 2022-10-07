@@ -8,6 +8,14 @@ menu:
 
 Affix 中间件用于往 Depot 中添加共享数据.
 
+## 配置 Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["affix"] }
+```
+
+## 示例代码
+
 ```rust
 use salvo::affix;
 use salvo::prelude::*;

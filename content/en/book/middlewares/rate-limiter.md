@@ -6,28 +6,28 @@ menu:
     parent: "middlewares"
 ---
 
-提供流量控制功能的中间件.
+Middleware that provides flow control functionality.
 
 
-## 主要功能
+## Main Features
 
-* `RateIssuer` 提供了对分配的识别访问者身份键值的抽象. `RemoteIpIssuer` 是它的一个实现, 可以依据请求的 IP 地址确定访问者. 键不一定是字符串类型, 任何满足 `Hash + Eq + Send + Sync + 'static` 约束的类型都可以作为键.
+* `RateIssuer` provides an abstraction of the assigned key value to identify the visitor's identity. `RemoteIpIssuer` is an implementation of it that can determine the visitor based on the requested IP address. Eq + Send + Sync + 'static` constraint types can be used as keys.
 
-* `RateGuard` 提供对流量控制算法的抽象. 默认实现了固定窗口(`FixedGuard`)和滑动窗口(`SlidingGuard`)两个实现方式.
+* `RateGuard` provides an abstraction for the flow control algorithm. By default, two implementations of fixed window (`FixedGuard`) and sliding window (`SlidingGuard`) are implemented.
 
-* `RateStore` 提供对数据的存取操作. `MemoryStore` 是内置的基于 `moka` 的一个内存的缓存实现. 你也可以定义自己的实现方式.
+* `RateStore` provides access to data. `MemoryStore` is a built-in `moka`-based memory cache implementation. You can also define your own implementation.
 
-* `RateLimiter` 是实现了 `Handler` 的结构体, 内部还有一个 `skipper` 字段, 可以指定跳过某些不需要缓存的请求. 默认情况下, 会使用 `none_skipper` 不跳过任何请求.
+* `RateLimiter` is a structure that implements `Handler`, and there is also a `skipper` field inside, which can be specified to skip certain requests that do not require caching. By default, `none_skipper` will be used to not skip any requests.
 
-* `QuotaGetter` 提供配额获取的抽象, 可根据访问者的 `Key` 获取一个配额对象, 也就意味着我们可以把用户配额等信息配置到数据库中,动态改变, 动态获取.
+* `QuotaGetter` provides the abstraction of quota acquisition, which can obtain a quota object according to the visitor's `Key`, which means that we can configure the user quota and other information into the database, change it dynamically, and acquire it dynamically.
 
-## 配置 Cargo.toml
+## Config Cargo.toml
 
 ```toml
 salvo = { version = "*", features = ["rate-limiter"] }
 ```
 
-## 简单示例代码
+## Sample Code With Static Quota
 
 ``` rust
 use salvo::prelude::*;
@@ -55,7 +55,7 @@ async fn main() {
 ```
 
 
-## 动态获取配额示例代码
+## Sample Code With Dynnamic Quota
 
 ```rust
 use std::borrow::Borrow;

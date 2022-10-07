@@ -6,6 +6,15 @@ menu:
     parent: "middlewares"
 ---
 
+Provides middleware for requesting upload file size limits.
+
+## Config Cargo.toml
+
+```toml
+salvo = { version = "*", features = ["size-limit"] }
+```
+
+## Sample Code
 
 ```rust
 use std::fs::create_dir_all;
