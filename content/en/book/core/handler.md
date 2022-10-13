@@ -19,7 +19,7 @@ pub trait Handler: Send + Sync + 'static {
 
 ## Function handler
 
-In many cases, we just want to use functions as ```Handler``` to process requests. We can add ```handler``` to convert ordinary functions to ```Handler```. The most commonly used in normal projects should be ```handler```, it is a ```proc macro```, adding to the function can turn the function into a ```Handler```: 
+In many cases, we just want to use functions as ```Handler``` to process requests. We can add `Handler` to convert ordinary functions to ```Handler```. The most commonly used in normal projects should be `Handler`, it is a ```proc macro```, adding to the function can turn the function into a ```Handler```: 
 
 ```rust
 #[handler]
@@ -50,7 +50,7 @@ async fn hello_world(res: &mut Response) {
 
 ## Handle errors
 
-```handler``` in Salvo can return ```Result```, only the types of ```Ok``` and ```Err``` in ```Result``` are implemented ```Writer``` trait. 
+`Handler` in Salvo can return ```Result```, only the types of ```Ok``` and ```Err``` in ```Result``` are implemented ```Writer``` trait. 
 Taking into account the widespread use of ```anyhow```, the ```Writer``` implementation of ```anyhow::Error``` is provided by default, and ```anyhow::Error``` is Mapped to ```InternalServerError```. 
 
 ```rust

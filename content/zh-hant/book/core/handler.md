@@ -19,7 +19,7 @@ pub trait Handler: Send + Sync + 'static {
 
 ## 函數式 Handler
 
-很多時候只是希望通過函數作為 ```Handler``` 處理請求. 可以添加 ```handler``` 將普通函數轉為 ```Handler```.
+很多時候只是希望通過函數作為 ```Handler``` 處理請求. 可以添加 `Handler` 將普通函數轉為 ```Handler```.
 
 處理函數默認簽名包含四個參數, 依次是, ```&mut Request, &mut Depot. &mut Response, &mut FlowCtrl```. Depot 是一個臨時存儲, 可以存儲本次請求相關的數據. 
 
@@ -27,7 +27,7 @@ pub trait Handler: Send + Sync + 'static {
 
 中間件是通過 ```Router``` 的 ```hoop``` 函數添加的. 被添加的中間件會影響當前的 ```Router``` 和它內部所有子孫 ```Router```.
 
-正常項目中使用得最多的應該是 ```handler```, 它是一個 ```proc macro```, 加在函數上可以將函數轉變成一個 ```Handler```:
+正常項目中使用得最多的應該是 `Handler`, 它是一個 ```proc macro```, 加在函數上可以將函數轉變成一個 ```Handler```:
 
 ```rust
 #[handler]
@@ -52,7 +52,7 @@ async fn hello_world(res: &mut Response) {
 
 ## 處理錯誤
 
-Salvo 中的 ```handler``` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的類型都實現 ```Writer``` trait.
+Salvo 中的 `Handler` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的類型都實現 ```Writer``` trait.
 考慮到 anyow 的使用比較廣泛, 在開啟 ```anyhow``` 功能後, ```anyhow::Error``` 會實現 ```Writer``` trait. ```anyhow::Error``` 會被映射為 ```InternalServerError```. 
 
 ```rust

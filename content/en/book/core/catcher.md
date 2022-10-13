@@ -6,7 +6,7 @@ menu:
     parent: "core"
 ---
 
-```Catcher``` is used to handle request errors.
+```Catcher``` is used to handle how to display page when response's code is error.
 
 ```rust
 pub trait Catcher: Send + Sync + 'static {

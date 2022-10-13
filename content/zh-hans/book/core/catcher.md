@@ -6,7 +6,7 @@ menu:
     parent: "core"
 ---
 
-```Catcher``` 是用于处理请求出错的情况.
+```Catcher``` 是用于处理页面返回 HTTP 状态码为错误的情况下, 如何显示页面的抽象.
 
 ```rust
 pub trait Catcher: Send + Sync + 'static {
