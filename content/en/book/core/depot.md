@@ -33,3 +33,23 @@ async fn main() {
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
 ```
+
+## Set and retrieve data via `insert` and `get`
+
+  As shown above, `key` and `value` can be inserted into `Depot` via `insert`. For values of this type, `get` can be used to retrieve them directly.
+
+```rust
+depot.insert("a", "b");
+assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
+````
+
+  Returns `None` if the `key` does not exist, or if the `key` exists, but the types do not match.
+
+## Set and retrieve data via `inject` and `obtain`
+
+Sometimes, there are cases where you don't need a relation-specific `key`, and there is also a unique instance of that type. You can use `inject` to insert data, and `obtain` to get data out. They don't require you to provide a `key`.
+
+```rust
+depot.insert(Config::new());
+depot.obtain::<Config>();
+````

@@ -35,7 +35,7 @@ In Salvo, `Handler` often encounters various errors, such as: database connectio
 
 ```rust
 #[handler]
-async fn home()->AppResult<()> {
+async fn home()-> AppResult<()> {
 
 }
 ```

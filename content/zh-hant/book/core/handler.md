@@ -116,3 +116,45 @@ impl Handler for MaxSizeHandler {
     }
 }
 ```
+
+## `#[handler]` 的使用
+
+`#[handler]` 可以大量簡化代碼的書寫, 並且提升代碼的靈活度. 它可以加在一個函數上, 讓它實現 `Handler`:
+
+```rust
+#[handler]
+async fn hello() -> &'static str {
+    "hello world!"
+}
+```
+
+這等價於:
+
+```rust
+struct hello;
+
+#[async_trait]
+impl Hander for hello {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
+        res.render(Text::Plain("hello world!"));
+    }
+}
+```
+
+可以看到, 在使用 `#[handler]` 的情況下, 代碼變得簡單很多:
+- 不再需要手工添加 `#[async_trait]`.
+- 函數中不需要的參數已經省略, 對於需要的參數也可以按任意順序排布.
+- 對於實現了 `Writer` 或者 `Piece` 抽象的對象, 可以直接作為函數的返回值. 在這裏 `&'static str` 實現了 `Piece`, 於是可以直接作為函數返回值返回.
+
+`#[handler]` 不僅可以加在函數上, 也可以加在 `struct` 的 `impl` 上:
+
+```rust
+struct Hello;
+
+#[handler]
+impl Hello {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
+        res.render(Text::Plain("hello world!"));
+    }
+}
+```

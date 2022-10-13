@@ -116,3 +116,45 @@ impl Handler for MaxSizeHandler {
     }
 }
 ```
+
+## `#[handler]` usage
+
+`#[handler]` can greatly simplify the writing of the code, and improve the flexibility of the code. It can be added to a function to make it implement `Handler`:
+
+```rust
+#[handler]
+async fn hello() -> &'static str {
+    "hello world!"
+}
+````
+
+This is equivalent to:
+
+```rust
+struct hello;
+
+#[async_trait]
+impl Handler for hello {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
+        res.render(Text::Plain("hello world!"));
+    }
+}
+````
+
+As you can see, in the case of using `#[handler]`, the code becomes much simpler:
+- No need to manually add `#[async_trait]`.
+- The parameters that are not needed in the function have been omitted, and the required parameters can be arranged in any order.
+- For objects that implement `Writer` or `Piece` abstraction, it can be directly used as the return value of the function. Here `&'static str` implements `Piece`, so it can be returned directly as the return value of the function.
+
+`#[handler]` can be added not only to functions, but also to `impl` of `struct`:
+
+```rust
+struct Hello;
+
+#[handler]
+impl Hello {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
+        res.render(Text::Plain("hello world!"));
+    }
+}
+````

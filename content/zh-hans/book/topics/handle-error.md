@@ -2,7 +2,6 @@
 title: "错误处理"
 weight: 7032
 menu:
-
   book:
     parent: "topics"
 ---
@@ -37,7 +36,7 @@ pub type AppResult<T> = Result<T, AppError>;
 
 ```rust
 #[handler]
-async fn home()->AppResult<()> {
+async fn home()-> AppResult<()> {
 
 }
 ```

@@ -32,3 +32,23 @@ async fn main() {
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
 ```
+
+## 通过 `insert` 和 `get` 设置和取出数据
+
+ 正如上面所示, 可以通过 `insert` 把 `key` 和 `value` 插入到 `Depot` 中. 对于这一类型的值, 直接用 `get` 取出.
+
+```rust
+depot.insert("a", "b");
+assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
+```
+
+ 如果不存在这个 `key`, 或者 `key` 存在, 但是类型不匹配, 则返回 `None`.
+
+## 通过 `inject` 和 `obtain` 设置和取出数据
+
+有时, 存在一些不需要关系具体 `key`, 对于这种类型也存在唯一实例的情况. 可以使用 `inject` 插入数据, 然后使用 `obtain` 取出数据. 它们不需要你提供 `key`.
+
+```rust
+depot.insert(Config::new());
+depot.obtain::<Config>();
+```
