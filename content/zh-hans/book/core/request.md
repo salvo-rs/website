@@ -52,7 +52,7 @@ req.parse_json::<User>().await;
 * ```parse_body```: 根据请求的 ```content-type``` 的类型, 将 HTTP body 部分的数据解析为特定类型. 
 * ```extract```: 可以合并不同的数据源解析出特定的类型.
 
-### 解析原理
+## 解析原理
 
 此处通过自定义的 ```serde::Deserializer``` 将类似 ```HashMap<String, String>``` 和 ```HashMap<String, Vec<String>>``` 的数据提取为特定的数据类型.
 

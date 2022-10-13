@@ -50,7 +50,7 @@ Request can be parsed into strongly typed structures by providing several functi
 * ```parse_body```: Parse the data in the HTTP body section to a specific type according to the type of the requested ```content-type```.
 * ```extract```: can combine different data sources to parse a specific type.
 
-### Parsing principle
+## Parsing principle
 
 The customized ```serde::Deserializer``` will be extract data similar to ```HashMap<String, String>``` and ```HashMap<String, Vec<String>>``` into a specific data type.
 
