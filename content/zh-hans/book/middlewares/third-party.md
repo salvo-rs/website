@@ -1,10 +1,12 @@
 ---
-title: "使用websocket插件"
-weight: 7151
+title: "第三方插件"
+weight: 8199
 menu:
   book:
-    parent: "topics"
+    parent: "middlewares"
 ---
+
+## salvo-websocket
 
 ### 添加项目依赖
 
