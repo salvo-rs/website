@@ -59,7 +59,7 @@ There are many ways to write function handler.
     }
     ```
 
-- You can omit function arguments if they do not used, like ```_req```, ```_depot```, ```_ctrl``` in this example:
+- You can omit function arguments if they are not used, like ```_req```, ```_depot```, ```_ctrl``` in this example:
 
     ``` rust
     #[handler]
