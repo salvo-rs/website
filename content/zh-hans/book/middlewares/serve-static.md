@@ -19,17 +19,22 @@ salvo = { version = "*", features = ["serve-static"] }
 * `StaticDir` 提供了对静态本地文件夹的支持. 可以将多个文件夹的列表作为参数. 比如:
 
     ```rust
-    use salvo_core::routing::Router;
-    use salvo_core::Server;
-    use salvo_extra::serve::StaticDir;
+    use salvo::prelude::*;
+    use salvo::serve_static::StaticDir;
 
     #[tokio::main]
     async fn main() {
         tracing_subscriber::fmt().init();
-        
-        let router = Router::new()
-            .path("<**path>")
-            .get(StaticDir::new(vec!["examples/static/body", "examples/static/girl"]));
+
+        let router = Router::with_path("<**path>").get(
+            StaticDir::new([
+                "examples/static-dir-list/static/boy",
+                "examples/static-dir-list/static/girl",
+            ])
+            .with_defaults("index.html")
+            .with_listing(true),
+        );
+        tracing::info!("Listening on http://127.0.0.1:7878");
         Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
     }
     ```
