@@ -73,12 +73,6 @@
 
 {{ if .IsPage -}}
   {{ range .Site.Authors -}}
-    {{ with .Social.facebook -}}
-      <meta property="article:author" content="https://www.facebook.com/{{ . }}">
-    {{ end -}}
-    {{ with .Site.Social.facebook -}}
-      <meta property="article:publisher" content="https://www.facebook.com/{{ . }}">
-    {{ end -}}
     <meta property="article:section" content="{{ .Section }}">
     {{ with .Params.tags -}}
       {{ range first 6 . -}}
@@ -86,8 +80,4 @@
       {{ end -}}
     {{ end -}}
   {{ end -}}
-{{ end -}}
-
-{{ with .Site.Social.facebook_admin -}}
-  <meta property="fb:admins" content="{{ . }}">
 {{ end -}}
