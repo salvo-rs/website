@@ -47,9 +47,9 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 
 ## Set and retrieve data via `inject` and `obtain`
 
-Sometimes, there are cases where you don't need a relation-specific `key`, and there is also a unique instance of that type. You can use `inject` to insert data, and `obtain` to get data out. They don't require you to provide a `key`.
+Sometimes, there are cases where you don't need a relation-specific `key`, and there is also a unique instance of that type. You can use `inject` to inject data, and `obtain` to get data out. They don't require you to provide a `key`.
 
 ```rust
-depot.insert(Config::new());
+depot.inject(Config::new());
 depot.obtain::<Config>();
 ````

@@ -49,6 +49,6 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 有時, 存在一些不需要關系具體 `key`, 對於這種類型也存在唯一實例的情況. 可以使用 `inject` 插入數據, 然後使用 `obtain` 取出數據. 它們不需要你提供 `key`.
 
 ```rust
-depot.insert(Config::new());
+depot.inject(Config::new());
 depot.obtain::<Config>();
 ```
