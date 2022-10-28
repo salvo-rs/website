@@ -1,5 +1,23 @@
-functions
-node_modules
-public
-resources
+/target
+**/*.rs.bk
+/Cargo.lock
+/.idea
+/.vscode
+**/target
+/.vs
+/examples/_*.rs
+/examples/target
+/examples/*/target
+cobertura.xml
 debug.log
+temp
+tarpaulin-report.*
+
+.DS_Store
+
+
+**/node_modules/
+ss files
+.vuepress/.temp/
+.vuepress/.cache/
+.vuepress/dist/
