@@ -68,6 +68,23 @@ There are many ways to write function handler.
     }
     ```
 
+## Use HTTP3
+
+First you need to enable feature `http3` in `Cargo.toml`, and then change `main.rs` like this:
+
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
+@[code rust](../codes/hello-h3/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../codes/hello-h3/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
+
 ## Run more examples
 The absolute fastest way to start experimenting with Salvo is to clone the
 Salvo repository and run the included examples in the `examples/` directory.

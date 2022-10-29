@@ -20,28 +20,18 @@ pub struct Service {
 
 They can be set via the ```with_catchers``` function of ```Server```:
 
-```rust
-structHandle404;
-impl Catcher for Handle404 {
-    fn catch(&self, _req: &Request, _depot: &Depot, res: &mut Response) -> bool {
-        if let Some(StatusCode::NOT_FOUND) = res.status_code() {
-            res.render("Custom 404 Error Page");
-            true
-        } else {
-            false
-        }
-    }
-}
-#[tokio::main]
-async fn main() {
-    let router = Router::new().get(hello_world);
-    let catchers: Vec<Box<dyn Catcher>> = vec![Box::new(Handle404)];
-    let service = Service::new(router).with_catchers(catchers);
-    Server::new(TcpListener::new("0.0.0.0:7878"))
-        .serve(service())
-        .await;
-}
-```
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
+@[code rust](../../codes/custom-error-page/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../codes/custom-error-page/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
 
 When there is an error in the website request result, first try to set the error page through the ```Catcher``` set by the user. If the ```Catcher``` catches the error, it will return ```true```. 
 

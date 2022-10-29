@@ -11,32 +11,28 @@
 創建一個全新的項目:
 
 ```bash
-cargo new hello_salvo --bin
+cargo new hello --bin
 ```
 
 添加依賴項到 `Cargo.toml`
 
 ```toml
+[package]
+name = "hello"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
 [dependencies]
 salvo = "*"
 tokio = { version = "1", features = ["macros"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
 ```
 
-在 `main.rs` 中創建一個簡單的函數句柄, 命名為`hello_world`, 這個函數只是簡單地打印文本 ```"Hello world"```.
+在 `main.rs` 中創建一個簡單的函數句柄, 命名為`hello`, 這個函數只是簡單地打印文本 ```"Hello world"```.
 
-```rust
-use salvo::prelude::*;
-
-#[handler]
-async fn hello_world() -> &'static str {
-    "Hello world"
-}
-#[tokio::main]
-async fn main() {
-    let router = Router::new().get(hello_world);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+@[code rust](../../codes/hello/src/main.rs)
 
 恭喜你, 你的一個 Salvo 程序已經完成. 只需要在命令行下運行 ```cargo run```, 然後在瀏覽器裏打開 ```http://127.0.0.1:7878``` 即可.
 
@@ -48,7 +44,7 @@ async fn main() {
   
     ```rust
     #[handler]
-    async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
+    async fn hello(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
         res.render("Hello world");
     }
     ```
@@ -57,7 +53,7 @@ async fn main() {
   
     ``` rust
     #[handler]
-    async fn hello_world(res: &mut Response) {
+    async fn hello(res: &mut Response) {
         res.render("Hello world");
     }
     ```
@@ -66,7 +62,7 @@ async fn main() {
 
     ```rust
     #[handler]
-    async fn hello_world(res: &mut Response) -> &'static str {
+    async fn hello(res: &mut Response) -> &'static str {
         "Hello world"
     }
     ```
@@ -75,13 +71,32 @@ async fn main() {
   
     ```rust
     #[handler]
-    async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {
+    async fn hello(res: &mut Response) -> Result<&'static str, ()> {
         Ok("Hello world")
     }
     ```
 
+## 風騷的 HTTP3
+
+據說 HTTP3 身輕如燕，多少程序員思而不得。這會，Salvo 就幫大家實現願望，然大家輕松享受到 HTTP3 帶來的美妙服務。
+
+首先在 `Cargo.toml` 中啟用 HTTP3 功能, 然後把 `main.rs` 改成這樣：
+
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
+@[code rust](../../../codes/../website/codes/hello-h3/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../../codes/../website/codes/hello-h3/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
+
 ## 更多示例
-建議直接克隆 Salvo 倉庫, 然後運行 examples 目錄下的示例. 比如下面的命令可以運行 ```hello_world``` 的例子:
+建議直接克隆 Salvo 倉庫, 然後運行 examples 目錄下的示例. 比如下面的命令可以運行 ```hello``` 的例子:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo

@@ -6,26 +6,19 @@ A depot instance created when server get a request from client. The depot will d
 
 For example, we can set ```current_user``` in ```set_user```, and then use this value in the following middlewares and handlers.
 
-```rust
-use salvo::prelude::*;
 
-#[handler]
-async fn set_user(depot: &mut Depot)  {
-  depot.insert("current_user", "Elon Musk");
-}
-#[handler]
-async fn home(depot: &mut Depot) -> String  {
-  // Notic: Don't use String here, because you inserted a &str.
-  let user = depot.get::<&str>("current_user").copied().unwrap();
-  format!("Hey {}, I love your money and girls!", user)
-}
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-#[tokio::main]
-async fn main() {
-    let router = Router::with_hoop(set_user).get(home);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+@[code rust](../../codes/use-depot/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../codes/use-depot/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
 
 ## Set and retrieve data via `insert` and `get`
 

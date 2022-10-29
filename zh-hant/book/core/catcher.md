@@ -20,28 +20,18 @@ pub struct Service {
 
 可以通過 ```Server``` 的 ```with_catchers``` 函數設置它們:
 
-```rust
-struct Handle404;
-impl Catcher for Handle404 {
-    fn catch(&self, _req: &Request, _depot: &Depot, res: &mut Response) -> bool {
-        if let Some(StatusCode::NOT_FOUND) = res.status_code() {
-            res.render("Custom 404 Error Page");
-            true
-        } else {
-            false
-        }
-    }
-}
-#[tokio::main]
-async fn main() {
-    let router = Router::new().get(hello_world);
-    let catchers: Vec<Box<dyn Catcher>> = vec![Box::new(Handle404)];
-    let service = Service::new(router).with_catchers(catchers);
-    Server::new(TcpListener::new("0.0.0.0:7878"))
-        .serve(service())
-        .await;
-}
-```
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
+@[code rust](../../../codes/custom-error-page/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../../codes/custom-error-page/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
 
 當網站請求結果有錯誤時, 首先試圖通過用戶自己設置的 ```Catcher``` 設置錯誤頁面, 如果 ```Catcher``` 捕獲錯誤, 則返回 ```true```. 
 

@@ -6,26 +6,18 @@ Depot 是用于保存一次请求中涉及到的临时数据. 中间件可以将
 
 比如说, 我们可以在登录的中间件中设置 ```current_user```, 然后在后续的中间件或者 ```Handler``` 中读取当前用户信息.
 
-```rust
-use salvo::prelude::*;
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-#[handler]
-async fn set_user(depot: &mut Depot)  {
-  depot.insert("current_user", "Elon Musk");
-}
-#[handler]
-async fn home(depot: &mut Depot) -> String  {
-  // 需要注意的是, 这里的类型必须是 &str, 而不是 String, 因为当初存入的数据类型为 &str.
-  let user = depot.get::<&str>("current_user").copied().unwrap();
-  format!("Hey {}, I love your money and girls!", user)
-}
+@[code rust](../../../codes/use-depot/src/main.rs)
 
-#[tokio::main]
-async fn main() {
-    let router = Router::with_hoop(set_user).get(home);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../../codes/use-depot/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
 
 ## 通过 `insert` 和 `get` 设置和取出数据
 

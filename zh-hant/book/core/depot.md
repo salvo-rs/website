@@ -6,26 +6,18 @@ Depot 是用於保存一次請求中涉及到的臨時數據. 中間件可以將
 
 比如說, 我們可以在登錄的中間件中設置 ```current_user```, 然後在後續的中間件或者 ```Handler``` 中讀取當前用戶信息.
 
-```rust
-use salvo::prelude::*;
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-#[handler]
-async fn set_user(depot: &mut Depot)  {
-  depot.insert("current_user", "Elon Musk");
-}
-#[handler]
-async fn home(depot: &mut Depot) -> String  {
-  // 需要註意的是, 這裏的類型必須是 &str, 而不是 String, 因為當初存入的數據類型為 &str.
-  let user = depot.get::<&str>("current_user").copied().unwrap();
-  format!("Hey {}, I love your money and girls!", user)
-}
+@[code rust](../../../codes/use-depot/src/main.rs)
 
-#[tokio::main]
-async fn main() {
-    let router = Router::with_hoop(set_user).get(home);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../../codes/use-depot/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
 
 ## 通過 `insert` 和 `get` 設置和取出數據
 

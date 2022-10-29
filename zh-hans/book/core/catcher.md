@@ -20,7 +20,18 @@ pub struct Service {
 
 可以通过 ```Server``` 的 ```with_catchers``` 函数设置它们:
 
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
 @[code rust](../../../codes/custom-error-page/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../../codes/custom-error-page/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
 
 当网站请求结果有错误时, 首先试图通过用户自己设置的 ```Catcher``` 设置错误页面, 如果 ```Catcher``` 捕获错误, 则返回 ```true```. 
 
