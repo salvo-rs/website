@@ -10,7 +10,7 @@
 Salvo 裏統一了 Handler 和 Middleware. Middleware 就是 Handler. 通過路由的 hoop 添加到 Router 上。本質上, Middleware 和 Handler 都是處理 Request 請求，並且可能向 Response 寫入數據。而 Handler 接收的參數是 Request, Depot, Response 三個, 其中 Depot 用於存儲請求處理過程中的臨時數據. 為方便書寫, 在用不著的情況下可以省略掉某些參數.
 
 ```rust
-use Salvo::prelude::*;
+use salvo::prelude::*;
 
 #[handler]
 async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
