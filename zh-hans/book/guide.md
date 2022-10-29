@@ -78,7 +78,7 @@ tracing-subscriber = "0.3"
 
 ## 风骚的 HTTP3
 
-据说 HTTP3 身轻如燕，多少程序员思而不得。这会，Salvo 就帮大家实现愿望，然大家轻松享受到 HTTP3 带来的美妙服务。
+据说 HTTP3 身轻如燕，多少程序员思而不得。这会，Salvo 就帮大家实现愿望，让大家轻松享受到 HTTP3 带来的美妙服务。
 
 首先在 `Cargo.toml` 中启用 HTTP3 功能, 然后把 `main.rs` 改成这样：
 
