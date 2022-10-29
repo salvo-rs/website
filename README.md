@@ -5,7 +5,7 @@ heroImage: /images/logo-text.svg
 heroText: null
 actions:
   - text: Get Started
-    link: /book/guid.md
+    link: /book/guide.md
     type: primary
   - text: Donate
     link: /donate.md
