@@ -31,35 +31,12 @@ footer: MIT Licensed | Copyright © 2019-present Salvo Team
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
   
-```rust
-use salvo::prelude::*;
-
-#[handler]
-async fn hello(res: &mut Response) {
-    res.render("Hello world!");
-}
-#[tokio::main]
-async fn main() {
-    let router = Router::new().get(hello);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await;
-    Server::new(acceptor).serve(router).await;
-}
-```
+@[code rust](../codes/hello/src/main.rs)
 
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
   
-```toml
-[package]
-name = "example-hello"
-version = "0.1.0"
-edition = "2021"
-publish = false
-
-[dependencies]
-salvo = { version = "0.37" }
-tokio = { version = "1", features = ["macros"] }
-```
+@[code rust](../codes/hello/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

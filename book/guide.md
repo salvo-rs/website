@@ -22,21 +22,10 @@ salvo = "*"
 tokio = { version = "1", features = ["macros"] }
 ```
 
-Create a simple function handler in the main.rs file, we call it `hello_world`, this function just render plain text ```"Hello world"```. In the ```main``` function, we need to create a root Router first, and then create a server and call it's ```bind``` function:
+Create a simple function handler in the main.rs file, we call it `hello`, this function just render plain text ```"Hello world"```. In the ```main``` function, we need to create a root Router first, and then create a server and call it's ```bind``` function:
 
-```rust
-use salvo::prelude::*;
+@[code rust](../../codes/hello/src/main.rs)
 
-#[handler]
-async fn hello_world() -> &'static str {
-    "Hello world"
-}
-#[tokio::main]
-async fn main() {
-    let router = Router::new().get(hello_world);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
 Congratulations! Your first app has done! Just run ```cargo run``` to run this app.
 
 ## More about handler
@@ -47,7 +36,7 @@ There are many ways to write function handler.
 
     ```rust
     #[handler]
-    async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
+    async fn hello(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
         res.render("Hello world");
     }
     ```
@@ -56,7 +45,7 @@ There are many ways to write function handler.
 
     ``` rust
     #[handler]
-    async fn hello_world(res: &mut Response) {
+    async fn hello(res: &mut Response) {
         res.render("Hello world");
     }
     ```
@@ -65,7 +54,7 @@ There are many ways to write function handler.
 
     ```rust
     #[handler]
-    async fn hello_world(res: &mut Response) -> &'static str {// just return &str
+    async fn hello(res: &mut Response) -> &'static str {// just return &str
         "Hello world"
     }
     ```
@@ -74,7 +63,7 @@ There are many ways to write function handler.
   
     ```rust
     #[handler]
-    async fn hello_world(res: &mut Response) -> Result<&'static str, ()> {// return Result
+    async fn hello(res: &mut Response) -> Result<&'static str, ()> {// return Result
         Ok("Hello world")
     }
     ```
@@ -82,12 +71,12 @@ There are many ways to write function handler.
 ## Run more examples
 The absolute fastest way to start experimenting with Salvo is to clone the
 Salvo repository and run the included examples in the `examples/` directory.
-For instance, the following set of commands runs the `hello_world` example:
+For instance, the following set of commands runs the `hello` example:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo.git
 cd salvo
-cargo run --bin example-hello_world
+cargo run --bin example-hello
 ```
 
 There are numerous examples in the `examples/` directory. They can all be run
