@@ -2,15 +2,13 @@ use salvo::prelude::*;
 
 #[handler]
 async fn set_user(req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl) {
-    depot.insert("user", "client");
-    ctrl.call_next(req, depot, res).await;
+    depot.insert("current_user", "Elon Musk");
 }
 #[handler]
 async fn hello(depot: &mut Depot) -> String {
-    format!(
-        "Hello {}",
-        depot.get::<&str>("user").copied().unwrap_or_default()
-    )
+    // Notic: Don't use String here, because you inserted a &str.
+    let user = depot.get::<&str>("current_user").copied().unwrap();
+    format!("Hey {}, I love your money and girls!", user)
 }
 
 #[tokio::main]
