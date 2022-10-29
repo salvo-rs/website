@@ -85,12 +85,12 @@ tracing-subscriber = "0.3"
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../codes/hello-h3/src/main.rs)
+@[code rust](../../codes/hello-h3/src/main.rs)
 
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../../codes/hello-h3/Cargo.toml)
+@[code rust](../../codes/hello-h3/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>
