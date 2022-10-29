@@ -7,7 +7,7 @@ actions:
   - text: 快速开始
     link: /zh-hans/book/guide.md
     type: primary
-  - text: 资助项目
+  - text: 我要捐金
     link: /zh-hans/donate.md
     type: secondary
 features:

@@ -76,6 +76,25 @@ tracing-subscriber = "0.3"
     }
     ```
 
+## 风骚的 HTTP3
+
+据说 HTTP3 身轻如燕，多少程序员思而不得。这会，Salvo 就帮大家实现愿望，然大家轻松享受到 HTTP3 带来的美妙服务。
+
+首先在 `Cargo.toml` 中启用 HTTP3 功能, 然后把 `main.rs` 改成这样：
+
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
+@[code rust](../../../codes/../website/codes/hello-h3/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../../codes/../website/codes/hello-h3/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
+
 ## 更多示例
 建议直接克隆 Salvo 仓库, 然后运行 examples 目录下的示例. 比如下面的命令可以运行 ```hello``` 的例子:
 
