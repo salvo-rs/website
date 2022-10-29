@@ -28,7 +28,7 @@ export default defineUserConfig({
   // extra tags in `<head>`
   head,
 
-  pagePatterns: ['**/*.md', '!.vuepress', '!node_modules', , '!codes'],
+  pagePatterns: ['**/*.md', '!.vuepress', '!node_modules', '!codes'],
 
   // site-level locales config
   locales: {
