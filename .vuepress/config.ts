@@ -55,6 +55,8 @@ export default defineUserConfig({
   theme: defaultTheme({
     logo: '/images/logo-text-h.svg',
     repo: 'salvo-rs/salvo',
+    docsRepo: 'salvo-rs/wesite',
+    docsBranch: 'main',
     docsDir: 'book',
 
     // theme-level locales config
