@@ -54,21 +54,17 @@ export const navbarEn: NavbarConfig = [
     text: 'Donate',
     link: '/donate.md',
   },
-  // {
-  //   text: `v${version}`,
-  //   children: [
-  //     {
-  //       text: 'Changelog',
-  //       link: 'https://github.com/vuepress/vuepress-next/blob/main/CHANGELOG.md',
-  //     },
-  //     {
-  //       text: 'v1.x',
-  //       link: 'https://v1.vuepress.vuejs.org',
-  //     },
-  //     {
-  //       text: 'v0.x',
-  //       link: 'https://v0.vuepress.vuejs.org',
-  //     },
-  //   ],
-  // },
+  {
+    text: `v${version}`,
+    children: [
+      {
+        text: 'released',
+        link: 'https://salvo.rs',
+      },
+      {
+        text: 'developing',
+        link: 'https://next.salvo.rs',
+      },
+    ],
+  },
 ]
