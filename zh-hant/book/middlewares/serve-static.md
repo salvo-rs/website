@@ -12,46 +12,34 @@ salvo = { version = "*", features = ["serve-static"] }
 
 * `StaticDir` 提供了對靜態本地文件夾的支持. 可以將多個文件夾的列表作為參數. 比如:
 
-    ```rust
-    use salvo::prelude::*;
-    use salvo::serve_static::StaticDir;
+    <CodeGroup>
+    <CodeGroupItem title="main.rs" active>
 
-    #[tokio::main]
-    async fn main() {
-        tracing_subscriber::fmt().init();
+    @[code rust](../../../codes/static-dir-list/src/main.rs)
 
-        let router = Router::with_path("<**path>").get(
-            StaticDir::new([
-                "examples/static-dir-list/static/boy",
-                "examples/static-dir-list/static/girl",
-            ])
-            .with_defaults("index.html")
-            .with_listing(true),
-        );
-        tracing::info!("Listening on http://127.0.0.1:7878");
-        let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-    }
-    ```
+    </CodeGroupItem>
+    <CodeGroupItem title="Cargo.toml">
+
+    @[code toml](../../../codes/static-dir-list/Cargo.toml)
+
+    </CodeGroupItem>
+    </CodeGroup>
+
     如果在第一個文件夾中找不到對應的文件, 則會到第二個文件夾中找.
 
 * 提供了對 `rust-embed` 的支持, 比如:
-    ```rust
-    use rust_embed::RustEmbed;
-    use salvo::prelude::*;
-    use salvo::serve_static::static_embed;
+   
+    <CodeGroup>
+    <CodeGroupItem title="main.rs" active>
 
-    #[derive(RustEmbed)]
-    #[folder = "static"]
-    struct Assets;
+    @[code rust](../../../codes/static-embed-files/src/main.rs)
 
-    #[tokio::main]
-    async fn main() {
-        tracing_subscriber::fmt().init();
+    </CodeGroupItem>
+    <CodeGroupItem title="Cargo.toml">
 
-        let router = Router::with_path("<**path>").get(static_embed::<Assets>().with_fallback("index.html"));
-        tracing::info!("Listening on http://127.0.0.1:7878");
-        let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-    }
-    ```
+    @[code toml](../../../codes/static-embed-files/Cargo.toml)
+
+    </CodeGroupItem>
+    </CodeGroup>
 
     `with_fallback` 可以設置在文件找不到時, 用這裏設置的文件代替, 這個對應某些單頁網站應用來還是有用的.

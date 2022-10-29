@@ -14,7 +14,7 @@ Depot 是用於保存一次請求中涉及到的臨時數據. 中間件可以將
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../../codes/use-depot/Cargo.toml)
+@[code toml](../../../codes/use-depot/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

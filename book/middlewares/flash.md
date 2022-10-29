@@ -12,39 +12,33 @@ salvo = { version = "*", features = ["flash"] }
 
 ## Sample Code
 
-```rust
-use std::fmt::Write;
+### Use cookie store
 
-use salvo::prelude::*;
-use salvo::flash::{CookieStore, FlashDepotExt};
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-#[handler]
-pub async fn set_flash(depot: &mut Depot, res: &mut Response) {
-    let flash = depot.outgoing_flash_mut();
-    flash.info("Hey there!").debug("How is it going?");
-    res.render(Redirect::other("/get"));
-}
+@[code rust](../../codes/flash-cookie-store/src/main.rs)
 
-#[handler]
-pub async fn get_flash(depot: &mut Depot, _res: &mut Response) -> String {
-    let mut body = String::new();
-    if let Some(flash) = depot.incoming_flash() {
-        for message in flash.iter() {
-            writeln!(body, "{} - {}", message.value, message.level).unwrap();
-        }
-    }
-    body
-}
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::fmt().init();
+@[code toml](../../codes/flash-cookie-store/Cargo.toml)
 
-    tracing::info!("Listening on http://127.0.0.1:7878");
-    let router = Router::new()
-        .hoop(CookieStore::new().into_handler())
-        .push(Router::with_path("get").get(get_flash))
-        .push(Router::with_path("set").get(set_flash));
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+  </CodeGroupItem>
+</CodeGroup>
+
+
+### Use session store
+
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
+@[code rust](../../codes/flash-session-store/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code toml](../../codes/flash-session-store/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>

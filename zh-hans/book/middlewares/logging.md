@@ -10,21 +10,16 @@ salvo = { version = "*", features = ["logging"] }
 
 ## 示例代码
 
-```rust
-use salvo::logging::Logger;
-use salvo::prelude::*;
 
-#[handler]
-async fn hello_world() -> &'static str {
-    "Hello World"
-}
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::fmt().init();
+@[code rust](../../../codes/logging/src/main.rs)
 
-    let router = Router::new().hoop(Logger).get(hello_world);
-    tracing::info!("Listening on http://127.0.0.1:7878");
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code toml](../../../codes/logging/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>

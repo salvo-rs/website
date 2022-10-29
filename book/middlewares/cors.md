@@ -12,25 +12,15 @@ salvo = { version = "*", features = ["cors"] }
 
 ## Sample Code
 
-```rust
-use salvo::prelude::*;
-use salvo_extra::cors::Cors;
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-#[handler]
-async fn hello() -> &'static str {
-    "hello"
-}
+@[code rust](../../codes/cors/src/main.rs)
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::fmt().init();
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
-    let cors_handler = Cors::builder()
-        .with_allow_origin("https://salvo.rs")
-        .with_allow_methods(vec!["GET", "POST", "DELETE"])
-        .build();
+@[code toml](../../codes/cors/Cargo.toml)
 
-    let router = Router::with_hoop(cors_handler).get(hello).options(empty_handler);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+  </CodeGroupItem>
+</CodeGroup>

@@ -90,7 +90,7 @@ tracing-subscriber = "0.3"
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../codes/hello-h3/Cargo.toml)
+@[code toml](../../codes/hello-h3/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

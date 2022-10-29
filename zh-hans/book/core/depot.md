@@ -14,7 +14,7 @@ Depot 是用于保存一次请求中涉及到的临时数据. 中间件可以将
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../../codes/use-depot/Cargo.toml)
+@[code toml](../../../codes/use-depot/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

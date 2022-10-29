@@ -36,7 +36,7 @@ footer: MIT Licensed | Copyright © 2019-present Salvo Team
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
   
-@[code rust](../codes/hello/Cargo.toml)
+@[code toml](../codes/hello/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

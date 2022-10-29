@@ -12,23 +12,15 @@ salvo = { version = "*", features = ["caching-headers"] }
 
 ## Sample Code
 
-```rust
-use salvo::prelude::*;
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-#[handler]
-async fn hello_world() -> &'static str {
-    "Hello World"
-}
+@[code rust](../../codes/caching-headers/src/main.rs)
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::fmt().init();
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
-    tracing::info!("Listening on http://127.0.0.1:7878");
-    // Compression must be before CachingHeader.
-    let router = Router::with_hoop(CachingHeaders::new())
-        .hoop(Compression::new().with_min_length(0))
-        .get(hello_world);
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
+@[code toml](../../codes/caching-headers/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>

@@ -15,7 +15,7 @@ For example, we can set ```current_user``` in ```set_user```, and then use this 
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../codes/use-depot/Cargo.toml)
+@[code toml](../../codes/use-depot/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

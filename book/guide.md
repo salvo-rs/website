@@ -80,7 +80,7 @@ First you need to enable feature `http3` in `Cargo.toml`, and then change `main.
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../codes/hello-h3/Cargo.toml)
+@[code toml](../codes/hello-h3/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

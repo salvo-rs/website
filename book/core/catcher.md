@@ -28,7 +28,7 @@ They can be set via the ```with_catchers``` function of ```Server```:
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../codes/custom-error-page/Cargo.toml)
+@[code toml](../../codes/custom-error-page/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

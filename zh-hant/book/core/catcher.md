@@ -28,7 +28,7 @@ pub struct Service {
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../../codes/custom-error-page/Cargo.toml)
+@[code toml](../../../codes/custom-error-page/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>
