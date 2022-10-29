@@ -55,14 +55,14 @@ export const navbarEn: NavbarConfig = [
     link: '/donate.md',
   },
   {
-    text: `v${version}`,
+    text: `v0.37.x`,
     children: [
       {
-        text: 'released',
+        text: 'v0.37.x',
         link: 'https://salvo.rs',
       },
       {
-        text: 'developing',
+        text: 'v0.38.x',
         link: 'https://next.salvo.rs',
       },
     ],
