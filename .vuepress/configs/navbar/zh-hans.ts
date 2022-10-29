@@ -54,4 +54,17 @@ export const navbarZhHans: NavbarConfig = [
     text: '资助项目',
     link: '/zh-hans/donate.md',
   },
+  {
+    text: `v0.38.x`,
+    children: [
+      {
+        text: 'v0.37.x',
+        link: 'https://salvo.rs',
+      },
+      {
+        text: 'v0.38.x',
+        link: 'https://next.salvo.rs',
+      },
+    ],
+  },
 ]
