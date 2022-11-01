@@ -17,6 +17,7 @@
     "@vuepress/plugin-docsearch": "workspace:*",
     "@vuepress/plugin-google-analytics": "workspace:*",
     "@vuepress/plugin-register-components": "workspace:*",
+    "@vuepress/plugin-search": "^2.0.0-beta.53",
     "@vuepress/plugin-shiki": "workspace:*",
     "@vuepress/theme-default": "workspace:*",
     "@vuepress/utils": "workspace:*",
