@@ -37,16 +37,17 @@ Router::new()
     .push(
         Router::with_path("articles")
             .get(list_articles)
-            .push(Router::with_path("<id>").get(show_article)),
-    ).then(|router|{
-        if admin_mode() {
-            router.post(create_article).push(
-                Router::with_path("<id>").patch(update_article).delete(delete_writer)
-            )
-        } else {
-            router
-        }
-    });
+            .push(Router::with_path("<id>").get(show_article))
+            .then(|router|{
+                if admin_mode() {
+                    router.post(create_article).push(
+                        Router::with_path("<id>").patch(update_article).delete(delete_writer)
+                    )
+                } else {
+                    router
+                }
+            }),
+    );
 ```
 This example represents that only when the server is in ```admin_mode```, routers such as creating articles, editing and deleting articles will be added.
 
