@@ -25,7 +25,7 @@ async fn main() {
     tracing_subscriber::fmt().init();
 
     tracing::info!("Listening on http://127.0.0.1:7878");
-    // Compression must be before CachingHeader.
+    // CachingHeader must be before Compression.
     let router = Router::with_hoop(CachingHeaders::new())
         .hoop(Compression::new().with_min_length(0))
         .get(hello_world);
