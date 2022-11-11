@@ -66,16 +66,17 @@ Router::new()
     .push(
         Router::with_path("articles")
             .get(list_articles)
-            .push(Router::with_path("<id>").get(show_article)),
-    ).then(|router|{
-        if admin_mode() {
-            router.post(create_article).push(
-                Router::with_path("<id>").patch(update_article).delete(delete_writer)
-            )
-        } else {
-            router
-        }
-    });
+            .push(Router::with_path("<id>").get(show_article))
+            .then(|router|{
+                if admin_mode() {
+                    router.post(create_article).push(
+                        Router::with_path("<id>").patch(update_article).delete(delete_writer)
+                    )
+                } else {
+                    router
+                }
+            }),
+    );
 ```
 该示例代表仅仅当服务器在 ```admin_mode``` 时, 才会添加创建文章, 编辑删除文章等路由.
 
