@@ -12,22 +12,22 @@ salvo = { version = "*", features = ["proxy"] }
 
 ```rust
 use salvo::prelude::*;
-use salvo_extra::proxy::ProxyHandler;
+use salvo::proxy::Proxy;
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt().init();
-    
+
     let router = Router::new()
         .push(
             Router::new()
                 .path("google/<**rest>")
-                .handle(ProxyHandler::new(vec!["https://www.google.com".into()])),
+                .handle(Proxy::new("https://www.google.com")),
         )
         .push(
             Router::new()
                 .path("baidu/<**rest>")
-                .handle(ProxyHandler::new(vec!["https://www.baidu.com".into()])),
+                .handle(Proxy::new("https://www.baidu.com")),
         );
     Server::new(TcpListener::bind("127.0.0.1:7878")).serve(router).await;
 }
