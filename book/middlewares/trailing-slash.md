@@ -1,6 +1,6 @@
 # Trailing Slash
 
-Middleware support for automatically add or remove the end of `/`.
+Middleware support to automatically add or remove the end of `/`.
 
 ## Config Cargo.toml
 

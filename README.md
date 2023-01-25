@@ -12,8 +12,8 @@ actions:
     type: secondary
 features:
   - title: Simplicity First
-    details: You just need the basic knowledge of Rust, you can write a powerful and efficient server, which is comparable to the development speed of some Go web server frameworks.
-  - title: Powerful features
+    details: With only basic knowledge of Rust, you can write a powerful and efficient server comparable to the development speed of some Go web server frameworks.
+  - title: Powerful Features
     details: Although it is simple, it is still powerful, with built-in Multipart, extract data from request, etc., which can meet the needs of most business scenarios.
   - title: Performance
     details: Thanks to the performance advantages of Rust, you can write extremely high-performance server-side applications very easily.
