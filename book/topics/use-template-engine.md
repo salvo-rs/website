@@ -1,12 +1,12 @@
 # Use Template Engine
 
-Salvo doesn't have any templating engine built in, after all, the style of templating you like to use varies from person to person.
+Salvo doesn't have a templating engine built in; after all, the style of templating you like to use varies from person to person.
 
 A template engine is essentially: data + template = string.
 
 So, any template engine can be supported as long as it can render the final string.
 
-For example support for `askama`:
+For example, we can use `askama` like so:
 
 `templates/hello.html`:
 

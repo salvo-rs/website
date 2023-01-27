@@ -1,6 +1,6 @@
 # Response
 
-We can get response reference as function handler paramer:
+We can get response reference as function handler parameter:
 
 ```rust
 #[handler]
@@ -9,7 +9,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-When server get a client request and in it's whole process cycle, any handler or middlewares can write to response object. In middleware, you may want to skip all reset middlewares and handler, you can use ```FlowCtrl```:
+When the server gets a client request but you only need to return a simple response (ie skip any middleware or other handlers), you can simply use ```FlowCtrl```:
 
 ```rust
 #[handler]
@@ -55,7 +55,7 @@ Write content is straightforward:
     res.set_http_error(StatusError::internal_server_error().with_summary("error when serialize object to json"))
     ```
 
-- If we don't want to customize error message, just use ```set_http_code```.
+- If you don't want to customize error message, just use ```set_http_code```.
 
     ```rust
     use salvo::http::StatusCode;

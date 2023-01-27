@@ -36,7 +36,7 @@ export default defineUserConfig({
     '/': {
       lang: 'en',
       title: 'Salvo',
-      description: 'Salvo is a powerful and simplest web server framework in Rust world',
+      description: 'A powerful and simple Rust web server framework',
     },
     '/zh-hans/': {
       lang: 'zh-hans',

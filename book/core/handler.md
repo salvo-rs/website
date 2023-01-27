@@ -1,8 +1,8 @@
 # Handler
 
-## What is handler
+## What is Handler
 
-Handler is the specific object responsible for processing Request requests. Handler is a Trait, which contains an asynchronous method of ```handle```: 
+Handler is the specific object responsible for processing Request requests. Handler itself is a Trait, which contains an asynchronous method of ```handle```: 
 
 ```rust
 #[async_trait]
@@ -24,9 +24,9 @@ async fn hello_world(req: &mut Request, depot: &mut Depot, res: &mut Response) {
 
 The default signature of the processing function contains four parameters, followed by ```&mut Request, &mut Depot, &mut Response, &mut FlowCtrl```. Depot is a temporary storage that can store data related to this request.
 
-Middleware is actually a ```Handler```, they can do some processing before or after the request arrives at the ```Handler``` that officially processes the request, such as login verification, data compression, etc.
+Middleware in Salvo uses ```Handler```, and can do some processing before or after the request arrives at the ```Handler``` that officially processes the request, such as login verification, data compression, etc.
 
-Middlewares is added through the ```hoop``` function of the ```Router```. The added middleware will affect the current ```Router``` and its internal all descendants of ```Router```.
+Middleware is added through the ```hoop``` function of the ```Router```. The added middleware will affect the current ```Router``` and its internal all descendants of ```Router```.
 
 If some parameters are not needed, they can be omitted directly. In fact, the order of these three parameters can be adjusted freely according to your preference, or any one or more parameters can be omitted. The following writing methods are all possible:
 

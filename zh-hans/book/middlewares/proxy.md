@@ -12,7 +12,7 @@ salvo = { version = "*", features = ["proxy"] }
 
 ```rust
 use salvo::prelude::*;
-use salvo_extra::proxy::ProxyHandler;
+use salvo::proxy::Proxy;
 
 #[tokio::main]
 async fn main() {
@@ -22,12 +22,12 @@ async fn main() {
         .push(
             Router::new()
                 .path("google/<**rest>")
-                .handle(ProxyHandler::new(vec!["https://www.google.com".into()])),
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.google.com"])),
         )
         .push(
             Router::new()
                 .path("baidu/<**rest>")
-                .handle(ProxyHandler::new(vec!["https://www.baidu.com".into()])),
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.baidu.com"])),
         );
     let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(router).await;
 }

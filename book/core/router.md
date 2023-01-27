@@ -53,7 +53,7 @@ This example represents that only when the server is in ```admin_mode```, router
 
 ## Get param in routers
 
-In previous source code, ```<id>``` is a param definition. We can access it's value via Request instance:
+In the previous source code, ```<id>``` is a param definition. We can access its value via Request instance:
 
 ```rust
 #[handler]
@@ -96,7 +96,7 @@ Router::new()
     );
 ```
 
-In this example, the root router has a middleware to check current user is authed. This middleware will affects root router and it's descendants.
+In this example, the root router has a middleware to check current user is authenticated. This middleware will affect the root router and its descendants.
 
 If we don't want to check user is authed when current user view writer informations and articles. We can write router like this:
 
@@ -157,7 +157,7 @@ Router::new().filter(filter::path("hello").and(filter::get()));
 
 ### Path filter
 
-The filter based on the request path is the most frequently used. Parameters can be defined in the path filter, such as:
+The filter is based on the request path is the most frequently used. Parameters can be defined in the path filter, such as:
 
 ```rust
 Router::with_path("articles/<id>").get(show_article);
@@ -206,7 +206,7 @@ Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA -F
 Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA -F]{12}/>");
 ```
 
-Writing this complex regular expression every time is prone to errors, and the code is not beautiful. You can do this:
+However, writing this complex regular expression every time is prone to errors and hard-coding the regex is not ideal. We could separate the regex into its own Regex variable like so:
 
 ```rust
 use salvo::routing::filter::PathFilter;
