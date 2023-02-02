@@ -111,7 +111,7 @@ export default defineUserConfig({
       '/zh-hant/': {
         // navbar
         navbar: navbarZhHant,
-        selectLanguageName: '簡體中文',
+        selectLanguageName: '繁體中文',
         selectLanguageText: '選擇語言',
         selectLanguageAriaLabel: '選擇語言',
         // sidebar
@@ -122,14 +122,14 @@ export default defineUserConfig({
         contributorsText: '貢獻者',
         // custom containers
         tip: '提示',
-        warning: '註意',
+        warning: '注意',
         danger: '警告',
         // 404 page
         notFound: [
-          '這裏什麼都冇有',
+          '這裡什麼都沒有',
           '我們怎麼到這來了？',
-          '這是一個 404 頁麵',
-          '看起來我們進入了錯誤的鏈接',
+          '這是一個 404 頁面',
+          '看起來我們進入了錯誤的連結',
         ],
         backToHome: '返回首頁',
         // a11y
@@ -222,7 +222,7 @@ export default defineUserConfig({
               },
               startScreen: {
                 recentSearchesTitle: '搜索曆史',
-                noRecentSearchesText: '冇有搜索曆史',
+                noRecentSearchesText: '沒有搜索曆史',
                 saveRecentSearchButtonTitle: '保存至搜索曆史',
                 removeRecentSearchButtonTitle: '從搜索曆史中移除',
                 favoriteSearchesTitle: '收藏',
