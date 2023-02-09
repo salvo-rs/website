@@ -21,7 +21,7 @@ pub struct Service {
 They can be set via the ```with_catchers``` function of ```Server```:
 
 ```rust
-structHandle404;
+struct Handle404;
 impl Catcher for Handle404 {
     fn catch(&self, _req: &Request, _depot: &Depot, res: &mut Response) -> bool {
         if let Some(StatusCode::NOT_FOUND) = res.status_code() {
