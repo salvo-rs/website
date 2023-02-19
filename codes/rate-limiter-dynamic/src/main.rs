@@ -5,7 +5,7 @@ use std::hash::Hash;
 use once_cell::sync::Lazy;
 use salvo::prelude::*;
 use salvo::Error;
-use salvo_rate_limiter::{
+use salvo::rate_limiter::{
     CelledQuota, MemoryStore, QuotaGetter, RateIssuer, RateLimiter, SlidingGuard,
 };
 

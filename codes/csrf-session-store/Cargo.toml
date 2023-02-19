@@ -5,9 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-salvo = { git = "https://github.com/salvo-rs/salvo.git" }
-salvo-csrf = { git = "https://github.com/salvo-rs/salvo.git", default-features = false, features = ["session-store", "bcrypt-cipher"] }
-salvo-session = { git = "https://github.com/salvo-rs/salvo.git" }
+salvo = { workspace = true, features = ["csrf", "session"] }
 tokio = { version = "1", features = ["macros"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"

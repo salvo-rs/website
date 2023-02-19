@@ -1,5 +1,6 @@
+use salvo::csrf::*;
 use salvo::prelude::*;
-use salvo_csrf::*;
+use salvo::session::{MemoryStore, SessionHandler};
 use serde::{Deserialize, Serialize};
 
 #[handler]
@@ -53,8 +54,8 @@ async fn main() {
     let ccp_session_csrf =
         ccp_session_csrf(*b"01234567012345670123456701234567", form_finder.clone());
 
-    let session_handler = salvo_session::SessionHandler::builder(
-        salvo_session::MemoryStore::new(),
+    let session_handler = SessionHandler::builder(
+        MemoryStore::new(),
         b"secretabsecretabsecretabsecretabsecretabsecretabsecretabsecretab",
     )
     .build()

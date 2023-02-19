@@ -6,7 +6,7 @@ publish = false
 
 
 [dependencies]
-salvo = { git = "https://github.com/salvo-rs/salvo.git" }
+salvo.workspace = true
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros"] }
 tracing = "0.1"

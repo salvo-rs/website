@@ -17,7 +17,7 @@ async fn main() {
 
     let router = Router::with_hoop(cors_handler)
         .get(hello)
-        .options(empty_handler);
+        .options(handler::empty());
 
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor).serve(router).await;

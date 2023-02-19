@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-salvo = { git = "https://github.com/salvo-rs/salvo.git", features = ["cache"] }
+salvo = {workspace = true, features = ["cache"] }
 tokio = { version = "1", features = ["macros"] }
 time = "0.3"
 tracing = "0.1"

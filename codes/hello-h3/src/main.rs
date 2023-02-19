@@ -20,7 +20,7 @@ async fn main() {
     );
     let listener = TcpListener::new(("127.0.0.1", 5800)).rustls(config.clone());
 
-    let acceptor = QuicListener::new(config, ("127.0.0.1", 5800))
+    let acceptor = QuinnListener::new(config, ("127.0.0.1", 5800))
         .join(listener)
         .bind()
         .await;
