@@ -24,7 +24,7 @@ pub(crate) async fn start_server() {
                 .delete(delete_todo),
         );
 
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await;
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -137,7 +137,7 @@ mod tests {
         tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
         let client = Client::new();
         let resp = client
-            .post("http://127.0.0.1:7878/todos")
+            .post("http://127.0.0.1:5800/todos")
             .json(&test_todo())
             .send()
             .await
@@ -145,7 +145,7 @@ mod tests {
 
         assert_eq!(resp.status(), StatusCode::CREATED);
         let resp = client
-            .post("http://127.0.0.1:7878/todos")
+            .post("http://127.0.0.1:5800/todos")
             .json(&test_todo())
             .send()
             .await

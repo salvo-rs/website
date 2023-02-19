@@ -18,9 +18,9 @@ async fn main() {
             .with_cert(cert.as_slice())
             .with_key(key.as_slice()),
     );
-    let listener = TcpListener::new(("127.0.0.1", 7878)).rustls(config.clone());
+    let listener = TcpListener::new(("127.0.0.1", 5800)).rustls(config.clone());
 
-    let acceptor = QuicListener::new(config, ("127.0.0.1", 7878))
+    let acceptor = QuicListener::new(config, ("127.0.0.1", 5800))
         .join(listener)
         .bind()
         .await;

@@ -34,7 +34,7 @@ tracing-subscriber = "0.3"
 
 @[code rust](../../codes/hello/src/main.rs)
 
-恭喜你, 你的一个 Salvo 程序已经完成. 只需要在命令行下运行 ```cargo run```, 然后在浏览器里打开 ```http://127.0.0.1:7878``` 即可.
+恭喜你, 你的一个 Salvo 程序已经完成. 只需要在命令行下运行 ```cargo run```, 然后在浏览器里打开 ```http://127.0.0.1:5800``` 即可.
 
 ## 详细解读
 

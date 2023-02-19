@@ -18,8 +18,8 @@ async fn hello_world() -> &'static str {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    tracing::info!("Listening on http://127.0.0.1:7878");
-    let acceptor = TcpListener::new("127.0.0.1:7878").bind().await; Server::new(acceptor).serve(route()).await;
+    tracing::info!("Listening on http://127.0.0.1:5800");
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(route()).await;
 }
 
 fn route() -> Router {
@@ -35,7 +35,7 @@ mod tests {
     async fn test_hello_world() {
         let service = Service::new(super::route());
 
-        let content = TestClient::get(format!("http://127.0.0.1:7878/{}", name))
+        let content = TestClient::get(format!("http://127.0.0.1:5800/{}", name))
             .send(service)
             .await
             .take_string()
