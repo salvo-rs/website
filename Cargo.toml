@@ -2,4 +2,4 @@
 members = ["codes/*"]
 
 [workspace.dependencies]
-salvo = { git = "https://github.com/salvo-rs/salvo.git", rev = "c577b0a" }
+salvo = { git = "https://github.com/salvo-rs/salvo.git" }
