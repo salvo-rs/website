@@ -1,0 +1,47 @@
+name: ci-linux
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - next
+
+jobs:
+  msrv:
+    name: Check MSRV - x86_64-unknown-linux-gnu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get MSRV from package metadata
+        id: msrv
+        run: grep rust-version Cargo.toml | cut -d'"' -f2 | sed 's/^/version=/' >> $GITHUB_OUTPUT
+        
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ steps.msrv.outputs.version }}
+          components: rustfmt, clippy
+
+      - name: check
+        run: cargo check --all --bins --examples --tests
+  check:
+    strategy:
+        fail-fast: false
+        matrix:
+          version:
+            - stable
+            # - nightly
+    name: Cargo check ${{ matrix.version }} - x86_64-unknown-linux-gnu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.version }}
+          components: rustfmt, clippy
+
+      - name: check build
+        run: cargo check --all --bins --examples --tests
+
+      - name: check release build
+        run: cargo check --all --bins --examples --tests --release
