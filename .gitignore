@@ -18,6 +18,6 @@ tarpaulin-report.*
 
 **/node_modules/
 ss files
-.vuepress/.temp/
-.vuepress/.cache/
-.vuepress/dist/
+**/.vuepress/.temp/
+**/.vuepress/.cache/
+**/.vuepress/dist/
