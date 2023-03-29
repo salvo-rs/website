@@ -6,26 +6,16 @@ Middleware that provides CSRF (Cross-Site Request Forgery) protection.
 
 * `Csrf` is a structure that implements `Handler`, and there is a `skipper` field inside, which can be specified to skip certain requests that do not require authentication. By default, `Method::POST`, `Method: :PATCH`, `Method::DELETE`, `Method::PUT` requests.
 
-## Config Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["csrf"] }
-```
-
-## Sample Code
+## Example
 
 ### Use cookie store
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../codes/csrf-cookie-store/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../codes/csrf-cookie-store/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 
@@ -34,13 +24,9 @@ salvo = { version = "*", features = ["csrf"] }
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../codes/csrf-session-store/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../codes/csrf-session-store/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

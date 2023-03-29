@@ -2,12 +2,6 @@
 
 将静态文件或者内嵌的文件作为服务提供的中间件.
 
-## 配置 Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["serve-static"] }
-```
-
 ## 主要功能
 
 * `StaticDir` 提供了对静态本地文件夹的支持. 可以将多个文件夹的列表作为参数. 比如:

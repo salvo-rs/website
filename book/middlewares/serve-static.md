@@ -2,16 +2,9 @@
 
 Middleware that provides static files or embedded files as services.
 
-## Config Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["serve-static"] }
-```
-
 ## Main Features
 
 * `StaticDir` provides support for static local folders. You can take a list of multiple folders as an argument. For example:
-
 
     <CodeGroup>
     <CodeGroupItem title="main.rs" active>

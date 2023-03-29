@@ -8,14 +8,10 @@ Depot 是用于保存一次请求中涉及到的临时数据. 中间件可以将
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/use-depot/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/use-depot/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 

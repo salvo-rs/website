@@ -2,12 +2,6 @@
 
 將靜態文件或者內嵌的文件作為服務提供的中間件.
 
-## 配置 Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["serve-static"] }
-```
-
 ## 主要功能
 
 * `StaticDir` 提供了對靜態本地文件夾的支持. 可以將多個文件夾的列表作為參數. 比如:

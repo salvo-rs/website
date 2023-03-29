@@ -22,14 +22,10 @@ They can be set via the ```with_catchers``` function of ```Server```:
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../codes/custom-error-page/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../codes/custom-error-page/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 

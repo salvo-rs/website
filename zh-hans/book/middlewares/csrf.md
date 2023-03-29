@@ -8,39 +8,25 @@
 
 * `Csrf` 是实现了 `Handler` 的结构体, 内部还有一个 `skipper` 字段, 可以指定跳过某些不需要验证的请求. 默认情况下, 验证 `Method::POST`, `Method::PATCH`, `Method::DELETE`, `Method::PUT` 请求.
 
-## 配置 Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["csrf"] }
-```
-
 ## 示例代码
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/csrf-cookie-store/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/csrf-cookie-store/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 
 
-## Sample Code(session store)
+## Example(session store)
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/csrf-session-store/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/csrf-session-store/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

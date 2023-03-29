@@ -27,23 +27,13 @@ Cache 中间件可以对 `Response` 中的 `StatusCode`, `Headers`, `Body` 提�
   }
   ```
 
-## 配置 Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["cache"] }
-```
-
 ## 示例代码
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/cache-simple/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/cache-simple/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

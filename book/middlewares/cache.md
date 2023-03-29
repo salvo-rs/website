@@ -29,23 +29,13 @@ Note that this plugin will not cache `Response` whose `Body` is a `ResBody::Stre
   }
   ```
 
-## Config Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["cache"] }
-```
-
-## Sample Code
+## Example
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../codes/cache-simple/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../codes/cache-simple/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

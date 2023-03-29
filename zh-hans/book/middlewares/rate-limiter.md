@@ -15,26 +15,16 @@
 
 * `QuotaGetter` 提供配额获取的抽象, 可根据访问者的 `Key` 获取一个配额对象, 也就意味着我们可以把用户配额等信息配置到数据库中,动态改变, 动态获取.
 
-## 配置 Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["rate-limiter"] }
-```
-
 ## 示例代码
 
 ### 静态配额示例
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/rate-limiter-static/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/rate-limiter-static/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 
@@ -43,13 +33,9 @@ salvo = { version = "*", features = ["rate-limiter"] }
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/rate-limiter-dynamic/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/rate-limiter-dynamic/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

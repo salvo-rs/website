@@ -4,23 +4,13 @@
 
 实际上实现内部包含了 `CachingHeaders`, `Modified`, `ETag` 三个 `Handler` 的实现, `CachingHeaders` 是后两者的组合. 正常情况下使用 `CachingHeaders`.
 
-## 配置 Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["caching-headers"] }
-```
-
 ## 示例代码
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/caching-headers/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/caching-headers/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

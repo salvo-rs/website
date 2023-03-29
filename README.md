@@ -32,11 +32,9 @@ footer: MIT Licensed | Copyright © 2019-present Salvo Team
   <CodeGroupItem title="main.rs" active>
   
 @[code rust](./codes/hello/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
   
 @[code toml](./codes/hello/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

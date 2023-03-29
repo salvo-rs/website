@@ -9,14 +9,10 @@ For example, we can set ```current_user``` in ```set_user```, and then use this 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../codes/use-depot/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../codes/use-depot/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 

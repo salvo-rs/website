@@ -15,26 +15,16 @@ Middleware that provides flow control functionality.
 
 * `QuotaGetter` provides the abstraction of quota acquisition, which can obtain a quota object according to the visitor's `Key`, which means that we can configure the user quota and other information into the database, change it dynamically, and acquire it dynamically.
 
-## Config Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["rate-limiter"] }
-```
-
-## Sample Code 
+## Example
 
 ### Use static quota
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../codes/rate-limiter-static/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../codes/rate-limiter-static/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 
@@ -43,13 +33,9 @@ salvo = { version = "*", features = ["rate-limiter"] }
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../codes/rate-limiter-dynamic/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../codes/rate-limiter-dynamic/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>

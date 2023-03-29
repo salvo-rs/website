@@ -8,14 +8,10 @@ Depot 是用於保存一次請求中涉及到的臨時數據. 中間件可以將
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
-
 @[code rust](../../../codes/use-depot/src/main.rs)
-
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
-
 @[code toml](../../../codes/use-depot/Cargo.toml)
-
   </CodeGroupItem>
 </CodeGroup>
 

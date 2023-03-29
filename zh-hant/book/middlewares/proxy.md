@@ -2,12 +2,6 @@
 
 提供反向代理功能的中間件.
 
-## 配置 Cargo.toml
-
-```toml
-salvo = { version = "*", features = ["proxy"] }
-```
-
 ## 示例代碼
 
 ```rust
