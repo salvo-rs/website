@@ -1,38 +1,29 @@
 # Catcher
 
-```Catcher``` is used to handle how to display page when response's code is error.
+If the status code of `Response` returned by the request is an error, and the `Body` in the page is empty, then salvo will try to use `Catcher` to catch the error and display a friendly error page.
+
+
+A simple way to create a custom `Catcher` is to return a system default `Catcher` via `Catcher::default()`, and then add it to `Service`.
 
 ```rust
-pub trait Catcher: Send + Sync + 'static {
-    fn catch(&self, req: &Request, res: &mut Response) -> bool;
-}
+use salvo::catcher::Catcher;
+
+Service::new(router).with_catcher(Catcher::default());
 ```
 
-A web application can specify several different Catchers to handle errors. They are stored in the Service field:
+The default ```Catcher``` implements ```CatcherImpl``` to capture and process errors, and send the default error page. The default error supports ```XML```, ```JSON```, `` `HTML```, ```Text``` format to send error page.
 
-```rust
-pub struct Service {
-    pub(crate) router: Arc<Router>,
-    pub(crate) catchers: Arc<Vec<Box<dyn Catcher>>>,
-    pub(crate) allowed_media_types: Arc<Vec<Mime>>,
-}
-```
-
-They can be set via the ```with_catchers``` function of ```Server```:
+You can add a custom error catcher to `Catcher` by adding `hoop` to the default `Catcher`. The error catcher is still `Handler`.
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../codes/custom-error-page/src/main.rs)
+@[code rust](../../../../codes/custom-error-page/src/main.rs)
 
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code toml](../../../codes/custom-error-page/Cargo.toml)
+@[code toml](../../../../codes/custom-error-page/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>
-
-When there is an error in the website request result, first try to set the error page through the ```Catcher``` set by the user. If the ```Catcher``` catches the error, it will return ```true```. 
-
-If your custom catchers does not capture this error, then the system uses the default ```CatcherImpl``` to capture processing errors and send the default error page. The default error implementation ```CatcherImpl``` supports sending error pages in ```XML```, ```JSON```, ```HTML```, ```Text``` formats.
