@@ -11,7 +11,7 @@ use salvo::catcher::Catcher;
 Service::new(router).with_catcher(Catcher::default());
 ```
 
-The default ```Catcher``` implements ```CatcherImpl``` to capture and process errors, and send the default error page. The default error supports ```XML```, ```JSON```, `` `HTML```, ```Text``` format to send error page.
+The default ```Catcher``` supports sending error pages in ```XML```, ```JSON```, ```HTML```, ```Text``` formats.
 
 You can add a custom error catcher to `Catcher` by adding `hoop` to the default `Catcher`. The error catcher is still `Handler`.
 
