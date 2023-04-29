@@ -22,7 +22,11 @@ async fn main() {
             Router::with_path("todos")
                 .get(list_todos)
                 .post(create_todo)
-                .push(Router::with_path("<id>").patch(update_todo).delete(delete_todo)),
+                .push(
+                    Router::with_path("<id>")
+                        .patch(update_todo)
+                        .delete(delete_todo),
+                ),
         ),
     );
 
