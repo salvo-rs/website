@@ -18,12 +18,12 @@ You can add a custom error catcher to `Catcher` by adding `hoop` to the default 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../../codes/custom-error-page/src/main.rs)
+@[code rust](../../../codes/custom-error-page/src/main.rs)
 
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code toml](../../../../codes/custom-error-page/Cargo.toml)
+@[code toml](../../../codes/custom-error-page/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>
