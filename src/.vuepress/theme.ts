@@ -68,7 +68,7 @@ export default defaultTheme({
         '/zh-hant/': {
             // navbar
             navbar: navbarZhHant,
-            selectLanguageName: '簡體中文',
+            selectLanguageName: '繁體中文',
             selectLanguageText: '選擇語言',
             selectLanguageAriaLabel: '選擇語言',
             // sidebar
