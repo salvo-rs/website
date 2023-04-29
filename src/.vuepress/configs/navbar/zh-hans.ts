@@ -34,6 +34,12 @@ export const navbarZhHans: NavbarConfig = [
         ],
       },
       {
+        text: '文档协作',
+        children: [
+          '/zh-hans/book/middlewares/openapi.md',
+        ],
+      },
+      {
         text: '安全防护',
         children: [
           '/zh-hans/book/middlewares/cors.md',

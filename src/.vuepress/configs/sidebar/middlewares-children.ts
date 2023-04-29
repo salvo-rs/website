@@ -11,6 +11,7 @@ export const middlewaresChildren = function (bookRoot: string) {
     `${bookRoot}/middlewares/force-https.md`,
     `${bookRoot}/middlewares/jwt-auth.md`,
     `${bookRoot}/middlewares/logging.md`,
+    `${bookRoot}/middlewares/openapi.md`,
     `${bookRoot}/middlewares/proxy.md`,
     `${bookRoot}/middlewares/rate-limiter.md`,
     `${bookRoot}/middlewares/serve-static.md`,

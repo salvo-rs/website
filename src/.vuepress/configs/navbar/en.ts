@@ -34,6 +34,12 @@ export const navbarEn: NavbarConfig = [
         ],
       },
       {
+        text: 'Documentation',
+        children: [
+          '/zh-hans/book/middlewares/openapi.md',
+        ],
+      },
+      {
         text: 'Security',
         children: [
           '/book/middlewares/cors.md',
