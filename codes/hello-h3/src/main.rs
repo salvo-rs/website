@@ -15,8 +15,8 @@ async fn main() {
     let router = Router::new().get(hello);
     let config = RustlsConfig::new(
         Keycert::new()
-            .with_cert(cert.as_slice())
-            .with_key(key.as_slice()),
+            .cert(cert.as_slice())
+            .key(key.as_slice()),
     );
     let listener = TcpListener::new(("127.0.0.1", 5800)).rustls(config.clone());
 

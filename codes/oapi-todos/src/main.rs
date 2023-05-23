@@ -62,7 +62,7 @@ pub async fn list_todos(req: &mut Request, res: &mut Response) {
         (status = 409, description = "Todo already exists", body = TodoError, example = json!(TodoError::Config(String::from("id = 1"))))
     )
 )]
-pub async fn create_todo(JsonBody(new_todo): JsonBody<Todo>, res: &mut Response) {
+pub async fn create_todo(new_todo: JsonBody<Todo>, res: &mut Response) {
     tracing::debug!(todo = ?new_todo, "create todo");
 
     let mut vec = STORE.lock().await;
@@ -70,13 +70,13 @@ pub async fn create_todo(JsonBody(new_todo): JsonBody<Todo>, res: &mut Response)
     for todo in vec.iter() {
         if todo.id == new_todo.id {
             tracing::debug!(id = ?new_todo.id, "todo already exists");
-            res.set_status_code(StatusCode::BAD_REQUEST);
+            res.status_code(StatusCode::BAD_REQUEST);
             return;
         }
     }
 
-    vec.push(new_todo);
-    res.set_status_code(StatusCode::CREATED);
+    vec.push(new_todo.into_inner());
+    res.status_code(StatusCode::CREATED);
 }
 
 #[endpoint(
@@ -92,13 +92,13 @@ pub async fn update_todo(id: PathParam<u64>, updated_todo: JsonBody<Todo>, res: 
     for todo in vec.iter_mut() {
         if todo.id == *id {
             *todo = (*updated_todo).clone();
-            res.set_status_code(StatusCode::OK);
+            res.status_code(StatusCode::OK);
             return;
         }
     }
 
     tracing::debug!(id = ?id, "todo is not found");
-    res.set_status_code(StatusCode::NOT_FOUND);
+    res.status_code(StatusCode::NOT_FOUND);
 }
 
 #[endpoint(
@@ -118,15 +118,15 @@ pub async fn delete_todo(id: PathParam<u64>, res: &mut Response) {
 
     let deleted = vec.len() != len;
     if deleted {
-        res.set_status_code(StatusCode::NO_CONTENT);
+        res.status_code(StatusCode::NO_CONTENT);
     } else {
         tracing::debug!(id = ?id, "todo is not found");
-        res.set_status_code(StatusCode::NOT_FOUND);
+        res.status_code(StatusCode::NOT_FOUND);
     }
 }
 
 mod models {
-    use salvo::oapi::AsSchema;
+    use salvo::oapi::ToSchema;
     use serde::{Deserialize, Serialize};
     use tokio::sync::Mutex;
 
@@ -136,7 +136,7 @@ mod models {
         Mutex::new(Vec::new())
     }
 
-    #[derive(Serialize, Deserialize, AsSchema)]
+    #[derive(Serialize, Deserialize, ToSchema)]
     pub(super) enum TodoError {
         /// Happens when Todo item already exists
         Config(String),
@@ -144,7 +144,7 @@ mod models {
         NotFound(String),
     }
 
-    #[derive(Serialize, Deserialize, Clone, Debug, AsSchema)]
+    #[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]
     pub struct Todo {
         #[schema(example = 1)]
         pub id: u64,

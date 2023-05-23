@@ -1,4 +1,4 @@
-use salvo::compression::{Compression, CompressionAlgo};
+use salvo::compression::Compression;
 use salvo::prelude::*;
 
 #[tokio::main]
@@ -14,22 +14,22 @@ async fn main() {
 
     let router = Router::new()
         .push(
-            Router::with_hoop(Compression::new().with_force_priority(true))
+            Router::with_hoop(Compression::new().force_priority(true))
                 .path("ws_chat")
                 .get(StaticFile::new(base_dir.join("ws_chat.txt"))),
         )
         .push(
-            Router::with_hoop(Compression::new().with_algos(&[CompressionAlgo::Brotli]))
+            Router::with_hoop(Compression::new().enable_brotli(CompressionLevel::Fastest))
                 .path("sse_chat")
                 .get(StaticFile::new(base_dir.join("sse_chat.txt"))),
         )
         .push(
-            Router::with_hoop(Compression::new().with_algos(&[CompressionAlgo::Deflate]))
+            Router::with_hoop(Compression::new().enable_deflate(CompressionLevel::Fastest))
                 .path("todos")
                 .get(StaticFile::new(base_dir.join("todos.txt"))),
         )
         .push(
-            Router::with_hoop(Compression::new().with_algos(&[CompressionAlgo::Gzip]))
+            Router::with_hoop(Compression::new().enable_gzip(CompressionLevel::Fastest))
                 .path("<*path>")
                 .get(StaticDir::new(base_dir)),
         );

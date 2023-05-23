@@ -12,14 +12,14 @@ you can use to annotate your code to have items documented.
   `format: date-time` for `DateTime` and `format: date` for `Date` and `NaiveDate` according
   [RFC3339](https://xml2rfc.ietf.org/public/rfc/html/rfc3339.html#anchor14) as `ISO-8601`. To
   override default `string` representation users have to use `value_type` attribute to override the type.
-  See [docs](https://docs.rs/salvo_oapi/latest/salvo_oapi/derive.AsSchema.html) for more details.
+  See [docs](https://docs.rs/salvo_oapi/latest/salvo_oapi/derive.ToSchema.html) for more details.
 * **time** Add support for [time](https://crates.io/crates/time) `OffsetDateTime`, `PrimitiveDateTime`, `Date`, and `Duration` types.
   By default these types are parsed as `string`. `OffsetDateTime` and `PrimitiveDateTime` will use `date-time` format. `Date` will use
   `date` format and `Duration` will not have any format. To override default `string` representation users have to use `value_type` attribute
-  to override the type. See [docs](https://docs.rs/salvo_oapi/latest/salvo_oapi/derive.AsSchema.html) for more details.
+  to override the type. See [docs](https://docs.rs/salvo_oapi/latest/salvo_oapi/derive.ToSchema.html) for more details.
 * **decimal** Add support for [rust_decimal](https://crates.io/crates/rust_decimal) `Decimal` type. **By default**
   it is interpreted as `String`. If you wish to change the format you need to override the type.
-  See the `value_type` in [`AsSchema` derive docs][as_schema_derive].
+  See the `value_type` in [`ToSchema` derive docs][as_schema_derive].
 * **uuid** Add support for [uuid](https://github.com/uuid-rs/uuid). `Uuid` type will be presented as `String` with
   format `uuid` in OpenAPI spec.
 * **smallvec** Add support for [smallvec](https://crates.io/crates/smallvec). `SmallVec` will be treated as `Vec`.

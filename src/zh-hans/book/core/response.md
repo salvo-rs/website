@@ -63,5 +63,5 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
     ```rust
     use salvo::http::StatusCode;
-    res.set_status_code(StatusCode::BAD_REQUEST);
+    res.status_code(StatusCode::BAD_REQUEST);
     ```

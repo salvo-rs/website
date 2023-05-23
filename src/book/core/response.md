@@ -59,5 +59,5 @@ Write content is straightforward:
 
     ```rust
     use salvo::http::StatusCode;
-    res.set_status_code(StatusCode::BAD_REQUEST);
+    res.status_code(StatusCode::BAD_REQUEST);
     ```
