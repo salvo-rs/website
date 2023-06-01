@@ -22,7 +22,11 @@ async fn main() {
             Router::with_path("todos")
                 .get(list_todos)
                 .post(create_todo)
-                .push(Router::with_path("<id>").patch(update_todo).delete(delete_todo)),
+                .push(
+                    Router::with_path("<id>")
+                        .patch(update_todo)
+                        .delete(delete_todo),
+                ),
         ),
     );
 
@@ -38,7 +42,10 @@ async fn main() {
 
 /// List todos.
 #[endpoint]
-pub async fn list_todos(offset: QueryParam<Option<usize>>, limit: QueryParam<Option<usize>>) -> Json<Vec<Todo>> {
+pub async fn list_todos(
+    offset: QueryParam<Option<usize>>,
+    limit: QueryParam<Option<usize>>,
+) -> Json<Vec<Todo>> {
     let todos = STORE.lock().await;
     let todos: Vec<Todo> = todos
         .clone()
@@ -69,7 +76,10 @@ pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, StatusE
 
 /// Update existing todo.
 #[endpoint(status_codes(200, 404))]
-pub async fn update_todo(id: PathParam<u64>, updated: JsonBody<Todo>) -> Result<StatusCode, StatusError> {
+pub async fn update_todo(
+    id: PathParam<u64>,
+    updated: JsonBody<Todo>,
+) -> Result<StatusCode, StatusError> {
     tracing::debug!(todo = ?updated, id = ?id, "update todo");
     let mut vec = STORE.lock().await;
 
