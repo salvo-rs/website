@@ -8,6 +8,7 @@ Salvo 沒有內置任何模板引擎, 畢竟, 喜歡使用那種風格的模板�
 
 比如對 `askama` 的支持:
 
+
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
 

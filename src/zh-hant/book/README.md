@@ -1,13 +1,13 @@
 # 欲練此功
 
-## 為什麽要寫這個框架
+## 爲什麼要寫這個框架
 
-因為我笨，無法學會使用 actix-web 等現存的框架。當我想把以前的 go 的 web 服務使用 rust 實現時，一眼看去，似乎每個框架都比 go 裏存在框架復雜, 本來 Rust 的學習曲線就夠陡峭的了, 又何苦把 Web 框架整得那麽復雜?
+因爲我笨，無法學會使用 actix-web 等現存的框架。當我想把以前的 go 的 web 服務使用 rust 實現時，一眼看去，似乎每個框架都比 go 裏存在框架複雜, 本來 Rust 的學習曲線就夠陡峭的了, 又何苦把 Web 框架整得那麼複雜?
 
 ## 如何做到足夠簡單
 很多底層的實現 Hyper 都已經實現，所以，一般需求，基於 Hyper 實現應該沒有錯。Salvo 也是一樣。 核心功能是提供還用簡單的API，以及一個功能強大並且靈活的路由系統。
 
-Salvo 裏統一了 Handler 和 Middleware. Middleware 就是 Handler. 通過路由的 hoop 添加到 Router 上。本質上, Middleware 和 Handler 都是處理 Request 請求，並且可能向 Response 寫入數據。而 Handler 接收的參數是 Request, Depot, Response 三個, 其中 Depot 用於存儲請求處理過程中的臨時數據. 為方便書寫, 在用不著的情況下可以省略掉某些參數.
+Salvo 裏統一了 Handler 和 Middleware. Middleware 就是 Handler. 通過路由的 hoop 添加到 Router 上。本質上, Middleware 和 Handler 都是處理 Request 請求，並且可能向 Response 寫入數據。而 Handler 接收的參數是 Request, Depot, Response 三個, 其中 Depot 用於存儲請求處理過程中的臨時數據. 爲方便書寫, 在用不着的情況下可以省略掉某些參數.
 
 ```rust
 use salvo::prelude::*;
@@ -22,7 +22,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-另外路由系統提供的 API 也是極其簡單的, 但是, 功能卻是強大的. 正常使用需求下, 基本上就是只關註 Router 一個類型即可.
+另外路由系統提供的 API 也是極其簡單的, 但是, 功能卻是強大的. 正常使用需求下, 基本上就是隻關注 Router 一個類型即可.
 
 ## 路由系統
 
@@ -39,7 +39,7 @@ Router::new()
     .delete(delete_article);
 ```
 
-往往查看文章和文章列表是不需要用戶登錄的, 但是創建, 編輯, 刪除文章等需要用戶登錄認證權限才可以. Salvo 中支持嵌套的路由系統可以很好地滿足這種需求. 我們可以把不需要用戶登錄的路由寫到一起：
+往往查看文章和文章列表是不需要用戶登錄的, 但是創建, 編輯, 刪除文章等需要用戶登錄認證權限纔可以. Salvo 中支持嵌套的路由系統可以很好地滿足這種需求. 我們可以把不需要用戶登錄的路由寫到一起：
 
 ```rust
 Router::new()

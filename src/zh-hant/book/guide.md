@@ -4,7 +4,7 @@
 
 如果你還沒有安裝 Rust, 你可以使用官方提供的 ```rustup``` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有如何安裝的詳細介紹.
 
-當前 Salvo 支持的最低 Rust 版本為 1.64. 運行 ```rustup update``` 確認您已經安裝了符合要求的 Rust.
+當前 Salvo 支持的最低 Rust 版本爲 1.64. 運行 ```rustup update``` 確認您已經安裝了符合要求的 Rust.
 
 ## 編寫第一個 Salvo 程序
 
@@ -30,7 +30,7 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 ```
 
-在 `main.rs` 中創建一個簡單的函數句柄, 命名為`hello`, 這個函數只是簡單地打印文本 ```"Hello world"```.
+在 `main.rs` 中創建一個簡單的函數句柄, 命名爲`hello`, 這個函數只是簡單地打印文本 ```"Hello world"```.
 
 @[code rust](../../../codes/hello/src/main.rs)
 
@@ -49,7 +49,7 @@ tracing-subscriber = "0.3"
     }
     ```
 
-- 您可以省略函數中某些用不著的參數, 比如這裏面的 ```_req```, ```_depot```, ```_ctrl``` 都沒有被使用, 可以直接不寫:
+- 您可以省略函數中某些用不着的參數, 比如這裏面的 ```_req```, ```_depot```, ```_ctrl``` 都沒有被使用, 可以直接不寫:
   
     ``` rust
     #[handler]
@@ -58,7 +58,7 @@ tracing-subscriber = "0.3"
     }
     ```
 
-- 任何類型都可以作為函數的返回類型, 只要它實現了 ```Writer``` trait. 比如 ```&str``` 實現了 ```Writer```, 當它被作為返回值時, 就打印純文本:
+- 任何類型都可以作爲函數的返回類型, 只要它實現了 ```Writer``` trait. 比如 ```&str``` 實現了 ```Writer```, 當它被作爲返回值時, 就打印純文本:
 
     ```rust
     #[handler]
@@ -67,7 +67,7 @@ tracing-subscriber = "0.3"
     }
     ```
 
-- 更普遍的情況是, 我們需要在將 ```Result<T, E>``` 作為返回類型, 以便處理函數執行過程中的錯誤. 如果 ```T``` 和 ```E``` 都實現了 ```Writer```, 那麽 ```Result<T, E>``` 就可以作為返回值:
+- 更普遍的情況是, 我們需要在將 ```Result<T, E>``` 作爲返回類型, 以便處理函數執行過程中的錯誤. 如果 ```T``` 和 ```E``` 都實現了 ```Writer```, 那麼 ```Result<T, E>``` 就可以作爲返回值:
   
     ```rust
     #[handler]
@@ -78,9 +78,9 @@ tracing-subscriber = "0.3"
 
 ## 風騷的 HTTP3
 
-據說 HTTP3 身輕如燕，多少程序員思而不得。這會，Salvo 就幫大家實現願望，讓大家輕松享受到 HTTP3 帶來的美妙服務。
+據說 HTTP3 身輕如燕，多少程序員思而不得。這會，Salvo 就幫大家實現願望，讓大家輕鬆享受到 HTTP3 帶來的美妙服務。
 
-首先在 `Cargo.toml` 中啟用 HTTP3 功能, 然後把 `main.rs` 改成這樣：
+首先在 `Cargo.toml` 中啓用 HTTP3 功能, 然後把 `main.rs` 改成這樣：
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

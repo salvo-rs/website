@@ -1,10 +1,10 @@
 # Serve Static
 
-將靜態文件或者內嵌的文件作為服務提供的中間件.
+將靜態文件或者內嵌的文件作爲服務提供的中間件.
 
 ## 主要功能
 
-* `StaticDir` 提供了對靜態本地文件夾的支持. 可以將多個文件夾的列表作為參數. 比如:
+* `StaticDir` 提供了對靜態本地文件夾的支持. 可以將多個文件夾的列表作爲參數. 比如:
 
     <CodeGroup>
     <CodeGroupItem title="main.rs" active>

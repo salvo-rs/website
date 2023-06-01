@@ -4,7 +4,7 @@
 
 ## 主要功能
 
-* `CsrfStore` 提供對數據的存取操作. `CookieStore` 會在 `Cookie` 中存儲數據, 將根據用戶提交的 `csrf-token` 和 `Cookie` 值驗證請求的有效性. 而 `SessionStore` 把數據存儲在 `Session` 中, 用用戶提交的數據和 `Session` 中的數據驗證請求的有效性. 需要註意的是, `SessionStore` 必須和 `session` 功能一起使用.
+* `CsrfStore` 提供對數據的存取操作. `CookieStore` 會在 `Cookie` 中存儲數據, 將根據用戶提交的 `csrf-token` 和 `Cookie` 值驗證請求的有效性. 而 `SessionStore` 把數據存儲在 `Session` 中, 用用戶提交的數據和 `Session` 中的數據驗證請求的有效性. 需要注意的是, `SessionStore` 必須和 `session` 功能一起使用.
 
 * `Csrf` 是實現了 `Handler` 的結構體, 內部還有一個 `skipper` 字段, 可以指定跳過某些不需要驗證的請求. 默認情況下, 驗證 `Method::POST`, `Method::PATCH`, `Method::DELETE`, `Method::PUT` 請求.
 

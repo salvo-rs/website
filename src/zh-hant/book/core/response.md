@@ -1,6 +1,6 @@
 # Response
 
-在 ```Handler``` 中, ```Response``` 會被作為參數傳入:
+在 ```Handler``` 中, ```Response``` 會被作爲參數傳入:
 
 ```rust
 #[handler]

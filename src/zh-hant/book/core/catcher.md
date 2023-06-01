@@ -11,7 +11,7 @@ use salvo::catcher::Catcher;
 Service::new(router).with_catcher(Catcher::default());
 ```
 
-默認的 ```Catcher``` 實現 ```CatcherImpl``` 捕獲處理錯誤, 發送默認的錯誤頁麵. 默認的錯誤支持以 ```XML```, ```JSON```, ```HTML```, ```Text``` 格式發送錯誤頁麵.
+默認的 ```Catcher``` 支持以 ```XML```, ```JSON```, ```HTML```, ```Text``` 格式發送錯誤頁麵.
 
 可以通過給這個默認的 `Catcher` 添加 `hoop` 的方式, 把自定義的錯誤捕獲程序添加到`Catcher`上. 這個錯誤捕獲的程序依然是 `Handler`.
 

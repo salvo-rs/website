@@ -21,12 +21,12 @@ pub enum AppError {
 pub type AppResult<T> = Result<T, AppError>;
 ```
 
-這裏使用了 `thiserror` 這個庫, 它可以方便地定義你自己的自定義錯誤類型, 簡化代碼. 為了簡單書寫, 順便定義一個 `AppResult`.
+這裏使用了 `thiserror` 這個庫, 它可以方便地定義你自己的自定義錯誤類型, 簡化代碼. 爲了簡單書寫, 順便定義一個 `AppResult`.
 
 
 ## Handler 中的錯誤處理
 
-在 Salvo 中, `Handler` 也經常會遇到各式錯誤, 比如: 數據庫連接錯誤, 文件訪問錯誤, 網絡連接錯誤等等. 對於這個類型的錯誤, 可以采用上述的錯誤處理手法:
+在 Salvo 中, `Handler` 也經常會遇到各式錯誤, 比如: 數據庫連接錯誤, 文件訪問錯誤, 網絡連接錯誤等等. 對於這個類型的錯誤, 可以採用上述的錯誤處理手法:
 
 ```rust
 #[handler]
@@ -35,7 +35,7 @@ async fn home()-> AppResult<()> {
 }
 ```
 
-這裏的 `home` 就直接返回了一個 `AppResult<()>`. 但是, 這個錯誤改如何顯示呢? 我們需要為 `AppResult` 這個自定義錯誤類型實現 `Writer`, 在這個實現中我們可以決定如何顯示錯誤:
+這裏的 `home` 就直接返回了一個 `AppResult<()>`. 但是, 這個錯誤改如何顯示呢? 我們需要爲 `AppResult` 這個自定義錯誤類型實現 `Writer`, 在這個實現中我們可以決定如何顯示錯誤:
 
 ```rust
 #[async_trait]

@@ -1,6 +1,6 @@
 # Handler
 
-## 什麽是 Handler
+## 什麼是 Handler
 
 Handler 是負責負責處理 Request 請求的具體對象.  Hander 本身是一個 Trait, 內部包含一個 ```handle``` 的異步方法:
 
@@ -13,7 +13,7 @@ pub trait Handler: Send + Sync + 'static {
 
 ## 函數式 Handler
 
-很多時候只是希望通過函數作為 ```Handler``` 處理請求. 可以添加 `Handler` 將普通函數轉為 ```Handler```.
+很多時候只是希望通過函數作爲 ```Handler``` 處理請求. 可以添加 `Handler` 將普通函數轉爲 ```Handler```.
 
 處理函數默認簽名包含四個參數, 依次是, ```&mut Request, &mut Depot. &mut Response, &mut FlowCtrl```. Depot 是一個臨時存儲, 可以存儲本次請求相關的數據. 
 
@@ -47,7 +47,7 @@ async fn hello_world(res: &mut Response) {
 ## 處理錯誤
 
 Salvo 中的 `Handler` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的類型都實現 ```Writer``` trait.
-考慮到 anyow 的使用比較廣泛, 在開啟 ```anyhow``` 功能後, ```anyhow::Error``` 會實現 ```Writer``` trait. ```anyhow::Error``` 會被映射為 ```InternalServerError```. 
+考慮到 anyow 的使用比較廣泛, 在開啓 ```anyhow``` 功能後, ```anyhow::Error``` 會實現 ```Writer``` trait. ```anyhow::Error``` 會被映射爲 ```InternalServerError```. 
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -138,7 +138,7 @@ impl Hander for hello {
 可以看到, 在使用 `#[handler]` 的情況下, 代碼變得簡單很多:
 - 不再需要手工添加 `#[async_trait]`.
 - 函數中不需要的參數已經省略, 對於需要的參數也可以按任意順序排布.
-- 對於實現了 `Writer` 或者 `Piece` 抽象的對象, 可以直接作為函數的返回值. 在這裏 `&'static str` 實現了 `Piece`, 於是可以直接作為函數返回值返回.
+- 對於實現了 `Writer` 或者 `Piece` 抽象的對象, 可以直接作爲函數的返回值. 在這裏 `&'static str` 實現了 `Piece`, 於是可以直接作爲函數返回值返回.
 
 `#[handler]` 不僅可以加在函數上, 也可以加在 `struct` 的 `impl` 上:
 
