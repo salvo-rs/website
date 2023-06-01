@@ -1,6 +1,6 @@
 use salvo::oapi::extract::*;
 use salvo::oapi::swagger_ui::SwaggerUi;
-use salvo::oapi::{Info, OpenApi, ToSchema};
+use salvo::oapi::{ToSchema, Info, OpenApi};
 use salvo::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -10,16 +10,16 @@ struct MyObject<T: ToSchema + std::fmt::Debug + 'static> {
 }
 
 #[endpoint]
-async fn use_string(body: JsonBody<MyObject<String>>, res: &mut Response) {
-    res.render(format!("{:?}", body))
+async fn use_string(body: JsonBody<MyObject<String>>, res: &mut Response) -> String {
+    format!("{:?}", body)
 }
 #[endpoint]
-async fn use_i32(body: JsonBody<MyObject<i32>>, res: &mut Response) {
-    res.render(format!("{:?}", body))
+async fn use_i32(body: JsonBody<MyObject<i32>>, res: &mut Response) -> String {
+    format!("{:?}", body)
 }
 #[endpoint]
-async fn use_u64(body: JsonBody<MyObject<u64>>, res: &mut Response) {
-    res.render(format!("{:?}", body))
+async fn use_u64(body: JsonBody<MyObject<u64>>, res: &mut Response) -> String {
+    format!("{:?}", body)
 }
 
 #[tokio::main]
