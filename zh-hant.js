@@ -10,8 +10,8 @@ for (let i = 0, il = files.length; i < il; i++) {
     console.log(file);
     let hans = fs.readFileSync(file, 'utf-8');
     converter.convertPromise(hans).then((hant) => {
-        console.log(hant);
-        let target_path = file.replace('src/zh-hans/', 'src/zh-hant/');
+        let target_path = file.replace('zh-hans', 'zh-hant');
+        console.log(target_path)
         fs.outputFileSync(target_path, hant);
     });
 }
