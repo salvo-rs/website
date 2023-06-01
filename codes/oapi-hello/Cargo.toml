@@ -1,0 +1,11 @@
+[package]
+name = "example-oapi-hello"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+salvo = { workspace = true, features = ["oapi"] }
+tokio = { workspace = true, features = ["macros"] }
+tracing.workspace = true
+tracing-subscriber.workspace = true
