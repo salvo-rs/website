@@ -1,54 +1,73 @@
-# OpenAPI
+# OpenApi
 
-Modified from [utoipa](https://github.com/juhaku/utoipa), It uses simple proc macros which
-you can use to annotate your code to have items documented.
+OpenApi 是一个开源的规范，用于描述 RESTful APIs 的接口设计。它以 JSON 或 YAML 格式定义了 API 的请求和响应的结构、参数、返回类型、错误码等细节，使得客户端和服务端之间的通信更加明确和规范化。
 
+OpenApi 最初是 Swagger 规范的开源版本，现在已经成为了一个独立的项目，并得到了许多大型企业和开发者的支持。使用 OpenApi 规范可以帮助开发团队更好地协作，减少沟通成本，提高开发效率。同时，OpenApi 还为开发者提供了自动生成 API 文档、Mock 数据和测试用例等工具，方便开发和测试工作。
 
-# Crate Features
+Salvo 提供了 OpenApi 的集成 (修改自 [utoipa](https://github.com/juhaku/utoipa)).
 
-* **yaml** Enables **serde_yaml** serialization of OpenAPI objects.
-* **chrono** Add support for [chrono](https://crates.io/crates/chrono) `DateTime`, `Date`, `NaiveDate` and `Duration`
-  types. By default these types are parsed to `string` types with additional `format` information.
-  `format: date-time` for `DateTime` and `format: date` for `Date` and `NaiveDate` according
-  [RFC3339](https://xml2rfc.ietf.org/public/rfc/html/rfc3339.html#anchor14) as `ISO-8601`. To
-  override default `string` representation users have to use `value_type` attribute to override the type.
-  See [docs](https://docs.rs/salvo_oapi/latest/salvo_oapi/derive.ToSchema.html) for more details.
-* **time** Add support for [time](https://crates.io/crates/time) `OffsetDateTime`, `PrimitiveDateTime`, `Date`, and `Duration` types.
-  By default these types are parsed as `string`. `OffsetDateTime` and `PrimitiveDateTime` will use `date-time` format. `Date` will use
-  `date` format and `Duration` will not have any format. To override default `string` representation users have to use `value_type` attribute
-  to override the type. See [docs](https://docs.rs/salvo_oapi/latest/salvo_oapi/derive.ToSchema.html) for more details.
-* **decimal** Add support for [rust_decimal](https://crates.io/crates/rust_decimal) `Decimal` type. **By default**
-  it is interpreted as `String`. If you wish to change the format you need to override the type.
-  See the `value_type` in [`ToSchema` derive docs][as_schema_derive].
-* **uuid** Add support for [uuid](https://github.com/uuid-rs/uuid). `Uuid` type will be presented as `String` with
-  format `uuid` in OpenAPI spec.
-* **smallvec** Add support for [smallvec](https://crates.io/crates/smallvec). `SmallVec` will be treated as `Vec`.
-* **indexmap** Add support for [indexmap](https://crates.io/crates/indexmap). When enabled `IndexMap` will be rendered as a map similar to
-  `BTreeMap` and `HashMap`.
+_**示例代码**_ 
+
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
+
+@[code rust](../../../../codes/oapi-hello/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code toml](../../../../codes/oapi-hello/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
+
+在浏览器里面输入 `http://localhost:5800/swagger-ui` 就可以看到 Swagger UI 的页面.
 
 
-### Endpoint
+Salvo 中的 OpenApi 集成是相当优雅的，对于上面的示例，相比于普通的 Salvo 项目，我们只是做了以下几步：
 
-Endpoint attribute macro implements OpenAPI path for the decorated function.
+- 在 `Cargo.toml` 中开启 `oapi` 功能: `salvo = { workspace = true, features = ["oapi"] }`;
 
-Macro accepts set of attributes that can be used to configure and override default values what are resolved automatically.
+- 把 `[handler]` 换成 `[endpoint]`;
 
-You can use the Rust's own `#[deprecated]` attribute on functions to mark it as deprecated and it will
-reflect to the generated OpenAPI spec. Only **parameters** has a special **deprecated** attribute to define them as deprecated.
+- 使用 `name: QueryParam<String, false>` 获取查询字符串的值, 当你访问网址 `http://localhost/hello?name=chris` 时, 这个 `name` 的查询字符串就会被解析. `QueryParam<String, false>` 这里的 `false` 代表这个参数是可以省略的, 如果访问 `http://localhost/hello` 依然不会报错. 相反, 如果是 `QueryParam<String, true>` 则代表此参数是必须提供的, 否则返回错误.
 
-`#[deprecated]` attribute supports adding additional details such as a reason and or since version but this is is not supported in
-OpenAPI. OpenAPI has only a boolean flag to determine deprecation. While it is totally okay to declare deprecated with reason
-`#[deprecated  = "There is better way to do this"]` the reason would not render in OpenAPI spec.
+- 创建 `OpenApi` 并且创建对应的 `Router`. `OpenApi::new("test api", "0.0.1").merge_router(&router)` 这里的 `merge_router` 表示这个 `OpenApi` 通过解析某个路由获取它和它的子孙路由获取必要的文档信息. 某些路由的 `Handler` 可能没有提供生成文档的信息, 这些路由将被忽略, 比如使用 `#[handler]` 宏而非 `#[endpoint]` 宏定义的 `Handler`. 也就是说, 实际项目中, 为了开发进度等原因, 你可以选择实现不生成 OpenApi 文档, 或者部分生成 OpenApi 文档. 后续可以逐步增加生成 OpenApi 接口的数量, 而你需要做的也仅仅只是把  `#[handler]` 改成 `#[endpoint]`, 以及修改函数签名.
 
-Doc comment at decorated function will be used for _`description`_ and _`summary`_ of the path.
-First line of the doc comment will be used as the _`summary`_ and the whole doc comment will be
-used as _`description`_.
-```
+
+## 数据提取器
+
+通过 `use salvo::oapi::extract:*;`  可以导入预置的常用的数据提取器. 提取器会提供一些必要的信息给 Salvo, 以便 Salvo 生成 OpenApi 的文档.
+
+- `QueryParam<T, const REQUIRED: bool>`: 一个从查询字符串提取数据的提取器. `QueryParam<T, false>` 代表此参数不是必须的, 可以省略. `QueryParam<T, true>` 代表此参数是必须的, 不可以省略, 如果不提供, 则返回错误;
+
+- `HeaderParam<T, const REQUIRED: bool>`: 一个从请求的头部信息中提取数据的提取器. `HeaderParam<T, false>` 代表此参数不是必须的, 可以省略. `HeaderParam<T, true>` 代表此参数是必须的, 不可以省略, 如果不提供, 则返回错误;
+
+- `CookieParam<T, const REQUIRED: bool>`: 一个从请求的头部信息中提取数据的提取器. `CookieParam<T, false>` 代表此参数不是必须的, 可以省略. `CookieParam<T, true>` 代表此参数是必须的, 不可以省略, 如果不提供, 则返回错误;
+
+- `PathParam<T>`: 一个从请求 `URL` 中提取路径参数的提取器. 此参数如果不存在, 路由匹配就是不成功, 因此不存在可以省略的情况;
+
+- `FormBody<T>`: 从请求提交的表单中提取信息;
+
+- `JsonBody<T>`: 从请求提交的 JSON 格式的负载中提取信息;
+
+
+## `#[endpoint]` 宏
+
+在生成 OpenApi 文档时, 需要使用 `#[endpoint]` 宏代替常规的 `#[handler]` 宏, 它实际上是一个增强版本的 `#[handler]` 宏. 
+
+- 它可以通过函数的签名获取生成 OpenApi 所必须的信息;
+
+- 对于不方便通过签名提供的信息, 可以直接在 `#[endpoint]` 宏中添加属性的方式提供, 通过这种方式提供的信息会于通过函数签名获取的信息合并, 如果存在冲突, 则会覆盖函数签名提供的信息.
+
+你可以使用 Rust 自带的 `#[deprecated]` 属性标注某个 Handler 已经过时被废弃. 虽然 `#[deprecated]` 属性支持添加诸如废弃原因,版本等信息, 但是 OpenApi 并不支持, 因此这些信息在生成 OpenApi 时将会被忽略.
+
+代码中的文档注释部分会自动被提取用于生成 OpenApi, 第一行被用于生成 _`summary`_, 整个注释部分会被用于生成 _`description`_.
+
+```rust
 /// This is a summary of the operation
 ///
 /// All lines of the doc comment will be included to operation description.
 #[salvo_oapi::endpoint()]
 fn endpoint() {}
 ```
-
-### TODO

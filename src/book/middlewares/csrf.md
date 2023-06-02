@@ -6,7 +6,7 @@ Middleware that provides CSRF (Cross-Site Request Forgery) protection.
 
 * `Csrf` is a structure that implements `Handler`, and there is a `skipper` field inside, which can be specified to skip certain requests that do not require authentication. By default, `Method::POST`, `Method: :PATCH`, `Method::DELETE`, `Method::PUT` requests.
 
-## Example
+_**Example**_ 
 
 ### Use cookie store
 

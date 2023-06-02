@@ -2,7 +2,7 @@
 
 Middleware that provides support for `SSE`.
 
-## Example
+_**Example**_ 
 
 <CodeGroup>
 <CodeGroupItem title="main.rs" active>

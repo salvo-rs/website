@@ -8,7 +8,7 @@
 
 * `Csrf` 是實現了 `Handler` 的結構體, 內部還有一個 `skipper` 字段, 可以指定跳過某些不需要驗證的請求. 默認情況下, 驗證 `Method::POST`, `Method::PATCH`, `Method::DELETE`, `Method::PUT` 請求.
 
-## 示例代碼
+_**示例代碼**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
@@ -24,7 +24,7 @@
 </CodeGroup>
 
 
-## Example(session store)
+_**Example**_ (session store)
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

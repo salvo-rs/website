@@ -4,7 +4,7 @@
 
 `FlashStore` 提供對數據的存取操作. `CookieStore` 會在 `Cookie` 中存儲數據. 而 `SessionStore` 把數據存儲在 `Session` 中, `SessionStore` 必須和 `session` 功能一起使用.
 
-## 示例代碼
+_**示例代碼**_ 
 
 ### Cookie 存儲示例
 

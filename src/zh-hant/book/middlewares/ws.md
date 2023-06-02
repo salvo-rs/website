@@ -2,7 +2,7 @@
 
 提供對 `WebSocket` 支持的中間件.
 
-## 示例代碼
+_**示例代碼**_ 
 
 <CodeGroup>
 <CodeGroupItem title="main.rs" active>

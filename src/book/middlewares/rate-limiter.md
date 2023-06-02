@@ -15,7 +15,7 @@ Middleware that provides flow control functionality.
 
 * `QuotaGetter` provides the abstraction of quota acquisition, which can obtain a quota object according to the visitor's `Key`, which means that we can configure the user quota and other information into the database, change it dynamically, and acquire it dynamically.
 
-## Example
+_**Example**_ 
 
 ### Use static quota
 

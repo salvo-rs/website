@@ -2,7 +2,7 @@
 
 Middleware that provides basic Log functionality.
 
-## Example
+_**Example**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

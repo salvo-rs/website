@@ -2,7 +2,7 @@
 
 Middleware that provides reverse proxy functionality.
 
-## Example
+_**Example**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

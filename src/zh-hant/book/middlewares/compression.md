@@ -4,7 +4,7 @@
 
 提供對三種壓縮格式的支持: `br`, `gzip`, `deflate`. 可以根據需求配置各個壓縮方式的優先度等.
 
-## 示例代碼
+_**示例代碼**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

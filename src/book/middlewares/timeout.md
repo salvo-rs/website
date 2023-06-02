@@ -2,5 +2,5 @@
 
 Middleware that provides support for timeout.
 
-## Example
+_**Example**_ 
 TODO

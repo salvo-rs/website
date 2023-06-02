@@ -30,7 +30,7 @@ async fn main() {
         ),
     );
 
-    let doc = OpenApi::new(Info::new("todos api", "0.0.1")).merge_router(&router);
+    let doc = OpenApi::new("todos api", "0.0.1").merge_router(&router);
 
     let router = router
         .push(doc.into_router("/api-doc/openapi.json"))

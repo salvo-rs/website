@@ -4,7 +4,7 @@ Middleware that provides the functionality of Flash Message.
 
 `FlashStore` provides access to data. `CookieStore` stores data in `Cookie`. While `SessionStore` stores data in `Session`, `SessionStore` must be used with the `session` middleware.
 
-## Example
+_**Example**_ 
 
 ### Use cookie store
 

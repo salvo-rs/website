@@ -29,7 +29,7 @@ Note that this plugin will not cache `Response` whose `Body` is a `ResBody::Stre
   }
   ```
 
-## Example
+_**Example**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

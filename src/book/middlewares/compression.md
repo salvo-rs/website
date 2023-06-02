@@ -4,7 +4,7 @@ Middleware for `Response` content compression processing.
 
 Provides support for three compression formats: `br`, `gzip`, `deflate`. You can configure the priority of each compression method according to your needs.
 
-## Example
+_**Example**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

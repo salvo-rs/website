@@ -4,7 +4,7 @@
 
 实际上实现内部包含了 `CachingHeaders`, `Modified`, `ETag` 三个 `Handler` 的实现, `CachingHeaders` 是后两者的组合. 正常情况下使用 `CachingHeaders`.
 
-## 示例代码
+_**示例代码**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

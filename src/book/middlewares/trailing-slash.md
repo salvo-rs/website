@@ -2,5 +2,5 @@
 
 Middleware support to automatically add or remove the end of `/`.
 
-## Example
+_**Example**_ 
 TODO

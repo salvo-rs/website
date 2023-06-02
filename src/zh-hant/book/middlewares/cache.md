@@ -27,7 +27,7 @@ Cache 中間件可以對 `Response` 中的 `StatusCode`, `Headers`, `Body` 提�
   }
   ```
 
-## 示例代碼
+_**示例代碼**_ 
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
