@@ -36,7 +36,7 @@ export const navbarZhHant: NavbarConfig = [
       {
         text: '文檔協作',
         children: [
-          '/zh-hans/book/middlewares/openapi.md',
+          '/zh-hant/book/middlewares/openapi.md',
         ],
       },
       {
