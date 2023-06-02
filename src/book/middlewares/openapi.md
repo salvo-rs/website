@@ -27,7 +27,7 @@ The OpenAPI integration in Salvo is quite elegant. For the example above, compar
 
 - Enable the oapi feature in `Cargo.toml`: `salvo = { workspace = true, features = ["oapi"] }`;
 
-- Replace [handler] with [endpoint];
+- Replace `#[handler]` with `#[endpoint]`;
 
 - Use name: `QueryParam<String, false>` to retrieve the value of a query string. When you visit the URL `http://localhost/hello?name=chris`, the query string for this name parameter will be parsed. The false here indicates that this parameter is optional. If you visit `http://localhost/hello` without the name parameter, it will not cause an error. Conversely, if it is `QueryParam<String, true>`, it means that this parameter is required and an error will be returned if it is not provided.
 
