@@ -73,6 +73,6 @@ used as _`description`_.
 /// This is a summary of the operation
 ///
 /// All lines of the doc comment will be included to operation description.
-#[salvo_oapi::endpoint()]
+#[endpoint]
 fn endpoint() {}
 ```

@@ -68,6 +68,6 @@ Salvo 中的 OpenAPI 集成是相当优雅的，对于上面的示例，相比�
 /// This is a summary of the operation
 ///
 /// All lines of the doc comment will be included to operation description.
-#[salvo_oapi::endpoint()]
+#[endpoint]
 fn endpoint() {}
 ```
