@@ -2,12 +2,12 @@
 
 ## 爲什麼要寫這個框架
 
-因爲我笨，無法學會使用 actix-web 等現存的框架。當我想把以前的 go 的 web 服務使用 rust 實現時，一眼看去，似乎每個框架都比 go 裏存在框架複雜, 本來 Rust 的學習曲線就夠陡峭的了, 又何苦把 Web 框架整得那麼複雜?
+因爲我笨，無法學會使用 actix-web 等現存的框架.當我想把以前的 go 的 web 服務使用 rust 實現時，一眼看去，似乎每個框架都比 go 裏存在框架複雜, 本來 Rust 的學習曲線就夠陡峭的了, 又何苦把 Web 框架整得那麼複雜?
 
 ## 如何做到足夠簡單
-很多底層的實現 Hyper 都已經實現，所以，一般需求，基於 Hyper 實現應該沒有錯。Salvo 也是一樣。 核心功能是提供還用簡單的API，以及一個功能強大並且靈活的路由系統。
+很多底層的實現 Hyper 都已經實現，所以，一般需求，基於 Hyper 實現應該沒有錯.Salvo 也是一樣. 核心功能是提供還用簡單的API，以及一個功能強大並且靈活的路由系統.
 
-Salvo 裏統一了 Handler 和 Middleware. Middleware 就是 Handler. 通過路由的 hoop 添加到 Router 上。本質上, Middleware 和 Handler 都是處理 Request 請求，並且可能向 Response 寫入數據。而 Handler 接收的參數是 Request, Depot, Response 三個, 其中 Depot 用於存儲請求處理過程中的臨時數據. 爲方便書寫, 在用不着的情況下可以省略掉某些參數.
+Salvo 裏統一了 Handler 和 Middleware. Middleware 就是 Handler. 通過路由的 hoop 添加到 Router 上.本質上, Middleware 和 Handler 都是處理 Request 請求，並且可能向 Response 寫入數據.而 Handler 接收的參數是 Request, Depot, Response 三個, 其中 Depot 用於存儲請求處理過程中的臨時數據. 爲方便書寫, 在用不着的情況下可以省略掉某些參數.
 
 ```rust
 use salvo::prelude::*;
@@ -26,7 +26,7 @@ async fn hello_world(res: &mut Response) {
 
 ## 路由系統
 
-我自己感覺路由系統是跟其他的框架不太一樣的. Router 可以寫平，也可以寫成樹狀。這裏區業務邏輯樹與訪問目錄樹。業務邏輯樹是根據業務邏輯需求，劃分 router 結構，形成 router 樹，它不一定與訪問目錄樹一致。
+我自己感覺路由系統是跟其他的框架不太一樣的. Router 可以寫平，也可以寫成樹狀.這裏區業務邏輯樹與訪問目錄樹.業務邏輯樹是根據業務邏輯需求，劃分 router 結構，形成 router 樹，它不一定與訪問目錄樹一致.
 
 正常情況下我們是這樣寫路由的：
 
