@@ -1,8 +1,8 @@
-# OpenApi
+# OpenAPI
 
-OpenApi is an open-source specification used to describe the interface design of RESTful APIs. It defines the details of the structure, parameters, return types, error codes, and other aspects of API requests and responses in JSON or YAML format, making communication between clients and servers more clear and standardized.
+OpenAPI is an open-source specification used to describe the interface design of RESTful APIs. It defines the details of the structure, parameters, return types, error codes, and other aspects of API requests and responses in JSON or YAML format, making communication between clients and servers more clear and standardized.
 
-Initially developed as an open-source version of the Swagger specification, OpenApi has now become an independent project and has gained support from many large enterprises and developers. Using the OpenApi specification can help development teams collaborate better, reduce communication costs, and improve development efficiency. Additionally, OpenApi provides developers with tools such as automatic API documentation generation, mock data, and test cases to facilitate development and testing work.
+Initially developed as an open-source version of the Swagger specification, OpenAPI has now become an independent project and has gained support from many large enterprises and developers. Using the OpenAPI specification can help development teams collaborate better, reduce communication costs, and improve development efficiency. Additionally, OpenAPI provides developers with tools such as automatic API documentation generation, mock data, and test cases to facilitate development and testing work.
 
 Salvo provides integration with OpenAPI (adapted from utoipa).
 
@@ -31,7 +31,7 @@ The OpenAPI integration in Salvo is quite elegant. For the example above, compar
 
 - Use name: `QueryParam<String, false>` to retrieve the value of a query string. When you visit the URL `http://localhost/hello?name=chris`, the query string for this name parameter will be parsed. The false here indicates that this parameter is optional. If you visit `http://localhost/hello` without the name parameter, it will not cause an error. Conversely, if it is `QueryParam<String, true>`, it means that this parameter is required and an error will be returned if it is not provided.
 
-- Create an OpenApi and create the corresponding Router. `OpenApi::new("test api", "0.0.1").merge_router(&router)` here merge_router means that this OpenApi obtains the necessary documentation information by parsing a certain route and its descendant routes. Some routes may not provide information for generating documentation, and these routes will be ignored, such as Handler defined using the `#[handler]` macro instead of the `#[endpoint]` macro. In other words, in actual projects, for reasons such as development progress, you can choose not to generate OpenAPI documentation, or only partially generate it. Later, you can gradually increase the number of OpenAPI interfaces generated, and all you need to do is change the `#[handler]` to `#[endpoint]` and modify the function signature.
+- Create an OpenAPI and create the corresponding Router. `OpenApi::new("test api", "0.0.1").merge_router(&router)` here merge_router means that this OpenAPI obtains the necessary documentation information by parsing a certain route and its descendant routes. Some routes may not provide information for generating documentation, and these routes will be ignored, such as Handler defined using the `#[handler]` macro instead of the `#[endpoint]` macro. In other words, in actual projects, for reasons such as development progress, you can choose not to generate OpenAPI documentation, or only partially generate it. Later, you can gradually increase the number of OpenAPI interfaces generated, and all you need to do is change the `#[handler]` to `#[endpoint]` and modify the function signature.
 
 ## Extractors
 
@@ -59,11 +59,11 @@ When generating OpenAPI documentation, the `#[endpoint]` macro needs to be used 
 - For information that is not convenient to provide through the signature, it can be directly added as an attribute in the `#[endpoint]` macro. Information provided in this way will be merged with the information obtained through the function signature. If there is a conflict, the information provided in the attribute will overwrite the information provided through the function signature.
 
 You can use the Rust's own `#[deprecated]` attribute on functions to mark it as deprecated and it will
-reflect to the generated OpenApi spec. Only **parameters** has a special **deprecated** attribute to define them as deprecated.
+reflect to the generated OpenAPI spec. Only **parameters** has a special **deprecated** attribute to define them as deprecated.
 
 `#[deprecated]` attribute supports adding additional details such as a reason and or since version but this is is not supported in
-OpenApi. OpenApi has only a boolean flag to determine deprecation. While it is totally okay to declare deprecated with reason
-`#[deprecated  = "There is better way to do this"]` the reason would not render in OpenApi spec.
+OpenAPI. OpenAPI has only a boolean flag to determine deprecation. While it is totally okay to declare deprecated with reason
+`#[deprecated  = "There is better way to do this"]` the reason would not render in OpenAPI spec.
 
 Doc comment at decorated function will be used for _`description`_ and _`summary`_ of the path.
 First line of the doc comment will be used as the _`summary`_ and the whole doc comment will be
