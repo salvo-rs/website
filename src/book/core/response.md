@@ -36,7 +36,7 @@ Write content is straightforward:
     struct User {
         name: String,
     }
-    let user = User{name: "jobs"};
+    let user = User{name: "jobs".to_string()};
     res.render(Json(user));
     ```
 
