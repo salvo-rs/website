@@ -39,7 +39,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     struct User {
         name: String,
     }
-    let user = User{name: "jobs"};
+    let user = User{name: "jobs".to_string()};
     res.render(Json(user));
     ```
 
