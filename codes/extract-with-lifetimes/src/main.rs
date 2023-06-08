@@ -59,7 +59,7 @@ struct GoodMan<'a> {
     username: &'a str,
     first_name: String,
     last_name: String,
-    #[extract(alias = "lovers")]
+    #[salvo(extract(alias = "lovers"))]
     lover: String,
 }
 

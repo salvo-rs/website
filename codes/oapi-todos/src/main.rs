@@ -1,7 +1,5 @@
 use once_cell::sync::Lazy;
 use salvo::oapi::extract::*;
-use salvo::oapi::swagger_ui::SwaggerUi;
-use salvo::oapi::{Info, OpenApi};
 use salvo::prelude::*;
 
 use self::models::*;
@@ -43,8 +41,8 @@ async fn main() {
 /// List todos.
 #[endpoint]
 pub async fn list_todos(
-    offset: QueryParam<Option<usize>>,
-    limit: QueryParam<Option<usize>>,
+    offset: QueryParam<usize, false>,
+    limit: QueryParam<usize, false>,
 ) -> Json<Vec<Todo>> {
     let todos = STORE.lock().await;
     let todos: Vec<Todo> = todos

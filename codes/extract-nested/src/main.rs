@@ -56,27 +56,27 @@ async fn edit<'a>(good_man: GoodMan<'a>, res: &mut Response) {
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 #[salvo(extract(default_source(from = "body", format = "json")))]
 struct GoodMan<'a> {
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
-    #[extract(source(from = "query"))]
+    #[salvo(extract(source(from = "query")))]
     username: &'a str,
     first_name: String,
     last_name: String,
     lovers: Vec<String>,
-    #[extract(source(from = "request"))]
+    #[salvo(extract(source(from = "request")))]
     nested: Nested<'a>,
 }
 
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 #[salvo(extract(default_source(from = "body", format = "json")))]
 struct Nested<'a> {
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
-    #[extract(source(from = "query"))]
+    #[salvo(extract(source(from = "query")))]
     username: &'a str,
     first_name: String,
     last_name: String,
-    #[extract(rename = "lovers")]
+    #[salvo(extract(rename = "lovers"))]
     #[serde(default)]
     pets: Vec<String>,
 }
