@@ -84,14 +84,14 @@ struct Pet {
 }
 ```
 
-可以使用 `#[schema(...)]` 定义可选的设置:
+可以使用 `#[salvo(schema(...))]` 定义可选的设置:
 
 
   - `example = ...` 可以是 `json!(...)`. `json!(...)` 会被 `serde_json::json!` 解析为`serde_json::Value`.
 
   ```rust
   #[derive(ToSchema)]
-  #[schema(example = json!({"name": "bob the cat", "id": 0}))]
+  #[salvo(schema(example = json!({"name": "bob the cat", "id": 0})))]
   struct Pet {
       id: u64,
       name: String,
@@ -104,14 +104,14 @@ struct Pet {
   #[derive(ToSchema)]
   struct Pet {
       id: u64,
-      #[schema(xml(name = "pet_name", prefix = "u"))]
+      #[salvo(schema(xml(name = "pet_name", prefix = "u")))]
       name: String,
   }
   ```
 
 
-- `rename_all = ...`: 支持于 `serde` 类似的语法定义重命名字段的规则. 如果同时定义了 `#[serde(rename_all = "...")]` 和 `#[schema(rename_all = "...")]`, 则优先使用 `#[serde(rename_all = "...")]`.
+- `rename_all = ...`: 支持于 `serde` 类似的语法定义重命名字段的规则. 如果同时定义了 `#[serde(rename_all = "...")]` 和 `#[salvo(schema(rename_all = "..."))]`, 则优先使用 `#[serde(rename_all = "...")]`.
 
-- `symbol = ...`: 一个字符串字面量, 用于定义结构在 OpenAPI 中线上的名字路径. 比如 `#[schema(symbol = "path.to.Pet")]`.
+- `symbol = ...`: 一个字符串字面量, 用于定义结构在 OpenAPI 中线上的名字路径. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`.
 
 - `default`: Can be used to populate default values on all fields using the struct’s Default implementation.
