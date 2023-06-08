@@ -36,11 +36,11 @@ async fn edit<'a>(bad_man: BadMan<'a>) -> String {
 }
 
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[extract(
+#[salvo(extract(
     default_source(from = "query"),
     default_source(from = "param"),
     default_source(from = "body")
-)]
+))]
 struct BadMan<'a> {
     id: i64,
     username: String,
@@ -49,11 +49,11 @@ struct BadMan<'a> {
     lovers: Vec<String>,
 }
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[extract(
+#[salvo(extract(
     default_source(from = "query"),
     default_source(from = "param"),
     default_source(from = "body")
-)]
+))]
 struct GoodMan<'a> {
     id: i64,
     username: &'a str,
