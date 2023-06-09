@@ -67,10 +67,6 @@ export const navbarZhHans: NavbarConfig = [
         text: 'v0.44.x',
         link: 'https://salvo.rs',
       },
-      {
-        text: 'v0.37.x',
-        link: 'https://prev.salvo.rs',
-      },
     ],
   },
 ]

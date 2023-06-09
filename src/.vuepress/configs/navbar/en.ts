@@ -64,8 +64,8 @@ export const navbarEn: NavbarConfig = [
     text: `v0.44.x`,
     children: [
       {
-        text: 'v0.37.x',
-        link: 'https://prev.salvo.rs',
+        text: 'nightly',
+        link: 'https://next.salvo.rs',
       },
       {
         text: 'v0.44.x',
