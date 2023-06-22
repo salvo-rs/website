@@ -120,7 +120,7 @@ Router::new()
     );
 ```
 
-Although there are two routers have the same ```path("articles")```, they can still be added to the same parent route at the same time.
+Although there are two routers have the same ```path("writers")```, they can still be added to the same parent route at the same time.
 
 ## Filters
 
@@ -204,8 +204,8 @@ Router::new().push(show_router).push(update_router).push(delete_router);
 For some frequently-occurring matching expressions, we can name a short name by ```PathFilter::register_wisp_regex``` or ```PathFilter::register_wisp_builder```. For example, GUID format is often used in paths appears, normally written like this every time a match is required:
 
 ```rust
-Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA -F]{12}/>");
-Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA -F]{12}/>");
+Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 ```
 
 However, writing this complex regular expression every time is prone to errors and hard-coding the regex is not ideal. We could separate the regex into its own Regex variable like so:
@@ -215,7 +215,7 @@ use salvo::routing::filter::PathFilter;
 
 #[tokio::main]
 async fn main() {
-    let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA- F]{12}").unwrap();
+    let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
     PathFilter::register_wisp_regex("guid", guid);
     Router::new()
         .push(Router::with_path("/articles/<id:guid>").get(show_article))
