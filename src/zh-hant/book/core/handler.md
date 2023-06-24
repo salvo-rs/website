@@ -54,7 +54,7 @@ Salvo 中的 `Handler` 可以返回 ```Result```, 只需要 ```Result``` 中的 
 #[async_trait]
 impl Writer for ::anyhow::Error {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        res.set_http_error(StatusError::internal_server_error());
+        res.render(StatusError::internal_server_error());
     }
 }
 ```
@@ -69,8 +69,8 @@ struct CustomError;
 #[async_trait]
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
         res.render("custom error");
-        res.set_http_error(StatusError::internal_server_error());
     }
 }
 

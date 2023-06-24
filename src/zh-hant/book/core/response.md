@@ -52,11 +52,11 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 ## 寫入 HTTP 錯誤
 
 
-- 使用 ```set_http_error``` 可以向 ```Response``` 寫入詳細錯誤信息.
+- 使用 ```render``` 可以向 ```Response``` 寫入詳細錯誤信息.
 
     ```rust
     use salvo::http::errors::*;
-    res.set_http_error(StatusError::internal_server_error().with_summary("error when serialize object to json"))
+    res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
     ```
 
 - 如果您不需要自定義錯誤信息, 可以直接調用 ```set_http_code```.
