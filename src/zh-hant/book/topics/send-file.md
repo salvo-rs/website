@@ -21,7 +21,7 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 可以做一些設置, 然後發送文件:
 
 
-```rust
+```rust 
 #[handler]
 async fn send_file(req: &mut Request, res: &mut Response) {
     NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
