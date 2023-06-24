@@ -61,14 +61,14 @@ export const navbarEn: NavbarConfig = [
     link: '/donate.md',
   },
   {
-    text: `v0.44.x`,
+    text: `v0.44.x release`,
     children: [
       {
-        text: 'nightly',
+        text: 'main branch',
         link: 'https://next.salvo.rs',
       },
       {
-        text: 'v0.44.x',
+        text: 'v0.44.x release',
         link: 'https://salvo.rs',
       },
     ],

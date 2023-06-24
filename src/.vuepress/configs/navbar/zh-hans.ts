@@ -61,10 +61,14 @@ export const navbarZhHans: NavbarConfig = [
     link: '/zh-hans/donate.md',
   },
   {
-    text: `v0.44.x`,
+    text: `v0.44.x release`,
     children: [
       {
-        text: 'v0.44.x',
+        text: 'main branch',
+        link: 'https://next.salvo.rs',
+      },
+      {
+        text: 'v0.44.x release',
         link: 'https://salvo.rs',
       },
     ],
