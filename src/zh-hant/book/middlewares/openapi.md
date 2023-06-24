@@ -32,7 +32,7 @@ Salvo 中的 OpenAPI 集成是相當優雅的，對於上面的示例，相比�
 
 - 使用 `name: QueryParam<String, false>` 獲取查詢字符串的值, 當你訪問網址 `http://localhost/hello?name=chris` 時, 這個 `name` 的查詢字符串就會被解析. `QueryParam<String, false>` 這裏的 `false` 代表這個參數是可以省略的, 如果訪問 `http://localhost/hello` 依然不會報錯. 相反, 如果是 `QueryParam<String, true>` 則代表此參數是必須提供的, 否則返回錯誤.
 
-- 創建 `OpenAPI` 並且創建對應的 `Router`. `OpenApi::new("test api", "0.0.1").merge_router(&router)` 這裏的 `merge_router` 表示這個 `OpenApi` 通過解析某個路由獲取它和它的子孫路由獲取必要的文檔信息. 某些路由的 `Handler` 可能沒有提供生成文檔的信息, 這些路由將被忽略, 比如使用 `#[handler]` 宏而非 `#[endpoint]` 宏定義的 `Handler`. 也就是說, 實際項目中, 爲了開發進度等原因, 你可以選擇實現不生成 OpenAPI 文檔, 或者部分生成 OpenAPI 文檔. 後續可以逐步增加生成 OpenAPI 接口的數量, 而你需要做的也僅僅只是把  `#[handler]` 改成 `#[endpoint]`, 以及修改函數簽名.
+- 創建 `OpenAPI` 並且創建對應的 `Router`. `OpenApi::new("test api", "0.0.1").merge_router(&router)` 這裏的 `merge_router` 表示這個 `OpenAPI` 通過解析某個路由獲取它和它的子孫路由獲取必要的文檔信息. 某些路由的 `Handler` 可能沒有提供生成文檔的信息, 這些路由將被忽略, 比如使用 `#[handler]` 宏而非 `#[endpoint]` 宏定義的 `Handler`. 也就是說, 實際項目中, 爲了開發進度等原因, 你可以選擇實現不生成 OpenAPI 文檔, 或者部分生成 OpenAPI 文檔. 後續可以逐步增加生成 OpenAPI 接口的數量, 而你需要做的也僅僅只是把  `#[handler]` 改成 `#[endpoint]`, 以及修改函數簽名.
 
 
 ## 數據提取器
@@ -71,3 +71,47 @@ Salvo 中的 OpenAPI 集成是相當優雅的，對於上面的示例，相比�
 #[endpoint]
 fn endpoint() {}
 ```
+
+## ToSchema
+
+可以使用 `#[derive(ToSchema)]` 定義數據結構:
+
+```rust
+#[derive(ToSchema)]
+struct Pet {
+    id: u64,
+    name: String,
+}
+```
+
+可以使用 `#[salvo(schema(...))]` 定義可選的設置:
+
+
+  - `example = ...` 可以是 `json!(...)`. `json!(...)` 會被 `serde_json::json!` 解析爲`serde_json::Value`.
+
+  ```rust
+  #[derive(ToSchema)]
+  #[salvo(schema(example = json!({"name": "bob the cat", "id": 0})))]
+  struct Pet {
+      id: u64,
+      name: String,
+  }
+  ```
+
+- `xml(...)` 可以用於定義 Xml 對象屬性:
+
+  ```rust
+  #[derive(ToSchema)]
+  struct Pet {
+      id: u64,
+      #[salvo(schema(xml(name = "pet_name", prefix = "u")))]
+      name: String,
+  }
+  ```
+
+
+- `rename_all = ...`: 支持於 `serde` 類似的語法定義重命名字段的規則. 如果同時定義了 `#[serde(rename_all = "...")]` 和 `#[salvo(schema(rename_all = "..."))]`, 則優先使用 `#[serde(rename_all = "...")]`.
+
+- `symbol = ...`: 一個字符串字面量, 用於定義結構在 OpenAPI 中線上的名字路徑. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`.
+
+- `default`: Can be used to populate default values on all fields using the struct’s Default implementation.

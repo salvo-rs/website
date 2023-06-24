@@ -54,7 +54,7 @@ Salvo 中的 `Handler` 可以返回 ```Result```, 只需要 ```Result``` 中的 
 #[async_trait]
 impl Writer for ::anyhow::Error {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
-        res.set_http_error(StatusError::internal_server_error());
+        res.render(StatusError::internal_server_error());
     }
 }
 ```
@@ -69,8 +69,8 @@ struct CustomError;
 #[async_trait]
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
         res.render("custom error");
-        res.set_http_error(StatusError::internal_server_error());
     }
 }
 
@@ -101,7 +101,7 @@ impl Handler for MaxSizeHandler {
     async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl) {
         if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {
             if upper > self.0 {
-                res.set_status_error(StatusError::payload_too_large());
+                res.render(StatusError::payload_too_large());
                 ctrl.skip_rest();
             } else {
                 ctrl.call_next(req, depot, res).await;
