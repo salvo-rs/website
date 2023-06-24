@@ -61,14 +61,10 @@ export const navbarZhHant: NavbarConfig = [
     link: '/zh-hant/donate.md',
   },
   {
-    text: `nightly`,
+    text: `v0.44.x`,
     children: [
       {
-        text: 'nightly',
-        link: 'https://next.salvo.rs',
-      },
-      {
-        text: 'v0.43.x',
+        text: 'v0.44.x',
         link: 'https://salvo.rs',
       },
     ],
