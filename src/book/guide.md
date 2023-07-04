@@ -17,9 +17,17 @@ cargo new hello_salvo --bin
 Add this to `Cargo.toml`
 
 ```toml
+[package]
+name = "hello"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
 [dependencies]
 salvo = "*"
 tokio = { version = "1", features = ["macros"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
 ```
 
 Create a simple function handler in the main.rs file, we call it `hello`, this function just render plain text ```"Hello world"```. In the ```main``` function, we need to create a root Router first, and then create a server and call it's ```bind``` function:
