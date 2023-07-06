@@ -7,7 +7,28 @@ _**示例代码**_
 ```rust
 #[handler]
 async fn send_file(req: &mut Request, res: &mut Response) {
-    NamedFile::send_file("/file/to/path", req, res).await;
+    res.send_file("/file/to/path", req.headers()).await;
 }
 ```
 
+实际上, 通过 `Response::send_file` 只是一种简化的使用 `NamedFile` 的方式, 如果你需要对发送的文件进行更多的控制, 可以使用 `NamedFileBuilder`.
+
+通过 `NamedFile::builder` 可以创建 `NamedFileBuilder`:
+
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+可以做一些设置, 然后发送文件:
+
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```

@@ -1,4 +1,4 @@
-# How to deploy
+# Deployment
 
 The Salvo project is an executable file after compilation. When deploying, you only need to upload the executable file and the static resources it depends on to the server.
 

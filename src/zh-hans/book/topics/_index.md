@@ -1,5 +1,5 @@
 ---
-title : "专题"
+title : "专题讨论"
 linktitle: Topics
 lead: ""
 draft: false

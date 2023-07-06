@@ -1,4 +1,4 @@
-# File Upload
+# Upload File
 
 Salvo Handle file uploads is also fairly straightforward, such as handling single file uploads:
 

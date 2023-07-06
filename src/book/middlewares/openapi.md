@@ -76,3 +76,41 @@ used as _`description`_.
 #[endpoint]
 fn endpoint() {}
 ```
+
+
+### Error handling
+
+For general applications, we will define a global error type (AppError), and implement `Writer` or `Piece` for AppError, so that errors can be sent to the client as web page information.
+
+For OpenAPI, in order to achieve the necessary error message, we also need to implement `EndpointOutRegister` for this error:
+
+```rust
+use salvo::http::{StatusCode, StatusError};
+use salvo::oapi::{self, EndpointOutRegister, ToSchema};
+
+impl EndpointOutRegister for Error {
+     fn register(components: &mut oapi::Components, operation: &mut oapi::Operation) {
+         operation.responses.insert(
+             StatusCode::INTERNAL_SERVER_ERROR.as_str(),
+             oapi::Response::new("Internal server error").add_content("application/json", StatusError::to_schema(components)),
+         );
+         operation.responses.insert(
+             StatusCode::NOT_FOUND.as_str(),
+             oapi::Response::new("Not found").add_content("application/json", StatusError::to_schema(components)),
+         );
+         operation.responses.insert(
+             StatusCode::BAD_REQUEST.as_str(),
+             oapi::Response::new("Bad request").add_content("application/json", StatusError::to_schema(components)),
+         );
+     }
+}
+```
+
+This error centrally defines all error messages that may be returned by the entire web application. However, in many cases, our `Handler` may only contain a few specific error types. At this time, `status_codes` can be used to filter out the required error type information:
+
+```rust
+#[endpoint(status_codes(201, 409))]
+pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> {
+     Ok(StatusCode::CREATED)
+}
+```

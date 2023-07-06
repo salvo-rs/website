@@ -115,3 +115,41 @@ struct Pet {
 - `symbol = ...`: 一个字符串字面量, 用于定义结构在 OpenAPI 中线上的名字路径. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`.
 
 - `default`: Can be used to populate default values on all fields using the struct’s Default implementation.
+
+
+### 错误处理方式
+
+对于一般的应用, 我们会定义一个全局的错误类型 (AppError), 为 AppError 实现 `Writer` 或者 `Piece`, 以便可以将错误作为网页信息发送给客户端.
+
+而对于 OpenAPI, 我们为了能达到必要的错误信息, 我们还需要为这个错误实现 `EndpointOutRegister`:
+
+```rust
+use salvo::http::{StatusCode, StatusError};
+use salvo::oapi::{self, EndpointOutRegister, ToSchema};
+
+impl EndpointOutRegister for Error {
+    fn register(components: &mut oapi::Components, operation: &mut oapi::Operation) {
+        operation.responses.insert(
+            StatusCode::INTERNAL_SERVER_ERROR.as_str(),
+            oapi::Response::new("Internal server error").add_content("application/json", StatusError::to_schema(components)),
+        );
+        operation.responses.insert(
+            StatusCode::NOT_FOUND.as_str(),
+            oapi::Response::new("Not found").add_content("application/json", StatusError::to_schema(components)),
+        );
+        operation.responses.insert(
+            StatusCode::BAD_REQUEST.as_str(),
+            oapi::Response::new("Bad request").add_content("application/json", StatusError::to_schema(components)),
+        );
+    }
+}
+```
+
+此错误集中定义了整个网页应用可能返回的所有错误信息, 然而, 很多时候我们的 `Handler` 里面可能只包含其中几种具体错误类型, 此时可以使用 `status_codes` 过滤出需要的错误类型信息:
+
+```rust
+#[endpoint(status_codes(201, 409))]
+pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> {
+    Ok(StatusCode::CREATED)
+}
+```
