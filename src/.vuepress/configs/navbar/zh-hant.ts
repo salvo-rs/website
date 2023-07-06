@@ -61,7 +61,7 @@ export const navbarZhHant: NavbarConfig = [
     link: '/zh-hant/donate.md',
   },
   {
-    text: `v0.45.x release`,
+    text: `main branch`,
     children: [
       {
         text: 'main branch',
