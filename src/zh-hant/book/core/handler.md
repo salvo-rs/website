@@ -2,7 +2,7 @@
 
 ## 什麼是 Handler
 
-Handler 是負責負責處理 Request 請求的具體對象.  Hander 本身是一個 Trait, 內部包含一個 ```handle``` 的異步方法:
+Handler 是負責負責處理 Request 請求的具體對象.  Handler 本身是一個 Trait, 內部包含一個 ```handle``` 的異步方法:
 
 ```rust
 #[async_trait]
@@ -128,7 +128,7 @@ async fn hello() -> &'static str {
 struct hello;
 
 #[async_trait]
-impl Hander for hello {
+impl Handler for hello {
     async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
         res.render(Text::Plain("hello world!"));
     }
