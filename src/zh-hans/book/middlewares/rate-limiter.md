@@ -9,7 +9,7 @@
 
 * `RateGuard` 提供对流量控制算法的抽象. 默认实现了固定窗口(`FixedGuard`)和滑动窗口(`SlidingGuard`)两个实现方式.
 
-* `RateStore` 提供对数据的存取操作. `MemoryStore` 是内置的基于 `moka` 的一个内存的缓存实现. 你也可以定义自己的实现方式.
+* `RateStore` 提供对数据的存取操作. `MokaStore` 是内置的基于 `moka` 的一个内存的缓存实现. 你也可以定义自己的实现方式.
 
 * `RateLimiter` 是实现了 `Handler` 的结构体, 内部还有一个 `skipper` 字段, 可以指定跳过某些不需要缓存的请求. 默认情况下, 会使用 `none_skipper` 不跳过任何请求.
 

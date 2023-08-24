@@ -5,7 +5,7 @@ use std::hash::Hash;
 use once_cell::sync::Lazy;
 use salvo::prelude::*;
 use salvo::rate_limiter::{
-    CelledQuota, MemoryStore, QuotaGetter, RateIssuer, RateLimiter, SlidingGuard,
+    CelledQuota, MokaStore, QuotaGetter, RateIssuer, RateLimiter, SlidingGuard,
 };
 use salvo::Error;
 
@@ -59,7 +59,7 @@ async fn main() {
 
     let limiter = RateLimiter::new(
         SlidingGuard::new(),
-        MemoryStore::new(),
+        MokaStore::new(),
         UserIssuer,
         CustomQuotaGetter,
     );
