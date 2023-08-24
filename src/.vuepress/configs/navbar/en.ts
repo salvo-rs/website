@@ -68,7 +68,7 @@ export const navbarEn: NavbarConfig = [
         link: 'https://next.salvo.rs',
       },
       {
-        text: 'v0.45.x release',
+        text: 'v0.51.x release',
         link: 'https://salvo.rs',
       },
     ],
