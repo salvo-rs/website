@@ -9,7 +9,7 @@ Cache 中間件可以對 `Response` 中的 `StatusCode`, `Headers`, `Body` 提�
 ## 主要功能
 * `CacheIssuer` 提供了對分配的緩存鍵值的抽象. `RequestIssuer` 是它的一個實現, 可以定義依據請求的 URL 的哪些部分以及請求的 `Method` 生成緩存的鍵. 你也可以定義你自己的緩存鍵生成的邏輯. 緩存的鍵不一定是字符串類型, 任何滿足 `Hash + Eq + Send + Sync + 'static` 約束的類型都可以作爲鍵.
 
-* `CacheStore` 提供對數據的存取操作. `MemoryStore` 是內置的基於 `moka` 的一個內存的緩存實現. 你也可以定義自己的實現方式.
+* `CacheStore` 提供對數據的存取操作. `MokaStore` 是內置的基於 `moka` 的一個內存的緩存實現. 你也可以定義自己的實現方式.
 
 * `Cache` 是實現了 `Handler` 的結構體, 內部還有一個 `skipper` 字段, 可以指定跳過某些不需要緩存的請求. 默認情況下, 會使用 `MethodSkipper` 跳過除了 `Method::GET` 以外的所有請求.
   

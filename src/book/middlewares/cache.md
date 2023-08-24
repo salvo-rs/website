@@ -10,7 +10,7 @@ Note that this plugin will not cache `Response` whose `Body` is a `ResBody::Stre
 
 * `CacheIssuer` provides an abstraction over the assigned cache keys. `RequestIssuer` is an implementation of it that defines which parts of the requested URL and the requested `Method` to generate a cache key. You can also define your own The logic of cache key generation. The cache key does not have to be a string type, any type that satisfies the constraints of `Hash + Eq + Send + Sync + 'static` can be used as a key.
   
-* `CacheStore` provides access to data. `MemoryStore` is a built-in `moka`-based memory cache implementation. You can also define your own implementation.
+* `CacheStore` provides access to data. `MokaStore` is a built-in `moka`-based memory cache implementation. You can also define your own implementation.
   
 * `Cache` is a structure that implements `Handler`, and there is a `skipper` field inside, which can be specified to skip certain requests that do not need to be cached. By default, `MethodSkipper` will be used to skip all request except `Method::GET`.
   
