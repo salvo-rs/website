@@ -8,8 +8,8 @@ export const sidebarEn: SidebarConfig = {
     {
       text: 'Book',
       children: [
-        '/book/README.html',
-        '/book/guide.html',
+        '/book/README.md',
+        '/book/guide.md',
         {
           text: 'Core',
           children: coreChildren('/book'),
