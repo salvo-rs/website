@@ -58,7 +58,7 @@ export const navbarZhHant: NavbarConfig = [
   },
   {
     text: '資助項目',
-    link: '/zh-hant/donate.md',
+    link: '/zh-hant/donate.html',
   },
   {
     text: `main branch`,
