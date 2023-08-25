@@ -58,7 +58,7 @@ export const navbarEn: NavbarConfig = [
   },
   {
     text: 'Donate',
-    link: '/donate.md',
+    link: '/donate.html',
   },
   {
     text: `v0.51.x release`,

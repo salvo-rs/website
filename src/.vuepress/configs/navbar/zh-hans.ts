@@ -58,7 +58,7 @@ export const navbarZhHans: NavbarConfig = [
   },
   {
     text: '资助项目',
-    link: '/zh-hans/donate.md',
+    link: '/zh-hans/donate.html',
   },
   {
     text: `v0.51.x release`,
