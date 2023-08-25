@@ -5,10 +5,10 @@ heroImage: /images/logo-text.svg
 heroText: null
 actions:
   - text: 快速開始
-    link: /zh-hans/book/guide.html
+    link: /zh-hans/book/guide.md
     type: primary
   - text: 捐獻金子
-    link: /zh-hans/donate.html
+    link: /zh-hans/donate.md
     type: secondary
 features:
   - title: 簡單得讓你一見鍾情

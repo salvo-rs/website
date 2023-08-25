@@ -5,10 +5,10 @@ heroImage: /images/logo-text.svg
 heroText: null
 actions:
   - text: Get Started
-    link: /book/guide.html
+    link: /book/guide.md
     type: primary
   - text: Donate
-    link: /donate.html
+    link: /donate.md
     type: secondary
 features:
   - title: Simplicity First

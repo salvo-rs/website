@@ -8,8 +8,8 @@ export const sidebarZhHant: SidebarConfig = {
     {
       text: 'Book',
       children: [
-        '/zh-hant/book/README.html',
-        '/zh-hant/book/guide.html',
+        '/zh-hant/book/README.md',
+        '/zh-hant/book/guide.md',
         {
           text: '核心功能',
           children: coreChildren('/zh-hant/book'),
