@@ -23,7 +23,7 @@ export const navbarZhHans: NavbarConfig = [
           '/zh-hans/book/middlewares/sse.md',
           '/zh-hans/book/middlewares/timeout.md',
           '/zh-hans/book/middlewares/trailing-slash.md',
-          '/zh-hans/book/middlewares/ws.md',
+          '/zh-hans/book/middlewares/websocket.md',
         ],
       },
       {
