@@ -23,7 +23,7 @@ export const navbarEn: NavbarConfig = [
           '/book/middlewares/sse.md',
           '/book/middlewares/timeout.md',
           '/book/middlewares/trailing-slash.md',
-          '/book/middlewares/ws.md',
+          '/book/middlewares/websocket.md',
         ],
       },
       {
