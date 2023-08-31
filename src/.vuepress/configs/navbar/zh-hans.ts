@@ -1,5 +1,5 @@
 import type { NavbarConfig } from '@vuepress/theme-default'
-import { version } from '../meta.js'
+import versions from './versions.js'
 
 export const navbarZhHans: NavbarConfig = [
   {
@@ -60,17 +60,5 @@ export const navbarZhHans: NavbarConfig = [
     text: '资助项目',
     link: '/zh-hans/donate.html',
   },
-  {
-    text: `main branch`,
-    children: [
-      {
-        text: 'main branch',
-        link: 'https://next.salvo.rs',
-      },
-      {
-        text: 'v0.51.x release',
-        link: 'https://salvo.rs',
-      },
-    ],
-  },
+  versions,
 ]
