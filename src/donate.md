@@ -1,4 +1,4 @@
-# Donate Project
+# Donate
 
 Salvo is an open source project. If you want to support Salvo, you can transfer money directly through Alipay or WeChat or [**Please buy me a cup of coffee☕**](https://ko-fi.com/chrislearn):
 
