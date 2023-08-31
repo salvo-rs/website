@@ -27,12 +27,12 @@ export default defineUserConfig({
     },
     '/zh-hans/': {
       lang: 'zh-hans',
-      title: 'Salvo',
+      title: 'Salvo(赛风)',
       description: '赛风是像风一样轻快的 Rust Web 服务端框架',
     },
     '/zh-hant/': {
       lang: 'zh-hant',
-      title: 'Salvo',
+      title: 'Salvo(賽風)',
       description: '賽風是像風一樣輕快的 Rust Web 服務端框架',
     },
   },
