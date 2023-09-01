@@ -75,7 +75,7 @@ For numeric characters there is an easier way to use ```<id:num>```, the specifi
 - ```<id:num(3..=10)>``` means match 3 to 10 numeric characters;
 - ```<id:num(10..)>``` means to match at least 10 numeric characters.
 
-You can also use ```<*>``` or ```<**>``` to match all remaining path fragments. In order to make the code more readable, you can also add appropriate name to make the path semantics more clear, for example: ```<**file_path>```.
+You can also use ```<*>``` or ```<?>``` to match all remaining path fragments. In order to make the code more readable, you can also add appropriate name to make the path semantics more clear, for example: ```<*file_path>```.
 
 It is allowed to combine multiple expressions to match the same path segment, such as ```/articles/article_<id:num>/```, ```/images/<name>.<ext>```.
 
@@ -163,7 +163,7 @@ The filter is based on the request path is the most frequently used. Parameters 
 
 ```rust
 Router::with_path("articles/<id>").get(show_article);
-Router::with_path("files/<**rest_path>").get(serve_file)
+Router::with_path("files/<*rest_path>").get(serve_file)
 ```
 
 In ```Handler```, it can be obtained through the ```get_param``` function of the ```Request``` object:
