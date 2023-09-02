@@ -103,9 +103,13 @@ async fn show_writer(req: &mut Request) {
 - ```<id:num(3..=10)>```, 代表匹配 3 到 10 个数字字符;
 - ```<id:num(10..)>```, 代表匹配至少 10 个数字字符.
 
-还可以通过 ```<*>``` 或者 ```<**>``` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: ```<**file_path>```. ```<*>``` 与 ```<**>``` 的区别是, 如果路径是 ```/files/<*rest_path>```, 不会匹配 ```/files```, 而路径 ```/files/<**rest_path>``` 则可以匹配 ```/files```.
+还可以通过 `<**>`, `<*+>` 或者 `<*?>` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: `<**file_path>`. 
 
-允许组合使用多个表达式匹配同一个路径片段, 比如 ```/articles/article_<id:num>/```, ```/images/<name>.<ext>```.
+- `<**>`: 代表通配符匹配的部分可以是空字符串, 比如路径是 `/files/<**+*rest_path>`, 会匹配 `/files`， `/files/abc.txt`，`/files/dir/abc.txt`；
+- `<*+>`: 代表通配符匹配的部分必须存在，不能匹配到空字符串, 比如路径是 `/files/<*+rest_path>`, 不会匹配 `/files` 但是会匹配 `/files/abc.txt`，`/files/dir/abc.txt`；
+- `<*?>`: 代表通配符匹配的部分可以是空字符串, 但是只能包含一个路径片段, 比如路径是 `/files/<*？rest_path>`, 不会匹配 `/files/dir/abc.txt` 但是会匹配 `/files`，`/files/abc.txt`；
+
+允许组合使用多个表达式匹配同一个路径片段, 比如 `/articles/article_<id:num>/`, `/images/<name>.<ext>`.
 
 ## 添加中间件
 
