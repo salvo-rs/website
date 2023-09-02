@@ -103,7 +103,7 @@ async fn show_writer(req: &mut Request) {
 - ```<id:num(3..=10)>```, 代表匹配 3 到 10 个数字字符;
 - ```<id:num(10..)>```, 代表匹配至少 10 个数字字符.
 
-还可以通过 ```<*>``` 或者 ```<?>``` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: ```<*file_path>```. ```<*>``` 与 ```<?>``` 的区别是, 如果路径是 ```/files/<*rest_path>```, 不会匹配 ```/files```, 而路径 ```/files/<*rest_path>``` 则可以匹配 ```/files```.
+还可以通过 ```<*>``` 或者 ```<**>``` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: ```<**file_path>```. ```<*>``` 与 ```<**>``` 的区别是, 如果路径是 ```/files/<*rest_path>```, 不会匹配 ```/files```, 而路径 ```/files/<**rest_path>``` 则可以匹配 ```/files```.
 
 允许组合使用多个表达式匹配同一个路径片段, 比如 ```/articles/article_<id:num>/```, ```/images/<name>.<ext>```.
 
@@ -188,7 +188,7 @@ Router::with_filter(filter::path("hello").and(filter::get()));
 
 ```rust
 Router::with_path("articles/<id>").get(show_article);
-Router::with_path("files/<*rest_path>").get(serve_file)
+Router::with_path("files/<**rest_path>").get(serve_file)
 ```
 
 在 ```Handler``` 中, 可以通过 ```Request``` 对象的 ```get_param``` 函数获取:

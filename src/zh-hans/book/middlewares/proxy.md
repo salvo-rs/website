@@ -15,12 +15,12 @@ async fn main() {
     let router = Router::new()
         .push(
             Router::new()
-                .path("google/<*rest>")
+                .path("google/<**rest>")
                 .handle(Proxy::<Vec<&str>>::new(vec!["https://www.google.com"])),
         )
         .push(
             Router::new()
-                .path("baidu/<*rest>")
+                .path("baidu/<**rest>")
                 .handle(Proxy::<Vec<&str>>::new(vec!["https://www.baidu.com"])),
         );
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
