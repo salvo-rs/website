@@ -103,9 +103,13 @@ async fn show_writer(req: &mut Request) {
 - ```<id:num(3..=10)>```, 代表匹配 3 到 10 個數字字符;
 - ```<id:num(10..)>```, 代表匹配至少 10 個數字字符.
 
-還可以通過 ```<*>``` 或者 ```<**>``` 匹配所有剩餘的路徑片段. 爲了代碼易讀性性強些, 也可以添加適合的名字, 讓路徑語義更清晰, 比如: ```<**file_path>```. ```<*>``` 與 ```<**>``` 的區別是, 如果路徑是 ```/files/<*rest_path>```, 不會匹配 ```/files```, 而路徑 ```/files/<**rest_path>``` 則可以匹配 ```/files```.
+還可以通過 `<**>`, `<*+>` 或者 `<*?>` 匹配所有剩餘的路徑片段. 爲了代碼易讀性性強些, 也可以添加適合的名字, 讓路徑語義更清晰, 比如: `<**file_path>`. 
 
-允許組合使用多個表達式匹配同一個路徑片段, 比如 ```/articles/article_<id:num>/```, ```/images/<name>.<ext>```.
+- `<**>`: 代表通配符匹配的部分可以是空字符串, 比如路徑是 `/files/<**+*rest_path>`, 會匹配 `/files`， `/files/abc.txt`，`/files/dir/abc.txt`；
+- `<*+>`: 代表通配符匹配的部分必須存在，不能匹配到空字符串, 比如路徑是 `/files/<*+rest_path>`, 不會匹配 `/files` 但是會匹配 `/files/abc.txt`，`/files/dir/abc.txt`；
+- `<*?>`: 代表通配符匹配的部分可以是空字符串, 但是隻能包含一個路徑片段, 比如路徑是 `/files/<*？rest_path>`, 不會匹配 `/files/dir/abc.txt` 但是會匹配 `/files`，`/files/abc.txt`；
+
+允許組合使用多個表達式匹配同一個路徑片段, 比如 `/articles/article_<id:num>/`, `/images/<name>.<ext>`.
 
 ## 添加中間件
 

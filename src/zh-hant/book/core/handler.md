@@ -138,7 +138,7 @@ impl Handler for hello {
 可以看到, 在使用 `#[handler]` 的情況下, 代碼變得簡單很多:
 - 不再需要手工添加 `#[async_trait]`.
 - 函數中不需要的參數已經省略, 對於需要的參數也可以按任意順序排布.
-- 對於實現了 `Writer` 或者 `Piece` 抽象的對象, 可以直接作爲函數的返回值. 在這裏 `&'static str` 實現了 `Piece`, 於是可以直接作爲函數返回值返回.
+- 對於實現了 `Writer` 或者 `Scribe` 抽象的對象, 可以直接作爲函數的返回值. 在這裏 `&'static str` 實現了 `Scribe`, 於是可以直接作爲函數返回值返回.
 
 `#[handler]` 不僅可以加在函數上, 也可以加在 `struct` 的 `impl` 上:
 
