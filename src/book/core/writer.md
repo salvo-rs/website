@@ -24,12 +24,12 @@ Their differences are:
 - ```Writer``` can be used as the content of ```Result``` returned by ```Handler```;
 - The ```FlowCtrl``` parameter does not exist in ```Writer```, and cannot control the execution flow of the entire request.
 
-```Piece``` implements ```Writer```, but with less functionality than ```Writer```:
+```Scribe``` implements ```Writer```, but with less functionality than ```Writer```:
 
 ```rust
-pub trait Piece {
+pub trait Scribe {
     fn render(self, res: &mut Response);
 }
 ````
 
-```Piece```'s rendering function just writes data to ```Response```, this process cannot get information from ```Request``` or ```Depot```.
+```Scribe```'s rendering function just writes data to ```Response```, this process cannot get information from ```Request``` or ```Depot```.

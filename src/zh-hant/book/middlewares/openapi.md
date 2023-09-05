@@ -119,7 +119,7 @@ struct Pet {
 
 ### 錯誤處理方式
 
-對於一般的應用, 我們會定義一個全局的錯誤類型 (AppError), 爲 AppError 實現 `Writer` 或者 `Piece`, 以便可以將錯誤作爲網頁信息發送給客戶端.
+對於一般的應用, 我們會定義一個全局的錯誤類型 (AppError), 爲 AppError 實現 `Writer` 或者 `Scribe`, 以便可以將錯誤作爲網頁信息發送給客戶端.
 
 而對於 OpenAPI, 我們爲了能達到必要的錯誤信息, 我們還需要爲這個錯誤實現 `EndpointOutRegister`:
 
