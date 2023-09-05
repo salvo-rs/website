@@ -21,3 +21,6 @@ ss files
 **/.vuepress/.temp/
 **/.vuepress/.cache/
 **/.vuepress/dist/
+
+package-lock.json
+pnpm-lock.yaml
