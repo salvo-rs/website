@@ -28,7 +28,7 @@ async fn main() {
 
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor)
-        .serve(Router::with_hoop(auth_handler).handle(index))
+        .serve(Router::with_hoop(auth_handler).goal(index))
         .await;
 }
 #[handler]
