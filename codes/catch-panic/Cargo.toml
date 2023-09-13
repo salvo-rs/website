@@ -1,0 +1,13 @@
+[package]
+name = "example-catch-panic"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+
+[dependencies]
+anyhow = "1"
+salvo = { workspace = true, features=["catch-panic"] }
+tokio = { workspace = true, features = ["macros"] }
+tracing.workspace = true
+tracing-subscriber.workspace = true
