@@ -137,7 +137,7 @@ struct GoodMan<'a> {
 struct Nested<'a> {
     #[salvo(extract(source(from = "param")))]
     id: i64,
-    #[salvo(extract(source(from = "query")salvo()]
+    #[salvo(extract(source(from = "query")))]
     username: &'a str,
     first_name: String,
     last_name: String,

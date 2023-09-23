@@ -86,10 +86,10 @@ assert_eq!(user.ids, vec![123, 234]);
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 /// 默認從 body 中獲取數據字段值
-#[extract(default_source(from = "body"))]
+#[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
     /// 其中, id 號從請求路徑參數中獲取, 並且自動解析數據爲 i64 類型.
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
     /// 可以使用引用類型, 避免內存複製.
     username: &'a str,
@@ -121,30 +121,30 @@ async fn edit<'a>(good_man: GoodMan<'a>) -> String {
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[extract(default_source(from = "body", format = "json"))]
+#[salvo(extract(default_source(from = "body", format = "json")))]
 struct GoodMan<'a> {
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
-    #[extract(source(from = "query"))]
+    #[salvo(extract(source(from = "query")))]
     username: &'a str,
     first_name: String,
     last_name: String,
     lovers: Vec<String>,
     /// 這個 nested 字段完全是從 Request 重新解析.
-    #[extract(source(from = "request"))]
+    #[salvo(extract(source(from = "request")))]
     nested: Nested<'a>,
 }
 
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[extract(default_source(from = "body", format = "json"))]
+#[salvo(extract(default_source(from = "body", format = "json")))]
 struct Nested<'a> {
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
-    #[extract(source(from = "query"))]
+    #[salvo(extract(source(from = "query")))]
     username: &'a str,
     first_name: String,
     last_name: String,
-    #[extract(rename = "lovers")]
+    #[salvo(extract(rename = "lovers"))]
     #[serde(default)]
     pets: Vec<String>,
 }
