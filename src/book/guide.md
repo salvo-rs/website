@@ -24,7 +24,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-salvo = "0.55"
+salvo = "0.57"
 tokio = { version = "1", features = ["macros"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
