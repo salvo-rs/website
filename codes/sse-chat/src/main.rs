@@ -74,7 +74,7 @@ async fn user_connected(res: &mut Response) {
         }
         Message::Reply(reply) => Ok(SseEvent::default().text(reply)),
     });
-    SseKeepAlive::new(stream).streaming(res).ok();
+    SseKeepAlive::new(stream).stream(res);
 }
 
 fn user_message(my_id: usize, msg: &str) {
