@@ -18,7 +18,10 @@ fn init_tracer() -> Tracer {
 
 #[handler]
 async fn index(req: &mut Request) -> String {
-    format!("Body: {}", std::str::from_utf8(req.payload().await.unwrap()).unwrap())
+    format!(
+        "Body: {}",
+        std::str::from_utf8(req.payload().await.unwrap()).unwrap()
+    )
 }
 
 #[tokio::main]
