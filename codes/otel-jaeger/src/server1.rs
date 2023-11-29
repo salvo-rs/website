@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use opentelemetry::sdk::{propagation::TraceContextPropagator, trace::Tracer};
+use opentelemetry_sdk::{propagation::TraceContextPropagator, trace::Tracer};
 use opentelemetry::trace::{FutureExt, SpanKind, TraceContextExt, Tracer as _};
 use opentelemetry::{global, KeyValue};
 use opentelemetry_http::HeaderInjector;
@@ -20,7 +20,7 @@ fn init_tracer() -> Tracer {
         .with_service_name("salvo")
         .with_endpoint("http://localhost:14268/api/traces")
         .with_hyper()
-        .install_batch(opentelemetry::runtime::Tokio)
+        .install_batch(opentelemetry_sdk::runtime::Tokio)
         .unwrap()
 }
 
@@ -36,10 +36,7 @@ async fn index(req: &mut Request, depot: &mut Depot) -> String {
 
     let body = std::str::from_utf8(req.payload().await.unwrap()).unwrap();
     let req = {
-        let mut req = reqwest::Request::new(
-            Method::GET,
-            Url::from_str("http://localhost:5801/api2").unwrap(),
-        );
+        let mut req = reqwest::Request::new(Method::GET, Url::from_str("http://localhost:5801/api2").unwrap());
         global::get_text_map_propagator(|propagator| {
             propagator.inject_context(&cx, &mut HeaderInjector(req.headers_mut()))
         });

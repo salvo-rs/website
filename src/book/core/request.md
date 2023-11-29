@@ -118,7 +118,7 @@ There is considerable flexibility in the definition of data types, and can even 
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[salvo(extract(default_source(from = "body", format = "json")))]
+#[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
     #[salvo(extract(source(from = "param")))]
     id: i64,
@@ -133,7 +133,7 @@ struct GoodMan<'a> {
 }
 
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[salvo(extract(default_source(from = "body", format = "json")))]
+#[salvo(extract(default_source(from = "body")))]
 struct Nested<'a> {
     #[salvo(extract(source(from = "param")))]
     id: i64,
@@ -148,3 +148,43 @@ struct Nested<'a> {
 ```
 
 For specific examples, see: [extract-nested](https://github.com/salvo-rs/salvo/blob/main/examples/extract-nested/src/main.rs).
+
+### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
+
+If in the above example Nested<'a> does not have the same fields as the parent, you can use `#[serde(flatten)]`, otherwise you need to use `·`#[salvo(extract(flatten))]`.
+
+### `#[salvo(extract(source(parse)))]`
+
+In fact, you can also add a `parse` parameter to `source` to specify a specific parsing method. If you do not specify this parameter, the parsing will determine the parsing method of the `Body` part based on the `Request` information. If it is a `Form` form , it will be parsed according to the `MuiltMap` method. If it is a json payload, it will be parsed according to the json format. Generally, there is no need to specify this parameter. In rare cases, specifying this parameter can achieve some special functions.
+
+```rust
+#[tokio::test]
+async fn test_de_request_with_form_json_str() {
+     #[derive(Deserialize, Eq, PartialEq, Debug)]
+     struct User<'a> {
+         name: &'a str,
+         age: usize,
+     }
+     #[derive(Deserialize, Extractible, Eq, PartialEq, Debug)]
+     #[salvo(extract(default_source(from = "body", parser = "json")))]
+     struct RequestData<'a> {
+         #[salvo(extract(source(from = "param")))]
+         p2: &'a str,
+         user: User<'a>,
+     }
+     let mut req = TestClient::get("http://127.0.0.1:5800/test/1234/param2v")
+         .raw_form(r#"user={"name": "chris", "age": 20}"#)
+         .build();
+     req.params.insert("p2".into(), "921".into());
+     let data: RequestData = req.extract().await.unwrap();
+     assert_eq!(
+         data,
+         RequestData {
+             p2: "921",
+             user: User { name: "chris", age: 20 }
+         }
+     );
+}
+```
+
+For example, the actual request here is Form, but the value of a certain field is a json text. At this time, you can specify `parse` to parse the string in json format.
