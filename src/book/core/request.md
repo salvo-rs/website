@@ -166,7 +166,7 @@ async fn test_de_request_with_form_json_str() {
          age: usize,
      }
      #[derive(Deserialize, Extractible, Eq, PartialEq, Debug)]
-     #[salvo(extract(default_source(from = "body", parser = "json")))]
+     #[salvo(extract(default_source(from = "body", parse = "json")))]
      struct RequestData<'a> {
          #[salvo(extract(source(from = "param")))]
          p2: &'a str,
