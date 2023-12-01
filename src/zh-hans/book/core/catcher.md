@@ -3,7 +3,7 @@
 如果请求返回的 `Response` 的状态码是错误, 而页面里面的 `Body` 是空, 这时 salvo 会试图使用 `Catcher` 捕获这个错误, 显示一个友好的错误页面.
 
 
-一种简单的创建自定义 `Catcher` 的方法是, 通过 `Catcher::default()` 返回一个系统默认的 `Catcher`, 然后讲它添加到 `Service` 上.
+一种简单的创建自定义 `Catcher` 的方法是通过 `Catcher::default()` 返回一个系统默认的 `Catcher`, 然后讲它添加到 `Service` 上.
 
 ```rust
 use salvo::catcher::Catcher;
