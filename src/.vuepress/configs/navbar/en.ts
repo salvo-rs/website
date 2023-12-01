@@ -29,7 +29,7 @@ export const navbarEn: NavbarConfig = [
       {
         text: 'Authentication',
         children: [
-          '/book/middlewares/basic-auth.md',
+          '/book/middlewares/basic-auth.html',
           '/book/middlewares/jwt-auth.md',
         ],
       },
