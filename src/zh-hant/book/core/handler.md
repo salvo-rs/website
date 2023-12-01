@@ -47,7 +47,7 @@ async fn hello_world(res: &mut Response) {
 ## 處理錯誤
 
 Salvo 中的 `Handler` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的類型都實現 ```Writer``` trait.
-考慮到 anyow 的使用比較廣泛, 在開啓 ```anyhow``` 功能後, ```anyhow::Error``` 會實現 ```Writer``` trait. ```anyhow::Error``` 會被映射爲 ```InternalServerError```. 
+考慮到 anyhow 的使用比較廣泛, 在開啓 ```anyhow``` 功能後, ```anyhow::Error``` 會實現 ```Writer``` trait. ```anyhow::Error``` 會被映射爲 ```InternalServerError```. 
 
 ```rust
 #[cfg(feature = "anyhow")]
