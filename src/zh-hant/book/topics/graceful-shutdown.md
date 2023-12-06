@@ -2,9 +2,7 @@
 
 
 ```rust
-use tokio::sync::oneshot;
-
-use salvo_core::prelude::*;
+use salvo::prelude::*;
 
 #[handler]
 async fn hello(res: &mut Response) {
@@ -13,17 +11,11 @@ async fn hello(res: &mut Response) {
 
 #[tokio::main]
 async fn main() {
-    let (tx, rx) = oneshot::channel();
     let router = Router::new().get(hello);
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
-    let server = Server::new(acceptor).serve_with_graceful_shutdown(router, async {
-        rx.await.ok();
-    }, None);
-
-    // Spawn the server into a runtime
-    tokio::task::spawn(server);
-
-    // Later, start the shutdown...
-    let _ = tx.send(());
-}
-```
+    let server = Server::new(acceptor);
+    let handle = server.handle();
+    server.serve(router).await;
+    // Gracefully shut down the server
+    handle.stop_graceful(std::time::Duration::from_secs(5));
+}```
