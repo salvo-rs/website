@@ -1,5 +1,5 @@
 import type { NavbarConfig } from '@vuepress/theme-default'
-import { version } from '../meta.js'
+import versions from './versions.js'
 
 export const navbarEn: NavbarConfig = [
   {
@@ -23,13 +23,13 @@ export const navbarEn: NavbarConfig = [
           '/book/middlewares/sse.md',
           '/book/middlewares/timeout.md',
           '/book/middlewares/trailing-slash.md',
-          '/book/middlewares/ws.md',
+          '/book/middlewares/websocket.md',
         ],
       },
       {
         text: 'Authentication',
         children: [
-          '/book/middlewares/basic-auth.md',
+          '/book/middlewares/basic-auth.html',
           '/book/middlewares/jwt-auth.md',
         ],
       },
@@ -58,19 +58,7 @@ export const navbarEn: NavbarConfig = [
   },
   {
     text: 'Donate',
-    link: '/donate.md',
+    link: '/donate.html',
   },
-  {
-    text: `v0.45.x release`,
-    children: [
-      {
-        text: 'main branch',
-        link: 'https://next.salvo.rs',
-      },
-      {
-        text: 'v0.45.x release',
-        link: 'https://salvo.rs',
-      },
-    ],
-  },
+  versions,
 ]

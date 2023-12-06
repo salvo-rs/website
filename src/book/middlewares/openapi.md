@@ -80,7 +80,7 @@ fn endpoint() {}
 
 ### Error handling
 
-For general applications, we will define a global error type (AppError), and implement `Writer` or `Piece` for AppError, so that errors can be sent to the client as web page information.
+For general applications, we will define a global error type (AppError), and implement `Writer` or `Scribe` for AppError, so that errors can be sent to the client as web page information.
 
 For OpenAPI, in order to achieve the necessary error message, we also need to implement `EndpointOutRegister` for this error:
 

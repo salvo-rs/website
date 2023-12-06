@@ -86,10 +86,10 @@ assert_eq!(user.ids, vec![123, 234]);
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 /// 默認從 body 中獲取數據字段值
-#[extract(default_source(from = "body"))]
+#[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
     /// 其中, id 號從請求路徑參數中獲取, 並且自動解析數據爲 i64 類型.
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
     /// 可以使用引用類型, 避免內存複製.
     username: &'a str,
@@ -121,33 +121,73 @@ async fn edit<'a>(good_man: GoodMan<'a>) -> String {
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[extract(default_source(from = "body", format = "json"))]
+#[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
-    #[extract(source(from = "query"))]
+    #[salvo(extract(source(from = "query")))]
     username: &'a str,
     first_name: String,
     last_name: String,
     lovers: Vec<String>,
     /// 這個 nested 字段完全是從 Request 重新解析.
-    #[extract(source(from = "request"))]
+    #[salvo(extract(flatten))]
     nested: Nested<'a>,
 }
 
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-#[extract(default_source(from = "body", format = "json"))]
+#[salvo(extract(default_source(from = "body")))]
 struct Nested<'a> {
-    #[extract(source(from = "param"))]
+    #[salvo(extract(source(from = "param")))]
     id: i64,
-    #[extract(source(from = "query"))]
+    #[salvo(extract(source(from = "query")))]
     username: &'a str,
     first_name: String,
     last_name: String,
-    #[extract(rename = "lovers")]
+    #[salvo(extract(rename = "lovers"))]
     #[serde(default)]
     pets: Vec<String>,
 }
 ```
 
 具體實例參見: [extract-nested](https://github.com/salvo-rs/salvo/blob/main/examples/extract-nested/src/main.rs).
+
+### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
+
+如果在上面例子中 Nested<'a> 沒有與父級相同的字段，可以使用 `#[serde(flatten)]`, 否則需要使用 `·`#[salvo(extract(flatten))]`.
+
+### `#[salvo(extract(source(parse)))]`
+
+實際上還可以給 `source` 添加一個 `parse` 的參數指定特定的解析方式. 如果不指定這個參數，解析會根據 `Request` 的信息決定 `Body` 部分的解析方式，如果是 `Form` 表單，則按照 `MuiltMap` 的方式解析，如果是 json 的 payload, 則按 json 格式解析. 一般情況下不需要指定這個參數, 極個別情況下, 指定這個參數可以實現一些特殊功能.
+
+```rust
+#[tokio::test]
+async fn test_de_request_with_form_json_str() {
+    #[derive(Deserialize, Eq, PartialEq, Debug)]
+    struct User<'a> {
+        name: &'a str,
+        age: usize,
+    }
+    #[derive(Deserialize, Extractible, Eq, PartialEq, Debug)]
+    #[salvo(extract(default_source(from = "body", parse = "json")))]
+    struct RequestData<'a> {
+        #[salvo(extract(source(from = "param")))]
+        p2: &'a str,
+        user: User<'a>,
+    }
+    let mut req = TestClient::get("http://127.0.0.1:5800/test/1234/param2v")
+        .raw_form(r#"user={"name": "chris", "age": 20}"#)
+        .build();
+    req.params.insert("p2".into(), "921".into());
+    let data: RequestData = req.extract().await.unwrap();
+    assert_eq!(
+        data,
+        RequestData {
+            p2: "921",
+            user: User { name: "chris", age: 20 }
+        }
+    );
+}
+```
+
+比如這裏實際請求發來的是 Form，但是某個字段的值是一段 json 的文本，這時候可以通過指定 `parse`，按 json 格式解析這個字符串。

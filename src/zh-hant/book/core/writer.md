@@ -24,12 +24,12 @@ pub trait Handler: Send + Sync + 'static {
 - ```Writer``` 可以作爲 ```Handler``` 的返回的 ```Result``` 中的內容;
 - ```Writer``` 中不存在 ```FlowCtrl``` 參數, 無法控制整個請求的執行流程.
 
-```Piece``` 實現了 ```Writer```, 但是比 ```Writer``` 能實現的功能更少:
+```Scribe``` 實現了 ```Writer```, 但是比 ```Writer``` 能實現的功能更少:
 
 ```rust
-pub trait Piece {
+pub trait Scribe {
     fn render(self, res: &mut Response);
 }
 ```
 
-```Piece``` 的渲染函數只是寫入數據到 ```Response```中, 這個過程是無法從 ```Request``` 或者 ```Depot``` 中獲取信息的.
+```Scribe``` 的渲染函數只是寫入數據到 ```Response```中, 這個過程是無法從 ```Request``` 或者 ```Depot``` 中獲取信息的.

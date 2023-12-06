@@ -1,18 +1,18 @@
 # WebSocket
 
-提供对 `WebSocket` 支持的中间件.
+提供對 `WebSocket` 支持的中間件.
 
-_**示例代码**_ 
+_**示例代碼**_ 
 
 <CodeGroup>
 <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../../codes/ws/src/main.rs)
+@[code rust](../../../../codes/websocket/src/main.rs)
 
 </CodeGroupItem>
 <CodeGroupItem title="Cargo.toml">
 
-@[code toml](../../../../codes/ws/Cargo.toml)
+@[code toml](../../../../codes/websocket/Cargo.toml)
 
 </CodeGroupItem>
 </CodeGroup>
@@ -22,12 +22,12 @@ _**示例代码**_
 <CodeGroup>
 <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../../codes/ws-chat/src/main.rs)
+@[code rust](../../../../codes/websocket-chat/src/main.rs)
 
 </CodeGroupItem>
 <CodeGroupItem title="Cargo.toml">
 
-@[code toml](../../../../codes/ws-chat/Cargo.toml)
+@[code toml](../../../../codes/websocket-chat/Cargo.toml)
 
 </CodeGroupItem>
 </CodeGroup>

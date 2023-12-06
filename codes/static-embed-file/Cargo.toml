@@ -6,7 +6,7 @@ publish = false
 
 
 [dependencies]
-rust-embed = "6"
+rust-embed = { workspace = true }
 salvo = { workspace = true, features = ["serve-static"] }
 tokio = { version = "1", features = ["macros"] }
 tracing = "0.1"

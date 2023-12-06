@@ -1,5 +1,5 @@
 import type { NavbarConfig } from '@vuepress/theme-default'
-import { version } from '../meta.js'
+import versions from './versions.js'
 
 export const navbarZhHant: NavbarConfig = [
   {
@@ -23,7 +23,7 @@ export const navbarZhHant: NavbarConfig = [
           '/zh-hant/book/middlewares/sse.md',
           '/zh-hant/book/middlewares/timeout.md',
           '/zh-hant/book/middlewares/trailing-slash.md',
-          '/zh-hant/book/middlewares/ws.md',
+          '/zh-hant/book/middlewares/websocket.md',
         ],
       },
       {
@@ -58,19 +58,7 @@ export const navbarZhHant: NavbarConfig = [
   },
   {
     text: '資助項目',
-    link: '/zh-hant/donate.md',
+    link: '/zh-hant/donate.html',
   },
-  {
-    text: `v0.45.x release`,
-    children: [
-      {
-        text: 'main branch',
-        link: 'https://next.salvo.rs',
-      },
-      {
-        text: 'v0.45.x release',
-        link: 'https://salvo.rs',
-      },
-    ],
-  },
+  versions,
 ]

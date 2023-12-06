@@ -138,7 +138,7 @@ impl Handler for hello {
 As you can see, in the case of using `#[handler]`, the code becomes much simpler:
 - No need to manually add `#[async_trait]`.
 - The parameters that are not needed in the function have been omitted, and the required parameters can be arranged in any order.
-- For objects that implement `Writer` or `Piece` abstraction, it can be directly used as the return value of the function. Here `&'static str` implements `Piece`, so it can be returned directly as the return value of the function.
+- For objects that implement `Writer` or `Scribe` abstraction, it can be directly used as the return value of the function. Here `&'static str` implements `Scribe`, so it can be returned directly as the return value of the function.
 
 `#[handler]` can be added not only to functions, but also to `impl` of `struct`:
 

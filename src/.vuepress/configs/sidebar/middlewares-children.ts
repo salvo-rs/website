@@ -20,6 +20,6 @@ export const middlewaresChildren = function (bookRoot: string) {
     `${bookRoot}/middlewares/sse.md`,
     `${bookRoot}/middlewares/timeout.md`,
     `${bookRoot}/middlewares/trailing-slash.md`,
-    `${bookRoot}/middlewares/ws.md`,
+    `${bookRoot}/middlewares/websocket.md`,
   ];
 }

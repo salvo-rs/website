@@ -9,7 +9,7 @@ Middleware that provides flow control functionality.
 
 * `RateGuard` provides an abstraction for the flow control algorithm. By default, two implementations of fixed window (`FixedGuard`) and sliding window (`SlidingGuard`) are implemented.
 
-* `RateStore` provides access to data. `MemoryStore` is a built-in `moka`-based memory cache implementation. You can also define your own implementation.
+* `RateStore` provides access to data. `MokaStore` is a built-in `moka`-based memory cache implementation. You can also define your own implementation.
 
 * `RateLimiter` is a structure that implements `Handler`, and there is also a `skipper` field inside, which can be specified to skip certain requests that do not require caching. By default, `none_skipper` will be used to not skip any requests.
 

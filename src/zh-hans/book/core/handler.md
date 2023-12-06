@@ -47,7 +47,7 @@ async fn hello_world(res: &mut Response) {
 ## 处理错误
 
 Salvo 中的 `Handler` 可以返回 ```Result```, 只需要 ```Result``` 中的 ```Ok``` 和 ```Err``` 的类型都实现 ```Writer``` trait.
-考虑到 anyow 的使用比较广泛, 在开启 ```anyhow``` 功能后, ```anyhow::Error``` 会实现 ```Writer``` trait. ```anyhow::Error``` 会被映射为 ```InternalServerError```. 
+考虑到 anyhow 的使用比较广泛, 在开启 ```anyhow``` 功能后, ```anyhow::Error``` 会实现 ```Writer``` trait. ```anyhow::Error``` 会被映射为 ```InternalServerError```. 
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -138,7 +138,7 @@ impl Handler for hello {
 可以看到, 在使用 `#[handler]` 的情况下, 代码变得简单很多:
 - 不再需要手工添加 `#[async_trait]`.
 - 函数中不需要的参数已经省略, 对于需要的参数也可以按任意顺序排布.
-- 对于实现了 `Writer` 或者 `Piece` 抽象的对象, 可以直接作为函数的返回值. 在这里 `&'static str` 实现了 `Piece`, 于是可以直接作为函数返回值返回.
+- 对于实现了 `Writer` 或者 `Scribe` 抽象的对象, 可以直接作为函数的返回值. 在这里 `&'static str` 实现了 `Scribe`, 于是可以直接作为函数返回值返回.
 
 `#[handler]` 不仅可以加在函数上, 也可以加在 `struct` 的 `impl` 上:
 
