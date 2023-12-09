@@ -18,4 +18,5 @@ async fn main() {
     server.serve(router).await;
     // Gracefully shut down the server
     handle.stop_graceful(std::time::Duration::from_secs(5));
-}```
+}
+```

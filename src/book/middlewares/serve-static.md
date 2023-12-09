@@ -20,6 +20,8 @@ Middleware that provides static files or embedded files as services.
     </CodeGroup>
 
     If the corresponding file is not found in the first folder, it will look in the second folder.
+ 
+    `StaticDir` supports sending compressed files first when compressed files exist. For example, if there are files `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br`, then `index.html.gz`, `index.html. zst`, `index.html.br` are considered to be pre-compressed versions of `index.html`, and the corresponding compressed files will be sent according to the request information.
 
 * Provides support for `rust-embed`, such as:
 
