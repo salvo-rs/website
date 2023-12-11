@@ -11,47 +11,66 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-## Function handler
+The default signature of the `handle` function contains four parameters, in order, `&mut Request, &mut Depot. &mut Response, &mut FlowCtrl`. Depot is a temporary storage that can store data related to this request.
 
-In many cases, we just want to use functions as ```Handler``` to process requests. We can add `Handler` to convert ordinary functions to ```Handler```. The most commonly used in normal projects should be `Handler`, it is a ```proc macro```, adding to the function can turn the function into a ```Handler```: 
+Middleware is actually also a `Handler`. They can do some processing before or after the request reaches the `Handler` that officially handles the request, such as: login verification, data compression, etc.
+
+Middleware is added through the `hoop` function of `Router`. The added middleware will affect the current `Router` and all its internal descendants `Router`.
+
+## Macro `#[handler]`
+
+`#[handler]` can greatly simplify the writing of the code, and improve the flexibility of the code. 
+
+It can be added to a function to make it implement `Handler`:
 
 ```rust
 #[handler]
-async fn hello_world(req: &mut Request, depot: &mut Depot, res: &mut Response) {
-    res.render("Hello world");
+async fn hello() -> &'static str {
+    "hello world!"
 }
 ```
 
-The default signature of the processing function contains four parameters, followed by ```&mut Request, &mut Depot, &mut Response, &mut FlowCtrl```. Depot is a temporary storage that can store data related to this request.
-
-Middleware in Salvo uses ```Handler```, and can do some processing before or after the request arrives at the ```Handler``` that officially processes the request, such as login verification, data compression, etc.
-
-Middleware is added through the ```hoop``` function of the ```Router```. The added middleware will affect the current ```Router``` and its internal all descendants of ```Router```.
-
-If some parameters are not needed, they can be omitted directly. In fact, the order of these three parameters can be adjusted freely according to your preference, or any one or more parameters can be omitted. The following writing methods are all possible:
+This is equivalent to:
 
 ```rust
-#[handler]
-async fn hello_world(req: &mut Request, res: &mut Response) {
+struct hello;
+
+#[async_trait]
+impl Handler for hello {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
+        res.render(Text::Plain("hello world!"));
+    }
 }
+```
+
+As you can see, in the case of using `#[handler]`, the code becomes much simpler:
+- No need to manually add `#[async_trait]`.
+- The parameters that are not needed in the function have been omitted, and the required parameters can be arranged in any order.
+- For objects that implement `Writer` or `Scribe` abstraction, it can be directly used as the return value of the function. Here `&'static str` implements `Scribe`, so it can be returned directly as the return value of the function.
+
+`#[handler]` can not only be added to the function, but also can be added to the `impl` of `struct` to let `struct` implement `Handler`. At this time, the `handle` function in the `impl` code block will be Identified as the specific implementation of `handle` in `Handler`:
+
+```rust
+struct Hello;
+
 #[handler]
-async fn hello_world(depot: &mut Depot) {
-}
-#[handler]
-async fn hello_world(res: &mut Response) {
+impl Hello {
+    async fn handle(&self) {
+        res.render(Text::Plain("hello world!"));
+    }
 }
 ```
 
 ## Handle errors
 
-`Handler` in Salvo can return ```Result```, only the types of ```Ok``` and ```Err``` in ```Result``` are implemented ```Writer``` trait. 
-Taking into account the widespread use of ```anyhow```, the ```Writer``` implementation of ```anyhow::Error``` is provided by default, and ```anyhow::Error``` is Mapped to ```InternalServerError```. 
+`Handler` in Salvo can return `Result`, only the types of `Ok` and `Err` in `Result` are implemented `Writer` trait. 
+Taking into account the widespread use of `anyhow`, the `Writer` implementation of `anyhow::Error` is provided by default, and `anyhow::Error` is Mapped to `InternalServerError`. 
 
 ```rust
 #[cfg(feature = "anyhow")]
 #[async_trait]
 impl Writer for ::anyhow::Error {
-    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    async fn write(mut self, res: &mut Response) {
         res.render(StatusError::internal_server_error());
     }
 }
@@ -66,7 +85,7 @@ use salvo::prelude::*;
 struct CustomError;
 #[async_trait]
 impl Writer for CustomError {
-    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    async fn write(mut self, res: &mut Response) {
         res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
         res.render("custom error");
     }
@@ -86,13 +105,14 @@ async fn main() {
     let router = Router::new()
         .push(Router::new().path("anyhow").get(handle_anyhow))
         .push(Router::new().path("custom").get(handle_custom));
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
 }
 ```
 
 ## Implement Handler trait directly
 
-Under certain circumstances, We need to implment ```Handler``` direclty.
+Under certain circumstances, We need to implment `Handler` direclty.
 
 ```rust
 pub struct MaxSizeHandler(u64);
@@ -110,45 +130,3 @@ impl Handler for MaxSizeHandler {
     }
 }
 ```
-
-## `#[handler]` usage
-
-`#[handler]` can greatly simplify the writing of the code, and improve the flexibility of the code. It can be added to a function to make it implement `Handler`:
-
-```rust
-#[handler]
-async fn hello() -> &'static str {
-    "hello world!"
-}
-````
-
-This is equivalent to:
-
-```rust
-struct hello;
-
-#[async_trait]
-impl Handler for hello {
-    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
-        res.render(Text::Plain("hello world!"));
-    }
-}
-````
-
-As you can see, in the case of using `#[handler]`, the code becomes much simpler:
-- No need to manually add `#[async_trait]`.
-- The parameters that are not needed in the function have been omitted, and the required parameters can be arranged in any order.
-- For objects that implement `Writer` or `Scribe` abstraction, it can be directly used as the return value of the function. Here `&'static str` implements `Scribe`, so it can be returned directly as the return value of the function.
-
-`#[handler]` can be added not only to functions, but also to `impl` of `struct`:
-
-```rust
-struct Hello;
-
-#[handler]
-impl Hello {
-    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, _res: &mut Response) {
-        res.render(Text::Plain("hello world!"));
-    }
-}
-````
