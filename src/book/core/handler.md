@@ -115,6 +115,9 @@ async fn main() {
 Under certain circumstances, We need to implment `Handler` direclty.
 
 ```rust
+use salvo_core::prelude::*;
+use crate::salvo_core::http::Body;
+
 pub struct MaxSizeHandler(u64);
 #[async_trait]
 impl Handler for MaxSizeHandler {

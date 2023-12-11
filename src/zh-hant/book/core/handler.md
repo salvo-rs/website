@@ -114,6 +114,9 @@ async fn main() {
 ## 直接實現 Handler Trait
 
 ```rust
+use salvo_core::prelude::*;
+use crate::salvo_core::http::Body;
+
 pub struct MaxSizeHandler(u64);
 #[async_trait]
 impl Handler for MaxSizeHandler {
