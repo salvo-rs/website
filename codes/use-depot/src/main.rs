@@ -1,12 +1,7 @@
 use salvo::prelude::*;
 
 #[handler]
-async fn set_user(
-    _req: &mut Request,
-    depot: &mut Depot,
-    _res: &mut Response,
-    _ctrl: &mut FlowCtrl,
-) {
+async fn set_user(depot: &mut Depot) {
     depot.insert("current_user", "Elon Musk");
 }
 #[handler]
