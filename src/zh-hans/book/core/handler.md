@@ -56,7 +56,7 @@ struct Hello;
 
 #[handler]
 impl Hello {
-    async fn handle(&self) {
+    async fn handle(&self, res: &mut Response) {
         res.render(Text::Plain("hello world!"));
     }
 }
@@ -71,7 +71,7 @@ Salvo 中的 `Handler` 可以返回 `Result`, 只需要 `Result` 中的 `Ok` 和
 #[cfg(feature = "anyhow")]
 #[async_trait]
 impl Writer for ::anyhow::Error {
-    async fn write(mut self, res: &mut Response) {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.render(StatusError::internal_server_error());
     }
 }
@@ -86,7 +86,7 @@ use salvo::prelude::*;
 struct CustomError;
 #[async_trait]
 impl Writer for CustomError {
-    async fn write(mut self, res: &mut Response) {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
         res.render("custom error");
     }
