@@ -55,7 +55,7 @@ struct Hello;
 
 #[handler]
 impl Hello {
-    async fn handle(&self) {
+    async fn handle(&self, res: &mut Response) {
         res.render(Text::Plain("hello world!"));
     }
 }
@@ -70,7 +70,7 @@ Taking into account the widespread use of `anyhow`, the `Writer` implementation 
 #[cfg(feature = "anyhow")]
 #[async_trait]
 impl Writer for ::anyhow::Error {
-    async fn write(mut self, res: &mut Response) {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.render(StatusError::internal_server_error());
     }
 }
@@ -85,7 +85,7 @@ use salvo::prelude::*;
 struct CustomError;
 #[async_trait]
 impl Writer for CustomError {
-    async fn write(mut self, res: &mut Response) {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
         res.render("custom error");
     }
