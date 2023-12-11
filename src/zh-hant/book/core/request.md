@@ -98,7 +98,7 @@ struct GoodMan<'a> {
 }
 ```
 
-然後在 ```Handler``` 中可以這樣獲取數據:
+然後在 `Handler` 中可以這樣獲取數據:
 
 ```rust
 #[handler]

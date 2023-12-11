@@ -27,7 +27,7 @@ For example, we can set ```current_user``` in ```set_user```, and then use this 
 ```rust
 depot.insert("a", "b");
 assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
-````
+```
 
   Returns `None` if the `key` does not exist, or if the `key` exists, but the types do not match.
 
@@ -38,4 +38,4 @@ Sometimes, there are cases where you don't need a relation-specific `key`, and t
 ```rust
 depot.inject(Config::new());
 depot.obtain::<Config>();
-````
+```

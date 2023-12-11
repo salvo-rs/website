@@ -2,7 +2,7 @@
 
 ## 什麼是路由
 
-```Router``` 定義了一個 HTTP 請求會被哪些中間件和 ```Handler``` 處理. 這個是 Salvo 裏面最基礎也是最核心的功能.
+```Router``` 定義了一個 HTTP 請求會被哪些中間件和 `Handler` 處理. 這個是 Salvo 裏面最基礎也是最核心的功能.
 
 ```Router``` 內部實際上是由一系列過濾器(Filter) 組成, 當請求到來時, 路由會按添加的順序, 由上往下依次測試自身極其子孫項是否能夠匹配請求, 如果可以, 則依次執行路由以及其子孫路由形成的整個鏈上的中間件, 如果處理過程中, `Response` 的狀態被設置爲錯誤(4XX, 5XX) 或者是跳轉(3XX), 則後續中間件和 `Handler` 都會跳過. 你也可以手工調 `ctrl.skip_rest()` 跳過後續的中間件和 `Handler`.
 
@@ -176,7 +176,7 @@ Router::new()
     );
 ```
 
-路由是使用過濾器過濾請求並且發送給對應的中間件和 ```Handler``` 處理的.
+路由是使用過濾器過濾請求並且發送給對應的中間件和 `Handler` 處理的.
 
 ```path``` 和 ```method``` 是兩個最爲常用的過濾器. ```path``` 用於匹配路徑信息; ```method``` 用於匹配請求的 Method, 比如: GET, POST, PATCH 等.
 
@@ -195,7 +195,7 @@ Router::with_path("articles/<id>").get(show_article);
 Router::with_path("files/<**rest_path>").get(serve_file)
 ```
 
-在 ```Handler``` 中, 可以通過 ```Request``` 對象的 ```get_param``` 函數獲取:
+在 `Handler` 中, 可以通過 ```Request``` 對象的 ```get_param``` 函數獲取:
 
 ```rust
 #[handler]
