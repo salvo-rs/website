@@ -37,7 +37,7 @@ struct hello;
 
 #[async_trait]
 impl Handler for hello {
-    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
         res.render(Text::Plain("hello world!"));
     }
 }
@@ -119,7 +119,7 @@ pub struct MaxSizeHandler(u64);
 #[async_trait]
 impl Handler for MaxSizeHandler {
     async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl) {
-        if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {
+        if let Some(upper) = req.body().size_hint().upper() {
             if upper > self.0 {
                 res.render(StatusError::payload_too_large());
                 ctrl.skip_rest();

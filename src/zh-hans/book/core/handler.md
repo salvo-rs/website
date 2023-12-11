@@ -38,7 +38,7 @@ struct hello;
 
 #[async_trait]
 impl Handler for hello {
-    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
         res.render(Text::Plain("hello world!"));
     }
 }
