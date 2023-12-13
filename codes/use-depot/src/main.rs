@@ -6,7 +6,7 @@ async fn set_user(depot: &mut Depot) {
 }
 #[handler]
 async fn hello(depot: &mut Depot) -> String {
-    // Notic: Don't use String here, because you inserted a &str.
+    // Notice: Don't use String here, because you inserted a &str.
     let user = depot.get::<&str>("current_user").copied().unwrap();
     format!("Hey {}, I love your money and girls!", user)
 }
