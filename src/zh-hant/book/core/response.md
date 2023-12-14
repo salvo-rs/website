@@ -1,6 +1,6 @@
 # Response
 
-在 ```Handler``` 中, ```Response``` 會被作爲參數傳入:
+在 `Handler` 中, ```Response``` 會被作爲參數傳入:
 
 ```rust
 #[handler]
@@ -9,7 +9,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-```Response``` 在服務器接收到客戶端請求後, 任何匹配到的 ```Handler``` 和中間件都可以向裏面寫入數據. 在某些情況下, 比如某個中間件希望阻止後續的中間件和 ```Handler``` 執行, 您可以使用 ```FlowCtrl```:
+```Response``` 在服務器接收到客戶端請求後, 任何匹配到的 `Handler` 和中間件都可以向裏面寫入數據. 在某些情況下, 比如某個中間件希望阻止後續的中間件和 `Handler` 執行, 您可以使用 ```FlowCtrl```:
 
 ```rust
 #[handler]

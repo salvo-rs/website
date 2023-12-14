@@ -2,21 +2,19 @@
 
 
 ```rust
-use salvo::prelude::*;
-
-#[handler]
-async fn hello(res: &mut Response) {
-    res.render("Hello World!");
-}
+use salvo_core::prelude::*;
 
 #[tokio::main]
 async fn main() {
-    let router = Router::new().get(hello);
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     let server = Server::new(acceptor);
     let handle = server.handle();
-    server.serve(router).await;
-    // Gracefully shut down the server
-    handle.stop_graceful(std::time::Duration::from_secs(5));
+
+    // 优雅地关闭服务器
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        handle.stop_graceful(None);
+    });
+    server.serve(Router::new()).await;
 }
 ```
