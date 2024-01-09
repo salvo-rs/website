@@ -2,7 +2,7 @@
 // import meta from '../meta.js';
 
 export default {
-    text: `v0.63.x release`,
+    text: `main branch`,
     children: [
         {
             text: 'main branch',
