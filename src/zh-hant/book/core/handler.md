@@ -71,7 +71,7 @@ Salvo 中的 `Handler` 可以返回 `Result`, 只需要 `Result` 中的 `Ok` 和
 #[cfg(feature = "anyhow")]
 #[async_trait]
 impl Writer for ::anyhow::Error {
-    async fn write(mut self, res: &mut Response) {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.render(StatusError::internal_server_error());
     }
 }
