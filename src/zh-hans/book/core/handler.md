@@ -17,6 +17,16 @@ pub trait Handler: Send + Sync + 'static {
 
 中间件是通过 `Router` 的 `hoop` 函数添加的. 被添加的中间件会影响当前的 `Router` 和它内部所有子孙 `Router`.
 
+## `Handler` 作为中间件
+
+当 `Handler` 作为中间件时，它可以被添加到以下三种支持中间件的对象上：
+
+- `Service`, 任何请求都会通过 `Service` 中的中间件。
+
+- `Router`, 只有路由匹配成功时，请求才依次通过 `Service` 中定义的的中间件和匹配路径上搜集到的所有中间。
+
+- `Catcher`, 当错误发生时，且没有写入自定义的错误信息时，请求才会通过 `Catcher` 中的中间件。
+
 
 ## `#[handler]` 宏的使用
 
