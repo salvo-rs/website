@@ -17,6 +17,16 @@ Middleware is actually also a `Handler`. They can do some processing before or a
 
 Middleware is added through the `hoop` function of `Router`. The added middleware will affect the current `Router` and all its internal descendants `Router`.
 
+## `Handler` as middleware
+
+When `Handler` is used as middleware, it can be added to the following three types of objects that support middleware:
+
+- `Service`, any request will pass through middlewares in `Service`.
+
+- `Router`, only when the route matching is successful, the request will pass through middlewares defined in `Service` and all middlewares collected on the matching path.
+
+- `Catcher`, when an error occurs and no custom error information is written, the request will pass through the middleware in `Catcher`.
+
 ## Macro `#[handler]`
 
 `#[handler]` can greatly simplify the writing of the code, and improve the flexibility of the code. 
