@@ -9,7 +9,7 @@ export default {
             link: 'https://next.salvo.rs',
         },
         {
-            text: 'v0.64.x release',
+            text: 'v0.63.x release',
             link: 'https://salvo.rs',
         },
     ],
