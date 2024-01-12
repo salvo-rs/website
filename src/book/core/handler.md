@@ -2,7 +2,7 @@
 
 ## What is Handler
 
-Handler is the specific object responsible for processing Request requests. Handler itself is a Trait, which contains an asynchronous method of ```handle```: 
+Handler is the specific object responsible for processing Request requests. Handler itself is a Trait, which contains an asynchronous method of `handle`:
 
 ```rust
 #[async_trait]
@@ -29,7 +29,7 @@ When `Handler` is used as middleware, it can be added to the following three typ
 
 ## Macro `#[handler]`
 
-`#[handler]` can greatly simplify the writing of the code, and improve the flexibility of the code. 
+`#[handler]` can greatly simplify the writing of the code, and improve the flexibility of the code.
 
 It can be added to a function to make it implement `Handler`:
 
@@ -54,6 +54,7 @@ impl Handler for hello {
 ```
 
 As you can see, in the case of using `#[handler]`, the code becomes much simpler:
+
 - No need to manually add `#[async_trait]`.
 - The parameters that are not needed in the function have been omitted, and the required parameters can be arranged in any order.
 - For objects that implement `Writer` or `Scribe` abstraction, it can be directly used as the return value of the function. Here `&'static str` implements `Scribe`, so it can be returned directly as the return value of the function.
@@ -73,8 +74,8 @@ impl Hello {
 
 ## Handle errors
 
-`Handler` in Salvo can return `Result`, only the types of `Ok` and `Err` in `Result` are implemented `Writer` trait. 
-Taking into account the widespread use of `anyhow`, the `Writer` implementation of `anyhow::Error` is provided by default, and `anyhow::Error` is Mapped to `InternalServerError`. 
+`Handler` in Salvo can return `Result`, only the types of `Ok` and `Err` in `Result` are implemented `Writer` trait.
+Taking into account the widespread use of `anyhow`, the `Writer` implementation of `anyhow::Error` is provided by default, and `anyhow::Error` is Mapped to `InternalServerError`.
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -86,7 +87,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-For custom error types, you can output different error pages according to your needs. 
+For custom error types, you can output different error pages according to your needs.
 
 ```rust
 use salvo::anyhow;

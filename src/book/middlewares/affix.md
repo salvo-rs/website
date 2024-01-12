@@ -2,7 +2,7 @@
 
 Affix middleware for adding shared data to Depot.
 
-_**Example**_ 
+_**Example**_
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

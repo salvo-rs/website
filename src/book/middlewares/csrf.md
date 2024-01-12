@@ -8,7 +8,7 @@ Middleware that provides CSRF (Cross-Site Request Forgery) protection.
 
 _**Example**_ (cookie store)
 
-### Use cookie store
+## Use cookie store
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
@@ -24,7 +24,7 @@ _**Example**_ (cookie store)
 </CodeGroup>
 
 
-### Use session store
+## Use session store
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

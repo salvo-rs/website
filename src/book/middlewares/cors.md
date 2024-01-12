@@ -4,7 +4,7 @@ CORS middleware can be used for [Cross-Origin Resource Sharing](https://develope
 
 Modren browsers will block requests to a different domain unless that domain has CORS enabled. This middleware will add the appropriate headers to allow CORS requests from specified domains (You can allow multiple domains with [`AllowOrigin::list`] instance function).
 
-_**Example**_ 
+_**Example**_
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
