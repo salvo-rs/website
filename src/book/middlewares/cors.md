@@ -1,8 +1,8 @@
 # CORS
 
-CORS middleware can be used for [Cross-Origin Resource Sharing](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS).
+CORS middleware can be used for [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
 
-Since the browser will send `Method::OPTIONS` requests, we need to increase the processing of such requests. We need to add middleware to `Service`..
+Modren browsers will block requests to a different domain unless that domain has CORS enabled. This middleware will add the appropriate headers to allow CORS requests from specified domains (You can allow multiple domains with [`AllowOrigin::list`] instance function).
 
 _**Example**_ 
 
@@ -18,3 +18,5 @@ _**Example**_
 
   </CodeGroupItem>
 </CodeGroup>
+
+[`AllowOrigin::list`]: https://docs.rs/salvo-cors/0.64.0/salvo_cors/struct.AllowOrigin.html#method.list
