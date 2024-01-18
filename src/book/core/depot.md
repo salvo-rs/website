@@ -2,10 +2,9 @@
 
 Depot is used to save data when process current request. It is useful for middlewares to share data.
 
-A depot instance is created when server get a request from client. The depot will dropped when all process for this request done.
+A depot instance is created when server get a request from client. The depot will be dropped when all process for this request done.
 
-For example, we can set ```current_user``` in ```set_user```, and then use this value in the following middlewares and handlers.
-
+For example, we can set `current_user` in `set_user`, and then use this value in the following middlewares and handlers.
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

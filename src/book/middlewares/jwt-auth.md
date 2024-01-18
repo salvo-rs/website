@@ -2,7 +2,7 @@
 
 Provides middleware for JWT Auth authentication.
 
-_**Example**_ 
+_**Example**_
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

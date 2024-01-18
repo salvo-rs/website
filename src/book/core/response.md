@@ -9,7 +9,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-When the server gets a client request but you only need to return a simple response (ie skip any middleware or other handlers), you can simply use ```FlowCtrl```:
+When the server gets a client request but you only need to return a simple response (ie skip any middleware or other handlers), you can simply use `FlowCtrl`:
 
 ```rust
 #[handler]
@@ -27,10 +27,10 @@ Write content is straightforward:
 
     ```rust
     res.render("hello world!");
-    ``` 
+    ```
 
 - Write serializable type as json format
-    
+
     ```rust
     #[derive(Serialize, Debug)]
     struct User {
@@ -41,21 +41,21 @@ Write content is straightforward:
     ```
 
 - Write html text
-    
+
     ```rust
     res.render(Text::Html("<html><body>hello</body></html>"));
     ```
 
 ## Write status error
 
-- Use ```render``` can write a http error to response.
+- Use `render` can write a http error to response.
 
     ```rust
     use salvo::http::errors::*;
     res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
     ```
 
-- If you don't want to customize error message, just use ```set_http_code```.
+- If you don't want to customize error message, just use `status_code`.
 
     ```rust
     use salvo::http::StatusCode;

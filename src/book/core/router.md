@@ -4,9 +4,10 @@
 
 Router can route http requests to different handlers. This is a basic and key feature in salvo.
 
-The interior of `Router` is actually composed of a series of filters (Filter). When a request comes, the route will test itself and its descendants in order to see if they can match the request in the order they were added. , then execute the middleware on the entire chain formed by the route and its descendants in sequence. If the status of `Response` is set to error (4XX, 5XX) or jump (3XX) during processing, the subsequent middleware and `Handler` will be skipped. You can also manually adjust `ctrl.skip_rest()` to skip subsequent middleware and `Handler`.
+The interior of `Router` is actually composed of a series of filters (Filter). When a request comes, the route will test itself and its descendants in order to see if they can match the request in the order they were added, and then execute the middleware on the entire chain formed by the route and its descendants in sequence. If the status of `Response` is set to error (4XX, 5XX) or jump (3XX) during processing, the subsequent middleware and `Handler` will be skipped. You can also manually adjust `ctrl.skip_rest()` to skip subsequent middleware and `Handler`.
 
 ## Write in flat way
+
 We can write routers in flat way, like this:
 
 ```rust
@@ -16,6 +17,7 @@ Router::with_path("writers/<id>/articles").get(list_writer_articles);
 ```
 
 ## Write in tree way
+
 We can write router like a tree, this is also the recommended way:
 
 ```rust
@@ -30,9 +32,10 @@ Router::with_path("writers")
             .push(Router::with_path("articles").get(list_writer_articles)),
     );
 ```
+
 This form of definition can make the definition of router clear and simple for complex projects.
 
-There are many methods in `Router` that will return to `Self` after being called, so as to write code in a chain. Sometimes, you need to decide how to route according to certain conditions, and the `Router` also provides `then ` function, which is also easy to use:
+There are many methods in `Router` that will return to `Self` after being called, so as to write code in a chain. Sometimes, you need to decide how to route according to certain conditions, and the `Router` also provides `then` function, which is also easy to use:
 
 ```rust
 Router::new()
@@ -51,6 +54,7 @@ Router::new()
             }),
     );
 ```
+
 This example represents that only when the server is in `admin_mode`, routers such as creating articles, editing and deleting articles will be added.
 
 ## Get param in routers
@@ -67,6 +71,7 @@ async fn show_writer(req: &mut Request) {
 `<id>` matches a fragment in the path, under normal circumstances, the article `id` is just a number, which we can use regular expressions to restrict `id` matching rules, `r"<id:/\d+/>"`.
 
 For numeric characters there is an easier way to use `<id:num>`, the specific writing is:
+
 - `<id:num>`, matches any number of numeric characters;
 - `<id:num[10]>`, only matches a certain number of numeric characters, where 10 means that the match only matches 10 numeric characters;
 - `<id:num(..10)>` means matching 1 to 9 numeric characters;
@@ -152,7 +157,7 @@ Router is used to filter requests, and then send the requests to different Handl
 
 The most commonly used filtering is `path` and `method`. `path` matches path information; `method` matches the requested Method.
 
-We can use `and`, `or ` to connect between filter conditions, for example:
+We can use `and`, `or` to connect between filter conditions, for example:
 
 ```rust
 Router::new().filter(filter::path("hello").and(filter::get()));

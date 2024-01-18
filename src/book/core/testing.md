@@ -4,7 +4,7 @@ The test module provided by Salvo can help test Salvo's projects.
 
 [Latest Doc](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)
 
-**Example:** 
+**Example:**
 
 ```rust
 use salvo::prelude::*;

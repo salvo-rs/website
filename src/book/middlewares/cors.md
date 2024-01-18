@@ -1,29 +1,10 @@
 # CORS
 
-CORS middleware can be used for [Cross-Origin Resource Sharing](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS).
+CORS middleware can be used for [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
 
-Since the browser will send `Method::OPTIONS` requests, it is necessary to increase the processing of such requests. There are two ways to handle `OPTIONS` requests.
+Modren browsers will block requests to a different domain unless that domain has CORS enabled. This middleware will add the appropriate headers to allow CORS requests from specified domains (You can allow multiple domains with [`AllowOrigin::list`] instance function).
 
-- `empty_handler` can be added to the root `Router`:
-
-```rust
-Router::with_hoop(cors).get(hello).options(handler::empty());
-```
-
-- You can add `cors` Handler on Catcher:
-
-```rust
-let cors = Cors::new()
-        .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
-        .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
-        .allow_headers("authorization")
-        .into_handler();
-let acceptor = TcpListener::new("0.0.0.0:5600").bind().await;
-let service = Service::new(router).catcher(Catcher::default().hoop(cors));
-Server::new(acceptor).serve(service).await;
-```
-
-_**Example**_ 
+_**Example**_
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
@@ -37,3 +18,5 @@ _**Example**_
 
   </CodeGroupItem>
 </CodeGroup>
+
+[`AllowOrigin::list`]: https://docs.rs/salvo-cors/0.64.0/salvo_cors/struct.AllowOrigin.html#method.list

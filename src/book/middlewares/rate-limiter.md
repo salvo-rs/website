@@ -15,6 +15,17 @@ Middleware that provides flow control functionality.
 
 * `QuotaGetter` provides the abstraction of quota acquisition, which can obtain a quota object according to the visitor's `Key`, which means that we can configure the user quota and other information into the database, change it dynamically, and acquire it dynamically.
 
+* Appilty to add ratelimit headers to response with [`RateLimiter::add_headers`] instance function, will add the following headers to the response:
+
+  | Header                  | Description                                                                                      |
+  |-------------------------|--------------------------------------------------------------------------------------------------|
+  | `X-RateLimit-Limit`     | The maximum number of requests that the consumer is permitted to make per quota period.          |
+  | `X-RateLimit-Remaining` | The number of requests remaining in the current rate limit window.                               |
+  | `X-RateLimit-Reset`     | The time at which the current rate limit window resets in UTC epoch seconds.                     |
+
+
+
+
 _**Example**_ 
 
 ### Use static quota
@@ -47,3 +58,5 @@ _**Example**_
 
   </CodeGroupItem>
 </CodeGroup>
+
+[`RateLimiter::add_headers`]: https://docs.rs/salvo-rate-limiter/0.64.0/salvo_rate_limiter/struct.RateLimiter.html#method.add_headers
