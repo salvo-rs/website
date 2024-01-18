@@ -1,6 +1,6 @@
 # Static File
 
-Salvo provides ```salvo::fs::NamedFile```, which can be used to send files to clients efficiently:
+Salvo provides `salvo::fs::NamedFile`, which can be used to send files to clients efficiently:
 
 ```rust
 #[handler]
@@ -13,7 +13,6 @@ Actually, passing `Response::send_file` is just a simplified way of using `Named
 
 A `NamedFileBuilder` can be created via `NamedFile::builder`:
 
-
 ```rust
 #[handler]
 async fn send_file(req: &mut Request, res: &mut Response) {
@@ -22,7 +21,6 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 ```
 
 You can do some settings, and then send the file:
-
 
 ```rust
 #[handler]

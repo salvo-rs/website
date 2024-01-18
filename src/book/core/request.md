@@ -19,11 +19,9 @@ req.query::<String>("id");
 
 ## About form
 
-
 ```rust
 req.form::<String>("id").await;
 ```
-
 
 ## About json payload
 
@@ -33,21 +31,21 @@ req.parse_json::<User>().await;
 
 ## Extract Data
 
-Request can be parsed into strongly typed structures by providing several functions through ```Request```.
+Request can be parsed into strongly typed structures by providing several functions through `Request`.
 
-* ```parse_params```: parse the requested router params into a specific data type;
-* ```parse_queries```: parse the requested URL queries into a specific data type;
-* ```parse_headers```: parse the requested HTTP haders into a specific data type;
-* ```parse_json```: Parse the data in the HTTP body part of the request as JSON format to a specific type;
-* ```parse_form```: Parse the data in the HTTP body part of the request as a Form form to a specific type;
-* ```parse_body```: Parse the data in the HTTP body section to a specific type according to the type of the requested ```content-type```.
-* ```extract```: can combine different data sources to parse a specific type.
+* `parse_params`: parse the requested router params into a specific data type;
+* `parse_queries`: parse the requested URL queries into a specific data type;
+* `parse_headers`: parse the requested HTTP haders into a specific data type;
+* `parse_json`: Parse the data in the HTTP body part of the request as JSON format to a specific type;
+* `parse_form`: Parse the data in the HTTP body part of the request as a Form form to a specific type;
+* `parse_body`: Parse the data in the HTTP body section to a specific type according to the type of the requested `content-type`.
+* `extract`: can combine different data sources to parse a specific type.
 
 ## Parsing principle
 
-The customized ```serde::Deserializer``` will be extract data similar to ```HashMap<String, String>``` and ```HashMap<String, Vec<String>>``` into a specific data type.
+The customized `serde::Deserializer` will be extract data similar to `HashMap<String, String>` and `HashMap<String, Vec<String>>` into a specific data type.
 
-For example: ```URL queries``` is actually extracted as a [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) type, ```MultiMap``` can think of it as a data structure like ```HashMap<String, Vec<String>>```. If the requested URL is ```http://localhost/users?id=123&id=234```, we provide The target type is:
+For example: `URL queries` is actually extracted as a [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) type, `MultiMap` can think of it as a data structure like `HashMap<String, Vec<String>>`. If the requested URL is `http://localhost/users?id=123&id=234`, we provide The target type is:
 
 ```rust
 #[derive(Deserialize)]
@@ -56,7 +54,7 @@ struct User {
 }
 ```
 
-Then the first ```id=123``` will be parsed, and ```id=234``` will be discarded:
+Then the first `id=123` will be parsed, and `id=234` will be discarded:
 
 ```rust
 let user: User = req.parse_queries().unwrap();
@@ -72,7 +70,7 @@ struct Users {
 }
 ```
 
-Then ```id=123&id=234``` will be parsed:
+Then `id=123&id=234` will be parsed:
 
 ```rust
 let users: Users = req.parse_queries().unwrap();

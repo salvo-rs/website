@@ -48,7 +48,7 @@ Write content is straightforward:
 
 ## Write status error
 
-- Use ```render``` can write a http error to response.
+- Use `render` can write a http error to response.
 
     ```rust
     use salvo::http::errors::*;

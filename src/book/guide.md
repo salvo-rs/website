@@ -2,9 +2,9 @@
 
 ## Installing Rust
 
-If you don’t have Rust yet, we recommend you use ```rustup``` to manage your Rust installation. The [official rust guide](https://doc.rust-lang.org/book/ch01-01-installation.html) has a wonderful section on getting started.
+If you don’t have Rust yet, we recommend you use `rustup` to manage your Rust installation. The [official rust guide](https://doc.rust-lang.org/book/ch01-01-installation.html) has a wonderful section on getting started.
 
-Salvo currently has a minimum supported Rust version 1.59. Running ```rustup update``` will ensure you have the latest and greatest Rust version available. As such, this guide assumes you are running Rust 1.59 or later.
+Salvo currently has a minimum supported Rust version 1.59. Running `rustup update` will ensure you have the latest and greatest Rust version available. As such, this guide assumes you are running Rust 1.59 or later.
 
 ## Write first app
 
@@ -24,17 +24,17 @@ edition = "2021"
 publish = false
 
 [dependencies]
-salvo = "0.59"
+salvo = "0.64.0"
 tokio = { version = "1", features = ["macros"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
 ```
 
-Create a simple function handler in the main.rs file, we call it `hello`, this function just render plain text ```"Hello world"```. In the ```main``` function, we need to create a root Router first, and then create a server and call it's ```bind``` function:
+Create a simple function handler in the main.rs file, we call it `hello`, this function just render plain text `"Hello world"`. In the `main` function, we need to create a root Router first, and then create a server and call it's `bind` function:
 
 @[code rust](../../codes/hello/src/main.rs)
 
-Congratulations! Your first app has done! Just run ```cargo run``` to run this app.
+Congratulations! Your first app has done! Just run `cargo run` to run this app.
 
 ## More about handler
 
@@ -68,7 +68,7 @@ There are many ways to write function handler.
     ```
 
 - The more common situation is we want to return a ```Result<T, E>``` to implify error handling. If ```T``` and ```E``` implements `Writer`, ```Result<T, E>``` can be function handler's return type:
-  
+
     ```rust
     #[handler]
     async fn hello(res: &mut Response) -> Result<&'static str, ()> {// return Result
@@ -94,6 +94,7 @@ First you need to enable feature `http3` in `Cargo.toml`, and then change `main.
 </CodeGroup>
 
 ## Run more examples
+
 The absolute fastest way to start experimenting with Salvo is to clone the
 Salvo repository and run the included examples in the `examples/` directory.
 For instance, the following set of commands runs the `hello` example:

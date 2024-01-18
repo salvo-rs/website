@@ -4,9 +4,9 @@ Middleware that provides the functionality of Flash Message.
 
 `FlashStore` provides access to data. `CookieStore` stores data in `Cookie`. While `SessionStore` stores data in `Session`, `SessionStore` must be used with the `session` middleware.
 
-_**Example**_ 
+_**Example**_
 
-### Use cookie store
+## Use cookie store
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
@@ -22,7 +22,7 @@ _**Example**_
 </CodeGroup>
 
 
-### Use session store
+## Use session store
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
