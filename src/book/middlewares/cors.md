@@ -2,7 +2,7 @@
 
 CORS middleware can be used for [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
 
-Modren browsers will block requests to a different domain unless that domain has CORS enabled. This middleware will add the appropriate headers to allow CORS requests from specified domains (You can allow multiple domains with [`AllowOrigin::list`] instance function).
+Modern browsers will block requests to a different domain unless that domain has CORS enabled. This middleware will add the appropriate headers to allow CORS requests from specified domains (You can allow multiple domains with [`AllowOrigin::list`] instance function).
 
 _**Example**_
 
