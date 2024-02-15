@@ -8,7 +8,7 @@ actions:
     link: /book/guide.html
     type: primary
   - text: Donar
-    link: /boo/donate.html
+    link: /book/donate.html
     type: secondary
 features:
   - title: La Simplicidad Primero
