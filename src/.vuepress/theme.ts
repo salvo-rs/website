@@ -14,7 +14,7 @@ export default defaultTheme({
     repo: 'salvo-rs/salvo',
     docsRepo: 'salvo-rs/website',
     docsBranch: 'next',
-    docsDir: 'book',
+    docsDir: 'src',
 
     // theme-level locales config
     locales: {
