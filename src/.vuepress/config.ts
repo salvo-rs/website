@@ -35,6 +35,11 @@ export default defineUserConfig({
       title: 'Salvo(賽風)',
       description: '賽風是像風一樣輕快的 Rust Web 服務端框架',
     },
+    '/es/': {
+      lang: 'es',
+      title: 'Salvo',
+      description: 'Un poderoso y simple servidor web escrito en Rust',
+    },
   },
 
   // configure markdown
@@ -78,6 +83,9 @@ export default defineUserConfig({
         },
         '/zh-hant/': {
           placeholder: '搜索',
+        },
+        '/es/': {
+          placeholder: 'Buscar',
         },
       },
     }),
