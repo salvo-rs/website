@@ -154,7 +154,7 @@ deriving `ToParameters`:
 Use `names` to define name for single unnamed argument.
 ```
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(names("id")))]
 struct Id(u64);
@@ -163,7 +163,7 @@ struct Id(u64);
 Use `names` to define names for multiple unnamed arguments.
 ```
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(names("id", "name")))]
 struct IdAndName(u64, String);
@@ -306,7 +306,7 @@ async fn get_pet(query: PetQuery) {
 _**Override `String` with `i64` using `value_type` attribute.**_
 ```
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -318,7 +318,7 @@ struct Filter {
 _**Override `String` with `Object` using `value_type` attribute. _`Object`_ will render as `type: object` in OpenAPI spec.**_
 ```
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -330,7 +330,7 @@ struct Filter {
 _**You can use a generic type to override the default type of the field.**_
 ```
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -342,7 +342,7 @@ struct Filter {
 _**You can even override a [`Vec`] with another one.**_
 ```
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -354,7 +354,7 @@ struct Filter {
 _**We can override value with another [`ToSchema`][to_schema].**_
 ```
 # use salvo_oapi::{ToParameters, ToSchema};
-#
+
 #[derive(ToSchema)]
 struct Id {
     value: i64,
