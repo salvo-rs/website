@@ -4,7 +4,7 @@
 
 如果你還沒有安裝 Rust, 你可以使用官方提供的 ```rustup``` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有如何安裝的詳細介紹.
 
-當前 Salvo 支持的最低 Rust 版本爲 1.64. 運行 ```rustup update``` 確認您已經安裝了符合要求的 Rust.
+當前 Salvo 支持的最低 Rust 版本爲 1.75. 運行 ```rustup update``` 確認您已經安裝了符合要求的 Rust.
 
 ## 編寫第一個 Salvo 程序
 

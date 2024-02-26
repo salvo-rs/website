@@ -2,9 +2,11 @@ import { defaultTheme } from "@vuepress/theme-default";
 import {
     head,
     navbarEn,
+    navbarEs,
     navbarZhHans,
     navbarZhHant,
     sidebarEn,
+    sidebarEs,
     sidebarZhHans,
     sidebarZhHant,
 } from './configs/index.js';
@@ -14,7 +16,7 @@ export default defaultTheme({
     repo: 'salvo-rs/salvo',
     docsRepo: 'salvo-rs/website',
     docsBranch: 'next',
-    docsDir: 'book',
+    docsDir: 'src',
 
     // theme-level locales config
     locales: {
@@ -93,6 +95,35 @@ export default defaultTheme({
             openInNewWindow: '在新窗口打開',
             toggleColorMode: '切換顔色模式',
             toggleSidebar: '切換側邊欄',
+        },
+        '/es/': {
+            // navbar
+            navbar: navbarEs,
+            selectLanguageName: 'Español',
+            selectLanguageText: 'Idioma',
+            selectLanguageAriaLabel: 'Idioma',
+            // sidebar
+            sidebar: sidebarEs,
+            // page meta
+            editLinkText: 'Editar ésta página en Github',
+            lastUpdatedText: 'Última Actualización',
+            contributorsText: 'Contribuidor',
+            // custom containers
+            tip: 'Nota',
+            warning: 'Aviso',
+            danger: 'Advertencia',
+            // 404 page
+            notFound: [
+                'No hay nada aquí',
+                '¿Cómo llegamos aquí?',
+                'Ésta es una página 404.',
+                'Parece que fuimos al enlace equivocado',
+            ],
+            backToHome: 'Regresar a la página Principal',
+            // a11y
+            openInNewWindow: 'Abrir en una Nueva Ventana',
+            toggleColorMode: 'Cambiar Modo de Color',
+            toggleSidebar: 'Alternar Barra Lateral',
         },
     },
 

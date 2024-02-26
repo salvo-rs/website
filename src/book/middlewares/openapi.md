@@ -122,7 +122,7 @@ Use `names` to define name for single unnamed argument.
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(names("id")))]
 struct Id(u64);
@@ -132,7 +132,7 @@ Use `names` to define names for multiple unnamed arguments.
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(names("id", "name")))]
 struct IdAndName(u64, String);
@@ -277,7 +277,7 @@ _**Override `String` with `i64` using `value_type` attribute.**_
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -290,7 +290,7 @@ _**Override `String` with `Object` using `value_type` attribute. `Object` will r
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -303,7 +303,7 @@ _**You can use a generic type to override the default type of the field.**_
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -316,7 +316,7 @@ _**You can even override a [`Vec`] with another one.**_
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -329,7 +329,7 @@ _**We can override value with another [`ToSchema`][to_schema].**_
 
 ```rust
 # use salvo_oapi::{ToParameters, ToSchema};
-#
+
 #[derive(ToSchema)]
 struct Id {
     value: i64,
@@ -355,7 +355,7 @@ struct Item {
     #[salvo(parameter(max_items = 5, min_items = 1))]
     items: Vec<String>,
 }
-````
+```
 
 _**Use `schema_with` to manually implement schema for a field.**_
 
