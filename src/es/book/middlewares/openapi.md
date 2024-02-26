@@ -122,7 +122,7 @@ Utilice `names` para definir el nombre de un único argumento sin nombre.
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(names("id")))]
 struct Id(u64);
@@ -132,7 +132,7 @@ Use `names` para definir múltiples argumentos sin nombre.
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(names("id", "name")))]
 struct IdAndName(u64, String);
@@ -276,7 +276,7 @@ _**Sobrescribir `String` con `i64` usando atributos `value_type`**_
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -289,7 +289,7 @@ _**Sobrescribir `String` con `Object` usando atributos `value_type`. `Object` se
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -302,7 +302,7 @@ _**Puede utilizar un tipo genérico para anular el tipo predeterminado del campo
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -315,7 +315,7 @@ _**Incluso puedes anular un [`Vec`] con otro.**_
 
 ```rust
 # use salvo_oapi::ToParameters;
-#
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(default_parameter_in = Query))]
 struct Filter {
@@ -328,7 +328,7 @@ _**Podemos anular el valor con otro [`ToSchema`][to_schema].**_
 
 ```rust
 # use salvo_oapi::{ToParameters, ToSchema};
-#
+
 #[derive(ToSchema)]
 struct Id {
     value: i64,
