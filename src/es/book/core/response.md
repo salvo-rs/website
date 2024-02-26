@@ -61,3 +61,14 @@ Escribe contenido directamente:
     use salvo::http::StatusCode;
     res.status_code(StatusCode::BAD_REQUEST);
     ```
+
+## Redireccionar a Otra URL
+- Utiliza el método ```render``` para escribir una respuesta de redirección en ```Response```, que navega hacia una nueva URL. Al invocar el método Redirect::found, se establece el código de estado HTTP en 302 (Found), lo que indica un redireccionamiento temporal.
+    ```rust
+    use salvo::prelude::*;
+
+    #[handler]
+    async fn redirect(res: &mut Response) {
+        res.render(Redirect::found("https://salvo.rs/"));
+    }
+    ```

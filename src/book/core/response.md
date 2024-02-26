@@ -61,3 +61,14 @@ Write content is straightforward:
     use salvo::http::StatusCode;
     res.status_code(StatusCode::BAD_REQUEST);
     ```
+
+## Redirect to Another URL
+- Use the ```render``` method to write a redirect response into ```Response```, which navigates to a new URL. When you invoke the Redirect::found method, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
+    ```rust
+    use salvo::prelude::*;
+
+    #[handler]
+    async fn redirect(res: &mut Response) {
+        res.render(Redirect::found("https://salvo.rs/"));
+    }
+    ```

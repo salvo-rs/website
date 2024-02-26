@@ -65,3 +65,14 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     use salvo::http::StatusCode;
     res.status_code(StatusCode::BAD_REQUEST);
     ```
+
+## 重定向到其他URL
+- 使用 ```render``` 方法可以向 ```Response``` 寫入一個重定向回應，導航到一個新的URL。當你調用 Redirect::found 方法時，它會設置 HTTP 狀態碼為 302（Found），表示暫時重定向。
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn redirect(res: &mut Response) {
+    res.render(Redirect::found("https://salvo.rs/"));
+}
+```
