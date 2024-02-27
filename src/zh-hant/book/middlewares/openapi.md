@@ -1,12 +1,12 @@
 # OpenAPI
 
-OpenAPI 是一個開源的規範，用於描述 RESTful APIs 的接口設計.它以 JSON 或 YAML 格式定義了 API 的請求和響應的結構、參數、返回類型、錯誤碼等細節，使得客戶端和服務端之間的通信更加明確和規範化.
+OpenAPI 是一個開源的規範，用於描述 RESTful APIs 的接口設計。它以 JSON 或 YAML 格式定義了 API 的請求和響應的結構、參數、返回類型、錯誤碼等細節，使得客戶端和服務端之間的通信更加明確和規範化。
 
-OpenAPI 最初是 Swagger 規範的開源版本，現在已經成爲了一個獨立的項目，並得到了許多大型企業和開發者的支持.使用 OpenAPI 規範可以幫助開發團隊更好地協作，減少溝通成本，提高開發效率.同時，OpenAPI 還爲開發者提供了自動生成 API 文檔、Mock 數據和測試用例等工具，方便開發和測試工作.
+OpenAPI 最初是 Swagger 規範的開源版本，現在已經成爲了一個獨立的項目，並得到了許多大型企業和開發者的支持。使用 OpenAPI 規範可以幫助開發團隊更好地協作，減少溝通成本，提高開發效率。同時，OpenAPI 還爲開發者提供了自動生成 API 文檔、Mock 數據和測試用例等工具，方便開發和測試工作。
 
 Salvo 提供了 OpenAPI 的集成 (修改自 [utoipa](https://github.com/juhaku/utoipa)).
 
-_**示例代碼**_ 
+_**示例代碼**_
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
@@ -21,8 +21,7 @@ _**示例代碼**_
   </CodeGroupItem>
 </CodeGroup>
 
-在瀏覽器裏面輸入 `http://localhost:5800/swagger-ui` 就可以看到 Swagger UI 的頁面.
-
+在瀏覽器裏面輸入 `http://localhost:5800/swagger-ui` 就可以看到 Swagger UI 的頁面。
 
 Salvo 中的 OpenAPI 集成是相當優雅的，對於上面的示例，相比於普通的 Salvo 項目，我們只是做了以下幾步：
 
@@ -30,39 +29,37 @@ Salvo 中的 OpenAPI 集成是相當優雅的，對於上面的示例，相比�
 
 - 把 `[handler]` 換成 `[endpoint]`;
 
-- 使用 `name: QueryParam<String, false>` 獲取查詢字符串的值, 當你訪問網址 `http://localhost/hello?name=chris` 時, 這個 `name` 的查詢字符串就會被解析. `QueryParam<String, false>` 這裏的 `false` 代表這個參數是可以省略的, 如果訪問 `http://localhost/hello` 依然不會報錯. 相反, 如果是 `QueryParam<String, true>` 則代表此參數是必須提供的, 否則返回錯誤.
+- 使用 `name: QueryParam<String, false>` 獲取查詢字符串的值, 當你訪問網址 `http://localhost/hello?name=chris` 時, 這個 `name` 的查詢字符串就會被解析。 `QueryParam<String, false>` 這裏的 `false` 代表這個參數是可以省略的, 如果訪問 `http://localhost/hello` 依然不會報錯。 相反, 如果是 `QueryParam<String, true>` 則代表此參數是必須提供的, 否則返回錯誤。
 
-- 創建 `OpenAPI` 並且創建對應的 `Router`. `OpenApi::new("test api", "0.0.1").merge_router(&router)` 這裏的 `merge_router` 表示這個 `OpenAPI` 通過解析某個路由獲取它和它的子孫路由獲取必要的文檔信息. 某些路由的 `Handler` 可能沒有提供生成文檔的信息, 這些路由將被忽略, 比如使用 `#[handler]` 宏而非 `#[endpoint]` 宏定義的 `Handler`. 也就是說, 實際項目中, 爲了開發進度等原因, 你可以選擇實現不生成 OpenAPI 文檔, 或者部分生成 OpenAPI 文檔. 後續可以逐步增加生成 OpenAPI 接口的數量, 而你需要做的也僅僅只是把  `#[handler]` 改成 `#[endpoint]`, 以及修改函數簽名.
-
+- 創建 `OpenAPI` 並且創建對應的 `Router`。 `OpenApi::new("test api", "0.0.1").merge_router(&router)` 這裏的 `merge_router` 表示這個 `OpenAPI` 通過解析某個路由獲取它和它的子孫路由獲取必要的文檔信息。 某些路由的 `Handler` 可能沒有提供生成文檔的信息, 這些路由將被忽略, 比如使用 `#[handler]` 宏而非 `#[endpoint]` 宏定義的 `Handler`。 也就是說, 實際項目中, 爲了開發進度等原因, 你可以選擇實現不生成 OpenAPI 文檔, 或者部分生成 OpenAPI 文檔。 後續可以逐步增加生成 OpenAPI 接口的數量, 而你需要做的也僅僅只是把  `#[handler]` 改成 `#[endpoint]`, 以及修改函數簽名。
 
 ## 數據提取器
 
-通過 `use salvo::oapi::extract:*;`  可以導入預置的常用的數據提取器. 提取器會提供一些必要的信息給 Salvo, 以便 Salvo 生成 OpenAPI 的文檔.
+通過 `use salvo::oapi::extract:*;`  可以導入預置的常用的數據提取器。 提取器會提供一些必要的信息給 Salvo, 以便 Salvo 生成 OpenAPI 的文檔。
 
-- `QueryParam<T, const REQUIRED: bool>`: 一個從查詢字符串提取數據的提取器. `QueryParam<T, false>` 代表此參數不是必須的, 可以省略. `QueryParam<T, true>` 代表此參數是必須的, 不可以省略, 如果不提供, 則返回錯誤;
+- `QueryParam<T, const REQUIRED: bool>`: 一個從查詢字符串提取數據的提取器。 `QueryParam<T, false>` 代表此參數不是必須的, 可以省略。 `QueryParam<T, true>` 代表此參數是必須的, 不可以省略, 如果不提供, 則返回錯誤;
 
-- `HeaderParam<T, const REQUIRED: bool>`: 一個從請求的頭部信息中提取數據的提取器. `HeaderParam<T, false>` 代表此參數不是必須的, 可以省略. `HeaderParam<T, true>` 代表此參數是必須的, 不可以省略, 如果不提供, 則返回錯誤;
+- `HeaderParam<T, const REQUIRED: bool>`: 一個從請求的頭部信息中提取數據的提取器。 `HeaderParam<T, false>` 代表此參數不是必須的, 可以省略。 `HeaderParam<T, true>` 代表此參數是必須的, 不可以省略, 如果不提供, 則返回錯誤;
 
-- `CookieParam<T, const REQUIRED: bool>`: 一個從請求的頭部信息中提取數據的提取器. `CookieParam<T, false>` 代表此參數不是必須的, 可以省略. `CookieParam<T, true>` 代表此參數是必須的, 不可以省略, 如果不提供, 則返回錯誤;
+- `CookieParam<T, const REQUIRED: bool>`: 一個從請求的頭部信息中提取數據的提取器。 `CookieParam<T, false>` 代表此參數不是必須的, 可以省略。 `CookieParam<T, true>` 代表此參數是必須的, 不可以省略, 如果不提供, 則返回錯誤;
 
-- `PathParam<T>`: 一個從請求 `URL` 中提取路徑參數的提取器. 此參數如果不存在, 路由匹配就是不成功, 因此不存在可以省略的情況;
+- `PathParam<T>`: 一個從請求 `URL` 中提取路徑參數的提取器。 此參數如果不存在, 路由匹配就是不成功, 因此不存在可以省略的情況;
 
 - `FormBody<T>`: 從請求提交的表單中提取信息;
 
 - `JsonBody<T>`: 從請求提交的 JSON 格式的負載中提取信息;
 
-
 ## `#[endpoint]` 宏
 
-在生成 OpenAPI 文檔時, 需要使用 `#[endpoint]` 宏代替常規的 `#[handler]` 宏, 它實際上是一個增強版本的 `#[handler]` 宏. 
+在生成 OpenAPI 文檔時, 需要使用 `#[endpoint]` 宏代替常規的 `#[handler]` 宏, 它實際上是一個增強版本的 `#[handler]` 宏。
 
 - 它可以通過函數的簽名獲取生成 OpenAPI 所必須的信息;
 
-- 對於不方便通過簽名提供的信息, 可以直接在 `#[endpoint]` 宏中添加屬性的方式提供, 通過這種方式提供的信息會於通過函數簽名獲取的信息合併, 如果存在衝突, 則會覆蓋函數簽名提供的信息.
+- 對於不方便通過簽名提供的信息, 可以直接在 `#[endpoint]` 宏中添加屬性的方式提供, 通過這種方式提供的信息會於通過函數簽名獲取的信息合併, 如果存在衝突, 則會覆蓋函數簽名提供的信息。
 
-你可以使用 Rust 自帶的 `#[deprecated]` 屬性標註某個 Handler 已經過時被廢棄. 雖然 `#[deprecated]` 屬性支持添加諸如廢棄原因,版本等信息, 但是 OpenAPI 並不支持, 因此這些信息在生成 OpenAPI 時將會被忽略.
+你可以使用 Rust 自帶的 `#[deprecated]` 屬性標註某個 Handler 已經過時被廢棄。 雖然 `#[deprecated]` 屬性支持添加諸如廢棄原因,版本等信息, 但是 OpenAPI 並不支持, 因此這些信息在生成 OpenAPI 時將會被忽略。
 
-代碼中的文檔註釋部分會自動被提取用於生成 OpenAPI, 第一行被用於生成 _`summary`_, 整個註釋部分會被用於生成 _`description`_.
+代碼中的文檔註釋部分會自動被提取用於生成 OpenAPI, 第一行被用於生成 _`summary`_, 整個註釋部分會被用於生成 _`description`_。
 
 ```rust
 /// This is a summary of the operation
@@ -86,8 +83,7 @@ struct Pet {
 
 可以使用 `#[salvo(schema(...))]` 定義可選的設置:
 
-
-  - `example = ...` 可以是 `json!(...)`. `json!(...)` 會被 `serde_json::json!` 解析爲`serde_json::Value`.
+- `example = ...` 可以是 `json!(...)`. `json!(...)` 會被 `serde_json::json!` 解析爲`serde_json::Value`。
 
   ```rust
   #[derive(ToSchema)]
@@ -109,28 +105,21 @@ struct Pet {
   }
   ```
 
-
 ## ToParameters
 
-Generate [path parameters][path_params] from struct's fields.
+從結構體的字段生成 [路徑參數][path_params]。
 
-This is `#[derive]` implementation for [`ToParameters`][to_parameters] trait.
+這是 [`ToParameters`][to_parameters] trait 的 `#[derive]` 實現。
 
-Typically path parameters need to be defined within [`#[salvo_oapi::endpoint(...parameters(...))]`][path_params] section
-for the endpoint. But this trait eliminates the need for that when [`struct`][struct]s are used to define parameters.
-Still [`std::primitive`] and [`String`](std::string::String) path parameters or [`tuple`] style path parameters need to be defined
-within `parameters(...)` section if description or other than default configuration need to be given.
+通常情況下，路徑參數需要在 `endpoint` 的 [`#[salvo_oapi::endpoint(...parameters(...))]`][path_params] 中定義。但是當使用 [`struct`][struct] 來定義參數時，就可以省略上面的步驟。儘管如此，如果需要給出描述或更改默認配置，那麼 [`std::primitive`] 和 [`String`](std::string::String) 路徑參數或 [tuple] 風格的路徑參數還是需要在 `parameters(...)` 中定義。
 
-You can use the Rust's own `#[deprecated]` attribute on field to mark it as
-deprecated and it will reflect to the generated OpenAPI spec.
+你可以使用 Rust 內置的 `#[deprecated]` 屬性標記字段為已棄用，它將反映到生成出來的 OpenAPI 規範中。
 
-`#[deprecated]` attribute supports adding additional details such as a reason and or since version
-but this is is not supported in OpenAPI. OpenAPI has only a boolean flag to determine deprecation.
-While it is totally okay to declare deprecated with reason
-`#[deprecated  = "There is better way to do this"]` the reason would not render in OpenAPI spec.
+`#[deprecated]` 屬性支持添加額外的信息比如棄用原因或者從某個版本開始棄用，但 OpenAPI 並不支持。OpenAPI 只支持一個布爾值來確定是否棄用。雖然完全可以聲明一個帶原因的棄用，如 `#[deprecated  = "There is better way to do this"]`，但這個原因不會在 OpenAPI 規範中呈現。
 
-Doc comment on struct fields will be used as description for the generated parameters.
-```
+結構體字段上的註釋文檔會用作生成出來的 OpenAPI 規範中的參數描述。
+
+```rust
 #[derive(salvo_oapi::ToParameters, serde::Deserialize)]
 struct Query {
     /// Query todo items by name.
@@ -140,19 +129,16 @@ struct Query {
 
 ### ToParameters Container Attributes for `#[salvo(parameters(...))]`
 
-The following attributes are available for use in on the container attribute `#[salvo(parameters(...))]` for the struct
-deriving `ToParameters`:
+以下屬性可以用在那些派生於 `ToParameters` 的結構體的容器屬性 `#[salvo(parameters(…))]`
 
-* `names(...)` Define comma separated list of names for unnamed fields of struct used as a path parameter.
-   __Only__ supported on __unnamed structs__.
-* `style = ...` Defines how all parameters are serialized by [`ParameterStyle`][style]. Default
-   values are based on _`parameter_in`_ attribute.
-* `default_parameter_in = ...` =  Defines default where the parameters of this field are used with a value from
-   [`parameter::ParameterIn`][in_enum]. If this attribute is not supplied, then the default value is from query.
-* `rename_all = ...` Can be provided to alternatively to the serde's `rename_all` attribute. Effectively provides same functionality.
+- `names(...)` 為作為路徑參數使用的結構體的未命名字段定義逗號分隔的名稱列表。僅支持在未命名結構體上使用。
+- `style = ...` 可定義所有參數的序列化方式，由 [`ParameterStyle`][style] 指定。默認值基於 _`parameter_in`_ 屬性。
+- `default_parameter_in = ...` 定義此字段的參數使用的默認位置，該位置的值來自於 [`parameter::ParameterIn`][in_enum]。如果沒有提供此屬性，則默認來自 `query`。
+- `rename_all = ...` 可以作為 `serde` 的 `rename_all` 的替代方案。實際上提供了相同的功能。
 
-Use `names` to define name for single unnamed argument.
-```
+使用 `names` 給單個未命名的參數定義名稱。
+
+```rust
 # use salvo_oapi::ToParameters;
 
 #[derive(ToParameters, serde::Deserialize)]
@@ -160,8 +146,9 @@ Use `names` to define name for single unnamed argument.
 struct Id(u64);
 ```
 
-Use `names` to define names for multiple unnamed arguments.
-```
+使用 `names` 給多個未命名的參數定義名稱。
+
+```rust
 # use salvo_oapi::ToParameters;
 
 #[derive(ToParameters, serde::Deserialize)]
@@ -171,105 +158,84 @@ struct IdAndName(u64, String);
 
 ### ToParameters Field Attributes for `#[salvo(parameter(...))]`
 
-The following attributes are available for use in the `#[salvo(parameter(...))]` on struct fields:
+以下屬性可以在結構體字段上使用 `#[salvo(parameter(...))]`：
 
-* `style = ...` Defines how the parameter is serialized by [`ParameterStyle`][style]. Default values are based on _`parameter_in`_ attribute.
+- `style = ...` 定義參數如何被 [`ParameterStyle`][style] 序列化。默認值基於 _`parameter_in`_ 屬性。
 
-* `parameter_in = ...` =  Defines where the parameters of this field are used with a value from
-   [`parameter::ParameterIn`][in_enum]. If this attribute is not supplied, then the default value is from query.
+- `parameter_in = ...` 使用來自 [`parameter::ParameterIn`][in_enum] 的值定義這個字段參數在哪裡。如果沒有提供這個值，則默認來自 `query`。
 
-* `explode` Defines whether new _`parameter=value`_ pair is created for each parameter within _`object`_ or _`array`_.
+- `explode` 定義是否為每個在 _`object`_ 或 _`array`_ 中的參數創建新的 _`parameter=value`_ 對。
 
-* `allow_reserved` Defines whether reserved characters _`:/?#[]@!$&'()*+,;=`_ is allowed within value.
+- `allow_reserved` 定義參數值中是否允許出現保留字符 _`:/?#[]@!$&'()*+,;=`_。
 
-* `example = ...` Can be method reference or _`json!(...)`_. Given example
-  will override any example in underlying parameter type.
+- `example = ...` 可以是方法的引用或 _`json!(...)`_。給定的示例會覆蓋底層參數類型的任何示例。
 
-* `value_type = ...` Can be used to override default type derived from type of the field used in OpenAPI spec.
-  This is useful in cases where the default type does not correspond to the actual type e.g. when
-  any third-party types are used which are not [`ToSchema`][to_schema]s nor [`primitive` types][primitive].
-   Value can be any Rust type what normally could be used to serialize to JSON or custom type such as _`Object`_.
-   _`Object`_ will be rendered as generic OpenAPI object.
+- `value_type = ...` 可被用於重寫 OpenAPI 規範中字段使用的默認類型。在默認類型與實際類型不對應的情況下很有用，比如使用非 [`ToSchema`][to_schema] 或 [`primitive` types][primitive] 中定義的第三方類型時。值可以是正常情況下可被序列化為 JSON 的任意 Rust 類型或如 _`Object`_._`Object`_ 這種會被渲染成通用 OpenAPI 對象的自定義類型。
 
-* `inline` If set, the schema for this field's type needs to be a [`ToSchema`][to_schema], and
-  the schema definition will be inlined.
+- `inline` 如果啟用，這個字段類型的定義必須來自 [`ToSchema`][to_schema]，且這個定義會被內聯。
 
-* `default = ...` Can be method reference or _`json!(...)`_.
+- `default = ...` 可以是方法引用或 _`json!(...)`_。
 
-* `format = ...` May either be variant of the [`KnownFormat`][known_format] enum, or otherwise
-  an open value as a string. By default the format is derived from the type of the property
-  according OpenApi spec.
+- `format = ...` 可以是 [`KnownFormat`][known_format] 枚舉的變體，或者是字符串形式的開放值。默認情況下，格式是根據屬性的類型根據 OpenAPI 規範推導而來。
 
-* `write_only` Defines property is only used in **write** operations *POST,PUT,PATCH* but not in *GET*
+- `write_only` 定義屬性僅用於**寫**操作 _POST,PUT,PATCH_ 而不是 _GET_。
 
-* `read_only` Defines property is only used in **read** operations *GET* but not in *POST,PUT,PATCH*
+- `read_only` 定義屬性僅用於**讀**操作 _GET_ 而不是 _POST,PUT,PATCH_。
 
-* `nullable` Defines property is nullable (note this is different to non-required).
+- `nullable` 定義屬性是否可為 `null` （注意這與非必需不同）。
 
-* `required = ...` Can be used to enforce required status for the parameter. [See
-   rules][derive@ToParameters#field-nullability-and-required-rules]
+- `required = ...` 用於強制要求參數必傳。[參見規則][derive@ToParameters#field-nullability-and-required-rules]。
 
-* `rename = ...` Can be provided to alternatively to the serde's `rename` attribute. Effectively provides same functionality.
+- `rename = ...` 可以作為 `serde` 的 `rename` 的替代方案。實際上提供了相同的功能。
 
-* `multiple_of = ...` Can be used to define multiplier for a value. Value is considered valid
-  division will result an `integer`. Value must be strictly above _`0`_.
+- `multiple_of = ...` 用於定義值的倍數。只有當用這個關鍵字的值去除參數值，並且結果是一個整數時，參數值才被認為是有效的。倍數值必須嚴格大於 _`0`_。
 
-* `maximum = ...` Can be used to define inclusive upper bound to a `number` value.
+- `maximum = ...` 用於定義取值的上限，包含當前取值。
 
-* `minimum = ...` Can be used to define inclusive lower bound to a `number` value.
+- `minimum = ...` 用於定義取值的下限，包含當前取值。
 
-* `exclusive_maximum = ...` Can be used to define exclusive upper bound to a `number` value.
+- `exclusive_maximum = ...` 用於定義取值的上限，不包含當前取值。
 
-* `exclusive_minimum = ...` Can be used to define exclusive lower bound to a `number` value.
+- `exclusive_minimum = ...` 用於定義取值的下限，不包含當前取值。
 
-* `max_length = ...` Can be used to define maximum length for `string` types.
+- `max_length = ...` 用於定義 `string` 類型取值的最大長度。
 
-* `min_length = ...` Can be used to define minimum length for `string` types.
+- `min_length = ...` 用於定義 `string` 類型取值的最小長度。
 
-* `pattern = ...` Can be used to define valid regular expression in _ECMA-262_ dialect the field value must match.
+- `pattern = ...` 用於定義字段值必須匹配的有效正則表達式，正則表達式採用 _ECMA-262_ 版本。
 
-* `max_items = ...` Can be used to define maximum items allowed for `array` fields. Value must
-  be non-negative integer.
+- `max_items = ...` 可用於定義 `array` 類型字段允許的最大項數。值必須是非負整數。
 
-* `min_items = ...` Can be used to define minimum items allowed for `array` fields. Value must
-  be non-negative integer.
+- `min_items = ...` 可用於定義 `array` 類型字段允許的最小項數。值必須是非負整數。
 
-* `with_schema = ...` Use _`schema`_ created by provided function reference instead of the
-  default derived _`schema`_. The function must match to `fn() -> Into<RefOr<Schema>>`. It does
-  not accept arguments and must return anything that can be converted into `RefOr<Schema>`.
+- `with_schema = ...` 使用函數引用創建出的 _`schema`_ 而不是默認的 _`schema`_。該函數必須滿足定義 `fn() -> Into<RefOr<Schema>>`。它不接收任何參數並且必須返回任何可以轉換為 `RefOr<Schema>` 的值。
 
-* `additional_properties = ...` Can be used to define free form types for maps such as
-  [`HashMap`](std::collections::HashMap) and [`BTreeMap`](std::collections::BTreeMap).
-  Free form type enables use of arbitrary types within map values.
-  Supports formats _`additional_properties`_ and _`additional_properties = true`_.
+- `additional_properties = ...` 用於為 `map` 定義自由形式類型，比如 [`HashMap`](std::collections::HashMap) 和 [`BTreeMap`](std::collections::BTreeMap)。自由形式類型允許在映射值中使用任意類型。支持的格式有 _`additional_properties`_ 和 _`additional_properties = true`_。
 
-##### Field nullability and required rules
+#### Field nullability and required rules
 
-Same rules for nullability and required status apply for _`ToParameters`_ field attributes as for
-_`ToSchema`_ field attributes. [See the rules][`derive@ToSchema#field-nullability-and-required-rules`].
+一些應用於 _`ToParameters`_ 字段屬性的是否可為空和是否必需的規則同樣可用於 _`ToSchema`_ 字段屬性。[參見規則][`derive@ToSchema#field-nullability-and-required-rules`]。
 
 ### Partial `#[serde(...)]` attributes support
 
-ToParameters derive has partial support for [serde attributes]. These supported attributes will reflect to the
-generated OpenAPI doc. The following attributes are currently supported:
+ToParameters 派生目前支持部分 [serde 屬性]。這些支持的屬性將反映到生成的 OpenAPI 文檔中。目前支持以下屬性：
 
-* `rename_all = "..."` Supported at the container level.
-* `rename = "..."` Supported **only** at the field level.
-* `default` Supported at the container level and field level according to [serde attributes].
-* `skip_serializing_if = "..."` Supported  **only** at the field level.
-* `with = ...` Supported **only** at field level.
-* `skip_serializing = "..."` Supported  **only** at the field or variant level.
-* `skip_deserializing = "..."` Supported  **only** at the field or variant level.
-* `skip = "..."` Supported  **only** at the field level.
+- `rename_all = "..."` 在容器級別支持。
+- `rename = "..."` **僅**在字段級別支持。
+- `default` 根據 [serde attributes] 在容器級和字段級支持。
+- `skip_serializing_if = "..."` **僅**在字段級別支持。
+- `with = ...` **僅**在字段級別支持。
+- `skip_serializing = "..."` **僅**在字段級或變體級支持。
+- `skip_deserializing = "..."` **僅**在字段級或變體級支持。
+- `skip = "..."` **僅**在字段級別支持。
 
-Other _`serde`_ attributes will impact the serialization but will not be reflected on the generated OpenAPI doc.
+其他的 _`serde`_ 屬性將影響序列化，但不會反映在生成的 OpenAPI 文檔上。
 
 ### Examples
 
-_**Demonstrate [`ToParameters`][to_parameters] usage with the `#[salvo(parameters(...))]` container attribute to
-be used as a path query, and inlining a schema query field:**_
+_**演示使用 `#[salvo(parameters(...))]` 容器屬性結合 [`ToParameters`][to_parameters] 的用法，用在路徑參數上，並內聯一個查詢字段：**_
 
-```
+```rust
 use serde::Deserialize;
 use salvo_core::prelude::*;
 use salvo_oapi::{ToParameters, ToSchema};
@@ -303,8 +269,9 @@ async fn get_pet(query: PetQuery) {
 }
 ```
 
-_**Override `String` with `i64` using `value_type` attribute.**_
-```
+_**使用 `value_type` 將 `String` 型別覆蓋為 `i64` 型別。**_
+
+```rust
 # use salvo_oapi::ToParameters;
 
 #[derive(ToParameters, serde::Deserialize)]
@@ -315,8 +282,9 @@ struct Filter {
 }
 ```
 
-_**Override `String` with `Object` using `value_type` attribute. _`Object`_ will render as `type: object` in OpenAPI spec.**_
-```
+_**使用 `value_type` 將 `String` 型別覆蓋為 `Object` 型別。在 OpenAPI 規範中，`Object` 型別會顯示為 `type:object`。**_
+
+```rust
 # use salvo_oapi::ToParameters;
 
 #[derive(ToParameters, serde::Deserialize)]
@@ -327,8 +295,9 @@ struct Filter {
 }
 ```
 
-_**You can use a generic type to override the default type of the field.**_
-```
+_**你也可以使用泛型來覆蓋字段的默認型別。**_
+
+```rust
 # use salvo_oapi::ToParameters;
 
 #[derive(ToParameters, serde::Deserialize)]
@@ -339,8 +308,9 @@ struct Filter {
 }
 ```
 
-_**You can even override a [`Vec`] with another one.**_
-```
+_**你甚至可以使用一個 [`Vec`] 覆蓋另一個 [`Vec`]。**_
+
+```rust
 # use salvo_oapi::ToParameters;
 
 #[derive(ToParameters, serde::Deserialize)]
@@ -351,8 +321,9 @@ struct Filter {
 }
 ```
 
-_**We can override value with another [`ToSchema`][to_schema].**_
-```
+_**我們可以使用另一個 [`ToSchema`][to_schema] 來覆蓋字段型別。**_
+
+```rust
 # use salvo_oapi::{ToParameters, ToSchema};
 
 #[derive(ToSchema)]
@@ -368,8 +339,9 @@ struct Filter {
 }
 ```
 
-_**Example with validation attributes.**_
-```
+_**屬性值的校驗示例**_
+
+```rust
 #[derive(salvo_oapi::ToParameters, serde::Deserialize)]
 struct Item {
     #[salvo(parameter(maximum = 10, minimum = 5, multiple_of = 2.5))]
@@ -379,10 +351,11 @@ struct Item {
     #[salvo(parameter(max_items = 5, min_items = 1))]
     items: Vec<String>,
 }
-````
-
-_**Use `schema_with` to manually implement schema for a field.**_
 ```
+
+_**使用 `schema_with` 為字段手動實現 schema。**_
+
+```rust
 # use salvo_oapi::schema::Object;
 fn custom_type() -> Object {
     Object::new()
@@ -412,13 +385,11 @@ struct Query {
 [primitive]: https://doc.rust-lang.org/std/primitive/index.html
 [serde attributes]: https://serde.rs/attributes.html
 
+- `rename_all = ...`: 支持於 `serde` 類似的語法定義重命名字段的規則. 如果同時定義了 `#[serde(rename_all = "...")]` 和 `#[salvo(schema(rename_all = "..."))]`, 則優先使用 `#[serde(rename_all = "...")]`。
 
-- `rename_all = ...`: 支持於 `serde` 類似的語法定義重命名字段的規則. 如果同時定義了 `#[serde(rename_all = "...")]` 和 `#[salvo(schema(rename_all = "..."))]`, 則優先使用 `#[serde(rename_all = "...")]`.
+- `symbol = ...`: 一個字符串字面量, 用於定義結構在 OpenAPI 中線上的名字路徑. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`。
 
-- `symbol = ...`: 一個字符串字面量, 用於定義結構在 OpenAPI 中線上的名字路徑. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`.
-
-- `default`: Can be used to populate default values on all fields using the struct’s Default implementation.
-
+- `default`: 可以使用結構體的 `Default` 實現來為所有字段填充默認值。
 
 ### 錯誤處理方式
 
