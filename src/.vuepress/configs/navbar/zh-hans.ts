@@ -60,5 +60,9 @@ export const navbarZhHans: NavbarConfig = [
     text: '资助项目',
     link: '/zh-hans/donate.html',
   },
+  {
+    text: 'Gitee',
+    link: 'https://gitee.com/salvo-rs/salvo',
+  },
   versions,
 ]
