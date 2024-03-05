@@ -68,7 +68,6 @@ El comentario del documento en la función decorada se utilizará para _`descrip
 La primera línea del comentario del documento se utilizará como _`summary`_ y el comentario completo del documento se
 utilizado como _`description`_.
 
-
 ```rust
 /// This is a summary of the operation
 ///
@@ -238,6 +237,7 @@ Otros atributos _`serde`_ afectarán la serialización pero no se reflejarán en
 
 _**Demostrar el uso de [`ToParameters`][to_parameters] con el atributo de contenedor `#[salvo(parameters(...))]` para
 usarse como consulta de ruta e incluir un campo de consulta de esquema:**_
+
 ```rust
 use serde::Deserialize;
 use salvo_core::prelude::*;
@@ -354,7 +354,7 @@ struct Item {
     #[salvo(parameter(max_items = 5, min_items = 1))]
     items: Vec<String>,
 }
-````
+```
 
 _**Utilice `schema_with` para implementar manualmente el esquema de un campo.**_
 
