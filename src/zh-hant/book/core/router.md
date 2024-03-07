@@ -2,9 +2,10 @@
 
 ## 什麼是路由
 
-```Router``` 定義了一個 HTTP 請求會被哪些中間件和 `Handler` 處理. 這個是 Salvo 裏面最基礎也是最核心的功能.
+```Router``` 定義了 HTTP 請求將如何被中間件和 `Handler` 處理。這是 Salvo 中最基本也是最核心的功能。
 
-```Router``` 內部實際上是由一系列過濾器(Filter) 組成, 當請求到來時, 路由會按添加的順序, 由上往下依次測試自身極其子孫項是否能夠匹配請求, 如果可以, 則依次執行路由以及其子孫路由形成的整個鏈上的中間件, 如果處理過程中, `Response` 的狀態被設置爲錯誤(4XX, 5XX) 或者是跳轉(3XX), 則後續中間件和 `Handler` 都會跳過. 你也可以手工調 `ctrl.skip_rest()` 跳過後續的中間件和 `Handler`.
+
+```Router``` 內部實質上是由一系列過濾器（Filter）組成，當請求到達時，路由器會按照添加的順序，從上而下逐一測試自己及其子項目是否能夠與請求匹配。如果匹配成功，則會按序執行路由及其子路由構成的整條鏈中的中間件。若在處理過程中 `Response` 的狀態被設置為錯誤（4XX、5XX）或重定向（3XX），則會跳過剩餘的中間件和 `Handler`。您也可以手動調用 `ctrl.skip_rest()` 來跳過後續的中間件和 `Handler`。
 
 
 比如:
@@ -17,24 +18,24 @@ Router::with_path("articles").get(list_articles).post(create_article);
 
 ```rust
 Router::new()
-    // PathFilter 可以過濾請求路徑, 只有請求路徑裏包含 articles 片段時纔會匹配成功, 
-    // 否則匹配失敗. 比如: /articles/123 是匹配成功的, 而 /articles_list/123 
-    // 雖然裏面包含了 articles, 但是因爲後面還有 _list, 是匹配不成功的.
+    // PathFilter 能夠過濾請求路徑，只有當請求路徑中含有 "articles" 這個片段時，才會匹配成功，
+    // 否則就會匹配失敗。例如：路徑 "/articles/123" 能夠匹配成功，但路徑 "/articles_list/123"
+    // 雖然包含 "articles" 字樣，由於後綴還有 "_list"，所以不會匹配成功。
     .filter(PathFilter::new("articles"))
 
-    // 在 root 匹配成功的情況下, 如果請求的 method 是 get, 則內部的子路由可以匹配成功, 
-    // 並且由 list_articles 處理請求.
+    // 在根路徑匹配成功的條件下，如果請求的方法是 GET，那麼內部的子路由就能夠匹配成功，
+    // 並且交由 `list_articles` 處理該請求。
     .push(Router::new().filter(filter::get()).handle(list_articles))
 
-    // 在 root 匹配成功的情況下, 如果請求的 method 是 post, 則內部的子路由可以匹配成功, 
-    // 並且由 create_article 處理請求.
+    // 在根路徑匹配成功的情況下，如果請求的方法是 POST，則內部的子路由可以匹配成功，
+    // 並由 create_article 處理該請求。
     .push(Router::new().filter(filter::post()).handle(create_article));
 ```
 
 
 ## 扁平式定義
 
-我們可以用扁平式的風格定義路由:
+我們可以採用扁平式風格來定義路由：
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer);
@@ -44,7 +45,7 @@ Router::with_path("writers/<id>/articles").get(list_writer_articles);
 
 ## 樹狀式定義
 
-我們也可以把路由定義成樹狀, 這也是推薦的定義方式:
+我們也可以將路由定義成樹狀結構，這也是推薦的做法：
 
 ```rust
 Router::with_path("writers")
@@ -58,9 +59,10 @@ Router::with_path("writers")
             .push(Router::with_path("articles").get(list_writer_articles)),
     );
 ```
-這種形式的定義對於複雜項目, 可以讓 Router 的定義變得層次清晰簡單.
+這種方式對於複雜的項目而言，能夠使得 Router 的架構層次分明且簡潔明瞭。
 
-在 ```Router``` 中有許多方法調用後會返回自己(Self), 以便於鏈式書寫代碼. 有時候, 你需要根據某些條件決定如何路由, 路由系統也提供了 ```then``` 函數, 也很容易使用:
+在 ```Router``` 中，許多方法調用後都會返回自身（Self），以利於鏈式編寫代碼。有時候，您可能需要根據某些條件來決定路由的方式，路由系統也提供了 ```then``` 函數，使用起來非常方便：
+
 
 ```rust
 Router::new()
@@ -79,11 +81,11 @@ Router::new()
             }),
     );
 ```
-該示例代表僅僅當服務器在 ```admin_mode``` 時, 纔會添加創建文章, 編輯刪除文章等路由.
+該示例表示只有當伺服器處於 ```admin_mode``` 時，才會添加創建文章、編輯文章、刪除文章等路由。
 
 ## 從路由中獲取參數
 
-在上面的代碼中, ```<id>``` 定義了一個參數. 我們可以通過 ```Request``` 實例獲取到它的值:
+在上述代碼中，```<id>```定義了一個參數。我們可以通過 ```Request``` 實例來獲取它的值：
 
 ```rust
 #[handler]
