@@ -8,7 +8,7 @@
 ```rust
 use salvo::catcher::Catcher;
 
-Service::new(router).with_catcher(Catcher::default());
+Service::new(router).catcher(Catcher::default());
 ```
 
 預設的 `Catcher` 支援以 `XML`、`JSON`、`HTML`、`Text` 等格式來回應錯誤訊息。

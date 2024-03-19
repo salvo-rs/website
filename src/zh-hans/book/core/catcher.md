@@ -7,7 +7,7 @@
 ```rust
 use salvo::catcher::Catcher;
 
-Service::new(router).with_catcher(Catcher::default());
+Service::new(router).catcher(Catcher::default());
 ```
 
 默认的 `Catcher` 支持以 `XML`, `JSON`, `HTML`, `Text` 格式发送错误页面.
