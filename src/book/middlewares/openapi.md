@@ -382,7 +382,7 @@ struct Query {
 [known_format]: openapi/schema/enum.KnownFormat.html
 [xml]: openapi/xml/struct.Xml.html
 [to_parameters]: trait.ToParameters.html
-[path_params]: attr.path.html#params-attributes
+[path_parameters]:openapi.html#parameters-attributes
 [struct]: https://doc.rust-lang.org/std/keyword.struct.html
 [style]: openapi/path/enum.ParameterStyle.html
 [in_enum]: salvo_oapi/openapi/path/enum.ParameterIn.html
