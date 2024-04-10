@@ -107,7 +107,7 @@ You can even pass the type directly to the function as a parameter, like this:
 
 ```rust
 #[handler]
-async fn edit<'a>(good_man: GoodMan<'a>) -> String {
+async fn edit<'a>(good_man: GoodMan<'a>) {
     res.render(Json(good_man));
 }
 ```

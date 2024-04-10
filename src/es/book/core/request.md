@@ -107,7 +107,7 @@ Incluso puedes pasar el tipo directamente a la función como parámetro, así:
 
 ```rust
 #[handler]
-async fn edit<'a>(good_man: GoodMan<'a>) -> String {
+async fn edit<'a>(good_man: GoodMan<'a>) {
     res.render(Json(good_man));
 }
 ```
