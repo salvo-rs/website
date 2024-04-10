@@ -98,7 +98,7 @@ Entonces en el `Handler` puedes obtener los datos como lo siguiente:
 
 ```rust
 #[handler]
-async fn edit(req: &mut Request) -> String {
+async fn edit(req: &mut Request) {
     let good_man: GoodMan<'_> = req.extract().await.unwrap();
 }
 ```
