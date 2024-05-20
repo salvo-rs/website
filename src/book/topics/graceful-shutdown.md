@@ -1,19 +1,16 @@
 # Graceful shutdown
 
-```rust
-use salvo_core::prelude::*;
+Handle graceful shutdown base on different signals.
 
-#[tokio::main]
-async fn main() {
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
-    let server = Server::new(acceptor);
-    let handle = server.handle();
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-    // Graceful shutdown the server
-    tokio::spawn(async move {
-        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
-        handle.stop_graceful(None);
-    });
-    server.serve(Router::new()).await;
-}
-```
+@[code rust](../../../codes/graceful-shutdown/src/main.rs)
+
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
+
+@[code rust](../../../codes/graceful-shutdown/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>
