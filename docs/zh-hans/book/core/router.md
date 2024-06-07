@@ -4,8 +4,9 @@
 
 ```Router``` 定义了一个 HTTP 请求会被哪些中间件和 `Handler` 处理. 这个是 Salvo 里面最基础也是最核心的功能.
 
-```Router``` 内部实际上是由一系列过滤器(Filter) 组成, 当请求到来时, 路由会按添加的顺序, 由上往下依次测试自身极其子孙项是否能够匹配请求, 如果可以, 则依次执行路由以及其子孙路由形成的整个链上的中间件, 如果处理过程中, `Response` 的状态被设置为错误(4XX, 5XX) 或者是跳转(3XX), 则后续中间件和 `Handler` 都会跳过. 你也可以手工调 `ctrl.skip_rest()` 跳过后续的中间件和 `Handler`.
+```Router``` 内部实际上是由一系列过滤器(Filter) 组成, 当请求到来时, 路由会按添加的顺序, 由上往下依次测试自身极其子孙项是否能够匹配请求, 如果匹配成功, 则依次执行路由以及其子孙路由形成的整个链上的中间件, 如果处理过程中, `Response` 的状态被设置为错误(4XX, 5XX) 或者是跳转(3XX), 则后续中间件和 `Handler` 都会跳过. 你也可以手工调 `ctrl.skip_rest()` 跳过后续的中间件和 `Handler`.
 
+在匹配的过程中，存在一个 Url 路径信息，可以认为它是一个在匹配过程中需要完全被 Filter 消费的对象，如果在某个 Router 中所有的 Filter 都匹配成功，并且这个 Url 路径信息已经完全被消费掉，则会认为是“匹配成功”。
 
 比如:
 
@@ -31,6 +32,13 @@ Router::new()
     .push(Router::new().filter(filter::post()).handle(create_article));
 ```
 
+如果访问 `GET /articles/` 认为匹配成功，并执行 `list_articles`. 但是如果访问的是 `GET /articles/123` 则匹配路由失败并返回 404 错误， 因为 ·Router::with_path("articles")仅仅只消费掉了 Url 路径信息中的 `/articles`, 还有 `/123` 部分未被消费掉,因此认为匹配失败. 要想能够匹配成功,路由可以改成:
+
+```rust
+Router::with_path("articles/<**>").get(list_articles).post(create_article);
+```
+
+这里的 `<**>` 会匹配任何多余的路径, 所以它能够匹配 `GET /articles/123` 执行 `list_articles`.
 
 ## 扁平式定义
 

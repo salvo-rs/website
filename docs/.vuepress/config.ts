@@ -1,15 +1,29 @@
 import { createRequire } from "node:module";
+import process from 'node:process';
+import { viteBundler } from '@vuepress/bundler-vite';
 // import { docsearchPlugin } from '@vuepress/plugin-docsearch'
 import { searchPlugin } from '@vuepress/plugin-search';
 import { googleAnalyticsPlugin } from '@vuepress/plugin-google-analytics';
-import { getDirname, path } from '@vuepress/utils';
+import { registerComponentsPlugin } from '@vuepress/plugin-register-components';
+import { shikiPlugin } from '@vuepress/plugin-shiki';
+import { defaultTheme } from "@vuepress/theme-default";
 import { defineUserConfig } from "vuepress";
-import theme from "./theme.js";
+import { getDirname, path } from '@vuepress/utils';
 import {
-  head
+  head,
+  navbarEn,
+  navbarEs,
+  navbarZhHans,
+  navbarZhHant,
+  sidebarEn,
+  sidebarEs,
+  sidebarZhHans,
+  sidebarZhHant,
 } from './configs/index.js';
 
 const __dirname = getDirname(import.meta.url);
+const require = createRequire(import.meta.url);
+const isProd = process.env.NODE_ENV === 'production';
 
 export default defineUserConfig({
   // set site base to default value
@@ -42,35 +56,153 @@ export default defineUserConfig({
     },
   },
 
+  // specify bundler via environment variable
+  bundler:
+    process.env.DOCS_BUNDLER === 'webpack' ? webpackBundler() : viteBundler(),
+
+  theme: defaultTheme({
+    logo: '/images/logo-text-h.svg',
+    repo: 'salvo-rs/salvo',
+    docsRepo: 'salvo-rs/website',
+    docsBranch: 'main',
+    docsDir: 'docs',
+
+    // theme-level locales config
+    locales: {
+      /**
+       * English locale config
+       *
+       * As the default locale of @vuepress/theme-default is English,
+       * we don't need to set all of the locale fields
+       */
+      '/': {
+        // navbar
+        navbar: navbarEn,
+        // sidebar
+        sidebar: sidebarEn,
+        // page meta
+        editLinkText: 'Edit this page on GitHub',
+      },
+
+      /**
+       * Chinese locale config
+       */
+      '/zh-hans/': {
+        // navbar
+        navbar: navbarZhHans,
+        selectLanguageName: '简体中文',
+        selectLanguageText: '选择语言',
+        selectLanguageAriaLabel: '选择语言',
+        // sidebar
+        sidebar: sidebarZhHans,
+        // page meta
+        editLinkText: '在 GitHub 上编辑此页',
+        lastUpdatedText: '上次更新',
+        contributorsText: '贡献者',
+        // custom containers
+        tip: '提示',
+        warning: '注意',
+        danger: '警告',
+        // 404 page
+        notFound: [
+          '这里什么都没有',
+          '我们怎么到这来了？',
+          '这是一个 404 页面',
+          '看起来我们进入了错误的链接',
+        ],
+        backToHome: '返回首页',
+        // a11y
+        openInNewWindow: '在新窗口打开',
+        toggleColorMode: '切换颜色模式',
+        toggleSidebar: '切换侧边栏',
+      },
+      '/zh-hant/': {
+        // navbar
+        navbar: navbarZhHant,
+        selectLanguageName: '繁體中文',
+        selectLanguageText: '選擇語言',
+        selectLanguageAriaLabel: '選擇語言',
+        // sidebar
+        sidebar: sidebarZhHant,
+        // page meta
+        editLinkText: '在 GitHub 上編輯此頁',
+        lastUpdatedText: '上次更新',
+        contributorsText: '貢獻者',
+        // custom containers
+        tip: '提示',
+        warning: '註意',
+        danger: '警告',
+        // 404 page
+        notFound: [
+          '這裏什麼都冇有',
+          '我們怎麼到這來了？',
+          '這是一個 404 頁麵',
+          '看起來我們進入了錯誤的鏈接',
+        ],
+        backToHome: '返回首頁',
+        // a11y
+        openInNewWindow: '在新窗口打開',
+        toggleColorMode: '切換顔色模式',
+        toggleSidebar: '切換側邊欄',
+      },
+      '/es/': {
+        // navbar
+        navbar: navbarEs,
+        selectLanguageName: 'Español',
+        selectLanguageText: 'Idioma',
+        selectLanguageAriaLabel: 'Idioma',
+        // sidebar
+        sidebar: sidebarEs,
+        // page meta
+        editLinkText: 'Editar ésta página en Github',
+        lastUpdatedText: 'Última Actualización',
+        contributorsText: 'Contribuidor',
+        // custom containers
+        tip: 'Nota',
+        warning: 'Aviso',
+        danger: 'Advertencia',
+        // 404 page
+        notFound: [
+          'No hay nada aquí',
+          '¿Cómo llegamos aquí?',
+          'Ésta es una página 404.',
+          'Parece que fuimos al enlace equivocado',
+        ],
+        backToHome: 'Regresar a la página Principal',
+        // a11y
+        openInNewWindow: 'Abrir en una Nueva Ventana',
+        toggleColorMode: 'Cambiar Modo de Color',
+        toggleSidebar: 'Alternar Barra Lateral',
+      },
+    },
+
+    themePlugins: {
+      // only enable git plugin in production mode
+      git: isProd,
+      // use shiki plugin in production mode instead
+      prismjs: !isProd,
+    },
+  }),
+
   // configure markdown
   markdown: {
     importCode: {
-      handleImportPath: (filePath) => {
-        if (filePath.endsWith("hotKey.ts"))
-          return path.resolve(__dirname, "./assets/hotKey.ts");
-
-        if (filePath.startsWith("@vuepress")) {
-          const pkgName = /(^@vuepress\/[^/]+)/.exec(filePath)![1]!;
-
-          return filePath
+      handleImportPath: (importPath) => {
+        // handle @vuepress packages import path
+        if (importPath.startsWith('@vuepress/')) {
+          const packageName = importPath.match(/^(@vuepress\/[^/]*)/)![1];
+          return importPath
             .replace(
-              pkgName,
-              path.dirname(
-                createRequire(import.meta.url).resolve(
-                  `${pkgName}/package.json`
-                )
-              )
+              packageName,
+              path.dirname(require.resolve(`${packageName}/package.json`)),
             )
-            .replace("/src/", "/lib/");
+            .replace('/src/', '/lib/')
+            .replace(/hotKey\.ts$/, 'hotKey.d.ts');
         }
-
-        return filePath;
+        return importPath;
       },
     },
   },
-
-  theme,
-
   // use plugins
   plugins: [
     searchPlugin({
@@ -185,5 +317,12 @@ export default defineUserConfig({
       // we have multiple deployments, which would use different id
       id: process.env.DOCS_GA_ID ?? 'G-X828N63WC8',
     }),
+    registerComponentsPlugin({
+      componentsDir: path.resolve(__dirname, './components'),
+    }),
+    shikiPlugin({
+      langs: ['bash', 'rs', 'diff', 'json', 'md', 'ts', 'vue'],
+      theme: 'dark-plus',
+    })
   ],
 });
