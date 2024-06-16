@@ -2,9 +2,9 @@
 
 ## 什么是路由
 
-```Router``` 定义了一个 HTTP 请求会被哪些中间件和 `Handler` 处理. 这个是 Salvo 里面最基础也是最核心的功能.
+`Router` 定义了一个 HTTP 请求会被哪些中间件和 `Handler` 处理. 这个是 Salvo 里面最基础也是最核心的功能.
 
-```Router``` 内部实际上是由一系列过滤器(Filter) 组成, 当请求到来时, 路由会按添加的顺序, 由上往下依次测试自身极其子孙项是否能够匹配请求, 如果匹配成功, 则依次执行路由以及其子孙路由形成的整个链上的中间件, 如果处理过程中, `Response` 的状态被设置为错误(4XX, 5XX) 或者是跳转(3XX), 则后续中间件和 `Handler` 都会跳过. 你也可以手工调 `ctrl.skip_rest()` 跳过后续的中间件和 `Handler`.
+`Router` 内部实际上是由一系列过滤器(Filter) 组成, 当请求到来时, 路由会按添加的顺序, 由上往下依次测试自身极其子孙项是否能够匹配请求, 如果匹配成功, 则依次执行路由以及其子孙路由形成的整个链上的中间件, 如果处理过程中, `Response` 的状态被设置为错误(4XX, 5XX) 或者是跳转(3XX), 则后续中间件和 `Handler` 都会跳过. 你也可以手工调 `ctrl.skip_rest()` 跳过后续的中间件和 `Handler`.
 
 在匹配的过程中，存在一个 Url 路径信息，可以认为它是一个在匹配过程中需要完全被 Filter 消费的对象，如果在某个 Router 中所有的 Filter 都匹配成功，并且这个 Url 路径信息已经完全被消费掉，则会认为是“匹配成功”。
 
@@ -25,11 +25,11 @@ Router::new()
 
     // 在 root 匹配成功的情况下, 如果请求的 method 是 get, 则内部的子路由可以匹配成功, 
     // 并且由 list_articles 处理请求.
-    .push(Router::new().filter(filter::get()).handle(list_articles))
+    .push(Router::new().filter(filters::get()).handle(list_articles))
 
     // 在 root 匹配成功的情况下, 如果请求的 method 是 post, 则内部的子路由可以匹配成功, 
     // 并且由 create_article 处理请求.
-    .push(Router::new().filter(filter::post()).handle(create_article));
+    .push(Router::new().filter(filters::post()).handle(create_article));
 ```
 
 如果访问 `GET /articles/` 认为匹配成功，并执行 `list_articles`. 但是如果访问的是 `GET /articles/123` 则匹配路由失败并返回 404 错误， 因为 ·Router::with_path("articles")仅仅只消费掉了 Url 路径信息中的 `/articles`, 还有 `/123` 部分未被消费掉,因此认为匹配失败. 要想能够匹配成功,路由可以改成:
@@ -68,7 +68,7 @@ Router::with_path("writers")
 ```
 这种形式的定义对于复杂项目, 可以让 Router 的定义变得层次清晰简单.
 
-在 ```Router``` 中有许多方法调用后会返回自己(Self), 以便于链式书写代码. 有时候, 你需要根据某些条件决定如何路由, 路由系统也提供了 ```then``` 函数, 也很容易使用:
+在 `Router` 中有许多方法调用后会返回自己(Self), 以便于链式书写代码. 有时候, 你需要根据某些条件决定如何路由, 路由系统也提供了 `then` 函数, 也很容易使用:
 
 ```rust
 Router::new()
@@ -87,11 +87,11 @@ Router::new()
             }),
     );
 ```
-该示例代表仅仅当服务器在 ```admin_mode``` 时, 才会添加创建文章, 编辑删除文章等路由.
+该示例代表仅仅当服务器在 `admin_mode` 时, 才会添加创建文章, 编辑删除文章等路由.
 
 ## 从路由中获取参数
 
-在上面的代码中, ```<id>``` 定义了一个参数. 我们可以通过 ```Request``` 实例获取到它的值:
+在上面的代码中, `<id>` 定义了一个参数. 我们可以通过 `Request` 实例获取到它的值:
 
 ```rust
 #[handler]
@@ -100,16 +100,16 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-```<id>```匹配了路径中的一个片段, 正常情况下文章的 ```id``` 只是一个数字, 这是我们可以使用正则表达式限制 ```id``` 的匹配规则, ```r"<id:/\d+/>"```. 
+`<id>` 匹配了路径中的一个片段, 正常情况下文章的 `id` 只是一个数字, 这是我们可以使用正则表达式限制 `id` 的匹配规则, `r"<id:/\d+/>"`.
 
-对于这种数字类型, 还有一种更简单的方法是使用  ```<id:num>```, 具体写法为:
-- ```<id:num>```， 匹配任意多个数字字符;
-- ```<id:num[10]>```， 只匹配固定特定数量的数字字符，这里的 10 代表匹配仅仅匹配 10 个数字字符;
-- ```<id:num(..10)>```, 代表匹配 1 到 9 个数字字符;
-- ```<id:num(3..10)>```, 代表匹配 3 到 9 个数字字符;
-- ```<id:num(..=10)>```, 代表匹配 1 到 10 个数字字符;
-- ```<id:num(3..=10)>```, 代表匹配 3 到 10 个数字字符;
-- ```<id:num(10..)>```, 代表匹配至少 10 个数字字符.
+对于这种数字类型, 还有一种更简单的方法是使用  `<id:num>`, 具体写法为:
+- `<id:num>`， 匹配任意多个数字字符;
+- `<id:num[10]>`， 只匹配固定特定数量的数字字符，这里的 10 代表匹配仅仅匹配 10 个数字字符;
+- `<id:num(..10)>`, 代表匹配 1 到 9 个数字字符;
+- `<id:num(3..10)>`, 代表匹配 3 到 9 个数字字符;
+- `<id:num(..=10)>`, 代表匹配 1 到 10 个数字字符;
+- `<id:num(3..=10)>`, 代表匹配 3 到 10 个数字字符;
+- `<id:num(10..)>`, 代表匹配至少 10 个数字字符.
 
 还可以通过 `<**>`, `<*+>` 或者 `<*?>` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: `<**file_path>`. 
 
@@ -121,7 +121,7 @@ async fn show_writer(req: &mut Request) {
 
 ## 添加中间件
 
-可以通过路由上的 ```hoop``` 函数添加中间件:
+可以通过路由上的 `hoop` 函数添加中间件:
 
 ```rust
 Router::new()
@@ -138,9 +138,9 @@ Router::new()
     );
 ```
 
-在这个例子, 根路由使用 ```check_authed``` 检查当前用户是否已经登录了. 所有子孙路由都会受此中间件影响.
+在这个例子, 根路由使用 `check_authed` 检查当前用户是否已经登录了. 所有子孙路由都会受此中间件影响.
 
-如果用户只是浏览 ```writer``` 的信息和文章, 我们更希望他们无需登录即可浏览. 我们可以把路由定义成这个样子:
+如果用户只是浏览 `writer` 的信息和文章, 我们更希望他们无需登录即可浏览. 我们可以把路由定义成这个样子:
 
 ```rust
 Router::new()
@@ -160,13 +160,13 @@ Router::new()
     );
 ```
 
-尽管有两个路由都有相同的路径定义 ```path("articles")```, 他们依然可以被添加到同一个父路由里.
+尽管有两个路由都有相同的路径定义 `path("articles")`, 他们依然可以被添加到同一个父路由里.
 
 ## 过滤器
 
-```Router``` 内部都是通过过滤器来确定路由是否匹配. 过滤器支持使用 ```or``` 或者 ```and``` 做基本逻辑运算. 一个路由可以包含多个过滤器, 当所有的过滤器都匹配成功时, 路由匹配成功.
+`Router` 内部都是通过过滤器来确定路由是否匹配. 过滤器支持使用 `or` 或者 `and` 做基本逻辑运算. 一个路由可以包含多个过滤器, 当所有的过滤器都匹配成功时, 路由匹配成功.
 
-网站的路径信息是一个树状机构, 这个树状机构并不等同于组织路由的树状结构. 网站的一个路径可能对于多个路由节点. 比如, 在 ```articles/``` 这个路径下的某些内容需要登录才可以查看, 而某些有不需要登录. 我们可以把需要登录查看的子路径组织到一个包含登录验证的中间件的路由下面. 不需要登录验证的组织到另一个没有登录验证的路由下面:
+网站的路径信息是一个树状机构, 这个树状机构并不等同于组织路由的树状结构. 网站的一个路径可能对于多个路由节点. 比如, 在 `articles/` 这个路径下的某些内容需要登录才可以查看, 而某些有不需要登录. 我们可以把需要登录查看的子路径组织到一个包含登录验证的中间件的路由下面. 不需要登录验证的组织到另一个没有登录验证的路由下面:
 
 
 ```rust
@@ -186,12 +186,12 @@ Router::new()
 
 路由是使用过滤器过滤请求并且发送给对应的中间件和 `Handler` 处理的.
 
-```path``` 和 ```method``` 是两个最为常用的过滤器. ```path``` 用于匹配路径信息; ```method``` 用于匹配请求的 Method, 比如: GET, POST, PATCH 等.
+`path` 和 `method` 是两个最为常用的过滤器. `path` 用于匹配路径信息; `method` 用于匹配请求的 Method, 比如: GET, POST, PATCH 等.
 
-我们可以使用 ```and```, ```or ``` 连接路由的过滤器:
+我们可以使用 `and`, `or ` 连接路由的过滤器:
 
 ```rust
-Router::with_filter(filter::path("hello").and(filter::get()));
+Router::with_filter(filters::path("hello").and(filters::get()));
 ```
 
 ### 路径过滤器
@@ -203,7 +203,7 @@ Router::with_path("articles/<id>").get(show_article);
 Router::with_path("files/<**rest_path>").get(serve_file)
 ```
 
-在 `Handler` 中, 可以通过 ```Request``` 对象的 ```get_param``` 函数获取:
+在 `Handler` 中, 可以通过 `Request` 对象的 `get_param` 函数获取:
 
 ```rust
 #[handler]
@@ -219,28 +219,28 @@ pub async fn serve_file(req: &mut Request) {
 
 ### Method 过滤器
 
-根据 ```HTTP``` 请求的 ```Method``` 过滤请求, 比如:
+根据 `HTTP` 请求的 `Method` 过滤请求, 比如:
 
 ```rust
 Router::new().get(show_article).patch(update_article).delete(delete_article);
 ```
 
-这里的 ```get```, ```patch```, ```delete``` 都是 Method 过滤器. 实际等价于:
+这里的 `get`, `patch`, `delete` 都是 Method 过滤器. 实际等价于:
 
 ```rust
 use salvo::routing::filter;
 
 let mut root_router = Router::new();
-let show_router = Router::with_filter(filter::get()).handle(show_article);
-let update_router = Router::with_filter(filter::patch()).handle(update_article);
-let delete_router = Router::with_filter(filter::get()).handle(delete_article);
+let show_router = Router::with_filter(filters::get()).handle(show_article);
+let update_router = Router::with_filter(filters::patch()).handle(update_article);
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);
 Router::new().push(show_router).push(update_router).push(delete_router);
 ```
 
 
 ## 自定义 Wisp
 
-对于某些经常出现的匹配表达式, 我们可以通过 ```PathFilter::register_wisp_regex``` 或者 ```PathFilter::register_wisp_builder``` 命名一个简短的名称. 举例来说, GUID 格式在路径中经常出现, 正常写法是每次需要匹配时都这样:
+对于某些经常出现的匹配表达式, 我们可以通过 `PathFilter::register_wisp_regex` 或者 `PathFilter::register_wisp_builder` 命名一个简短的名称. 举例来说, GUID 格式在路径中经常出现, 正常写法是每次需要匹配时都这样:
 
 ```rust
 Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
@@ -262,4 +262,4 @@ async fn main() {
 }
 ```
 
-仅仅只需要注册一次, 以后就可以直接通过 ```<id:guid>``` 这样的简单写法匹配 GUID, 简化代码的书写.
+仅仅只需要注册一次, 以后就可以直接通过 `<id:guid>` 这样的简单写法匹配 GUID, 简化代码的书写.

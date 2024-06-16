@@ -25,11 +25,11 @@ Router::new()
 
     // 在根路徑匹配成功的條件下，如果請求的方法是 GET，那麼內部的子路由就能夠匹配成功，
     // 並且交由 `list_articles` 處理該請求。
-    .push(Router::new().filter(filter::get()).handle(list_articles))
+    .push(Router::new().filter(filters::get()).handle(list_articles))
 
     // 在根路徑匹配成功的情況下，如果請求的方法是 POST，則內部的子路由可以匹配成功，
     // 並由 create_article 處理該請求。
-    .push(Router::new().filter(filter::post()).handle(create_article));
+    .push(Router::new().filter(filters::post()).handle(create_article));
 ```
 
 
@@ -185,7 +185,7 @@ Router::new()
 我們可以使用 ```and```, ```or ``` 連接路由的過濾器:
 
 ```rust
-Router::with_filter(filter::path("hello").and(filter::get()));
+Router::with_filter(filters::path("hello").and(filters::get()));
 ```
 
 ### 路徑過濾器
@@ -225,9 +225,9 @@ Router::new().get(show_article).patch(update_article).delete(delete_article);
 use salvo::routing::filter;
 
 let mut root_router = Router::new();
-let show_router = Router::with_filter(filter::get()).handle(show_article);
-let update_router = Router::with_filter(filter::patch()).handle(update_article);
-let delete_router = Router::with_filter(filter::get()).handle(delete_article);
+let show_router = Router::with_filter(filters::get()).handle(show_article);
+let update_router = Router::with_filter(filters::patch()).handle(update_article);
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);
 Router::new().push(show_router).push(update_router).push(delete_router);
 ```
 

@@ -63,7 +63,7 @@ Write content is straightforward:
     ```
 
 ## Redirect to Another URL
-- Use the ```render``` method to write a redirect response into ```Response```, which navigates to a new URL. When you invoke the Redirect::found method, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
+- Use the `render` method to write a redirect response into `Response`, which navigates to a new URL. When you invoke the Redirect::found method, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
     ```rust
     use salvo::prelude::*;
 

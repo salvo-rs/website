@@ -4,7 +4,7 @@ Salvo can send files in a number of ways:
 
 ### NamedFile
 
-Salvo provides ```salvo::::NamedFile```, which can be used to efficiently send files to the client. It does not load all files into the cache, but loads part of the content according to the requested `Range` sent to the client.
+Salvo provides `salvo::::NamedFile`, which can be used to efficiently send files to the client. It does not load all files into the cache, but loads part of the content according to the requested `Range` sent to the client.
 
 Actually, passing `Response::send_file` is just a simplified way of using `NamedFile`, if you need more control over the sent file, you can use `NamedFileBuilder`.
 

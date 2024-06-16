@@ -1,12 +1,13 @@
 # Cache
 
-提供缓存功能的中间件. 
+提供缓存功能的中间件.
 
 Cache 中间件可以对 `Response` 中的 `StatusCode`, `Headers`, `Body` 提供缓存功能. 对于已经缓存的内容, 当下次处理请求时, Cache 中间件会直接把缓存在内存中的内容发送给客户端.
 
 注意, 此插件不会缓存 `Body` 是 `ResBody::Stream` 的 `Response`. 如果应用到了这一类型的 `Response`, Cache 不会处理这些请求, 也不会引起错误.
 
 ## 主要功能
+
 * `CacheIssuer` 提供了对分配的缓存键值的抽象. `RequestIssuer` 是它的一个实现, 可以定义依据请求的 URL 的哪些部分以及请求的 `Method` 生成缓存的键. 你也可以定义你自己的缓存键生成的逻辑. 缓存的键不一定是字符串类型, 任何满足 `Hash + Eq + Send + Sync + 'static` 约束的类型都可以作为键.
 
 * `CacheStore` 提供对数据的存取操作. `MokaStore` 是内置的基于 `moka` 的一个内存的缓存实现. 你也可以定义自己的实现方式.

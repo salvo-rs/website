@@ -1,7 +1,7 @@
 import type { SidebarConfig } from '@vuepress/theme-default'
 import { coreChildren } from './core-children'
 import { topicsChildren } from './topics-children'
-import { middlewaresChildren } from './middlewares-children'
+import { featuresChildren } from './features-children'
 
 export const sidebarEn: SidebarConfig = {
   '/book/': [
@@ -20,7 +20,7 @@ export const sidebarEn: SidebarConfig = {
         },
         {
           text: 'Middlewares',
-          children: middlewaresChildren('/book'),
+          children: featuresChildren('/book'),
         }
       ],
     },

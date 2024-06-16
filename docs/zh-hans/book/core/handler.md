@@ -2,7 +2,7 @@
 
 ## 什么是 Handler
 
-Handler 是负责处理 Request 请求的具体对象.  Handler 本身是一个 Trait, 内部包含一个 ```handle``` 的异步方法:
+Handler 是负责处理 Request 请求的具体对象.  Handler 本身是一个 Trait, 内部包含一个 `handle` 的异步方法:
 
 ```rust
 #[async_trait]

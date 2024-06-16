@@ -4,7 +4,7 @@ Salvo 可以通过以下一些方式发送文件:
 
 ### NamedFile
 
-Salvo 提供了 ```salvo::fs::NamedFile```, 可以用它高效地发送文件到客户端. 它并不会把文件都加载入缓存, 而是根据请求的 `Range` 加载部分内容发送至客户端.
+Salvo 提供了 `salvo::fs::NamedFile`, 可以用它高效地发送文件到客户端. 它并不会把文件都加载入缓存, 而是根据请求的 `Range` 加载部分内容发送至客户端.
 
 实际上, 通过 `Response::send_file` 只是一种简化的使用 `NamedFile` 的方式, 如果你需要对发送的文件进行更多的控制, 可以使用 `NamedFileBuilder`.
 

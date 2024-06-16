@@ -2,7 +2,7 @@
 
 ## 什麼是 Handler
 
-Handler 是負責處理 Request 請求的實體。Handler 本身是一個特徵（Trait），其中包含了一個名為 ```handle``` 的非同步方法。
+Handler 是負責處理 Request 請求的實體。Handler 本身是一個特徵（Trait），其中包含了一個名為 `handle` 的非同步方法。
 
 ```rust
 #[async_trait]

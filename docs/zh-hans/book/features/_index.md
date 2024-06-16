@@ -1,5 +1,5 @@
 ---
-title : "Middlewares"
+title : "Features"
 lead: ""
 draft: false
 images: []

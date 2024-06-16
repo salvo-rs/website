@@ -161,7 +161,7 @@ Los filtros más comunes son `path` y `method`. `path`; `method`.
 Podemos usar `and`, `or` para conectar entre los filtros y las condiciones, por ejemplo:
 
 ```rust
-Router::new().filter(filter::path("hello").and(filter::get()));
+Router::new().filter(filters::path("hello").and(filters::get()));
 ```
 
 ### Filtro de Ruta
@@ -200,9 +200,9 @@ Aquí `get`, `patch`, `delete` son todos filtros de métodos, se usaría como:
 ```rust
 use salvo::routing::filter;
 
-let show_router = Router::with_filter(filter::get()).handle(show_article);
-let update_router = Router::with_filter(filter::patch()).handle(update_article);
-let delete_router = Router::with_filter(filter::get()).handle(delete_article);
+let show_router = Router::with_filter(filters::get()).handle(show_article);
+let update_router = Router::with_filter(filters::patch()).handle(update_article);
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);
 Router::new().push(show_router).push(update_router).push(delete_router);
 ```
 

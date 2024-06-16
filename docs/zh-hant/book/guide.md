@@ -2,9 +2,9 @@
 
 ## 安裝 Rust
 
-如果你還沒有安裝 Rust, 你可以使用官方提供的 ```rustup``` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有如何安裝的詳細介紹.
+如果你還沒有安裝 Rust, 你可以使用官方提供的 `rustup` 安裝 Rust. [官方教程](https://doc.rust-lang.org/book/ch01-01-installation.html) 中有如何安裝的詳細介紹.
 
-當前 Salvo 支持的最低 Rust 版本爲 1.75. 運行 ```rustup update``` 確認您已經安裝了符合要求的 Rust.
+當前 Salvo 支持的最低 Rust 版本爲 1.75. 運行 `rustup update` 確認您已經安裝了符合要求的 Rust.
 
 ## 編寫第一個 Salvo 程序
 
@@ -30,15 +30,15 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 ```
 
-在 `main.rs` 中創建一個簡單的函數句柄, 命名爲`hello`, 這個函數只是簡單地打印文本 ```"Hello world"```.
+在 `main.rs` 中創建一個簡單的函數句柄, 命名爲`hello`, 這個函數只是簡單地打印文本 `"Hello world"`.
 
 @[code rust](../../../codes/hello/src/main.rs)
 
-恭喜你, 你的一個 Salvo 程序已經完成. 只需要在命令行下運行 ```cargo run```, 然後在瀏覽器裏打開 ```http://127.0.0.1:5800``` 即可.
+恭喜你, 你的一個 Salvo 程序已經完成. 只需要在命令行下運行 `cargo run`, 然後在瀏覽器裏打開 `http://127.0.0.1:5800` 即可.
 
 ## 詳細解讀
 
-這裏的 ```hello_world``` 是一個 `Handler`, 用於處理用戶請求. ```#[handler]``` 可以讓一個函數方便實現 `Handler` trait. 並且, 它允許我們用不同的方式簡寫函數的參數.
+這裏的 `hello_world` 是一個 `Handler`, 用於處理用戶請求. `#[handler]` 可以讓一個函數方便實現 `Handler` trait. 並且, 它允許我們用不同的方式簡寫函數的參數.
 
 - 原始形式:
   
@@ -49,7 +49,7 @@ tracing-subscriber = "0.3"
     }
     ```
 
-- 您可以省略函數中某些用不着的參數, 比如這裏面的 ```_req```, ```_depot```, ```_ctrl``` 都沒有被使用, 可以直接不寫:
+- 您可以省略函數中某些用不着的參數, 比如這裏面的 `_req`, `_depot`, `_ctrl` 都沒有被使用, 可以直接不寫:
   
     ``` rust
     #[handler]
@@ -58,7 +58,7 @@ tracing-subscriber = "0.3"
     }
     ```
 
-- 任何類型都可以作爲函數的返回類型, 只要它實現了 `Writer` trait. 比如 ```&str``` 實現了 `Writer`, 當它被作爲返回值時, 就打印純文本:
+- 任何類型都可以作爲函數的返回類型, 只要它實現了 `Writer` trait. 比如 `&str` 實現了 `Writer`, 當它被作爲返回值時, 就打印純文本:
 
     ```rust
     #[handler]
@@ -67,7 +67,7 @@ tracing-subscriber = "0.3"
     }
     ```
 
-- 更普遍的情況是, 我們需要在將 ```Result<T, E>``` 作爲返回類型, 以便處理函數執行過程中的錯誤. 如果 ```T``` 和 ```E``` 都實現了 `Writer`, 那麼 ```Result<T, E>``` 就可以作爲返回值:
+- 更普遍的情況是, 我們需要在將 `Result<T, E>` 作爲返回類型, 以便處理函數執行過程中的錯誤. 如果 `T` 和 `E` 都實現了 `Writer`, 那麼 `Result<T, E>` 就可以作爲返回值:
   
     ```rust
     #[handler]
@@ -96,7 +96,7 @@ tracing-subscriber = "0.3"
 </CodeGroup>
 
 ## 更多示例
-建議直接克隆 Salvo 倉庫, 然後運行 examples 目錄下的示例. 比如下面的命令可以運行 ```hello``` 的例子:
+建議直接克隆 Salvo 倉庫, 然後運行 examples 目錄下的示例. 比如下面的命令可以運行 `hello` 的例子:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo
@@ -104,4 +104,4 @@ cd salvo
 cargo run --bin example-hello
 ```
 
-examples 目錄下有很多的例子. 都可以通過類似 ```cargo run --bin example-<name>``` 的命令運行.
+examples 目錄下有很多的例子. 都可以通過類似 `cargo run --bin example-<name>` 的命令運行.

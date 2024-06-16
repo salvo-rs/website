@@ -1,7 +1,7 @@
 import type { SidebarConfig } from '@vuepress/theme-default'
 import { coreChildren } from './core-children'
 import { topicsChildren } from './topics-children'
-import { middlewaresChildren } from './middlewares-children'
+import { featuresChildren } from './features-children'
 
 export const sidebarZhHans: SidebarConfig = {
   '/zh-hans/book/': [
@@ -19,8 +19,8 @@ export const sidebarZhHans: SidebarConfig = {
           children: topicsChildren('/zh-hans/book'),
         },
         {
-          text: '中间件',
-          children: middlewaresChildren('/zh-hans/book'),
+          text: '插件功能',
+          children: featuresChildren('/zh-hans/book'),
         }
       ],
     },

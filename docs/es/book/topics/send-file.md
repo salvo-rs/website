@@ -4,7 +4,7 @@ Salvo puede enviar archivos de varias maneras:
 
 ### Archivo con nombre
 
-Salvo proporciona ```salvo::::NamedFile```, que se puede utilizar para enviar archivos de manera eficiente al cliente. No carga todos los archivos en el caché, pero carga parte del contenido de acuerdo con el `Range` solicitado enviado al cliente.
+Salvo proporciona `salvo::::NamedFile`, que se puede utilizar para enviar archivos de manera eficiente al cliente. No carga todos los archivos en el caché, pero carga parte del contenido de acuerdo con el `Range` solicitado enviado al cliente.
 
 En realidad, pasar `Response::send_file` es solo una forma simplificada de usar `NamedFile`; si necesita más control sobre el archivo enviado, puede usar `NamedFileBuilder`.
 

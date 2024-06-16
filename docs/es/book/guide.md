@@ -49,7 +49,7 @@ Existen muchas formas para escribir una función del tipo controlador.
     }
     ```
 
-- Puedes omitir los argumentos como ```_req```, ```_depot```, ```_ctrl``` si no los usas como se ve en el siguiente ejemplo:
+- Puedes omitir los argumentos como `_req`, `_depot`, `_ctrl` si no los usas como se ve en el siguiente ejemplo:
 
     ``` rust
     #[handler]
@@ -58,7 +58,7 @@ Existen muchas formas para escribir una función del tipo controlador.
     }
     ```
 
-- El valor de retorno de la función controladora puede ser de cualquier tipo, únicamente debe implementar `Writer`. Por ejemplo ```&str``` implementa `Writer` y pudiera renderizar un string como un texto plano:
+- El valor de retorno de la función controladora puede ser de cualquier tipo, únicamente debe implementar `Writer`. Por ejemplo `&str` implementa `Writer` y pudiera renderizar un string como un texto plano:
 
     ```rust
     #[handler]
@@ -67,7 +67,7 @@ Existen muchas formas para escribir una función del tipo controlador.
     }
     ```
 
-- La forma más común es cuando queremos retornar una estructura de datos tipo ```Result<T, E>``` para manejar los errores. Si ```T``` y ```E``` implementan `Writer`, ```Result<T, E>``` Pueden ser valores de retornos válidos para la función del tipo controladora:
+- La forma más común es cuando queremos retornar una estructura de datos tipo `Result<T, E>` para manejar los errores. Si `T` y `E` implementan `Writer`, `Result<T, E>` Pueden ser valores de retornos válidos para la función del tipo controladora:
 
     ```rust
     #[handler]

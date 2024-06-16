@@ -1,6 +1,6 @@
 # Request
 
-在 Salvo 中可以通过 ```Request``` 获取用户请求的数据:
+在 Salvo 中可以通过 `Request` 获取用户请求的数据:
 
 ```rust
 #[handler]
@@ -11,7 +11,7 @@ async fn hello(req: &mut Request) -> String {
 
 ## 获取查询参数
 
-可以通过 ```get_query``` 获取查询参数:
+可以通过 `get_query` 获取查询参数:
 
 ```rust
 req.query::<String>("id");
@@ -19,7 +19,7 @@ req.query::<String>("id");
 
 ## 获取 Form 数据
 
-可以通过 ```get_form``` 获取查询参数, 此函数为异步函数:
+可以通过 `get_form` 获取查询参数, 此函数为异步函数:
 
 ```rust
 req.form::<String>("id").await;
@@ -35,21 +35,21 @@ req.parse_json::<User>().await;
 ## 提取 Request 数据
 
 
-```Request``` 提供多个方法将这些数据解析为强类型结构.
+`Request` 提供多个方法将这些数据解析为强类型结构.
 
-* ```parse_params```: 将请求的 router params 解析为特定的数据类型;
-* ```parse_queries```: 将请求的 URL queries 解析为特定的数据类型;
-* ```parse_headers```: 将请求的 HTTP headers 解析为特定的数据类型;
-* ```parse_json```: 将请求的 HTTP body 部分的数据当作 JSON 格式解析到特定的类型;
-* ```parse_form```: 将请求的 HTTP body 部分的数据当作 Form 表单解析到特定的类型;
-* ```parse_body```: 根据请求的 ```content-type``` 的类型, 将 HTTP body 部分的数据解析为特定类型. 
-* ```extract```: 可以合并不同的数据源解析出特定的类型.
+* `parse_params`: 将请求的 router params 解析为特定的数据类型;
+* `parse_queries`: 将请求的 URL queries 解析为特定的数据类型;
+* `parse_headers`: 将请求的 HTTP headers 解析为特定的数据类型;
+* `parse_json`: 将请求的 HTTP body 部分的数据当作 JSON 格式解析到特定的类型;
+* `parse_form`: 将请求的 HTTP body 部分的数据当作 Form 表单解析到特定的类型;
+* `parse_body`: 根据请求的 `content-type` 的类型, 将 HTTP body 部分的数据解析为特定类型. 
+* `extract`: 可以合并不同的数据源解析出特定的类型.
 
 ## 解析原理
 
-此处通过自定义的 ```serde::Deserializer``` 将类似 ```HashMap<String, String>``` 和 ```HashMap<String, Vec<String>>``` 的数据提取为特定的数据类型.
+此处通过自定义的 `serde::Deserializer` 将类似 `HashMap<String, String>` 和 `HashMap<String, Vec<String>>` 的数据提取为特定的数据类型.
 
-比如: ```URL queries``` 实际上被提取为一个 [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) 类型, ```MultiMap``` 可以认为就是一个类似 ```HashMap<String, Vec<String>>``` 的数据结构. 如果请求的 URL 是 ```http://localhost/users?id=123&id=234```, 我们提供的目标类型是:
+比如: `URL queries` 实际上被提取为一个 [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) 类型, `MultiMap` 可以认为就是一个类似 `HashMap<String, Vec<String>>` 的数据结构. 如果请求的 URL 是 `http://localhost/users?id=123&id=234`, 我们提供的目标类型是:
 
 ```rust
 #[derive(Deserialize)]
@@ -58,7 +58,7 @@ struct User {
 }
 ```
 
-则第一个 ```id=123``` 会被解析, ```id=234``` 则被丢弃:
+则第一个 `id=123` 会被解析, `id=234` 则被丢弃:
 
 ```rust
 let user: User = req.parse_queries().unwrap();
@@ -74,7 +74,7 @@ struct Users {
 }
 ```
 
-则 ```id=123&id=234``` 都会被解析:
+则 `id=123&id=234` 都会被解析:
 
 ```rust
 let users: Users = req.parse_queries().unwrap();
