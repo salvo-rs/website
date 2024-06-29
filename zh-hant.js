@@ -10,6 +10,7 @@ for (let i = 0, il = files.length; i < il; i++) {
     console.log(file);
     let hans = fs.readFileSync(file, 'utf-8');
     converter.convertPromise(hans).then((hant) => {
+        hant.replace("服务器", "伺服器").replace("软件", "軟體");
         let target_path = file.replace('zh-hans', 'zh-hant');
         console.log(target_path)
         fs.outputFileSync(target_path, hant);
