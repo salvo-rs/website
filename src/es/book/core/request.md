@@ -77,6 +77,68 @@ let users: Users = req.parse_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
 
+### Extractores incorporados
+El marco incluye extractores de parámetros de solicitud. Estos extractores pueden simplificar en gran medida el código para manejar solicitudes HTTP.
+
+#### JsonBody
+Se utiliza para extraer datos JSON del cuerpo de la solicitud y deserializarlos en un tipo específico.
+
+rust
+#[handler]
+async fn create_user(json: JsonBody<User>) -> String {
+    let user = json.into_inner();
+    format!("Se ha creado un usuario con ID: {}", user.id)
+}
+#### FormBody
+Extrae datos de formulario del cuerpo de la solicitud y los deserializa en un tipo específico.
+
+rust
+#[handler]
+async fn update_user(form: FormBody<User>) -> String {
+    let user = form.into_inner();
+    format!("Se ha actualizado el usuario con ID: {}", user.id)
+}
+#### CookieParam
+Extrae un valor específico de la Cookie de la solicitud.
+
+``` rust
+//Cuando el segundo parámetro es true,
+//si el valor no existe, into_inner() provocará un pánico.
+//Cuando es false, el método into_inner() devuelve Option<T>.
+#[handler]
+fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
+    format!("ID de usuario obtenido de la Cookie: {}", user_id.into_inner())
+}
+```
+#### HeaderParam
+Extrae un valor específico de los encabezados de la solicitud.
+
+```rust
+#[handler]
+fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
+    format!("ID de usuario obtenido del encabezado: {}", user_id.into_inner())
+}
+```
+#### PathParam
+Extrae parámetros de la ruta URL.
+
+```rust
+#[handler]
+fn get_user(id: PathParam<i64>) -> String {
+    format!("ID de usuario obtenido de la ruta: {}", id.into_inner())
+}
+```
+#### QueryParam
+Extrae parámetros de la cadena de consulta URL.
+
+``` rust
+#[handler]
+fn search_user(id: QueryParam<i64,true>) -> String {
+    format!("Buscando usuario con ID: {}", id.into_inner())
+}
+```
+### Uso avanzado
+
 Multiples tipos de datos pueden ser mezclados en un tipo de dato específico. Puedes definir un tipo de dato personalizado como el que se encuentra a continuación:
 
 ```rust
