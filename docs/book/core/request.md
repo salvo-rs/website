@@ -76,7 +76,69 @@ Then `id=123&id=234` will be parsed:
 let users: Users = req.parse_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
+### Extractors
+The salvo framework provides built-in request parameter extractors. These extractors can greatly simplify the code for handling HTTP requests.
 
+#### JsonBody
+Used to extract JSON data from the request body and deserialize it into a specified type.
+
+``` rust
+#[handler]
+async fn create_user(json: JsonBody<User>) -> String {
+    let user = json.into_inner();
+    format!("Created user with ID: {}", user.id)
+}
+```
+#### FormBody
+Extracts form data from the request body and deserializes it into a specified type.
+
+``` rust
+#[handler]
+async fn update_user(form: FormBody<User>) -> String {
+    let user = form.into_inner();
+    format!("Updated user with ID: {}", user.id)
+}
+```
+#### CookieParam
+Extracts a specific value from the request's Cookie.
+
+``` rust
+//When the second parameter is true, if the value doesn't exist, 
+//into_inner() will panic. When it's false, the into_inner()
+//method returns Option<T>.
+#[handler]
+fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
+    format!("User ID retrieved from Cookie: {}", user_id.into_inner())
+}
+```
+#### HeaderParam
+Extracts a specific value from the request headers.
+
+``` rust
+#[handler]
+fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
+    format!("User ID retrieved from header: {}", user_id.into_inner())
+}
+```
+#### PathParam
+Extracts parameters from the URL path.
+
+``` rust
+#[handler]
+fn get_user(id: PathParam<i64>) -> String {
+    format!("User ID retrieved from path: {}", id.into_inner())
+}
+```
+#### QueryParam
+Extracts parameters from the URL query string.
+
+``` rust
+#[handler]
+fn search_user(id: QueryParam<i64,true>) -> String {
+    format!("Searching for user with ID: {}", id.into_inner())
+}
+```
+### Advanced Usage
 Multiple data sources can be merged to parse out a specific type. You can define a custom type first, for example:
 
 ```rust

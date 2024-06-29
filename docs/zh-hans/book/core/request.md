@@ -81,6 +81,69 @@ let users: Users = req.parse_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
 
+### 内置提取器
+框架内置了请求参数提取器。这些提取器可以大大简化处理HTTP请求的代码
+
+#### JsonBody
+用于从请求体中提取 JSON 数据并反序列化为指定类型。
+
+``` rust
+#[handler]
+async fn create_user(json: JsonBody<User>) -> String {
+    let user = json.into_inner();
+    format!("已创建ID为 {} 的用户", user.id)
+}
+```
+#### FormBody
+从请求体中提取表单数据并反序列化为指定类型。
+
+``` rust
+#[handler]
+async fn update_user(form: FormBody<User>) -> String {
+    let user = form.into_inner();
+    format!("已更新ID为 {} 的用户", user.id)
+}
+```
+#### CookieParam
+从请求的 Cookie 中提取特定的值。
+
+```rust
+//第二个参数 为 true 时如果值不存在，into_inner() 会 panic, 为 false,
+//into_inner() 方法返回 Option<T>。
+#[handler]
+fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
+    format!("从Cookie中获取的用户ID: {}", user_id.into_inner())
+}
+```
+#### HeaderParam
+
+从请求头中提取特定的值。
+
+```rust
+#[handler]
+fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
+    format!("从请求头中获取的用户ID: {}", user_id.into_inner())
+}
+```
+#### PathParam
+从 URL 路径中提取参数。
+
+```rust
+#[handler]
+fn get_user(id: PathParam<i64>) -> String {
+    format!("从路径中获取的用户ID: {}", id.into_inner())
+}
+```
+#### QueryParam
+从 URL 查询字符串中提取参数。
+
+``` rust
+#[handler]
+fn search_user(id: QueryParam<i64,true>) -> String {
+    format!("正在搜索ID为 {} 的用户", id.into_inner())
+}
+```
+### 高阶用法 
 可以合并多个数据源, 解析出特定类型, 可以先定义一个自定义的类型, 比如: 
 
 ```rust
