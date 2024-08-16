@@ -1,6 +1,6 @@
-# Affix
+# Affix State
 
-Affix 中間件用於往 Depot 中添加共享數據.
+Affix State 中間件用於往 Depot 中添加共享數據.
 
 _**示例代碼**_ 
 

@@ -1,6 +1,6 @@
-# Affix
+# Affix State
 
-El middleware Affix para agrega datos compartidos al depósito
+El middleware Affix State para agrega datos compartidos al depósito
 
 _**Ejemplo**_
 

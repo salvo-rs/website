@@ -1,6 +1,6 @@
-# Affix
+# Affix State
 
-Affix middleware for adding shared data to Depot.
+Affix State middleware for adding shared data to Depot.
 
 _**Example**_
 
