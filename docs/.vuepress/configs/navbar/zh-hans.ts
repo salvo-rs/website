@@ -12,7 +12,7 @@ export const navbarZhHans: NavbarConfig = [
       {
         text: '常用功能',
         children: [
-          '/zh-hans/book/features/affix.md',
+          '/zh-hans/book/features/affix-state.md',
           '/zh-hans/book/features/compression.md',
           '/zh-hans/book/features/flash.md',
           '/zh-hans/book/features/force-https.md',

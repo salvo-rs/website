@@ -12,7 +12,7 @@ export const navbarEs: NavbarConfig = [
       {
         text: 'Características Comunes',
         children: [
-          '/es/book/features/affix.md',
+          '/es/book/features/affix-state.md',
           '/es/book/features/compression.md',
           '/es/book/features/flash.md',
           '/es/book/features/force-https.md',

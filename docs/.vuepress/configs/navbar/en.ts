@@ -12,7 +12,7 @@ export const navbarEn: NavbarConfig = [
       {
         text: 'Common Features',
         children: [
-          '/book/features/affix.md',
+          '/book/features/affix-state.md',
           '/book/features/compression.md',
           '/book/features/flash.md',
           '/book/features/force-https.md',

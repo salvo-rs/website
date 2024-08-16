@@ -1,6 +1,6 @@
 export const featuresChildren = function (bookRoot: string) {
   return [
-    `${bookRoot}/features/affix.md`,
+    `${bookRoot}/features/affix-state.md`,
     `${bookRoot}/features/basic-auth.md`,
     `${bookRoot}/features/cache.md`,
     `${bookRoot}/features/caching-headers.md`,
