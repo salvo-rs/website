@@ -51,7 +51,7 @@ tracing-subscriber = "0.3"
 
 - 您可以省略函數中某些用不着的參數, 比如這裏面的 `_req`, `_depot`, `_ctrl` 都沒有被使用, 可以直接不寫:
   
-    ``` rust
+    ```rust
     #[handler]
     async fn hello(res: &mut Response) {
         res.render("Hello world");

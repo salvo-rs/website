@@ -51,7 +51,7 @@ tracing-subscriber = "0.3"
 
 - 您可以省略函数中某些用不着的参数, 比如这里面的 `_req`, `_depot`, `_ctrl` 都没有被使用, 可以直接不写:
   
-    ``` rust
+    ```rust
     #[handler]
     async fn hello(res: &mut Response) {
         res.render("Hello world");

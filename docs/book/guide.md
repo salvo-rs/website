@@ -51,7 +51,7 @@ There are many ways to write function handler.
 
 - You can omit function arguments if they are not used, like `_req`, `_depot`, `_ctrl` in this example:
 
-    ``` rust
+    ```rust
     #[handler]
     async fn hello(res: &mut Response) {
         res.render("Hello world");

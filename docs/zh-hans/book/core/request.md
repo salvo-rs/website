@@ -87,7 +87,7 @@ assert_eq!(user.ids, vec![123, 234]);
 #### JsonBody
 用于从请求体中提取 JSON 数据并反序列化为指定类型。
 
-``` rust
+```rust
 #[handler]
 async fn create_user(json: JsonBody<User>) -> String {
     let user = json.into_inner();
@@ -97,7 +97,7 @@ async fn create_user(json: JsonBody<User>) -> String {
 #### FormBody
 从请求体中提取表单数据并反序列化为指定类型。
 
-``` rust
+```rust
 #[handler]
 async fn update_user(form: FormBody<User>) -> String {
     let user = form.into_inner();
@@ -137,7 +137,7 @@ fn get_user(id: PathParam<i64>) -> String {
 #### QueryParam
 从 URL 查询字符串中提取参数。
 
-``` rust
+```rust
 #[handler]
 fn search_user(id: QueryParam<i64,true>) -> String {
     format!("正在搜索ID为 {} 的用户", id.into_inner())

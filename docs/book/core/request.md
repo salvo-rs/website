@@ -82,7 +82,7 @@ The salvo framework provides built-in request parameter extractors. These extrac
 #### JsonBody
 Used to extract JSON data from the request body and deserialize it into a specified type.
 
-``` rust
+```rust
 #[handler]
 async fn create_user(json: JsonBody<User>) -> String {
     let user = json.into_inner();
@@ -92,7 +92,7 @@ async fn create_user(json: JsonBody<User>) -> String {
 #### FormBody
 Extracts form data from the request body and deserializes it into a specified type.
 
-``` rust
+```rust
 #[handler]
 async fn update_user(form: FormBody<User>) -> String {
     let user = form.into_inner();
@@ -102,7 +102,7 @@ async fn update_user(form: FormBody<User>) -> String {
 #### CookieParam
 Extracts a specific value from the request's Cookie.
 
-``` rust
+```rust
 //When the second parameter is true, if the value doesn't exist, 
 //into_inner() will panic. When it's false, the into_inner()
 //method returns Option<T>.
@@ -114,7 +114,7 @@ fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
 #### HeaderParam
 Extracts a specific value from the request headers.
 
-``` rust
+```rust
 #[handler]
 fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
     format!("User ID retrieved from header: {}", user_id.into_inner())
@@ -123,7 +123,7 @@ fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
 #### PathParam
 Extracts parameters from the URL path.
 
-``` rust
+```rust
 #[handler]
 fn get_user(id: PathParam<i64>) -> String {
     format!("User ID retrieved from path: {}", id.into_inner())
@@ -132,7 +132,7 @@ fn get_user(id: PathParam<i64>) -> String {
 #### QueryParam
 Extracts parameters from the URL query string.
 
-``` rust
+```rust
 #[handler]
 fn search_user(id: QueryParam<i64,true>) -> String {
     format!("Searching for user with ID: {}", id.into_inner())

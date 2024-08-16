@@ -51,7 +51,7 @@ Existen muchas formas para escribir una función del tipo controlador.
 
 - Puedes omitir los argumentos como `_req`, `_depot`, `_ctrl` si no los usas como se ve en el siguiente ejemplo:
 
-    ``` rust
+    ```rust
     #[handler]
     async fn hello(res: &mut Response) {
         res.render("Hello world");
