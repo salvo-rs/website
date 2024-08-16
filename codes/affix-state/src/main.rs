@@ -1,4 +1,3 @@
-use salvo::affix;
 use salvo::prelude::*;
 
 #[handler]
@@ -32,7 +31,7 @@ fn route() -> Router {
         password: "pwd".to_string(),
     };
     Router::new()
-        .hoop(affix::inject(config).insert("custom_data", "I love this world!"))
+        .hoop(affix_state::inject(config).insert("custom_data", "I love this world!"))
         .get(hello)
         .push(Router::with_path("hello").get(hello))
 }

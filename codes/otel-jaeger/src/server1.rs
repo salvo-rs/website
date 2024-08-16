@@ -1,10 +1,11 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use opentelemetry::trace::{FutureExt, SpanKind, TraceContextExt, Tracer as _};
+use opentelemetry::trace::{FutureExt, SpanKind, TraceContextExt, Tracer as _, TracerProvider as _};
 use opentelemetry::{global, KeyValue};
 use opentelemetry_http::HeaderInjector;
-use opentelemetry_sdk::{propagation::TraceContextPropagator, trace::Tracer};
+use opentelemetry_sdk::trace::{Tracer, TracerProvider};
+use opentelemetry_sdk::{propagation::TraceContextPropagator, Resource};
 use reqwest::{Client, Method, Url};
 use salvo::otel::{Metrics, Tracing};
 use salvo::prelude::*;
@@ -12,12 +13,15 @@ use salvo::prelude::*;
 mod exporter;
 use exporter::Exporter;
 
-fn init_tracer() -> Tracer {
+fn init_tracer_provider() -> TracerProvider {
     global::set_text_map_propagator(TraceContextPropagator::new());
-    opentelemetry_jaeger::new_collector_pipeline()
-        .with_service_name("salvo")
-        .with_endpoint("http://localhost:14268/api/traces")
-        .with_hyper()
+    opentelemetry_otlp::new_pipeline()
+        .tracing()
+        .with_trace_config(
+            opentelemetry_sdk::trace::Config::default()
+                .with_resource(Resource::new(vec![KeyValue::new("service.name", "server1")])),
+        )
+        .with_exporter(opentelemetry_otlp::new_exporter().tonic())
         .install_batch(opentelemetry_sdk::runtime::Tokio)
         .unwrap()
 }
@@ -34,10 +38,7 @@ async fn index(req: &mut Request, depot: &mut Depot) -> String {
 
     let body = std::str::from_utf8(req.payload().await.unwrap()).unwrap();
     let req = {
-        let mut req = reqwest::Request::new(
-            Method::GET,
-            Url::from_str("http://localhost:5801/api2").unwrap(),
-        );
+        let mut req = reqwest::Request::new(Method::GET, Url::from_str("http://localhost:5801/api2").unwrap());
         global::get_text_map_propagator(|propagator| {
             propagator.inject_context(&cx, &mut HeaderInjector(req.headers_mut()))
         });
@@ -66,9 +67,9 @@ async fn index(req: &mut Request, depot: &mut Depot) -> String {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    let tracer = init_tracer();
+    let tracer = init_tracer_provider().tracer("app");
     let router = Router::new()
-        .hoop(affix::inject(Arc::new(tracer.clone())))
+        .hoop(affix_state::inject(Arc::new(tracer.clone())))
         .hoop(Metrics::new())
         .hoop(Tracing::new(tracer))
         .push(Router::with_path("api1").get(index))

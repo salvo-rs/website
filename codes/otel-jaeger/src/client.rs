@@ -6,31 +6,33 @@ use opentelemetry::{
     Context, KeyValue,
 };
 use opentelemetry_http::HeaderInjector;
-use opentelemetry_sdk::{propagation::TraceContextPropagator, trace::Tracer};
+use opentelemetry_otlp::WithExportConfig;
+use opentelemetry_sdk::propagation::TraceContextPropagator;
 use reqwest::{Client, Method, Url};
 
-fn init_tracer() -> Tracer {
+fn init_tracer() {
     global::set_text_map_propagator(TraceContextPropagator::new());
-    opentelemetry_jaeger::new_collector_pipeline()
-        .with_service_name("salvo")
-        .with_endpoint("http://localhost:14268/api/traces")
-        .with_hyper()
+    let provider = opentelemetry_otlp::new_pipeline()
+        .tracing()
+        .with_exporter(
+            opentelemetry_otlp::new_exporter()
+                .http()
+                .with_endpoint("http://localhost:14268/api/traces"),
+        )
         .install_batch(opentelemetry_sdk::runtime::Tokio)
-        .unwrap()
+        .unwrap();
+    let _ = global::set_tracer_provider(provider);
 }
 
 #[tokio::main]
 async fn main() {
-    let _tracer = init_tracer();
+    init_tracer();
     let client = Client::new();
     let span = global::tracer("example-opentelemetry/client").start("request/server1");
     let cx = Context::current_with_span(span);
 
     let req = {
-        let mut req = reqwest::Request::new(
-            Method::GET,
-            Url::from_str("http://localhost:5800/api1").unwrap(),
-        );
+        let mut req = reqwest::Request::new(Method::GET, Url::from_str("http://localhost:5800/api1").unwrap());
         global::get_text_map_propagator(|propagator| {
             propagator.inject_context(&cx, &mut HeaderInjector(req.headers_mut()));
             println!("{:?}", req.headers_mut());
