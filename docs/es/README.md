@@ -14,7 +14,7 @@ features:
   - title: La Simplicidad Primero
     details: Sólo con un conocimiento básico de Rust, puedes escribir un poderoso y eficiente servidor comparable a la velocidad de desarrollo de algo como un servidor we escrito en Go.
   - title: Funciones Potentes
-    details: Aunque es simple, sigue siendo poderoso, con Multipart, OpenAPI, extracción de datos de solicitudes, entre otros. Integrados, que pueden satisfacer las necesidades de la mayoría de los escenarios comerciales.
+    details: Aunque es simple, sigue siendo poderoso, con Multipart, OpenAPI，HTTP2/3, LetsEncrypt, extracción de datos de solicitudes, entre otros. Integrados, que pueden satisfacer las necesidades de la mayoría de los escenarios comerciales.
   - title: Rendimiento
     details: Gracias a las ventajas de rendimiento de Rust, puedes escribir aplicaciones del lado del servidor de muy alto rendimiento con mucha facilidad.
   - title: Rutas tipo Árbol
