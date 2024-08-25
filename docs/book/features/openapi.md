@@ -49,7 +49,7 @@ By using use salvo::oapi::extract:*;, you can import commonly used data extracto
 
 - `JsonBody<T>`: an extractor that extracts information from JSON-formatted payloads submitted in requests.
 
-## `#[endpoint]` 宏
+## `#[endpoint]`
 
 When generating OpenAPI documentation, the `#[endpoint]` macro needs to be used instead of the regular `#[handler]` macro. It is actually an enhanced version of the `#[handler]` macro.
 

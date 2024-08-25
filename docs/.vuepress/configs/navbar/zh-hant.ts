@@ -1,64 +1,76 @@
 import type { NavbarConfig } from '@vuepress/theme-default'
-import versions from './versions.js'
+// import versions from './versions.js'
 
 export const navbarZhHant: NavbarConfig = [
   {
-    text: '葵花寶典',
-    link: '/zh-hant/book/',
+    text: '開發指南',
+    link: '/zh-hans/book/',
   },
   {
-    text: '中間件',
+    text: '功能大全',
     children: [
       {
         text: '常用功能',
         children: [
-          '/zh-hant/book/features/affix-state.md',
-          '/zh-hant/book/features/compression.md',
-          '/zh-hant/book/features/flash.md',
-          '/zh-hant/book/features/force-https.md',
-          '/zh-hant/book/features/logging.md',
-          '/zh-hant/book/features/proxy.md',
-          '/zh-hant/book/features/serve-static.md',
-          '/zh-hant/book/features/session.md',
-          '/zh-hant/book/features/sse.md',
-          '/zh-hant/book/features/timeout.md',
-          '/zh-hant/book/features/trailing-slash.md',
-          '/zh-hant/book/features/websocket.md',
+          '/zh-hans/book/features/affix-state.md',
+          '/zh-hans/book/features/catch-panic.md',
+          '/zh-hans/book/features/compression.md',
+          '/zh-hans/book/features/flash.md',
+          '/zh-hans/book/features/force-https.md',
+          '/zh-hans/book/features/logging.md',
+          '/zh-hans/book/features/proxy.md',
+          '/zh-hans/book/features/request-id.md',
+          '/zh-hans/book/features/serve-static.md',
+          '/zh-hans/book/features/session.md',
+          '/zh-hans/book/features/sse.md',
+          '/zh-hans/book/features/timeout.md',
+          '/zh-hans/book/features/tower-compat.md',
+          '/zh-hans/book/features/trailing-slash.md',
+          '/zh-hans/book/features/websocket.md',
         ],
       },
       {
         text: '用戶驗證',
         children: [
-          '/zh-hant/book/features/basic-auth.md',
-          '/zh-hant/book/features/jwt-auth.md',
+          '/zh-hans/book/features/basic-auth.md',
+          '/zh-hans/book/features/jwt-auth.md',
         ],
       },
       {
         text: '文檔協作',
         children: [
-          '/zh-hant/book/features/openapi.md',
+          '/zh-hans/book/features/openapi.md',
         ],
       },
       {
         text: '安全防護',
         children: [
-          '/zh-hant/book/features/cors.md',
-          '/zh-hant/book/features/csrf.md',
-          '/zh-hant/book/features/rate-limiter.md',
+          '/zh-hans/book/features/concurrency-limiter.md',
+          '/zh-hans/book/features/cors.md',
+          '/zh-hans/book/features/csrf.md',
+          '/zh-hans/book/features/rate-limiter.md',
         ],
       },
       {
         text: '數據緩存',
         children: [
-          '/zh-hant/book/features/cache.md',
-          '/zh-hant/book/features/caching-headers.md',
+          '/zh-hans/book/features/cache.md',
+          '/zh-hans/book/features/caching-headers.md',
         ],
       },
     ],
   },
   {
-    text: '資助項目',
-    link: '/zh-hant/donate.html',
+    text: '文檔參考',
+    link: 'https://docs.rs/salvo/latest/salvo/',
   },
-  versions,
+  {
+    text: '資助項目',
+    link: '/zh-hans/donate.html',
+  },
+  {
+    text: 'Gitee',
+    link: 'https://gitee.com/salvo-rs/salvo',
+  },
+  // versions,
 ]

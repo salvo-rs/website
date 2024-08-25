@@ -41,7 +41,7 @@ tracing-subscriber = "0.3"
 这里的 `hello_world` 是一个 `Handler`, 用于处理用户请求. `#[handler]` 可以让一个函数方便实现 `Handler` trait. 并且, 它允许我们用不同的方式简写函数的参数.
 
 - 原始形式:
-  
+
     ```rust
     #[handler]
     async fn hello(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
@@ -50,7 +50,7 @@ tracing-subscriber = "0.3"
     ```
 
 - 您可以省略函数中某些用不着的参数, 比如这里面的 `_req`, `_depot`, `_ctrl` 都没有被使用, 可以直接不写:
-  
+
     ```rust
     #[handler]
     async fn hello(res: &mut Response) {

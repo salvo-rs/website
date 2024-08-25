@@ -1,9 +1,8 @@
 # Catcher
 
-當 `Response` 的狀態碼為錯誤，且頁面中的 `Body` 為空時，salvo 會嘗試使用 `Catcher` 來捕捉此錯誤，並展示一個友善的錯誤提示頁面。
+如果 `Response` 的狀態碼是錯誤, 而頁麵裏麵的 `Body` 是空, 這時 salvo 會試圖使用 `Catcher` 捕獲這個錯誤, 顯示一個友好的錯誤頁麵.
 
-您可以透過 `Catcher::default()` 獲取系統預設的 `Catcher`，並將其加入至 `Service` 中。
-
+可以通過 `Catcher::default()` 返回一個係統默認的 `Catcher`, 然後講它添加到 `Service` 上.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -11,11 +10,12 @@ use salvo::catcher::Catcher;
 Service::new(router).catcher(Catcher::default());
 ```
 
-預設的 `Catcher` 支援以 `XML`、`JSON`、`HTML`、`Text` 等格式來回應錯誤訊息。
+默認的 `Catcher` 支持以 `XML`, `JSON`, `HTML`, `Text` 格式發送錯誤頁麵.
 
-您還可以透過為預設的 `Catcher` 加入 `hoop`，來新增自訂的錯誤處理函式至 `Catcher`。這些自訂的錯誤處理函式本質上仍是 `Handler`。
+可以通過給這個默認的 `Catcher` 添加 `hoop` 的方式, 把自定義的錯誤捕獲程序添加到`Catcher`上. 這個錯誤捕獲的程序依然是 `Handler`.
 
-您可利用 `hoop` 為 `Catcher` 增添多個自訂的錯誤捕捉處理器。這些自訂的錯誤處理器能在處置錯誤後，呼叫 `FlowCtrl::skip_next` 方法以跳過餘下的錯誤處理流程，從而提前結束處理。
+你可以通過 `hoop` 為 `Catcher` 添加多個自定義的錯誤捕獲程序. 自定義的錯誤處理程序可以在處理錯誤後調用 `FlowCtrl::skip_next` 方法跳過後續錯誤程序，提前返回. 
+
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
 

@@ -1,6 +1,6 @@
 # Response
 
-在 `Handler` 中, `Response` 会被作为参数传入:
+在 `Handler` 中, ()`Response`]((https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html)) 会被作为参数传入:
 
 ```rust
 #[handler]
@@ -27,10 +27,10 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
     ```rust
     res.render("Hello world!");
-    ``` 
+    ```
 
 - 写入 JSON 序列化数据
-    
+
     ```rust
     use serde::Serialize;
     use salvo::prelude::Json;
@@ -67,7 +67,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ```
 
 ## 重定向到其他URL
-- 使用 `render` 方法可以向 `Response` 写入一个重定向响应，导航到一个新的URL。当你调用 Redirect::found 方法时，它会设置 HTTP 状态码为 302（Found），表示临时重定向。
+- 使用 `render` 方法可以向 `Response` 写入一个重定向响应，导航到一个新的URL. 当你调用 Redirect::found 方法时，它会设置 HTTP 状态码为 302（Found），表示临时重定向. 
     ```rust
     use salvo::prelude::*;
 
@@ -76,3 +76,8 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
         res.render(Redirect::found("https://salvo.rs/"));
     }
     ```
+
+
+## ResBody
+
+Response 返回的 Body 类型是 `ResBody`, 它是一个枚举，在出错时被设置为 `ResBody::Error` ,这里包含错误的信息，用于延后处理错误，`StatusError` 实际上并没实现 `Writer`, 目的是让你可以在 `Catcher` 中自定义自己的显示方式.

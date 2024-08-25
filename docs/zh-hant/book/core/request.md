@@ -1,6 +1,6 @@
 # Request
 
-在 Salvo 中可以通過 `Request` 獲取用戶請求的數據:
+在 Salvo 中可以通過 [`Request`](https://docs.rs/salvo_core/latest/salvo_core/http/request/struct.Request.html) 獲取用戶請求的數據:
 
 ```rust
 #[handler]
@@ -19,7 +19,7 @@ req.query::<String>("id");
 
 ## 獲取 Form 數據
 
-可以通過 ```get_form``` 獲取查詢參數, 此函數爲異步函數:
+可以通過 `get_form` 獲取查詢參數, 此函數為異步函數:
 
 ```rust
 req.form::<String>("id").await;
@@ -35,21 +35,21 @@ req.parse_json::<User>().await;
 ## 提取 Request 數據
 
 
-`Request` 提供多個方法將這些數據解析爲強類型結構.
+`Request` 提供多個方法將這些數據解析為強類型結構.
 
-* `parse_params`: 將請求的 router params 解析爲特定的數據類型;
-* `parse_queries`: 將請求的 URL queries 解析爲特定的數據類型;
-* `parse_headers`: 將請求的 HTTP headers 解析爲特定的數據類型;
+* `parse_params`: 將請求的 router params 解析為特定的數據類型;
+* `parse_queries`: 將請求的 URL queries 解析為特定的數據類型;
+* `parse_headers`: 將請求的 HTTP headers 解析為特定的數據類型;
 * `parse_json`: 將請求的 HTTP body 部分的數據當作 JSON 格式解析到特定的類型;
-* `parse_form`: 將請求的 HTTP body 部分的數據當作 Form 表單解析到特定的類型;
-* `parse_body`: 根據請求的 `content-type` 的類型, 將 HTTP body 部分的數據解析爲特定類型. 
-* `extract`: 可以合併不同的數據源解析出特定的類型.
+* `parse_form`: 將請求的 HTTP body 部分的數據當作 Form 錶單解析到特定的類型;
+* `parse_body`: 根據請求的 `content-type` 的類型, 將 HTTP body 部分的數據解析為特定類型. 
+* `extract`: 可以合並不同的數據源解析出特定的類型.
 
 ## 解析原理
 
-此處通過自定義的 `serde::Deserializer` 將類似 `HashMap<String, String>` 和 ```HashMap<String, Vec<String>>``` 的數據提取爲特定的數據類型.
+此處通過自定義的 `serde::Deserializer` 將類似 `HashMap<String, String>` 和 `HashMap<String, Vec<String>>` 的數據提取為特定的數據類型.
 
-比如: `URL queries` 實際上被提取爲一個 [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) 類型, ```MultiMap``` 可以認爲就是一個類似 ```HashMap<String, Vec<String>>``` 的數據結構. 如果請求的 URL 是 ```http://localhost/users?id=123&id=234```, 我們提供的目標類型是:
+比如: `URL queries` 實際上被提取為一個 [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html) 類型, `MultiMap` 可以認為就是一個類似 `HashMap<String, Vec<String>>` 的數據結構. 如果請求的 URL 是 `http://localhost/users?id=123&id=234`, 我們提供的目標類型是:
 
 ```rust
 #[derive(Deserialize)]
@@ -58,7 +58,7 @@ struct User {
 }
 ```
 
-則第一個 ```id=123``` 會被解析, ```id=234``` 則被丟棄:
+則第一個 `id=123` 會被解析, `id=234` 則被丟棄:
 
 ```rust
 let user: User = req.parse_queries().unwrap();
@@ -74,17 +74,18 @@ struct Users {
 }
 ```
 
-則 ```id=123&id=234``` 都會被解析:
+則 `id=123&id=234` 都會被解析:
 
 ```rust
 let users: Users = req.parse_queries().unwrap();
 assert_eq!(user.ids, vec![123, 234]);
 ```
+
 ### 內置提取器
-框架內置了請求參數提取器。這些提取器可以大大簡化處理HTTP請求的代碼
+框架內置了請求參數提取器. 這些提取器可以大大簡化處理HTTP請求的代碼
 
 #### JsonBody
-用於從請求體中提取 JSON 數據並反序列化為指定類型。
+用於從請求體中提取 JSON 數據並反序列化為指定類型. 
 
 ```rust
 #[handler]
@@ -94,7 +95,8 @@ async fn create_user(json: JsonBody<User>) -> String {
 }
 ```
 #### FormBody
-從請求體中提取表單數據並反序列化為指定類型。
+從請求體中提取錶單數據並反序列化為指定類型. 
+
 ```rust
 #[handler]
 async fn update_user(form: FormBody<User>) -> String {
@@ -103,18 +105,19 @@ async fn update_user(form: FormBody<User>) -> String {
 }
 ```
 #### CookieParam
-從請求的 Cookie 中提取特定的值。
+從請求的 Cookie 中提取特定的值. 
 
 ```rust
-//當第二個參數為 true 時，如果值不存在，into_inner() 會引發 panic。
-//當為 false 時，into_inner() 方法返回 Option<T>。
+//第二個參數 為 true 時如果值不存在，into_inner() 會 panic, 為 false,
+//into_inner() 方法返回 Option<T>. 
 #[handler]
 fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
     format!("從Cookie中獲取的用戶ID: {}", user_id.into_inner())
 }
 ```
 #### HeaderParam
-從請求頭中提取特定的值。
+
+從請求頭中提取特定的值. 
 
 ```rust
 #[handler]
@@ -123,7 +126,7 @@ fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
 }
 ```
 #### PathParam
-從 URL 路徑中提取參數。
+從 URL 路徑中提取參數. 
 
 ```rust
 #[handler]
@@ -132,7 +135,7 @@ fn get_user(id: PathParam<i64>) -> String {
 }
 ```
 #### QueryParam
-從 URL 查詢字符串中提取參數。
+從 URL 查詢字符串中提取參數. 
 
 ```rust
 #[handler]
@@ -140,16 +143,15 @@ fn search_user(id: QueryParam<i64,true>) -> String {
     format!("正在搜索ID為 {} 的用戶", id.into_inner())
 }
 ```
-### 高階用法
-
-可以合併多個數據源, 解析出特定類型, 可以先定義一個自定義的類型, 比如: 
+### 高階用法 
+可以合並多個數據源, 解析出特定類型, 可以先定義一個自定義的類型, 比如: 
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 /// 默認從 body 中獲取數據字段值
 #[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
-    /// 其中, id 號從請求路徑參數中獲取, 並且自動解析數據爲 i64 類型.
+    /// 其中, id 號從請求路徑參數中獲取, 並且自動解析數據為 i64 類型.
     #[salvo(extract(source(from = "param")))]
     id: i64,
     /// 可以使用引用類型, 避免內存複製.
@@ -168,7 +170,7 @@ async fn edit(req: &mut Request) {
 }
 ```
 
-甚至於可以直接把類型作爲參數傳入函數, 像這樣:
+甚至於可以直接把類型作為參數傳入函數, 像這樣:
 
 
 ```rust
@@ -178,7 +180,7 @@ async fn edit<'a>(good_man: GoodMan<'a>) {
 }
 ```
 
-數據類型的定義有相當大的靈活性, 甚至可以根據需要解析爲嵌套的結構:
+數據類型的定義有相當大的靈活性, 甚至可以根據需要解析為嵌套的結構:
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
@@ -215,11 +217,11 @@ struct Nested<'a> {
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-如果在上面例子中 Nested<'a> 沒有與父級相同的字段，可以使用 `#[serde(flatten)]`, 否則需要使用 `·`#[salvo(extract(flatten))]`.
+如果在上麵例子中 Nested<'a> 冇有與父級相同的字段，可以使用 `#[serde(flatten)]`, 否則需要使用 `·`#[salvo(extract(flatten))]`.
 
 ### `#[salvo(extract(source(parse)))]`
 
-實際上還可以給 `source` 添加一個 `parse` 的參數指定特定的解析方式. 如果不指定這個參數，解析會根據 `Request` 的信息決定 `Body` 部分的解析方式，如果是 `Form` 表單，則按照 `MuiltMap` 的方式解析，如果是 json 的 payload, 則按 json 格式解析. 一般情況下不需要指定這個參數, 極個別情況下, 指定這個參數可以實現一些特殊功能.
+實際上還可以給 `source` 添加一個 `parse` 的參數指定特定的解析方式. 如果不指定這個參數，解析會根據 `Request` 的信息決定 `Body` 部分的解析方式，如果是 `Form` 錶單，則按照 `MuiltMap` 的方式解析，如果是 json 的 payload, 則按 json 格式解析. 一般情況下不需要指定這個參數, 極個別情況下, 指定這個參數可以實現一些特殊功能.
 
 ```rust
 #[tokio::test]
@@ -251,4 +253,4 @@ async fn test_de_request_with_form_json_str() {
 }
 ```
 
-比如這裏實際請求發來的是 Form，但是某個字段的值是一段 json 的文本，這時候可以通過指定 `parse`，按 json 格式解析這個字符串。
+比如這裏實際請求發來的是 Form，但是某個字段的值是一段 json 的文本，這時候可以通過指定 `parse`，按 json 格式解析這個字符串. 

@@ -1,30 +1,30 @@
 # Capturador
 
-Si el código de estatus `Response` es un error, y el `Body` de `Response` se encuentra vacio, entonces salvo pudiera intentar usar el `Catcher` para capturar el error y mostrar una página de error amigable.
+Si el código de estado de `Response` es un error y el `Body` de la página está vacío, salvo intentará usar `Catcher` para capturar el error y mostrar una página de error amigable.
 
-Una forma fácil para crear un `Catcher` personalizado es retornar `Catcher` el predeterminado del sistema vía `Catcher::default()`, y agregar éste al  `Service` como se muestra a continuación.
+Puede devolver un `Catcher` predeterminado del sistema a través de `Catcher::default()` y luego agregarlo a `Service`.
 
 ```rust
 use salvo::catcher::Catcher;
 
-Service::new(router).with_catcher(Catcher::default());
+Service::new(router).catcher(Catcher::default());
 ```
 
-Por defecto `Catcher` soporta envío de página de erroresen formato `XML`, `JSON`, `HTML` y `Text` .
+El `Catcher` predeterminado admite el envío de páginas de error en formatos `XML`, `JSON`, `HTML`, `Text`.
 
-Puedes agregar un manejador de errores personalizados al `Catcher` agregando en el `hoop` por defecto el `Catcher`. El manejador de errores se encuentra en `Handler`.
+Puede agregar un receptor de errores personalizado a `Catcher` agregando `hoop` al `Catcher` predeterminado. Este receptor de errores sigue siendo un `Handler`.
 
-Puedes agregar múltiples manejadores de errores personalizados al `Catcher` a través de `hoop`. El controlador de errores personalizado puede llamar al método `FlowCtrl::skip_next` después de controlar el error para omitir los siguientes errores.
+Puede agregar múltiples receptores de errores personalizados a `Catcher` a través de `hoop`. Los controladores de errores personalizados se pueden llamar después de manejar errores. El método `FlowCtrl::skip_next` omite el programa de error subsiguiente y regresa antes.
 
 <CodeGroup>
-  <CodeGroupItem title="main.rs" active>
+<CodeGroupItem title="main.rs" active>
 
 @[code rust](../../../../codes/custom-error-page/src/main.rs)
 
-  </CodeGroupItem>
-  <CodeGroupItem title="Cargo.toml">
+</CodeGroupItem>
+<CodeGroupItem title="Cargo.toml">
 
 @[code toml](../../../../codes/custom-error-page/Cargo.toml)
 
-  </CodeGroupItem>
+</CodeGroupItem>
 </CodeGroup>

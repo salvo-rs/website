@@ -19,7 +19,7 @@ export const sidebarZhHans: SidebarConfig = {
           children: topicsChildren('/zh-hans/book'),
         },
         {
-          text: '主要功能',
+          text: '功能大全',
           children: featuresChildren('/zh-hans/book'),
         }
       ],

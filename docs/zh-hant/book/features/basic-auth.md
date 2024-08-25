@@ -2,7 +2,7 @@
 
 提供對 Basic Auth 的支持的中間件.
 
-_**示例代碼**_ 
+_**示例代碼**_
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

@@ -11,22 +11,25 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-处理函数 `handle` 默认签名包含四个参数, 依次是, `&mut Request, &mut Depot. &mut Response, &mut FlowCtrl`. Depot 是一个临时存储, 可以存储本次请求相关的数据. 
+处理函数 `handle` 默认签名包含四个参数, 依次是, `&mut Request, &mut Depot. &mut Response, &mut FlowCtrl`. Depot 是一个临时存储, 可以存储本次请求相关的数据.
 
-中间件其实也是 `Handler`, 它们可以对请求到达正式处理请求的 `Handler` 之前或者之后作一些处理 比如：登录验证, 数据压缩等.
+根据使用方式不一样，它可以被用作中间件(hoop), 它们可以对请求到达正式处理请求的 `Handler` 之前或者之后作一些处理 比如：登录验证, 数据压缩等.
 
 中间件是通过 `Router` 的 `hoop` 函数添加的. 被添加的中间件会影响当前的 `Router` 和它内部所有子孙 `Router`.
 
-## `Handler` 作为中间件
+`Handler` 也可以被用作参与路由匹配并最终执行的 `Handler`, 被称为 `goal`.
+
+## `Handler` 作为中间件(hoop)
 
 当 `Handler` 作为中间件时，它可以被添加到以下三种支持中间件的对象上：
 
-- `Service`, 任何请求都会通过 `Service` 中的中间件。
+- `Service`, 任何请求都会通过 `Service` 中的中间件. 
 
-- `Router`, 只有路由匹配成功时，请求才依次通过 `Service` 中定义的的中间件和匹配路径上搜集到的所有中间。
+- `Router`, 只有路由匹配成功时，请求才依次通过 `Service` 中定义的的中间件和匹配路径上搜集到的所有中间.
 
-- `Catcher`, 当错误发生时，且没有写入自定义的错误信息时，请求才会通过 `Catcher` 中的中间件。
+- `Catcher`, 当错误发生时，且没有写入自定义的错误信息时，请求才会通过 `Catcher` 中的中间件.
 
+- `Handler`, `Handler` 本身支持添加中间件包裹, 则行一些前置或者后置的逻辑. 
 
 ## `#[handler]` 宏的使用
 

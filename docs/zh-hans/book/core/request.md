@@ -1,6 +1,6 @@
 # Request
 
-在 Salvo 中可以通过 `Request` 获取用户请求的数据:
+在 Salvo 中可以通过 [`Request`](https://docs.rs/salvo_core/latest/salvo_core/http/request/struct.Request.html) 获取用户请求的数据:
 
 ```rust
 #[handler]
@@ -82,10 +82,10 @@ assert_eq!(user.ids, vec![123, 234]);
 ```
 
 ### 内置提取器
-框架内置了请求参数提取器。这些提取器可以大大简化处理HTTP请求的代码
+框架内置了请求参数提取器. 这些提取器可以大大简化处理HTTP请求的代码
 
 #### JsonBody
-用于从请求体中提取 JSON 数据并反序列化为指定类型。
+用于从请求体中提取 JSON 数据并反序列化为指定类型. 
 
 ```rust
 #[handler]
@@ -95,7 +95,7 @@ async fn create_user(json: JsonBody<User>) -> String {
 }
 ```
 #### FormBody
-从请求体中提取表单数据并反序列化为指定类型。
+从请求体中提取表单数据并反序列化为指定类型. 
 
 ```rust
 #[handler]
@@ -105,11 +105,11 @@ async fn update_user(form: FormBody<User>) -> String {
 }
 ```
 #### CookieParam
-从请求的 Cookie 中提取特定的值。
+从请求的 Cookie 中提取特定的值. 
 
 ```rust
 //第二个参数 为 true 时如果值不存在，into_inner() 会 panic, 为 false,
-//into_inner() 方法返回 Option<T>。
+//into_inner() 方法返回 Option<T>. 
 #[handler]
 fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
     format!("从Cookie中获取的用户ID: {}", user_id.into_inner())
@@ -117,7 +117,7 @@ fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
 ```
 #### HeaderParam
 
-从请求头中提取特定的值。
+从请求头中提取特定的值. 
 
 ```rust
 #[handler]
@@ -126,7 +126,7 @@ fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
 }
 ```
 #### PathParam
-从 URL 路径中提取参数。
+从 URL 路径中提取参数. 
 
 ```rust
 #[handler]
@@ -135,7 +135,7 @@ fn get_user(id: PathParam<i64>) -> String {
 }
 ```
 #### QueryParam
-从 URL 查询字符串中提取参数。
+从 URL 查询字符串中提取参数. 
 
 ```rust
 #[handler]
@@ -253,4 +253,4 @@ async fn test_de_request_with_form_json_str() {
 }
 ```
 
-比如这里实际请求发来的是 Form，但是某个字段的值是一段 json 的文本，这时候可以通过指定 `parse`，按 json 格式解析这个字符串。
+比如这里实际请求发来的是 Form，但是某个字段的值是一段 json 的文本，这时候可以通过指定 `parse`，按 json 格式解析这个字符串. 

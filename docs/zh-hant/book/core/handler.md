@@ -2,7 +2,7 @@
 
 ## 什麼是 Handler
 
-Handler 是負責處理 Request 請求的實體。Handler 本身是一個特徵（Trait），其中包含了一個名為 `handle` 的非同步方法。
+Handler 是負責處理 Request 請求的具體對象.  Handler 本身是一個 Trait, 內部包含一個 `handle` 的異步方法:
 
 ```rust
 #[async_trait]
@@ -11,18 +11,31 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-處理函數 `handle` 的預設簽名包含四個參數，分別是 `&mut Request、&mut Depot、&mut Response , &mut FlowCtrl`。Depot 用於暫存與該請求相關的數據。
+處理函數 `handle` 默認簽名包含四個參數, 依次是, `&mut Request, &mut Depot. &mut Response, &mut FlowCtrl`. Depot 是一個臨時存儲, 可以存儲本次請求相關的數據.
 
-中間件實際上也是 `Handler` 的一種形式，它們可以在請求被正式處理之前或之後執行某些操作，例如：進行用戶身份驗證、數據壓縮等。
+根據使用方式不一樣，它可以被用作中間件(hoop), 它們可以對請求到達正式處理請求的 `Handler` 之前或者之後作一些處理 比如：登錄驗證, 數據壓縮等.
 
-中間件可以透過 `Router` 的 `hoop` 方法來添加。一旦添加，該中間件會影響當前的 `Router` 以及其內部所有的子 `Router`。
+中間件是通過 `Router` 的 `hoop` 函數添加的. 被添加的中間件會影響當前的 `Router` 和它內部所有子孫 `Router`.
+
+`Handler` 也可以被用作參與路由匹配並最終執行的 `Handler`, 被稱為 `goal`.
+
+## `Handler` 作為中間件(hoop)
+
+當 `Handler` 作為中間件時，它可以被添加到以下三種支持中間件的對象上：
+
+- `Service`, 任何請求都會通過 `Service` 中的中間件. 
+
+- `Router`, 隻有路由匹配成功時，請求才依次通過 `Service` 中定義的的中間件和匹配路徑上搜集到的所有中間.
+
+- `Catcher`, 當錯誤發生時，且冇有寫入自定義的錯誤信息時，請求才會通過 `Catcher` 中的中間件.
+
+- `Handler`, `Handler` 本身支持添加中間件包裹, 則行一些前置或者後置的邏輯. 
 
 ## `#[handler]` 宏的使用
 
-使用 `#[handler]` 屬性可以顯著簡化代碼書寫並提高代碼靈活性。
+`#[handler]` 可以大量簡化代碼的書寫, 並且提升代碼的靈活度. 
 
-
-它可以被加在函數上，從而讓該函數實現 `Handler` 特徵：
+它可以加在一個函數上, 讓它實現 `Handler`:
 
 ```rust
 #[handler]
@@ -44,12 +57,12 @@ impl Handler for hello {
 }
 ```
 
-正確地，`#[handler]` 屬性的出現讓你在寫服務器處理邏輯時變得更加簡潔和直觀。它允許你將一個普通的異步函數，簡單地轉化為一個能夠處理網絡請求的處理器。以下是一些主要的優點：
+可以看到, 在使用 `#[handler]` 的情況下, 代碼變得簡單很多:
+- 不再需要手工添加 `#[async_trait]`.
+- 函數中不需要的參數已經省略, 對於需要的參數也可以按任意順序排佈.
+- 對於實現了 `Writer` 或者 `Scribe` 抽象的對象, 可以直接作為函數的返回值. 在這裏 `&'static str` 實現了 `Scribe`, 於是可以直接作為函數返回值返回.
 
-- 省略 `#[async_trait]`。
-- 參數靈活性： 使用 `#[handler]` 時，你可以根據需要選擇你的函數參數，且參數順序可以任意排列。
-- 方便的返回類型： 如果你的函數返回值實現了 `Writer` 或 `Scribe` 特徵，那麼這個值可以直接作為函數的返回值。例如，`&'static str` 類型實現了 `Scribe` 特徵，因此它可以直接作為返回值。
-`#[handler]` 不僅可以加在函數上, 也可以加在 `struct` 的 `impl` 上，讓 `struct` 實現 `Handler`, 這時 `impl` 代碼塊中的 `handle` 函數會被識別爲 `Handler` 中的 `handle` 的具體實現:
+`#[handler]` 不僅可以加在函數上, 也可以加在 `struct` 的 `impl` 上，讓 `struct` 實現 `Handler`, 這時 `impl` 代碼塊中的 `handle` 函數會被識別為 `Handler` 中的 `handle` 的具體實現:
 
 ```rust
 struct Hello;
@@ -64,8 +77,8 @@ impl Hello {
 
 ## 處理錯誤
 
-在 Salvo 中，`Handler` 可以返回 `Result`，只要 `Result` 類型中的 `Ok` 和 `Err` 分別實現了 `Writer` 特徵。
-考慮到 `anyhow` 庫的使用相當普遍，在啟用 `anyhow` 功能之後，`anyhow::Error` 會實現 `Writer` 特徵。`anyhow::Error` 會被轉換成 `InternalServerError`。
+Salvo 中的 `Handler` 可以返回 `Result`, 隻需要 `Result` 中的 `Ok` 和 `Err` 的類型都實現 `Writer` trait.
+考慮到 anyhow 的使用比較廣泛, 在開啓 `anyhow` 功能後, `anyhow::Error` 會實現 `Writer` trait. `anyhow::Error` 會被映射為 `InternalServerError`. 
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -77,7 +90,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-針對自定義錯誤類型，您可以根據需求輸出不同的錯誤頁面。
+對於自定義錯誤類型, 你可以根據需要輸出不同的錯誤頁麵.
 
 ```rust
 use salvo::anyhow;

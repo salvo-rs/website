@@ -21,7 +21,7 @@
 
     如果在第一個文件夾中找不到對應的文件, 則會到第二個文件夾中找.
 
-  `StaticDir` 支持在存在壓縮文件的情況下，優先發送壓縮文件。比如存在 `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br` 這幾個文件，則 `index.html.gz`, `index.html.zst`, `index.html.br` 被認爲是 `index.html` 的預壓縮版本，會根據請求信息，發送對應的壓縮文件。
+  `StaticDir` 支持在存在壓縮文件的情況下，優先發送壓縮文件. 比如存在 `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br` 這幾個文件，則 `index.html.gz`, `index.html.zst`, `index.html.br` 被認爲是 `index.html` 的預壓縮版本，會根據請求信息，發送對應的壓縮文件. 
     
 
 * 提供了對 `rust-embed` 的支持, 比如:

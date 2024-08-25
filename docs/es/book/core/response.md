@@ -1,74 +1,81 @@
 # Respuesta (Response)
 
-Podemos obtener la referencia de respuesta como parámetro del manejador de la función:
+En `Handler`, ()`Response`]((https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html)) se pasará como parámetro:
 
 ```rust
 #[handler]
 async fn hello_world(res: &mut Response) {
-    res.render("hello world!");
+res.render("¡Hola mundo!");
 }
 ```
 
-Cuando el servidor obtiene una solicitud de un cliente pero solo necesitas retornar una simple respuesta (es decir, omitir cualquier middleware u otro manejador), puedes simplemente usar `FlowCtrl`:
+`Response` Una vez que el servidor recibe la solicitud del cliente, cualquier `Handler` y middleware coincidentes pueden escribir datos en él. En algunos casos, como un middleware que desea evitar que se ejecuten middleware y `Handler` posteriores, puede usar `FlowCtrl`:
 
 ```rust
 #[handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
-    ctrl.skip_rest();
-    res.render("hello world!");
+ctrl.skip_rest();
+res.render("¡Hola mundo!");
 }
 ```
 
-## Escribir contenido (Write content)
+## Escribir contenido
 
-Escribe contenido directamente:
+Escribir datos en una `Respuesta` es muy simple:
 
-- Para escribir un texto plano:
+- Escribir datos en texto simple
 
-    ```rust
-    res.render("hello world!");
-    ```
+```rust
+res.render("¡Hola mundo!");
+```
 
-- Para escribir una serialización de un objeto con formato `json`
+- Escribir datos serializados en JSON
 
-    ```rust
-    #[derive(Serialize, Debug)]
-    struct User {
-        name: String,
-    }
-    let user = User{name: "jobs".to_string()};
-    res.render(Json(user));
-    ```
+```rust
+use serde::Serialize;
+use salvo::prelude::Json;
 
-- Para escribir un texto en formato `html`
+#[derive(Serialize, Debug)]
+struct User {
+name: String,
+}
+let user = User{name: "jobs".to_string()};
+res.render(Json(user));
+```
 
-    ```rust
-    res.render(Text::Html("<html><body>hello</body></html>"));
-    ```
+- Escribir HTML
 
-## Escribir un estado de error
+```rust
+res.render(Text::Html("<html><body>hello</body></html>"));
+```
 
-- El uso de `render` puede escribir una respuesta tipo http error.
+## Cómo escribir errores HTTP
 
-    ```rust
-    use salvo::http::errors::*;
-    res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
-    ```
+- Use `render` para escribir información detallada de errores en una `Respuesta`.
 
-- Si no quieres personalizar el mensaje de error, solo usa el `status_code`.
+```rust
+use salvo::http::errors::*;
+res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
+```
 
-    ```rust
-    use salvo::http::StatusCode;
-    res.status_code(StatusCode::BAD_REQUEST);
-    ```
+- Si no necesita mensajes de error personalizados, puede llamar a `set_http_code` directamente.
 
-## Redireccionar a Otra URL
-- Utiliza el método `render` para escribir una respuesta de redirección en `Response`, que navega hacia una nueva URL. Al invocar el método Redirect::found, se establece el código de estado HTTP en 302 (Found), lo que indica un redireccionamiento temporal.
-    ```rust
-    use salvo::prelude::*;
+```rust
+use salvo::http::StatusCode;
+res.status_code(StatusCode::BAD_REQUEST);
+```
 
-    #[handler]
-    async fn redirect(res: &mut Response) {
-        res.render(Redirect::found("https://salvo.rs/"));
-    }
-    ```
+## Redireccionar a otra URL
+- Use el método `render` para escribir una respuesta de redireccionamiento a una `Respuesta`, navegando a una nueva URL. Cuando llama al método Redirect::found, establece el código de estado HTTP en 302 (Encontrado), lo que indica una redirección temporal.
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn redirect(res: &mut Response) {
+res.render(Redirect::found("https://salvo.rs/"));
+}
+```
+
+## ResBody
+
+El tipo de cuerpo que devuelve Response es `ResBody`, que es una enumeración. Cuando ocurre un error, se establece en `ResBody::Error`, que contiene información sobre el error y se utiliza para retrasar el procesamiento del error. `StatusError` en realidad no implementa `Writer`, pero está diseñado para permitirle personalizar su método de visualización en `Catcher`.

@@ -1,5 +1,5 @@
 import type { NavbarConfig } from '@vuepress/theme-default'
-import versions from './versions.js'
+// import versions from './versions.js'
 
 export const navbarEs: NavbarConfig = [
   {
@@ -13,15 +13,18 @@ export const navbarEs: NavbarConfig = [
         text: 'Características Comunes',
         children: [
           '/es/book/features/affix-state.md',
+          '/es/book/features/catch-panic.md',
           '/es/book/features/compression.md',
           '/es/book/features/flash.md',
           '/es/book/features/force-https.md',
           '/es/book/features/logging.md',
           '/es/book/features/proxy.md',
+          '/es/book/features/request-id.md',
           '/es/book/features/serve-static.md',
           '/es/book/features/session.md',
           '/es/book/features/sse.md',
           '/es/book/features/timeout.md',
+          '/es/book/features/tower-compat.md',
           '/es/book/features/trailing-slash.md',
           '/es/book/features/websocket.md',
         ],
@@ -42,6 +45,7 @@ export const navbarEs: NavbarConfig = [
       {
         text: 'Seguridad',
         children: [
+          '/es/book/features/concurrency-limiter.md',
           '/es/book/features/cors.md',
           '/es/book/features/csrf.md',
           '/es/book/features/rate-limiter.md',
@@ -60,5 +64,5 @@ export const navbarEs: NavbarConfig = [
     text: 'Donar',
     link: '/es/donate.html',
   },
-  versions,
+  // versions,
 ]

@@ -1,74 +1,81 @@
 # Response
 
-We can get response reference as function handler parameter:
+In `Handler`, ()`Response`]((https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html)) will be passed as a parameter:
 
 ```rust
 #[handler]
 async fn hello_world(res: &mut Response) {
-    res.render("hello world!");
+res.render("Hello world!");
 }
 ```
 
-When the server gets a client request but you only need to return a simple response (ie skip any middleware or other handlers), you can simply use `FlowCtrl`:
+`Response` After the server receives the client request, any matching `Handler` and middleware can write data to it. In some cases, such as a middleware that wants to prevent subsequent middleware and `Handler` from executing, you can use `FlowCtrl`:
 
 ```rust
 #[handler]
 async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
-    ctrl.skip_rest();
-    res.render("hello world!");
+ctrl.skip_rest();
+res.render("Hello world!");
 }
 ```
 
-## Write content
+## Writing Content
 
-Write content is straightforward:
+Writing data to a `Response` is very simple:
 
-- Write plain text
+- Writing plain text data
 
-    ```rust
-    res.render("hello world!");
-    ```
+```rust
+res.render("Hello world!");
+```
 
-- Write serializable type as json format
+- Writing JSON serialized data
 
-    ```rust
-    #[derive(Serialize, Debug)]
-    struct User {
-        name: String,
-    }
-    let user = User{name: "jobs".to_string()};
-    res.render(Json(user));
-    ```
+```rust
+use serde::Serialize;
+use salvo::prelude::Json;
 
-- Write html text
+#[derive(Serialize, Debug)]
+struct User {
+name: String,
+}
+let user = User{name: "jobs".to_string()};
+res.render(Json(user));
+```
 
-    ```rust
-    res.render(Text::Html("<html><body>hello</body></html>"));
-    ```
+- Writing HTML
 
-## Write status error
+```rust
+res.render(Text::Html("<html><body>hello</body></html>"));
+```
 
-- Use `render` can write a http error to response.
+## Writing HTTP Errors
 
-    ```rust
-    use salvo::http::errors::*;
-    res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
-    ```
+- Use `render` to write detailed error information to a `Response`.
 
-- If you don't want to customize error message, just use `status_code`.
+```rust
+use salvo::http::errors::*;
+res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
+```
 
-    ```rust
-    use salvo::http::StatusCode;
-    res.status_code(StatusCode::BAD_REQUEST);
-    ```
+- If you don't need custom error messages, you can call `set_http_code` directly.
 
-## Redirect to Another URL
-- Use the `render` method to write a redirect response into `Response`, which navigates to a new URL. When you invoke the Redirect::found method, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
-    ```rust
-    use salvo::prelude::*;
+```rust
+use salvo::http::StatusCode;
+res.status_code(StatusCode::BAD_REQUEST);
+```
 
-    #[handler]
-    async fn redirect(res: &mut Response) {
-        res.render(Redirect::found("https://salvo.rs/"));
-    }
-    ```
+## Redirect to another URL
+- Use the `render` method to write a redirect response to a `Response`, navigating to a new URL. When you call the Redirect::found method, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn redirect(res: &mut Response) {
+res.render(Redirect::found("https://salvo.rs/"));
+}
+```
+
+## ResBody
+
+The Body type returned by Response is `ResBody`, which is an enumeration. When an error occurs, it is set to `ResBody::Error`, which contains error information and is used to delay error processing. `StatusError` does not actually implement `Writer`, but is designed to allow you to customize your display method in `Catcher`.
