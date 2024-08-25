@@ -3,9 +3,6 @@
 El "servicio" primero convierte la solicitud en la "respuesta" de salvo y luego ingresa a la etapa de coincidencia de enrutamiento.
 
 ## Etapa de coincidencia de ruta
-La coincidencia de rutas se instala según el orden de adición, de afuera hacia adentro, de arriba a abajo. En este momento, los filtros se ejecutan jerárquicamente. Si algún filtro no se ejecuta, se considerará que la coincidencia falla. , la ruta es seguida por A medida que avanza la coincidencia, el filtro de ruta continúa consumiendo rutas. Cuando se consumen todas las rutas y no hay ningún filtro en el enlace coincidente, la coincidencia falla. El último "enrutador" en el enlace actual tiene el objetivo. `Handler`, luego la coincidencia es exitosa y la coincidencia es exitosa. Al final de la fase, `Handler` que coincide con todos los enlaces coincidentes se recopila y se ingresa en la fase de ejecución.
-
-## Etapa de coincidencia de ruta
 
 La coincidencia de rutas se realiza en el orden en que se agregan y los filtros se ejecutan de afuera hacia adentro y de arriba a abajo. Si algún filtro no se ejecuta, se considerará una coincidencia fallida.
 

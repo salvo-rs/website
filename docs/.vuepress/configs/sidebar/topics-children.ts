@@ -1,6 +1,6 @@
 export const topicsChildren = function (bookRoot: string) {
   return [
-    `${bookRoot}/topics/workflow.md`,
+    `${bookRoot}/topics/processing-flow.md`,
     `${bookRoot}/topics/handle-error.md`,
     `${bookRoot}/topics/send-file.md`,
     `${bookRoot}/topics/upload-file.md`,

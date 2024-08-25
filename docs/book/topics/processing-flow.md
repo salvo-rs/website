@@ -2,9 +2,6 @@
 
 `Service` first converts the request into salvo's `Response`, and then enters the route matching stage.
 
-## Route matching stage
-The route matching is performed in the order of addition, from outside to inside, from top to bottom. At this time, the filters are run hierarchically. If any filter fails to execute, it will be considered a match failure. During the matching process, the path is consumed as the matching progresses, and the path filter continuously consumes the path. When all paths are consumed and no filter fails to match on the matching link, the last `Router` on the current link has a goal `Handler`, then the match is successful, the matching stage ends, and the `Handler` on all matching links is collected and matched to enter the execution stage.
-
 ## Route matching phase
 
 Route matching runs filters in the order of addition, from outside to inside and from top to bottom. If any filter fails to execute, it will be considered a match failure.
