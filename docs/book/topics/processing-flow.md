@@ -16,7 +16,7 @@ If all routes are matched and there is no success, then the error capture phase 
 
 Execute `Handler` in sequence according to the `Handler` list collected in the matching phase. During the execution process, the previous middleware can call `ctrl::call_next()` Let the subsequent middleware execute first, and then execute your own logic. If there is a status code error or redirection during the execution, the subsequent `Handler` will no longer be executed. At this time, if the status code is an error, and the `Body` of the `Response` is not set or is `ResBody::Error`, it will enter the error capture phase, otherwise it will skip the capture phase.
 
-# Error capture phase
+## Error capture phase
 
 `Catcher` is a type used to handle errors. It can also add middleware (hoops). The error will pass through all `Handler` in `Catcher` in turn. If a `Handler` has handled the error and you don't want the subsequent `Handler` to continue executing, you can skip the subsequent `Handler` through `ctrl.skip_rest()` and end the capture phase directly.
 

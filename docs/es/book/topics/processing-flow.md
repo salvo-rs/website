@@ -16,7 +16,7 @@ Todas las rutas han coincidido. Si no hay éxito, se ingresará a la fase de cap
 
 `Handler` se ejecuta en secuencia de acuerdo con la lista de `Handler` recopilada en la fase de coincidencia. Durante el proceso de ejecución, el middleware anterior puede llamar a `ctrl::call_next()` para permitir que el middleware posterior se ejecute primero y luego ejecute el suyo propio. lógica Si se ejecuta Si se produce un error de código de estado o una redirección durante el proceso, el `Handler` posterior ya no se ejecutará. En este momento, si el código de estado es un error y el `Cuerpo` de `Respuesta` no está configurado. o es `ResBody::Error`, luego ingrese a la fase de captura de errores; de lo contrario, omita la fase de captura.
 
-# Fase de captura de errores
+## Fase de captura de errores
 
 `Catcher` es un tipo utilizado para manejar errores. También puede agregar middleware (aros). Los errores pasarán por todos los `Handler` en `Catcher` por turno. Si un `Handler` ya ha manejado el error, no querrás hacerlo. para usar el `Handler` posterior ` Para continuar la ejecución, puede omitir el `Handler` posterior a través de `ctrl.skip_rest()` y finalizar la fase de captura directamente.
 
