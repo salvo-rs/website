@@ -2,10 +2,9 @@
 
 CORS 中间件可以用于 [跨源资源共享](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CORS).
 
-由于浏览器会发 `Method::OPTIONS` 的请求, 所以需要增加对此类请求的处理, 需要吧中间件添加到 `Service` 上.
+由于浏览器会发 `Method::OPTIONS` 的请求, 所以需要增加对此类请求的处理, 需要把中间件添加到 `Service` 上.
 
-_**示例代码**_ 
-
+_**示例代码**_
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>

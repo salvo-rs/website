@@ -2,7 +2,7 @@
 
 El Intercambio de recursos entre Orígenes (CORS) puede ser usado por [Cross-Origin Resource Sharing](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
 
-Los navegadores modernos pueden bloquear las peticiones a diferentes dominios a menos que el dominio tenga habilitado el CORS. Éste middleware puede agregar la propiedad en las cabeceras para permitir peticiones desde dominios específico (Puedes permitir múltiples dominios con la instancia de la función [`AllowOrigin::list`]).
+Dado que el navegador enviará una solicitud `Method::OPTIONS`, es necesario aumentar el procesamiento de dichas solicitudes y agregar middleware a `Service`.
 
 _**Ejemplo**_
 
@@ -18,5 +18,3 @@ _**Ejemplo**_
 
   </CodeGroupItem>
 </CodeGroup>
-
-[`AllowOrigin::list`]: https://docs.rs/salvo-cors/0.64.0/salvo_cors/struct.AllowOrigin.html#method.list
