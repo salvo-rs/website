@@ -66,4 +66,4 @@ impl Writer for AppError {
 
 The error page that comes with Salvo is sufficient in most cases, it can display Html, Json or Xml page according to the requested data type. However, in some cases, we still expect to customize the display of the error page .
 
-This can be achieved by custom `Catcher`. For a detailed introduction, see the explanation in the [`Catcher`](../core/catcher/) section.
+This can be achieved by custom `Catcher`. For a detailed introduction, see the explanation in the [`Catcher`](../core/catcher.html) section.
