@@ -6,6 +6,8 @@ Initially developed as an open-source version of the Swagger specification, Open
 
 Salvo provides integration with OpenAPI (adapted from utoipa).
 
+Since Rust type names are long and may not be suitable for OpenAPI, `salvo-oapi` provides the `Namer` type, which can customize the rules and change the type name in OpenAPI as needed.
+
 _**Example**_
 
 <CodeGroup>

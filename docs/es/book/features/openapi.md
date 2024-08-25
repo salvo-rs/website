@@ -6,6 +6,8 @@ Inicialmente desarrollado como una versión de código abierto de la especificac
 
 Salvo proporciona integración con OpenAPI (adaptado de utoipa).
 
+Dado que los nombres de tipo de Rust son largos y pueden no ser adecuados para OpenAPI, `salvo-oapi` proporciona el tipo `Namer`, que puede personalizar las reglas y cambiar el nombre del tipo en OpenAPI según sea necesario.
+
 _**Ejemplo**_
 
 <CodeGroup>

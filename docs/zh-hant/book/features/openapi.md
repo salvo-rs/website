@@ -6,6 +6,8 @@ OpenAPI 最初是 Swagger 規範的開源版本，現在已經成為了一個獨
 
 Salvo 提供了 OpenAPI 的集成 (修改自 [utoipa](https://github.com/juhaku/utoipa)). salvo 依據自身特點，非常優雅地從 `Handler` 上自動獲取相關的 OpenAPI 數據類型信息. salvo 還集成 SwaggerUI, scalar, rapidodc, redoc 等幾個開源流行的 OpenAPI 界麵.
 
+針對 Rust 類型名稱長，不一定適合 OpenAPI 使用， `salvo-oapi` 提供了 `Namer` 類型，可以根據需要，定製規則，改變 OpenAPI 中類型名稱。
+
 _**示例代碼**_
 
 <CodeGroup>

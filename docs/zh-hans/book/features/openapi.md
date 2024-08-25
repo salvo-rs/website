@@ -6,6 +6,8 @@ OpenAPI 最初是 Swagger 规范的开源版本，现在已经成为了一个独
 
 Salvo 提供了 OpenAPI 的集成 (修改自 [utoipa](https://github.com/juhaku/utoipa)). salvo 依据自身特点，非常优雅地从 `Handler` 上自动获取相关的 OpenAPI 数据类型信息. salvo 还集成 SwaggerUI, scalar, rapidodc, redoc 等几个开源流行的 OpenAPI 界面.
 
+针对 Rust 类型名称长，不一定适合 OpenAPI 使用， `salvo-oapi` 提供了 `Namer` 类型，可以根据需要，定制规则，改变 OpenAPI 中类型名称。
+
 _**示例代码**_
 
 <CodeGroup>
@@ -49,9 +51,9 @@ Salvo 中的 OpenAPI 集成是相当优雅的，对于上面的示例，相比�
 
 - `JsonBody<T>`: 从请求提交的 JSON 格式的负载中提取信息;
 
-## `#[endpoint]` 宏
+## `#[endpoint]`
 
-在生成 OpenAPI 文档时, 需要使用 `#[endpoint]` 宏代替常规的 `#[handler]` 宏, 它实际上是一个增强版本的 `#[handler]` 宏. 
+在生成 OpenAPI 文档时, 需要使用 `#[endpoint]` 宏代替常规的 `#[handler]` 宏, 它实际上是一个增强版本的 `#[handler]` 宏.
 
 - 它可以通过函数的签名获取生成 OpenAPI 所必须的信息;
 
@@ -375,17 +377,6 @@ struct Query {
 }
 ```
 
-[to_schema]: trait.ToSchema.html
-[known_format]: openapi/schema/enum.KnownFormat.html
-[xml]: openapi/xml/struct.Xml.html
-[to_parameters]: trait.ToParameters.html
-[path_params]: attr.path.html#params-attributes
-[struct]: https://doc.rust-lang.org/std/keyword.struct.html
-[style]: openapi/path/enum.ParameterStyle.html
-[in_enum]: salvo_oapi/openapi/path/enum.ParameterIn.html
-[primitive]: https://doc.rust-lang.org/std/primitive/index.html
-[serde attributes]: https://serde.rs/attributes.html
-
 - `rename_all = ...`: 支持于 `serde` 类似的语法定义重命名字段的规则. 如果同时定义了 `#[serde(rename_all = "...")]` 和 `#[salvo(schema(rename_all = "..."))]`, 则优先使用 `#[serde(rename_all = "...")]`.
 
 - `symbol = ...`: 一个字符串字面量, 用于定义结构在 OpenAPI 中线上的名字路径. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`.
@@ -428,3 +419,14 @@ pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> 
     Ok(StatusCode::CREATED)
 }
 ```
+
+[to_schema]: trait.ToSchema.html
+[known_format]: openapi/schema/enum.KnownFormat.html
+[xml]: openapi/xml/struct.Xml.html
+[to_parameters]: trait.ToParameters.html
+[path_params]: attr.path.html#params-attributes
+[struct]: https://doc.rust-lang.org/std/keyword.struct.html
+[style]: openapi/path/enum.ParameterStyle.html
+[in_enum]: salvo_oapi/openapi/path/enum.ParameterIn.html
+[primitive]: https://doc.rust-lang.org/std/primitive/index.html
+[serde attributes]: https://serde.rs/attributes.html
