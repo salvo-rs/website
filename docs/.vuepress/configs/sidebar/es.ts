@@ -1,5 +1,5 @@
 import type { SidebarConfig } from '@vuepress/theme-default'
-import { coreChildren } from './core-children'
+import { conceptsChildren } from './concepts-children'
 import { topicsChildren } from './topics-children'
 import { featuresChildren } from './features-children'
 
@@ -11,8 +11,8 @@ export const sidebarEs: SidebarConfig = {
         '/es/book/README.md',
         '/es/book/guide.md',
         {
-          text: 'Base',
-          children: coreChildren('/es/book'),
+          text: 'Conceptos básicos',
+          children: conceptsChildren('/es/book'),
         },
         {
           text: 'Tópicos',

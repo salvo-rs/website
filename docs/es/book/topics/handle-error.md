@@ -66,4 +66,4 @@ impl Writer for AppError {
 
 La página de error que viene con Salvo es suficiente en la mayoría de los casos, puede mostrar páginas Html, Json o Xml según el tipo de datos solicitado, sin embargo, en algunos casos, aún esperamos personalizar la visualización de la página de error.
 
-Esto se puede lograr mediante un `Catcher` personalizado. Para obtener una introducción detallada, consulte la explicación en la sección [`Catcher`](../core/catcher.html).
+Esto se puede lograr mediante un `Catcher` personalizado. Para obtener una introducción detallada, consulte la explicación en la sección [`Catcher`](../concepts/catcher.html).

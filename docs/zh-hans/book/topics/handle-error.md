@@ -68,4 +68,4 @@ impl Writer for AppError {
 
 Salvo 中自带的错误页面在绝大部分情况下是满足需求的, 它可以根据请求的数据类型显示 Html, Json 或者 Xml 页面. 然而, 某些情况下, 我们依然期望自定义错误页面的显示.
 
-这个可以通过自定义 `Catcher` 实现. 详细的介绍可以查看 [`Catcher`](../core/catcher.html) 部分的讲解.
+这个可以通过自定义 `Catcher` 实现. 详细的介绍可以查看 [`Catcher`](../concepts/catcher.html) 部分的讲解.

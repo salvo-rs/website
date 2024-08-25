@@ -9,12 +9,12 @@ _**Example**_
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../../codes/cors/src/main.rs)
+@[code rust](../../../codes/cors/src/main.rs)
 
   </CodeGroupItem>
   <CodeGroupItem title="Cargo.toml">
 
-@[code toml](../../../../codes/cors/Cargo.toml)
+@[code toml](../../../codes/cors/Cargo.toml)
 
   </CodeGroupItem>
 </CodeGroup>

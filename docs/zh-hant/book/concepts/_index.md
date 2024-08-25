@@ -1,5 +1,5 @@
 ---
-title : "核心功能"
+title : "核心概念"
 lead: ""
 draft: false
 images: []

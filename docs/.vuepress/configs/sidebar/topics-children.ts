@@ -7,6 +7,7 @@ export const topicsChildren = function (bookRoot: string) {
     `${bookRoot}/topics/working-with-database.md`,
     `${bookRoot}/topics/use-template-engine.md`,
     `${bookRoot}/topics/graceful-shutdown.md`,
+    `${bookRoot}/topics/testing.md`,
     `${bookRoot}/topics/deployment.md`,
   ];
 }

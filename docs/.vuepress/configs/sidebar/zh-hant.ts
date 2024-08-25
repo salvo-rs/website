@@ -1,5 +1,5 @@
 import type { SidebarConfig } from '@vuepress/theme-default'
-import { coreChildren } from './core-children'
+import { conceptsChildren } from './concepts-children'
 import { topicsChildren } from './topics-children'
 import { featuresChildren } from './features-children'
 
@@ -11,8 +11,8 @@ export const sidebarZhHant: SidebarConfig = {
         '/zh-hant/book/README.md',
         '/zh-hant/book/guide.md',
         {
-          text: '核心功能',
-          children: coreChildren('/zh-hant/book'),
+          text: '核心概念',
+          children: conceptsChildren('/zh-hant/book'),
         },
         {
           text: '專題講解',
