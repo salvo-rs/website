@@ -18,6 +18,7 @@ export const navbarEs: NavbarConfig = [
           '/es/book/features/flash.md',
           '/es/book/features/force-https.md',
           '/es/book/features/logging.md',
+          '/es/book/features/open-telemetry.md',
           '/es/book/features/proxy.md',
           '/es/book/features/request-id.md',
           '/es/book/features/serve-static.md',

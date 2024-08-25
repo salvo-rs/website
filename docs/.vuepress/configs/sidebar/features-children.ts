@@ -13,6 +13,7 @@ export const featuresChildren = function (bookRoot: string) {
     `${bookRoot}/features/force-https.md`,
     `${bookRoot}/features/jwt-auth.md`,
     `${bookRoot}/features/logging.md`,
+    `${bookRoot}/features/open-telemetry.md`,
     `${bookRoot}/features/openapi.md`,
     `${bookRoot}/features/proxy.md`,
     `${bookRoot}/features/rate-limiter.md`,

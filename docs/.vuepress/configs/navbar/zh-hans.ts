@@ -18,6 +18,7 @@ export const navbarZhHans: NavbarConfig = [
           '/zh-hans/book/features/flash.md',
           '/zh-hans/book/features/force-https.md',
           '/zh-hans/book/features/logging.md',
+          '/zh-hans/book/features/open-telemetry.md',
           '/zh-hans/book/features/proxy.md',
           '/zh-hans/book/features/request-id.md',
           '/zh-hans/book/features/serve-static.md',
