@@ -7,11 +7,14 @@ In addition, you can control whether to overwrite the existing `requestid`. You 
 _**Sample code**_
 
 <CodeGroup>
-<CodeGroupItem title="main.rs" active>
+  <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../codes/logging/src/main.rs)
+@[code rust](../../../codes/request-id/src/main.rs)
 
-</CodeGroupItem>
-<CodeGroupItem title="Cargo.toml">
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
-@[code toml](../../../codes/logging/Cargo.toml) </CodeGroupItem> </CodeGroup>
+@[code toml](../../../codes/request-id/Cargo.toml)
+
+  </CodeGroupItem>
+</CodeGroup>

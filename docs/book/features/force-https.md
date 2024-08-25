@@ -11,11 +11,11 @@ _**Sample code**_
 <CodeGroup>
 <CodeGroupItem title="main.rs" active>
 
-@[code rust](../../../../codes/force-https/src/main.rs)
+@[code rust](../../../codes/force-https/src/main.rs)
 
 </CodeGroupItem>
 <CodeGroupItem title="Cargo.toml">
 
-@[code rust](../../../../codes/force-https/Cargo.toml)
+@[code rust](../../../codes/force-https/Cargo.toml)
 
 </CodeGroupItem> </CodeGroup>

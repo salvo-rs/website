@@ -2,6 +2,8 @@
 
 Salvo 通过 `tower-compat` 功能提供对 tower 生态的兼容性支持. 具体 API 请[查看文档](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
 
+_**示例代码**_
+
 <CodeGroup>
 <CodeGroupItem title="main.rs" active>
 

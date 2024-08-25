@@ -4,15 +4,15 @@ Catch Panic se utiliza para capturar fallas que ocurren cuando el programa proce
 
 _**Código de muestra**_
 
-<Grupo de códigos>
- <CodeGroupItem título="main.rs" activo>
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-@[código oxidado](../../../../codes/catch-panic/src/main.rs)
+@[code rust](../../../../codes/catch-panic/src/main.rs)
 
- </CodeGroupItem>
- <CodeGroupItem título="Cargo.toml">
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
-@[código oxidado](../../../../codes/catch-panic/Cargo.toml)
+@[code rust](../../../../codes/catch-panic/Cargo.toml)
 
- </CodeGroupItem>
-</Grupo de Códigos>
+  </CodeGroupItem>
+</CodeGroup>

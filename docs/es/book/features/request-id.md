@@ -6,15 +6,15 @@ Además, puede controlar si se sobrescribe el `requestid` existente. También pu
 
 _**Código de muestra**_
 
-<Grupo de códigos>
- <CodeGroupItem título="main.rs" activo>
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-@[código oxidado](../../../../codes/logging/src/main.rs)
+@[code rust](../../../../codes/request-id/src/main.rs)
 
- </CodeGroupItem>
- <CodeGroupItem título="Cargo.toml">
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
-@[código toml](../../../../codes/logging/Cargo.toml)
+@[code toml](../../../../codes/request-id/Cargo.toml)
 
- </CodeGroupItem>
-</Grupo de Códigos>
+  </CodeGroupItem>
+</CodeGroup>

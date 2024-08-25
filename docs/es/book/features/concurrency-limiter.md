@@ -4,15 +4,15 @@ El middleware del limitador de concurrencia puede controlar la cantidad de solic
 
 _**Código de muestra**_
 
-<Grupo de códigos>
- <CodeGroupItem título="main.rs" activo>
+<CodeGroup>
+  <CodeGroupItem title="main.rs" active>
 
-@[código oxidado](../../../../codes/concurrency-limiter/src/main.rs)
+@[code rust](../../../../codes/concurrency-limiter/src/main.rs)
 
- </CodeGroupItem>
- <CodeGroupItem título="Cargo.toml">
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
-@[código oxidado](../../../../codes/concurrency-limiter/Cargo.toml)
+@[code rust](../../../../codes/concurrency-limiter/Cargo.toml)
 
- </CodeGroupItem>
-</Grupo de Códigos>
+  </CodeGroupItem>
+</CodeGroup>

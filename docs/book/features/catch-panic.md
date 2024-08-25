@@ -5,14 +5,14 @@ Catch Panic is used to capture crashes that occur when the program handles reque
 _**Sample code**_
 
 <CodeGroup>
-<CodeGroupItem title="main.rs" active>
+  <CodeGroupItem title="main.rs" active>
 
 @[code rust](../../../codes/catch-panic/src/main.rs)
 
-</CodeGroupItem>
-<CodeGroupItem title="Cargo.toml">
+  </CodeGroupItem>
+  <CodeGroupItem title="Cargo.toml">
 
 @[code rust](../../../codes/catch-panic/Cargo.toml)
 
-</CodeGroupItem>
+  </CodeGroupItem>
 </CodeGroup>

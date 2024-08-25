@@ -2,6 +2,8 @@
 
 Salvo provides compatibility support for the tower ecosystem through the `tower-compat` function. For specific APIs, please [see the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
 
+_**Example**_
+
 <CodeGroup>
 <CodeGroupItem title="main.rs" active>
 
