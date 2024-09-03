@@ -12,7 +12,7 @@ actions:
     type: secondary
 features:
   - title: 简单得让你一见钟情
-    details: 其他 Rust 框架是在你掌握复杂的 Rust 语言功能，做完各种类型体操后依然“百思不得骑姐”， 而 Salvo 却善解人意，不管是新手还是老司机都可以轻松“破门而入，生儿育女”. 
+    details: 其他 Rust 框架是在你掌握复杂的 Rust 语言功能，做完各种类型体操后依然通不能正常编译， 而 Salvo 却善解人意，不管是新手还是老司机都可以轻松驾驭.
   - title: 强大实用的功能
     details: 虽然使用简单, 但是功能依旧强大, 内置 Multipart, OpenAPI，HTTP2/3, LetsEncrypt, 灵活的数据解析...等等实用功能.
   - title: 风驰电掣的性能
@@ -20,9 +20,9 @@ features:
   - title: 从未见过的路由系统
     details: Salvo 拥有与众不同的路由系统, 可以无限嵌套, 使用方便, 灵活, 高效. 你可以用各种姿势随心所欲地使用它, 想套就套，想去哪就去哪，带给你前所未有的极致快感. 
   - title: 极简的中间件系统
-    details: Salvo 中中间件和处理句柄都是 Handler, 两者合二为一, 和谐统一. 并且官方提供丰富且灵活的中间件实现，满足多种应用场景需求.
+    details: Salvo 中中间件和处理句柄都是 Handler, 两者合二为一, 和谐统一. 并且官方提供丰富且灵活的中间件实现，满足多z种应用场景需求.
   - title: 运行稳定无忧
-    details: Rust 的安全机制, 让你的网站上线后持久不崩, 没有后顾之忧. 你有更多的时间和你的异（同）性朋友享受啪啪啪地“玩游戏”时光, 而不是啪啪啪地敲键盘抢救服务器.
+    details: Rust 的安全机制, 让你的网站上线后持久不崩, 没有后顾之忧. 你有更多的时间享受幸福生活, 而不是啪啪啪地敲键盘抢救服务器.
 footer: MIT Licensed | Copyright © 2019-present Salvo Team
 ---
 
