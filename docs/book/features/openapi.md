@@ -37,7 +37,7 @@ The OpenAPI integration in Salvo is quite elegant. For the example above, compar
 
 ## Extractors
 
-By using use salvo::oapi::extract:*;, you can import commonly used data extractors that are pre-built in Salvo. These extractors provide necessary information to Salvo so that it can generate OpenAPI documentation.
+By using `use salvo::oapi::extract:*;`, you can import commonly used data extractors that are pre-built in Salvo. These extractors provide necessary information to Salvo so that it can generate OpenAPI documentation.
 
 - `QueryParam<T, const REQUIRED: bool>`: an extractor that extracts data from query strings. `QueryParam<T, false>` means that this parameter is optional and can be omitted. `QueryParam<T, true>` means that this parameter is required and cannot be omitted. If it is not provided, an error will be returned;
 
@@ -78,15 +78,51 @@ used as _`description`_.
 fn endpoint() {}
 ```
 
+## ToSchema
+
+Data structures can be defined using `#[derivative (ToSchema)]`:
+
+```rust
+#[derive(ToSchema)]
+struct Pet {
+    id: u64,
+    name: String,
+}
+```
+
+Optional settings can be defined using `#[salvo(schema(...))]`:
+
+- `example = ...` can be `json!(...)`. And `json!(...)` will parsed into `serde_json::Value` by `serde_json::json!`.
+
+  ```rust
+  #[derive(ToSchema)]
+  #[salvo(schema(example = json!({"name": "bob the cat", "id": 0})))]
+  struct Pet {
+      id: u64,
+      name: String,
+  }
+  ```
+
+- `xml(...)` Can be used to define Xml object properties:
+
+  ```rust
+  #[derive(ToSchema)]
+  struct Pet {
+      id: u64,
+      #[salvo(schema(xml(name = "pet_name", prefix = "u")))]
+      name: String,
+  }
+  ```
+
 ## ToParameters
 
-Generate [path parameters][path_params] from struct's fields.
+Generate [path parameters][path_parameters] from struct's fields.
 
 This is `#[derive]` implementation for [`ToParameters`][to_parameters] trait.
 
-Typically path parameters need to be defined within [`#[salvo_oapi::endpoint(...parameters(...))]`][path_params] section
+Typically path parameters need to be defined within [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters] section
 for the endpoint. But this trait eliminates the need for that when [`struct`][struct]s are used to define parameters.
-Still [`std::primitive`] and [`String`](std::string::String) path parameters or [`tuple`] style path parameters need to be defined
+Still [`primitive types`][primitive] and [`String`][std_string] path parameters or [`tuple`] style path parameters need to be defined
 within `parameters(...)` section if description or other than default configuration need to be given.
 
 You can use the Rust's own `#[deprecated]` attribute on field to mark it as
@@ -112,12 +148,11 @@ struct Query {
 The following attributes are available for use in on the container attribute `#[salvo(parameters(...))]` for the struct
 deriving `ToParameters`:
 
-- `names(...)` Define comma separated list of names for unnamed fields of struct used as a path parameter.
-   **Only** supported on **unnamed structs**.
+- `names(...)` Define comma separated list of names for unnamed fields of struct used as a path parameter. **Only** supported on **unnamed structs**.
 - `style = ...` Defines how all parameters are serialized by [`ParameterStyle`][style]. Default
    values are based on _`parameter_in`_ attribute.
 - `default_parameter_in = ...` =  Defines default where the parameters of this field are used with a value from
-   [`parameter::ParameterIn`][in_enum]. If this attribute is not supplied, then the default value is from query.
+   [`parameter::ParameterIn`][in_enum]. If this attribute is not supplied, then the default value is from `query`.
 - `rename_all = ...` Can be provided to alternatively to the serde's `rename_all` attribute. Effectively provides same functionality.
 
 Use `names` to define name for single unnamed argument.
@@ -147,7 +182,7 @@ The following attributes are available for use in the `#[salvo(parameter(...))]`
 - `style = ...` Defines how the parameter is serialized by [`ParameterStyle`][style]. Default values are based on _`parameter_in`_ attribute.
 
 - `parameter_in = ...` =  Defines where the parameters of this field are used with a value from
-   [`parameter::ParameterIn`][in_enum]. If this attribute is not supplied, then the default value is from query.
+   [`parameter::ParameterIn`][in_enum]. If this attribute is not supplied, then the default value is from `query`.
 
 - `explode` Defines whether new _`parameter=value`_ pair is created for each parameter within _`object`_ or _`array`_.
 
@@ -158,7 +193,7 @@ The following attributes are available for use in the `#[salvo(parameter(...))]`
 
 - `value_type = ...` Can be used to override default type derived from type of the field used in OpenAPI spec.
   This is useful in cases where the default type does not correspond to the actual type e.g. when
-  any third-party types are used which are not [`ToSchema`][to_schema]s nor [`primitive` types][primitive].
+  any third-party types are used which are not [`ToSchema`][to_schema]s nor [`primitive types`][primitive].
    Value can be any Rust type what normally could be used to serialize to JSON or custom type such as _`Object`_.
    _`Object`_ will be rendered as generic OpenAPI object.
 
@@ -177,8 +212,7 @@ The following attributes are available for use in the `#[salvo(parameter(...))]`
 
 - `nullable` Defines property is nullable (note this is different to non-required).
 
-- `required = ...` Can be used to enforce required status for the parameter. [See
-   rules][derive@ToParameters#field-nullability-and-required-rules]
+- `required = ...` Can be used to enforce required status for the parameter. [See rules](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)
 
 - `rename = ...` Can be provided to alternatively to the serde's `rename` attribute. Effectively provides same functionality.
 
@@ -210,7 +244,7 @@ The following attributes are available for use in the `#[salvo(parameter(...))]`
   not accept arguments and must return anything that can be converted into `RefOr<Schema>`.
 
 - `additional_properties = ...` Can be used to define free form types for maps such as
-  [`HashMap`](std::collections::HashMap) and [`BTreeMap`](std::collections::BTreeMap).
+  [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) and [`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html).
   Free form type enables use of arbitrary types within map values.
   Supports formats _`additional_properties`_ and _`additional_properties = true`_.
 
@@ -218,16 +252,16 @@ The following attributes are available for use in the `#[salvo(parameter(...))]`
 
 Same rules for nullability and required status apply for _`ToParameters`_ field attributes as for
 
-_`ToSchema`_ field attributes. [See the rules][`derive@ToSchema#field-nullability-and-required-rules`].
+_`ToSchema`_ field attributes. [See the rules](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules).
 
 ### Partial `#[serde(...)]` attributes support
 
-ToParameters derive has partial support for [serde attributes]. These supported attributes will reflect to the
+ToParameters derive has partial support for [serde attributes][serde attributes]. These supported attributes will reflect to the
 generated OpenAPI doc. The following attributes are currently supported:
 
 - `rename_all = "..."` Supported at the container level.
 - `rename = "..."` Supported **only** at the field level.
-- `default` Supported at the container level and field level according to [serde attributes].
+- `default` Supported at the container level and field level according to [serde attributes][serde attributes].
 - `skip_serializing_if = "..."` Supported  **only** at the field level.
 - `with = ...` Supported **only** at field level.
 - `skip_serializing = "..."` Supported  **only** at the field or variant level.
@@ -380,17 +414,6 @@ struct Query {
 }
 ```
 
-[to_schema]: trait.ToSchema.html
-[known_format]: openapi/schema/enum.KnownFormat.html
-[xml]: openapi/xml/struct.Xml.html
-[to_parameters]: trait.ToParameters.html
-[path_parameters]:openapi.html#parameters-attributes
-[struct]: https://doc.rust-lang.org/std/keyword.struct.html
-[style]: openapi/path/enum.ParameterStyle.html
-[in_enum]: salvo_oapi/openapi/path/enum.ParameterIn.html
-[primitive]: https://doc.rust-lang.org/std/primitive/index.html
-[serde attributes]: https://serde.rs/attributes.html
-
 - `rename_all = ...`: 支持于 `serde` 类似的语法定义重命名字段的规则. 如果同时定义了 `#[serde(rename_all = "...")]` 和 `#[salvo(schema(rename_all = "..."))]`, 则优先使用 `#[serde(rename_all = "...")]`.
 
 - `symbol = ...`: 一个字符串字面量, 用于定义结构在 OpenAPI 中线上的名字路径. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`.
@@ -433,3 +456,15 @@ pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> 
      Ok(StatusCode::CREATED)
 }
 ```
+
+[to_schema]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToSchema.html
+[known_format]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.KnownFormat.html
+<!-- [xml]: openapi/xml/struct.Xml.html -->
+[to_parameters]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToParameters.html
+[path_parameters]: openapi.html#parameters-attributes
+[struct]: https://doc.rust-lang.org/std/keyword.struct.html
+[style]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterStyle.html
+[in_enum]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterIn.html
+[primitive]: https://doc.rust-lang.org/std/primitive/index.html
+[serde attributes]: https://serde.rs/attributes.html
+[std_string]: https://doc.rust-lang.org/std/string/struct.String.html
