@@ -212,7 +212,7 @@ The following attributes are available for use in the `#[salvo(parameter(...))]`
 
 - `nullable` Defines property is nullable (note this is different to non-required).
 
-- `required = ...` Can be used to enforce required status for the parameter. [See rules](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)
+- `required = ...` Can be used to enforce required status for the parameter. [See rules](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)
 
 - `rename = ...` Can be provided to alternatively to the serde's `rename` attribute. Effectively provides same functionality.
 
@@ -252,7 +252,7 @@ The following attributes are available for use in the `#[salvo(parameter(...))]`
 
 Same rules for nullability and required status apply for _`ToParameters`_ field attributes as for
 
-_`ToSchema`_ field attributes. [See the rules](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules).
+_`ToSchema`_ field attributes. [See the rules](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules).
 
 ### Partial `#[serde(...)]` attributes support
 
@@ -457,14 +457,14 @@ pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> 
 }
 ```
 
-[to_schema]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToSchema.html
-[known_format]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.KnownFormat.html
+[to_schema]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToSchema.html
+[known_format]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.KnownFormat.html
 <!-- [xml]: openapi/xml/struct.Xml.html -->
-[to_parameters]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToParameters.html
+[to_parameters]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToParameters.html
 [path_parameters]: openapi.html#parameters-attributes
 [struct]: https://doc.rust-lang.org/std/keyword.struct.html
-[style]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterStyle.html
-[in_enum]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterIn.html
+[style]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.ParameterStyle.html
+[in_enum]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.ParameterIn.html
 [primitive]: https://doc.rust-lang.org/std/primitive/index.html
 [serde attributes]: https://serde.rs/attributes.html
 [std_string]: https://doc.rust-lang.org/std/string/struct.String.html

@@ -186,7 +186,7 @@ struct IdAndName(u64, String);
 
 - `nullable` 定義屬性是否可為 `null` （註意這與非必需不同）.
 
-- `required = ...` 用於強製要求參數必傳. [參見規則](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules).
+- `required = ...` 用於強製要求參數必傳. [參見規則](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules).
 
 - `rename = ...` 可以作為 `serde` 的 `rename` 的替代方案. 實際上提供了相同的功能.
 
@@ -216,7 +216,7 @@ struct IdAndName(u64, String);
 
 #### Field nullability and required rules
 
-一些應用於 _`ToParameters`_ 字段屬性的是否可為空和是否必需的規則同樣可用於 _`ToSchema`_ 字段屬性. [參見規則](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules).
+一些應用於 _`ToParameters`_ 字段屬性的是否可為空和是否必需的規則同樣可用於 _`ToSchema`_ 字段屬性. [參見規則](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules).
 
 ### Partial `#[serde(...)]` attributes support
 
@@ -419,14 +419,14 @@ pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> 
 }
 ```
 
-[to_schema]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToSchema.html
-[known_format]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.KnownFormat.html
+[to_schema]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToSchema.html
+[known_format]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.KnownFormat.html
 <!-- [xml]: openapi/xml/struct.Xml.html -->
-[to_parameters]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToParameters.html
+[to_parameters]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToParameters.html
 [path_parameters]: openapi.html#parameters-attributes
 [struct]: https://doc.rust-lang.org/std/keyword.struct.html
-[style]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterStyle.html
-[in_enum]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterIn.html
+[style]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.ParameterStyle.html
+[in_enum]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.ParameterIn.html
 [primitive]: https://doc.rust-lang.org/std/primitive/index.html
 [serde attributes]: https://serde.rs/attributes.html
 [std_string]: https://doc.rust-lang.org/std/string/struct.String.html
