@@ -37,7 +37,7 @@ La integración de OpenAPI en Salvo es bastante elegante. Para el ejemplo anteri
 
 ## Extractores
 
-Al utilizar use salvo::oapi::extract:*;, puede importar extractores de datos de uso común que están prediseñados en Salvo. Estos extractores proporcionan la información necesaria a Salvo para que pueda generar documentación OpenAPI.
+Al utilizar `use salvo::oapi::extract:*;`, puede importar extractores de datos de uso común que están prediseñados en Salvo. Estos extractores proporcionan la información necesaria a Salvo para que pueda generar documentación OpenAPI.
 
 - `QueryParam<T, const REQUIRED: bool>`: un extractor que extrae datos de cadenas de consulta. `QueryParam<T, false>` significa que este parámetro es opcional y se puede omitir. `QueryParam<T, true>` significa que este parámetro es obligatorio y no se puede omitir. Si no se proporciona, se devolverá un error;
 
@@ -80,13 +80,13 @@ fn endpoint() {}
 
 ## Parámetros
 
-Genere [parámetros de ruta] [path_params] a partir de los campos de la estructura.
+Genere [parámetros de ruta] [path parameters][path_parameters] a partir de los campos de la estructura.
 
 Esta es la implementación `#[derive]` para el rasgo [`ToParameters`][to_parameters].
 
-Normalmente, los parámetros de ruta deben definirse dentro de la sección [`#[salvo_oapi::endpoint(...parameters(...))]`][path_params]
+Normalmente, los parámetros de ruta deben definirse dentro de la sección [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters]
 para el punto final. Pero este rasgo elimina la necesidad de hacerlo cuando se usan [`struct`][struct]s para definir parámetros.
-Aún es necesario definir los parámetros de ruta [`std::primitive`] y [`String`](std::string::String) o los parámetros de ruta de estilo [`tuple`]
+Aún es necesario definir los parámetros de ruta [`std::primitive`][primitive] y [`String`][std_string] o los parámetros de ruta de estilo [`tuple`]
 dentro de la sección `parámetros(...)` si es necesario proporcionar una descripción u otra configuración que no sea la predeterminada.
 
 Puede utilizar el atributo `#[deprecated]` de Rust en el campo para marcarlo como
@@ -157,7 +157,7 @@ Los siguientes atributos están disponibles para su uso en el `#[salvo(parameter
 
 - `value_type = ...` Se puede utilizar para anular el tipo predeterminado derivado del tipo de campo utilizado en la especificación OpenAPI.
   Esto es útil en casos en los que el tipo predeterminado no corresponde al tipo real, p. cuando
-  Se utilizan tipos de terceros que no son [`ToSchema`][to_schema] ni [tipos `primitivos`][primitivos].
+  Se utilizan tipos de terceros que no son [`ToSchema`][to_schema] ni [`tipos primitivos`][primitive].
    El valor puede ser cualquier tipo de Rust que normalmente podría usarse para serializar a JSON o un tipo personalizado como _`Object`_.
    _`Object`_ se representará como un objeto OpenAPI genérico.
 
@@ -176,8 +176,7 @@ Los siguientes atributos están disponibles para su uso en el `#[salvo(parameter
 
 - `nullable` Define que la propiedad admite valores NULL (tenga en cuenta que esto es diferente a no obligatorio).
 
-- `required = ...` Se puede utilizar para imponer el estado requerido para el parámetro. [Ver
-   reglas][derive@ToParameters#campo-nullabilidad-y-reglas-requeridas]
+- `required = ...` Se puede utilizar para imponer el estado requerido para el parámetro. [Ver reglas](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)
 
 - `rename = ...` Se puede proporcionar como alternativa al atributo `rename` del serde. Proporciona efectivamente la misma funcionalidad.
 
@@ -209,7 +208,7 @@ Los siguientes atributos están disponibles para su uso en el `#[salvo(parameter
   no acepta argumentos y debe devolver cualquier cosa que pueda convertirse en `RefOr<Schema>`.
 
 - `additional_properties = ...` Se puede utilizar para definir tipos de formato libre para mapas como
-  [`HashMap`](std::collections::HashMap) y [`BTreeMap`](std::collections::BTreeMap).
+  [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) y [`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html).
   El tipo de formato libre permite el uso de tipos arbitrarios dentro de los valores del mapa.
   Admite formatos _`additional_properties`_ y _`additional_properties = true`_.
 
@@ -217,16 +216,16 @@ Los siguientes atributos están disponibles para su uso en el `#[salvo(parameter
 
 SSe aplican las mismas reglas de nulidad y estado requerido para los atributos de campo _`ToParameters`_ que para
 
-_`ToSchema`_ atributos del campo. [Ver las reglas][`derive@ToSchema#field-nullability-and-required-rules`].
+_`ToSchema`_ atributos del campo. [Ver las reglas](https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules).
 
 ### Soporte parcial de atributos `#[serde(...)]`
 
-ToParameters derive has partial support for [serde attributes]. These supported attributes will reflect to the
+ToParameters derive has partial support for [serde attributes][serde attributes]. These supported attributes will reflect to the
 generated OpenAPI doc. The following attributes are currently supported:
 
 - `rename_all = "..."` Apoyado a nivel del contenedor.
 - `rename = "..."` Compatible **sólo** a nivel de campo.
-- `default` Soportado a nivel de contenedor y a nivel de campo según [atributos del servidor].
+- `default` Soportado a nivel de contenedor y a nivel de campo según [atributos del servidor][serde attributes].
 - `skip_serializing_if = "..."` Compatible **sólo** a nivel de campo.
 - `with = ...` Compatible **sólo** a nivel de campo.
 - `skip_serializing = "..."` Compatible **solo** a nivel de campo o variante.
@@ -379,17 +378,6 @@ struct Query {
 }
 ```
 
-[to_schema]: trait.ToSchema.html
-[known_format]: openapi/schema/enum.KnownFormat.html
-[xml]: openapi/xml/struct.Xml.html
-[to_parameters]: trait.ToParameters.html
-[path_params]: attr.path.html#params-attributes
-[struct]: https://doc.rust-lang.org/std/keyword.struct.html
-[style]: openapi/path/enum.ParameterStyle.html
-[in_enum]: salvo_oapi/openapi/path/enum.ParameterIn.html
-[primitive]: https://doc.rust-lang.org/std/primitive/index.html
-[serde attributes]: https://serde.rs/attributes.html
-
 - `rename_all = ...`: admite una sintaxis similar a `serde` para definir reglas para cambiar el nombre de los campos. Si se definen tanto `#[serde(rename_all = "...")]` como `#[salvo(schema) al mismo tiempo (rename_all = "..."))]`, entonces se prefiere `#[serde(rename_all = "...")]`.
 
 - `symbol = ...`: una cadena literal utilizada para definir la ruta del nombre de la estructura en OpenAPI. Por ejemplo, `#[salvo(schema(symbol = "path.to.Pet"))]`.
@@ -432,3 +420,15 @@ pub async fn create_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> 
      Ok(StatusCode::CREATED)
 }
 ```
+
+[to_schema]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToSchema.html
+[known_format]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.KnownFormat.html
+<!-- [xml]: openapi/xml/struct.Xml.html -->
+[to_parameters]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/trait.ToParameters.html
+[path_parameters]: openapi.html#parameters-attributes
+[struct]: https://doc.rust-lang.org/std/keyword.struct.html
+[style]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterStyle.html
+[in_enum]: https://docs.rs/salvo-oapi/0.71.1/salvo_oapi/enum.ParameterIn.html
+[primitive]: https://doc.rust-lang.org/std/primitive/index.html
+[serde attributes]: https://serde.rs/attributes.html
+[std_string]: https://doc.rust-lang.org/std/string/struct.String.html
