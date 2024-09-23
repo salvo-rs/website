@@ -4,7 +4,7 @@
 
 Si no tiene Rust, recomendamos usar `rustup` para administrar la instalación de Rust. La [guía ofical de rust](https://doc.rust-lang.org/book/ch01-01-installation.html) tiene mucha documentación para comenzar.
 
-Actualmente Salvo tiene soportada la mínima versión de Rust version 1.75. Corriendo `rustup update` te aseguraras de tener la última versión disponible de Rust. Como tal, esta guía asume que estás ejecutando Rust 1.75 o posterior.
+Actualmente Salvo tiene soportada la mínima versión de Rust version 1.80. Corriendo `rustup update` te aseguraras de tener la última versión disponible de Rust. Como tal, esta guía asume que estás ejecutando Rust 1.80 o posterior.
 
 ## Escribiendo la primera Aplicación
 
