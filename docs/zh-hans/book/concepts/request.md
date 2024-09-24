@@ -82,10 +82,24 @@ assert_eq!(user.ids, vec![123, 234]);
 ```
 
 ### 内置提取器
-框架内置了请求参数提取器. 这些提取器可以大大简化处理HTTP请求的代码
+框架内置了请求参数提取器. 这些提取器可以大大简化处理HTTP请求的代码.
+
+#### Requirements
+
+To use the extractors you need to add `"oapi" feature` in your `Cargo.toml`
+
+```rust
+salvo = {version = "*", features = ["oapi"]}
+```
+
+Then you can import the extractors
+
+```rust
+use salvo::{oapi::extract::JsonBody, prelude::*};
+```
 
 #### JsonBody
-用于从请求体中提取 JSON 数据并反序列化为指定类型. 
+用于从请求体中提取 JSON 数据并反序列化为指定类型.
 
 ```rust
 #[handler]

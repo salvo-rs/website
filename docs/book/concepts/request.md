@@ -82,7 +82,7 @@ The salvo framework provides built-in request parameter extractors. These extrac
 
 #### Requirements
 
-To use the extractors you need to add `"oapi" feature` in your `cargo.toml`
+To use the extractors you need to add `"oapi" feature` in your `Cargo.toml`
 
 ```rust
 salvo = {version = "*", features = ["oapi"]}

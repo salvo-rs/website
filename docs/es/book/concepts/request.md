@@ -80,6 +80,20 @@ assert_eq!(user.ids, vec![123, 234]);
 ### Extractores incorporados
 El marco incluye extractores de parámetros de solicitud. Estos extractores pueden simplificar en gran medida el código para manejar solicitudes HTTP.
 
+#### Requirements
+
+To use the extractors you need to add `"oapi" feature` in your `Cargo.toml`
+
+```rust
+salvo = {version = "*", features = ["oapi"]}
+```
+
+Then you can import the extractors
+
+```rust
+use salvo::{oapi::extract::JsonBody, prelude::*};
+```
+
 #### JsonBody
 Se utiliza para extraer datos JSON del cuerpo de la solicitud y deserializarlos en un tipo específico.
 
