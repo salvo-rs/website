@@ -79,6 +79,21 @@ assert_eq!(user.ids, vec![123, 234]);
 ### Extractors
 The salvo framework provides built-in request parameter extractors. These extractors can greatly simplify the code for handling HTTP requests.
 
+
+#### Requirements
+
+To use the extractors you need to add `"oapi" feature` in your `cargo.toml`
+
+```rust
+salvo = {version = "*", features = ["oapi"]}
+```
+
+Then you can import the extractors
+
+```rust
+use salvo::{oapi::extract::JsonBody, prelude::*};
+```
+
 #### JsonBody
 Used to extract JSON data from the request body and deserialize it into a specified type.
 
