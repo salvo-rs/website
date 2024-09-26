@@ -27,6 +27,71 @@ When `Handler` is used as middleware, it can be added to the following three typ
 
 - `Catcher`, when an error occurs and no custom error information is written, the request will pass through the middleware in `Catcher`.
 
+### Example
+
+Suppose you want to create a really simple api key middleware where we check if an api key from a header matches an api key. For this example we will have the api key stored as a constant.
+
+Define the middleware handler:
+
+```rust
+use salvo::prelude::*;
+
+const API_KEY: &str = "api_key_value...";
+
+#[handler]
+async fn auth_middleware(req: &mut Request, res: &mut Respons) -> &'static str {
+//  NOTE:  Extract the auth token from header
+    let auth_token = match req.headers().get("API_KEY") {
+        Some(value) => match value.to_str() {
+            Ok(value) => value,
+            Err(e) => {
+            //  NOTE:  If there is an error reading it return with status unauthorized
+                res.status_code(StatusCode::UNAUTHORIZED);
+                res.render(Text::Plain("Couldn't read API Key"));
+                return;
+            }
+        },
+        None => {
+            //  NOTE:  If AUTH_TOKEN header is not in request return with status unauthorized
+            res.status_code(StatusCode::UNAUTHORIZED);
+            res.render(Text::Plain("Missing API Key"));
+            return;
+        }
+    };
+
+    //  NOTE:  If AUTH_TOKEN header value return with status unauthorized
+    if auth_token != API_KEY  {
+        res.status_code(StatusCode::UNAUTHORIZED);
+        res.render(Text::Plain("Invalid API Key"));
+        return;
+    }
+
+    //  NOTE: If all checks passed the middleware handler ends and continue with the next handler
+}
+```
+
+Add the middleware to your router
+
+```rust
+// Then in your router you can add the handler in different ways (specified in the above section)
+// here we add the handler in the router with the hoop method, so all the routes bellow
+// will be protected by the handler
+
+#[tokio::main]
+async fn main() {
+let api_router = Router::with_path("api")
+    .hoop(auth_middleware)
+    .push(Router::with_path("my_route").get(another_handler))
+    .push(Router::with_path("my_route_2").post(another_handler_2));
+
+// ...
+}
+
+
+```
+
+**Note:** Check the Middleware Section of the documentation to see prebuilt middlewares
+
 ## Macro `#[handler]`
 
 `#[handler]` can greatly simplify the writing of the code, and improve the flexibility of the code.
