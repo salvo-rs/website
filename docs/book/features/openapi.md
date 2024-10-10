@@ -37,7 +37,7 @@ The OpenAPI integration in Salvo is quite elegant. For the example above, compar
 
 ## Extractors
 
-By using `use salvo::oapi::extract:*;`, you can import commonly used data extractors that are pre-built in Salvo. These extractors provide necessary information to Salvo so that it can generate OpenAPI documentation.
+By using `use salvo::oapi::extract::*;`, you can import commonly used data extractors that are pre-built in Salvo. These extractors provide necessary information to Salvo so that it can generate OpenAPI documentation.
 
 - `QueryParam<T, const REQUIRED: bool>`: an extractor that extracts data from query strings. `QueryParam<T, false>` means that this parameter is optional and can be omitted. `QueryParam<T, true>` means that this parameter is required and cannot be omitted. If it is not provided, an error will be returned;
 
