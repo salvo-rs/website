@@ -37,7 +37,7 @@ Salvo 中的 OpenAPI 集成是相当优雅的，对于上面的示例，相比�
 
 ## 数据提取器
 
-通过 `use salvo::oapi::extract:*;`  可以导入预置的常用的数据提取器.  提取器会提供一些必要的信息给 Salvo, 以便 Salvo 生成 OpenAPI 的文档.
+通过 `use salvo::oapi::extract::*;`  可以导入预置的常用的数据提取器.  提取器会提供一些必要的信息给 Salvo, 以便 Salvo 生成 OpenAPI 的文档.
 
 - `QueryParam<T, const REQUIRED: bool>`: 一个从查询字符串提取数据的提取器.  `QueryParam<T, false>` 代表此参数不是必须的, 可以省略.  `QueryParam<T, true>` 代表此参数是必须的, 不可以省略, 如果不提供, 则返回错误;
 
