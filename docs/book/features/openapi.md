@@ -414,9 +414,9 @@ struct Query {
 }
 ```
 
-- `rename_all = ...`: 支持于 `serde` 类似的语法定义重命名字段的规则. 如果同时定义了 `#[serde(rename_all = "...")]` 和 `#[salvo(schema(rename_all = "..."))]`, 则优先使用 `#[serde(rename_all = "...")]`.
+- `rename_all = ...`: Support for defining renaming rules with a syntax similar to `serde`. If both `#[serde(rename_all = "...")]` and `#[salvo(schema(rename_all = "..."))]` are defined, `#[serde(rename_all = "...")]` takes precedence.
 
-- `symbol = ...`: 一个字符串字面量, 用于定义结构在 OpenAPI 中线上的名字路径. 比如 `#[salvo(schema(symbol = "path.to.Pet"))]`.
+- `symbol = ...`: A string literal, used to define the name path of a structure in OpenAPI. For example `#[salvo(schema(symbol = "path.to.Pet"))]`.
 
 - `default`: Can be used to populate default values on all fields using the struct’s Default implementation.
 
