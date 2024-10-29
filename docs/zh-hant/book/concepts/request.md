@@ -54,7 +54,7 @@ req.parse_json::<User>().await;
 ```rust
 #[derive(Deserialize)]
 struct User {
-  id: i64
+  ids: i64
 }
 ```
 

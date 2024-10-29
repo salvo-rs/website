@@ -66,7 +66,7 @@ If the type we provide is:
 ```rust
 #[derive(Deserialize)]
 struct Users {
-  id: Vec<i64>
+  ids: Vec<i64>
 }
 ```
 
