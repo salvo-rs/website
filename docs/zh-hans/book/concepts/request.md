@@ -70,7 +70,7 @@ assert_eq!(user.id, 123);
 ```rust
 #[derive(Deserialize)]
 struct Users {
-  id: Vec<i64>
+  ids: Vec<i64>
 }
 ```
 
