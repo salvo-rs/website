@@ -226,7 +226,7 @@ For specific examples, see: [extract-nested](https://github.com/salvo-rs/salvo/b
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-If in the above example Nested<'a> does not have the same fields as the parent, you can use `#[serde(flatten)]`, otherwise you need to use `·`#[salvo(extract(flatten))]`.
+If in the above example Nested<'a> does not have the same fields as the parent, you can use `#[serde(flatten)]`, otherwise you need to use `#[salvo(extract(flatten))]`.
 
 ### `#[salvo(extract(source(parse)))]`
 

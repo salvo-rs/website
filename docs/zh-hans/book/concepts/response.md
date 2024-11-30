@@ -1,6 +1,6 @@
 # Response
 
-在 `Handler` 中, ()`Response`]((https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html)) 会被作为参数传入:
+在 `Handler` 中, [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) 会被作为参数传入:
 
 ```rust
 #[handler]

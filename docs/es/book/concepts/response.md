@@ -1,6 +1,6 @@
 # Respuesta (Response)
 
-En `Handler`, ()`Response`]((https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html)) se pasará como parámetro:
+En `Handler`, [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) se pasará como parámetro:
 
 ```rust
 #[handler]
