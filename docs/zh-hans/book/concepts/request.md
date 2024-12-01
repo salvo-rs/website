@@ -231,7 +231,7 @@ struct Nested<'a> {
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-如果在上面例子中 Nested<'a> 没有与父级相同的字段，可以使用 `#[serde(flatten)]`, 否则需要使用 `·`#[salvo(extract(flatten))]`.
+如果在上面例子中 Nested<'a> 没有与父级相同的字段，可以使用 `#[serde(flatten)]`, 否则需要使用 `#[salvo(extract(flatten))]`.
 
 ### `#[salvo(extract(source(parse)))]`
 
