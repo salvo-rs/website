@@ -7,11 +7,11 @@ async fn main() {
 
     let router = Router::new()
         .push(
-            Router::with_path("google/<**rest>")
+            Router::with_path("google/{**rest}")
                 .goal(Proxy::use_hyper_client(["https://www.google.com"])),
         )
         .push(
-            Router::with_path("rust/<**rest>")
+            Router::with_path("rust/{**rest}")
                 .goal(Proxy::use_hyper_client("https://www.rust-lang.org")),
         );
 

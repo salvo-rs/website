@@ -35,7 +35,7 @@ Router::new()
 如果访问 `GET /articles/` 认为匹配成功，并执行 `list_articles`. 但是如果访问的是 `GET /articles/123` 则匹配路由失败并返回 404 错误， 因为 ·Router::with_path("articles")仅仅只消费掉了 Url 路径信息中的 `/articles`, 还有 `/123` 部分未被消费掉,因此认为匹配失败. 要想能够匹配成功,路由可以改成:
 
 ```rust
-Router::with_path("articles/<**>").get(list_articles).post(create_article);
+Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
 这里的 `<**>` 会匹配任何多余的路径, 所以它能够匹配 `GET /articles/123` 执行 `list_articles`.
@@ -46,8 +46,8 @@ Router::with_path("articles/<**>").get(list_articles).post(create_article);
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer);
-Router::with_path("writers/<id>").get(show_writer).patch(edit_writer).delete(delete_writer);
-Router::with_path("writers/<id>/articles").get(list_writer_articles);
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
+Router::with_path("writers/{id}/articles").get(list_writer_articles);
 ```
 
 ## 树状式定义
@@ -59,7 +59,7 @@ Router::with_path("writers")
     .get(list_writers)
     .post(create_writer)
     .push(
-        Router::with_path("<id>")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
@@ -75,11 +75,11 @@ Router::new()
     .push(
         Router::with_path("articles")
             .get(list_articles)
-            .push(Router::with_path("<id>").get(show_article))
+            .push(Router::with_path("{id}").get(show_article))
             .then(|router|{
                 if admin_mode() {
                     router.post(create_article).push(
-                        Router::with_path("<id>").patch(update_article).delete(delete_writer)
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)
                     )
                 } else {
                     router
@@ -91,7 +91,7 @@ Router::new()
 
 ## 从路由中获取参数
 
-在上面的代码中, `<id>` 定义了一个参数. 我们可以通过 `Request` 实例获取到它的值:
+在上面的代码中, `{id>` 定义了一个参数. 我们可以通过 `Request` 实例获取到它的值:
 
 ```rust
 #[handler]
@@ -100,24 +100,24 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-`<id>` 匹配了路径中的一个片段, 正常情况下文章的 `id` 只是一个数字, 此时我们可以使用正则表达式限制 `id` 的匹配规则, `r"<id:/\d+/>"`.
+`{id}` 匹配了路径中的一个片段, 正常情况下文章的 `id` 只是一个数字, 此时我们可以使用正则表达式限制 `id` 的匹配规则, `r"{id|\d+}"`.
 
 对于这种数字类型, 还有一种更简单的方法是使用  `<id:num>`, 具体写法为:
-- `<id:num>`， 匹配任意多个数字字符;
-- `<id:num[10]>`， 只匹配固定特定数量的数字字符，这里的 10 代表匹配仅仅匹配 10 个数字字符;
-- `<id:num(..10)>`, 代表匹配 1 到 9 个数字字符;
-- `<id:num(3..10)>`, 代表匹配 3 到 9 个数字字符;
-- `<id:num(..=10)>`, 代表匹配 1 到 10 个数字字符;
-- `<id:num(3..=10)>`, 代表匹配 3 到 10 个数字字符;
-- `<id:num(10..)>`, 代表匹配至少 10 个数字字符.
+- `{id:num}`， 匹配任意多个数字字符;
+- `{id:num[10]}`， 只匹配固定特定数量的数字字符，这里的 10 代表匹配仅仅匹配 10 个数字字符;
+- `{id:num(..10)}`, 代表匹配 1 到 9 个数字字符;
+- `{id:num(3..10)}`, 代表匹配 3 到 9 个数字字符;
+- `{id:num(..=10)}`, 代表匹配 1 到 10 个数字字符;
+- `{id:num(3..=10)}`, 代表匹配 3 到 10 个数字字符;
+- `{id:num(10..)}`, 代表匹配至少 10 个数字字符.
 
-还可以通过 `<**>`, `<*+>` 或者 `<*?>` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: `<**file_path>`. 
+还可以通过 `{**}`, `{*+}` 或者 `{*?}` 匹配所有剩余的路径片段. 为了代码易读性性强些, 也可以添加适合的名字, 让路径语义更清晰, 比如: `{**file_path}`.
 
-- `<**>`: 代表通配符匹配的部分可以是空字符串, 比如路径是 `/files/<**+*rest_path>`, 会匹配 `/files`， `/files/abc.txt`，`/files/dir/abc.txt`；
-- `<*+>`: 代表通配符匹配的部分必须存在，不能匹配到空字符串, 比如路径是 `/files/<*+rest_path>`, 不会匹配 `/files` 但是会匹配 `/files/abc.txt`，`/files/dir/abc.txt`；
-- `<*?>`: 代表通配符匹配的部分可以是空字符串, 但是只能包含一个路径片段, 比如路径是 `/files/<*？rest_path>`, 不会匹配 `/files/dir/abc.txt` 但是会匹配 `/files`，`/files/abc.txt`；
+- `{**}`: 代表通配符匹配的部分可以是空字符串, 比如路径是 `/files/{**rest_path}`, 会匹配 `/files`， `/files/abc.txt`，`/files/dir/abc.txt`；
+- `{*+}`: 代表通配符匹配的部分必须存在，不能匹配到空字符串, 比如路径是 `/files/{*+rest_path}`, 不会匹配 `/files` 但是会匹配 `/files/abc.txt`，`/files/dir/abc.txt`；
+- `{*?}`: 代表通配符匹配的部分可以是空字符串, 但是只能包含一个路径片段, 比如路径是 `/files/{*？rest_path}`, 不会匹配 `/files/dir/abc.txt` 但是会匹配 `/files`，`/files/abc.txt`；
 
-允许组合使用多个表达式匹配同一个路径片段, 比如 `/articles/article_<id:num>/`, `/images/<name>.<ext>`.
+允许组合使用多个表达式匹配同一个路径片段, 比如 `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
 
 ## 添加中间件
 
@@ -130,7 +130,7 @@ Router::new()
     .get(list_writers)
     .post(create_writer)
     .push(
-        Router::with_path("<id>")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
@@ -149,11 +149,11 @@ Router::new()
             .hoop(check_authed)
             .path("writers")
             .post(create_writer)
-            .push(Router::with_path("<id>").patch(edit_writer).delete(delete_writer)),
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),
     )
     .push(
         Router::with_path("writers").get(list_writers).push(
-            Router::with_path("<id>")
+            Router::with_path("{id}")
                 .get(show_writer)
                 .push(Router::with_path("articles").get(list_writer_articles)),
         ),
@@ -174,13 +174,13 @@ Router::new()
     .push(
         Router::with_path("articles")
             .get(list_articles)
-            .push(Router::new().path("<id>").get(show_article)),
+            .push(Router::new().path("{id}").get(show_article)),
     )
     .push(
         Router::with_path("articles")
             .hoop(auth_check)
             .post(list_articles)
-            .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
 ```
 
@@ -199,8 +199,8 @@ Router::with_filter(filters::path("hello").and(filters::get()));
 基于请求路径的过滤器是使用最频繁的. 路径过滤器中可以定义参数, 比如:
 
 ```rust
-Router::with_path("articles/<id>").get(show_article);
-Router::with_path("files/<**rest_path>").get(serve_file)
+Router::with_path("articles/{id}").get(show_article);
+Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
 在 `Handler` 中, 可以通过 `Request` 对象的 `get_param` 函数获取:
@@ -257,9 +257,9 @@ async fn main() {
     let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
     PathFilter::register_wisp_regex("guid", guid);
     Router::new()
-        .push(Router::with_path("/articles/<id:guid>").get(show_article))
-        .push(Router::with_path("/users/<id:guid>").get(show_user));
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))
+        .push(Router::with_path("/users/{id:guid}").get(show_user));
 }
 ```
 
-仅仅只需要注册一次, 以后就可以直接通过 `<id:guid>` 这样的简单写法匹配 GUID, 简化代码的书写.
+仅仅只需要注册一次, 以后就可以直接通过 `{id:guid}` 这样的简单写法匹配 GUID, 简化代码的书写.

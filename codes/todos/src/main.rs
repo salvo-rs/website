@@ -19,7 +19,7 @@ pub(crate) async fn start_server() {
         .get(list_todos)
         .post(create_todo)
         .push(
-            Router::with_path("<id>")
+            Router::with_path("{id}")
                 .put(update_todo)
                 .delete(delete_todo),
         );

@@ -50,7 +50,7 @@ async fn hello_world(res: &mut Response) {
 ```rust
 Router::new().path("articles").get(list_articles).post(create_article);
 Router::new()
-    .path("articles/<id>")
+    .path("articles/{id}")
     .get(show_article)
     .patch(edit_article)
     .delete(delete_article);
@@ -62,7 +62,7 @@ Router::new()
 Router::new()
     .path("articles")
     .get(list_articles)
-    .push(Router::new().path("<id>").get(show_article));
+    .push(Router::new().path("{id}").get(show_article));
 ```
 
 然后把需要用户登录的路由写到一起， 并且使用相应的中间件验证用户是否登录：
@@ -71,7 +71,7 @@ Router::new()
     .path("articles")
     .hoop(auth_check)
     .post(list_articles)
-    .push(Router::new().path("<id>").patch(edit_article).delete(delete_article));
+    .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
 ```
 
 虽然这两个路由都有这同样的 `path("articles")`, 然而它们依然可以被同时添加到同一个父路由, 所以最后的路由长成了这个样子:
@@ -82,15 +82,15 @@ Router::new()
         Router::new()
             .path("articles")
             .get(list_articles)
-            .push(Router::new().path("<id>").get(show_article)),
+            .push(Router::new().path("{id}").get(show_article)),
     )
     .push(
         Router::new()
             .path("articles")
             .hoop(auth_check)
             .post(list_articles)
-            .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
 ```
 
-`<id>` 匹配了路径中的一个片段, 正常情况下文章的 `id` 只是一个数字, 这是我们可以使用正则表达式限制 `id` 的匹配规则, `r"<id:/\d+/>"`.
+`{id}` 匹配了路径中的一个片段, 正常情况下文章的 `id` 只是一个数字, 这是我们可以使用正则表达式限制 `id` 的匹配规则, `r"{id:/\d+/}"`.

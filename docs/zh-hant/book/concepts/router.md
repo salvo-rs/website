@@ -35,7 +35,7 @@ Router::new()
 如果訪問 `GET /articles/` 認為匹配成功，並執行 `list_articles`. 但是如果訪問的是 `GET /articles/123` 則匹配路由失敗並返回 404 錯誤， 因為 ·Router::with_path("articles")僅僅隻消費掉了 Url 路徑信息中的 `/articles`, 還有 `/123` 部分未被消費掉,因此認為匹配失敗. 要想能夠匹配成功,路由可以改成:
 
 ```rust
-Router::with_path("articles/<**>").get(list_articles).post(create_article);
+Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
 這裏的 `<**>` 會匹配任何多餘的路徑, 所以它能夠匹配 `GET /articles/123` 執行 `list_articles`.
@@ -46,8 +46,8 @@ Router::with_path("articles/<**>").get(list_articles).post(create_article);
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer);
-Router::with_path("writers/<id>").get(show_writer).patch(edit_writer).delete(delete_writer);
-Router::with_path("writers/<id>/articles").get(list_writer_articles);
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
+Router::with_path("writers/{id}/articles").get(list_writer_articles);
 ```
 
 ## 樹狀式定義
@@ -59,7 +59,7 @@ Router::with_path("writers")
     .get(list_writers)
     .post(create_writer)
     .push(
-        Router::with_path("<id>")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
@@ -75,11 +75,11 @@ Router::new()
     .push(
         Router::with_path("articles")
             .get(list_articles)
-            .push(Router::with_path("<id>").get(show_article))
+            .push(Router::with_path("{id}").get(show_article))
             .then(|router|{
                 if admin_mode() {
                     router.post(create_article).push(
-                        Router::with_path("<id>").patch(update_article).delete(delete_writer)
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)
                     )
                 } else {
                     router
@@ -100,24 +100,24 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-`<id>` 匹配了路徑中的一個片段, 正常情況下文章的 `id` 隻是一個數字, 此時我們可以使用正則錶達式限製 `id` 的匹配規則, `r"<id:/\d+/>"`.
+`{id}` 匹配了路徑中的一個片段, 正常情況下文章的 `id` 隻是一個數字, 此時我們可以使用正則錶達式限製 `id` 的匹配規則, `r"{id|\d+}"`.
 
-對於這種數字類型, 還有一種更簡單的方法是使用  `<id:num>`, 具體寫法為:
-- `<id:num>`， 匹配任意多個數字字符;
-- `<id:num[10]>`， 隻匹配固定特定數量的數字字符，這裏的 10 代錶匹配僅僅匹配 10 個數字字符;
-- `<id:num(..10)>`, 代錶匹配 1 到 9 個數字字符;
-- `<id:num(3..10)>`, 代錶匹配 3 到 9 個數字字符;
-- `<id:num(..=10)>`, 代錶匹配 1 到 10 個數字字符;
-- `<id:num(3..=10)>`, 代錶匹配 3 到 10 個數字字符;
-- `<id:num(10..)>`, 代錶匹配至少 10 個數字字符.
+對於這種數字類型, 還有一種更簡單的方法是使用  `{id:num}`, 具體寫法為:
+- `{id:num}`， 匹配任意多個數字字符;
+- `{id:num[10]}`， 隻匹配固定特定數量的數字字符，這裏的 10 代錶匹配僅僅匹配 10 個數字字符;
+- `{id:num(..10)}`, 代錶匹配 1 到 9 個數字字符;
+- `{id:num(3..10)}`, 代錶匹配 3 到 9 個數字字符;
+- `{id:num(..=10)}`, 代錶匹配 1 到 10 個數字字符;
+- `{id:num(3..=10)}`, 代錶匹配 3 到 10 個數字字符;
+- `{id:num(10..)}`, 代錶匹配至少 10 個數字字符.
 
-還可以通過 `<**>`, `<*+>` 或者 `<*?>` 匹配所有剩餘的路徑片段. 為了代碼易讀性性強些, 也可以添加適合的名字, 讓路徑語義更清晰, 比如: `<**file_path>`. 
+還可以通過 `{**}`, `{*+}` 或者 `{*?}` 匹配所有剩餘的路徑片段. 為了代碼易讀性性強些, 也可以添加適合的名字, 讓路徑語義更清晰, 比如: `{**file_path}`.
 
-- `<**>`: 代錶通配符匹配的部分可以是空字符串, 比如路徑是 `/files/<**+*rest_path>`, 會匹配 `/files`， `/files/abc.txt`，`/files/dir/abc.txt`；
-- `<*+>`: 代錶通配符匹配的部分必須存在，不能匹配到空字符串, 比如路徑是 `/files/<*+rest_path>`, 不會匹配 `/files` 但是會匹配 `/files/abc.txt`，`/files/dir/abc.txt`；
-- `<*?>`: 代錶通配符匹配的部分可以是空字符串, 但是隻能包含一個路徑片段, 比如路徑是 `/files/<*？rest_path>`, 不會匹配 `/files/dir/abc.txt` 但是會匹配 `/files`，`/files/abc.txt`；
+- `{**}`: 代錶通配符匹配的部分可以是空字符串, 比如路徑是 `/files/{**rest_path}`, 會匹配 `/files`， `/files/abc.txt`，`/files/dir/abc.txt`；
+- `{*+}`: 代錶通配符匹配的部分必須存在，不能匹配到空字符串, 比如路徑是 `/files/{*+rest_path}`, 不會匹配 `/files` 但是會匹配 `/files/abc.txt`，`/files/dir/abc.txt`；
+- `{*?}`: 代錶通配符匹配的部分可以是空字符串, 但是隻能包含一個路徑片段, 比如路徑是 `/files/{*？rest_path}`, 不會匹配 `/files/dir/abc.txt` 但是會匹配 `/files`，`/files/abc.txt`；
 
-允許組合使用多個錶達式匹配同一個路徑片段, 比如 `/articles/article_<id:num>/`, `/images/<name>.<ext>`.
+允許組合使用多個錶達式匹配同一個路徑片段, 比如 `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
 
 ## 添加中間件
 
@@ -130,7 +130,7 @@ Router::new()
     .get(list_writers)
     .post(create_writer)
     .push(
-        Router::with_path("<id>")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
@@ -149,11 +149,11 @@ Router::new()
             .hoop(check_authed)
             .path("writers")
             .post(create_writer)
-            .push(Router::with_path("<id>").patch(edit_writer).delete(delete_writer)),
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),
     )
     .push(
         Router::with_path("writers").get(list_writers).push(
-            Router::with_path("<id>")
+            Router::with_path("{id}")
                 .get(show_writer)
                 .push(Router::with_path("articles").get(list_writer_articles)),
         ),
@@ -174,13 +174,13 @@ Router::new()
     .push(
         Router::with_path("articles")
             .get(list_articles)
-            .push(Router::new().path("<id>").get(show_article)),
+            .push(Router::new().path("{id}").get(show_article)),
     )
     .push(
         Router::with_path("articles")
             .hoop(auth_check)
             .post(list_articles)
-            .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
 ```
 
@@ -199,8 +199,8 @@ Router::with_filter(filters::path("hello").and(filters::get()));
 基於請求路徑的過濾器是使用最頻繁的. 路徑過濾器中可以定義參數, 比如:
 
 ```rust
-Router::with_path("articles/<id>").get(show_article);
-Router::with_path("files/<**rest_path>").get(serve_file)
+Router::with_path("articles/{id}").get(show_article);
+Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
 在 `Handler` 中, 可以通過 `Request` 對象的 `get_param` 函數獲取:
@@ -257,9 +257,9 @@ async fn main() {
     let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
     PathFilter::register_wisp_regex("guid", guid);
     Router::new()
-        .push(Router::with_path("/articles/<id:guid>").get(show_article))
-        .push(Router::with_path("/users/<id:guid>").get(show_user));
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))
+        .push(Router::with_path("/users/{id:guid}").get(show_user));
 }
 ```
 
-僅僅隻需要註冊一次, 以後就可以直接通過 `<id:guid>` 這樣的簡單寫法匹配 GUID, 簡化代碼的書寫.
+僅僅隻需要註冊一次, 以後就可以直接通過 `{id:guid}` 這樣的簡單寫法匹配 GUID, 簡化代碼的書寫.

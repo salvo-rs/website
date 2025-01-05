@@ -12,8 +12,8 @@ We can write routers in flat way, like this:
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer);
-Router::with_path("writers/<id>").get(show_writer).patch(edit_writer).delete(delete_writer);
-Router::with_path("writers/<id>/articles").get(list_writer_articles);
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
+Router::with_path("writers/{id}/articles").get(list_writer_articles);
 ```
 
 ## Write in tree way
@@ -25,7 +25,7 @@ Router::with_path("writers")
     .get(list_writers)
     .post(create_writer)
     .push(
-        Router::with_path("<id>")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
@@ -42,11 +42,11 @@ Router::new()
     .push(
         Router::with_path("articles")
             .get(list_articles)
-            .push(Router::with_path("<id>").get(show_article))
+            .push(Router::with_path("{id}").get(show_article))
             .then(|router|{
                 if admin_mode() {
                     router.post(create_article).push(
-                        Router::with_path("<id>").patch(update_article).delete(delete_writer)
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)
                     )
                 } else {
                     router
@@ -68,22 +68,22 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-`<id>` matches a fragment in the path, under normal circumstances, the article `id` is just a number, which we can use regular expressions to restrict `id` matching rules, `r"<id:/\d+/>"`.
+`{id}` matches a fragment in the path, under normal circumstances, the article `id` is just a number, which we can use regular expressions to restrict `id` matching rules, `r"{id|\d+}"`.
 
-For numeric characters there is an easier way to use `<id:num>`, the specific writing is:
+For numeric characters there is an easier way to use `{id:num}`, the specific writing is:
 
-- `<id:num>`, matches any number of numeric characters;
-- `<id:num[10]>`, only matches a certain number of numeric characters, where 10 means that the match only matches 10 numeric characters;
-- `<id:num(..10)>` means matching 1 to 9 numeric characters;
-- `<id:num(3..10)>` means matching 3 to 9 numeric characters;
-- `<id:num(..=10)>` means matching 1 to 10 numeric characters;
-- `<id:num(3..=10)>` means match 3 to 10 numeric characters;
-- `<id:num(10..)>` means to match at least 10 numeric characters.
+- `{id:num}`, matches any number of numeric characters;
+- `{id:num[10]}`, only matches a certain number of numeric characters, where 10 means that the match only matches 10 numeric characters;
+- `{id:num(..10)}` means matching 1 to 9 numeric characters;
+- `{id:num(3..10)}` means matching 3 to 9 numeric characters;
+- `{id:num(..=10)}` means matching 1 to 10 numeric characters;
+- `{id:num(3..=10)}` means match 3 to 10 numeric characters;
+- `{id:num(10..)}` means to match at least 10 numeric characters.
 
-You can also use `<**>`, `<*+*>` or `<*?>` to match all remaining path fragments.
-In order to make the code more readable, you can also add appropriate name to make the path semantics more clear, for example: `<**file_path>`.
+You can also use `{**}`, `{*+*}` or `{*?}` to match all remaining path fragments.
+In order to make the code more readable, you can also add appropriate name to make the path semantics more clear, for example: `{**file_path}`.
 
-It is allowed to combine multiple expressions to match the same path segment, such as `/articles/article_<id:num>/`, `/images/<name>.<ext>`.
+It is allowed to combine multiple expressions to match the same path segment, such as `/articles/article_<id:num>/`, `/images/{name}.{ext}`.
 
 ## Add middlewares
 
@@ -96,7 +96,7 @@ Router::new()
     .get(list_writers)
     .post(create_writer)
     .push(
-        Router::with_path("<id>")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
@@ -115,11 +115,11 @@ Router::new()
             .hoop(check_authed)
             .path("writers")
             .post(create_writer)
-            .push(Router::with_path("<id>").patch(edit_writer).delete(delete_writer)),
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),
     )
     .push(
         Router::new().path("writers").get(list_writers).push(
-            Router::with_path("<id>")
+            Router::with_path("{id}")
                 .get(show_writer)
                 .push(Router::with_path("articles").get(list_writer_articles)),
         ),
@@ -142,14 +142,14 @@ Router::new()
         Router::new()
             .path("articles")
             .get(list_articles)
-            .push(Router::new().path("<id>").get(show_article)),
+            .push(Router::new().path("{id}").get(show_article)),
     )
     .push(
         Router::new()
             .path("articles")
             .hoop(auth_check)
             .post(list_articles)
-            .push(Router::new().path("<id>").patch(edit_article).delete(delete_article)),
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
 ```
 
@@ -168,8 +168,8 @@ Router::new().filter(filters::path("hello").and(filters::get()));
 The filter is based on the request path is the most frequently used. Parameters can be defined in the path filter, such as:
 
 ```rust
-Router::with_path("articles/<id>").get(show_article);
-Router::with_path("files/<**rest_path>").get(serve_file)
+Router::with_path("articles/{id}").get(show_article);
+Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
 In `Handler`, it can be obtained through the `get_param` function of the `Request` object:
@@ -224,9 +224,9 @@ async fn main() {
     let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
     PathFilter::register_wisp_regex("guid", guid);
     Router::new()
-        .push(Router::with_path("/articles/<id:guid>").get(show_article))
-        .push(Router::with_path("/users/<id:guid>").get(show_user));
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))
+        .push(Router::with_path("/users/{id:guid}").get(show_user));
 }
 ```
 
-You only need to register once, and then you can directly match the GUID through the simple writing method as `<id:guid>`, which simplifies the writing of the code.
+You only need to register once, and then you can directly match the GUID through the simple writing method as `{id:guid}`, which simplifies the writing of the code.

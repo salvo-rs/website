@@ -25,7 +25,7 @@ async fn main() {
     let router = Router::new()
         .push(Router::with_hoop(auth_handler).path("welcome").get(welcome))
         .push(
-            Router::with_path("<**rest>")
+            Router::with_path("{**rest}")
                 .goal(Proxy::use_hyper_client(vec!["http://localhost:5801"])),
         );
     Server::new(acceptor).serve(router).await;

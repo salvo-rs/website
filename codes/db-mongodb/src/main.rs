@@ -121,7 +121,7 @@ async fn main() {
     let router = Router::with_path("users")
         .get(get_users)
         .post(add_user)
-        .push(Router::with_path("<username>").get(get_user));
+        .push(Router::with_path("{username}").get(get_user));
 
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor).serve(router).await;

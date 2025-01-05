@@ -21,7 +21,7 @@ async fn main() {
                 .get(list_todos)
                 .post(create_todo)
                 .push(
-                    Router::with_path("<id>")
+                    Router::with_path("{id}")
                         .patch(update_todo)
                         .delete(delete_todo),
                 ),
