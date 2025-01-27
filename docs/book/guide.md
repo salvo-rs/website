@@ -101,7 +101,7 @@ For instance, the following set of commands runs the `hello` example:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo.git
-cd salvo
+cd salvo/examples
 cargo run --bin example-hello
 ```
 
