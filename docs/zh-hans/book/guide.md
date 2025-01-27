@@ -100,7 +100,7 @@ tracing-subscriber = "0.3"
 
 ```sh
 git clone https://github.com/salvo-rs/salvo
-cd salvo
+cd salvo/examples
 cargo run --bin example-hello
 ```
 
