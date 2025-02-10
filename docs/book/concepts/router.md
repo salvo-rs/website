@@ -172,7 +172,7 @@ Router::with_path("articles/{id}").get(show_article);
 Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
-In `Handler`, it can be obtained through the `get_param` function of the `Request` object:
+In `Handler`, it can be obtained through the `param` function of the `Request` object:
 
 ```rust
 #[handler]
