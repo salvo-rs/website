@@ -12,7 +12,7 @@ actions:
     type: secondary
 features:
   - title: 简单得让你一见钟情
-    details: 其他 Rust 框架是在你掌握复杂的 Rust 语言功能，做完各种类型体操后依然通不能正常编译， 而 Salvo 却善解人意，不管是新手还是老司机都可以轻松驾驭.
+    details: 其他 Rust 框架是在你掌握复杂的 Rust 语言功能，做完各种类型体操后依然不能正常编译， 而 Salvo 却善解人意，不管是新手还是老司机都可以轻松驾驭.
   - title: 强大实用的功能
     details: 虽然使用简单, 但是功能依旧强大, 内置 Multipart, OpenAPI，HTTP2/3, LetsEncrypt, 灵活的数据解析...等等实用功能.
   - title: 风驰电掣的性能
