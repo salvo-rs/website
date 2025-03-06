@@ -73,5 +73,9 @@ export const navbarZhHant: NavbarConfig = [
     text: 'Gitee',
     link: 'https://gitee.com/salvo-rs/salvo',
   },
+  {
+    text: 'Gitcode',
+    link: 'https://gitcode.com/salvo-rs/salvo',
+  },
   // versions,
 ]
