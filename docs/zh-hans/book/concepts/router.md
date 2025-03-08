@@ -38,7 +38,7 @@ Router::new()
 Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
-这里的 `<**>` 会匹配任何多余的路径, 所以它能够匹配 `GET /articles/123` 执行 `list_articles`.
+这里的 `{**}` 会匹配任何多余的路径, 所以它能够匹配 `GET /articles/123` 执行 `list_articles`.
 
 ## 扁平式定义
 
