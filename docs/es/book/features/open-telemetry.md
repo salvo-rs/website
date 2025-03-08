@@ -1,3 +1,3 @@
 # OpenTelemetry
 
-提供对 OpenTelemetry 支持的中间件. 可以参考官方库中的[示例](https://github.com/salvo-rs/salvo/tree/main/examples/otel-jaeger).
+Proporciona middleware compatible con OpenTelemetry. Puedes consultar el [ejemplo](https://github.com/salvo-rs/salvo/tree/main/examples/otel-jaeger) en la biblioteca oficial.
