@@ -11,6 +11,7 @@ async fn main() {
             "examples/static-dir-list/static/girl",
         ])
         .defaults("index.html")
+        .fallback("index.html")
         .auto_list(true),
     );
 
