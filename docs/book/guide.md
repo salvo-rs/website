@@ -78,7 +78,7 @@ There are many ways to write function handler.
 
 ## Use HTTP3
 
-First you need to enable feature `http3` in `Cargo.toml`, and then change `main.rs` like this:
+First you need to enable feature `quinn` in `Cargo.toml`, and then change `main.rs` like this:
 
 <CodeGroup>
   <CodeGroupItem title="main.rs" active>
