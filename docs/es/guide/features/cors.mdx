@@ -1,0 +1,71 @@
+# Control de Acceso entre Orígenes (CORS)
+
+CORS (Cross-Origin Resource Sharing) es un mecanismo que permite a los navegadores realizar solicitudes a servidores de diferentes orígenes, superando así las restricciones de la política del mismo origen.
+
+## ¿Qué es la política del mismo origen?
+
+La política del mismo origen es una función de seguridad del navegador que limita cómo un documento o script cargado desde un origen puede interactuar con recursos de otro origen. Se considera "mismo origen" cuando coinciden el protocolo, dominio y número de puerto.
+
+## ¿Por qué necesitamos CORS?
+
+Cuando una aplicación frontend necesita acceder a APIs de diferentes orígenes, se requiere soporte CORS. Por ejemplo:
+- La aplicación frontend está desplegada en `https://frontend.com`
+- El servicio API está desplegada en `https://api.backend.com`
+
+Sin CORS, el navegador bloquearía el acceso de la aplicación frontend al servicio API.
+
+## ¿Cómo funciona CORS?
+
+CORS implementa el control de acceso entre orígenes mediante cabeceras HTTP:
+- Solicitud simple: se envía directamente, el servidor controla el acceso mediante cabeceras de respuesta
+- Solicitud de preflight: el navegador primero envía una solicitud OPTIONS para consultar si se permite el acceso, y solo envía la solicitud real si obtiene permiso
+
+Como el navegador envía solicitudes de preflight `Method::OPTIONS`, es necesario añadir manejo para este tipo de solicitudes, colocando el middleware CORS en el `Service`.
+
+## Uso de CORS en Salvo
+
+Salvo proporciona un middleware CORS integrado, fácil de configurar y usar. Aquí un ejemplo de código:
+
+:::warning
+Nota: El middleware .hoop(cors) se aplica al `Service`, no al `Router`. Esto permite manejar automáticamente las solicitudes OPTIONS de preflight.
+```rust
+let cors = Cors::new()
+    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
+    .allow_headers("authorization")
+    .into_handler();
+
+// Configurar enrutador backend con protección CORS
+let router = Router::with_path("hello").post(hello);
+let service = Service::new(router).hoop(cors);
+```
+:::
+
+_**Ejemplo de código**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CorsCode from '../../../../codes_md/cors/src/main.mdx';
+import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CorsCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CorsCargoCode/>
+  </Tab>
+</Tabs>
+
+## Opciones principales de configuración
+
+El middleware CORS ofrece varias opciones de configuración:
+
+- **Orígenes permitidos**: controla qué dominios pueden acceder al recurso
+- **Métodos permitidos**: especifica los métodos HTTP permitidos (GET, POST, etc.)
+- **Cabeceras permitidas**: especifica las cabeceras de solicitud permitidas
+- **Cabeceras expuestas**: especifica qué cabeceras de respuesta pueden ser accedidas por el cliente
+- **Credenciales permitidas**: indica si se permiten credenciales como cookies
+- **Tiempo de caché para preflight**: duración del caché para resultados de solicitudes de preflight
+
+Con una configuración adecuada de CORS, se puede garantizar seguridad mientras se satisface la necesidad de acceso entre orígenes.
+{/* 本行由工具自动生成,原文哈希值:0b191eacd5af64466fceaea928dec4d4 */}

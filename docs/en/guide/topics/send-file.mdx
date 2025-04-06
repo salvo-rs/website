@@ -1,0 +1,60 @@
+# Sending Files
+
+Salvo provides several ways to send files:
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+### NamedFile
+
+Salvo offers `salvo::fs::NamedFile` for efficiently sending files to clients. Instead of loading entire files into memory, it streams partial content based on the request's `Range` header.
+
+In fact, `Response::send_file` is simply a convenience wrapper around `NamedFile`. For more granular control over file sending, use `NamedFileBuilder`.
+
+Create a `NamedFileBuilder` via `NamedFile::builder`:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+Configure settings before sending the file:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### Serve Static
+
+Middleware for serving static files or embedded resources.
+
+- `StaticDir` supports serving from local directories. Multiple directories can be specified as fallback paths. For example:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  If a file isn't found in the first directory, the system will check subsequent directories.
+
+- Includes support for `rust-embed` integration:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  The `with_fallback` method specifies a fallback file when the requested resource isn't found, which is particularly useful for single-page applications.
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

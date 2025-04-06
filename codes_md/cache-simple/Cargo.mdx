@@ -1,0 +1,14 @@
+```toml  title="cache-simple/Cargo.toml"
+[package]
+name = "example-cache-simple"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+salvo = { version = "0.77.1", features = ["cache"] }
+tokio = { version = "1", features = ["macros"] }
+time = "0.3"
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+```

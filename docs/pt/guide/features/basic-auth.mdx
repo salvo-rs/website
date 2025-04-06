@@ -1,0 +1,48 @@
+# Autenticação Básica
+
+Middleware que fornece suporte a Basic Auth.
+
+import { Tab, Tabs } from 'rspress/theme';
+import BasicAuthCode from '../../../../codes_md/basic-auth/src/main.mdx';
+import BasicAuthCargoCode from '../../../../codes_md/basic-auth/Cargo.mdx';
+
+## Introdução à Autenticação Básica
+
+Basic Auth é um mecanismo simples de autenticação HTTP que transmite nome de usuário e senha através do cabeçalho `Authorization` nas requisições HTTP. O formato é `Authorization: Basic <base64(username:password)>`. Embora simples, como as credenciais são apenas codificadas em Base64 e não criptografadas, geralmente é necessário usar com HTTPS para garantir segurança.
+
+## Comparação de implementações de Basic Auth em frameworks comuns
+
+| Framework | Linguagem | Implementação Basic Auth |
+|-----------|-----------|--------------------------|
+| Salvo | Rust | Através do middleware `BasicAuth` e implementação personalizada de `BasicAuthValidator` |
+| Express | JavaScript | Usando o pacote middleware `express-basic-auth` |
+| Spring Security | Java | Configuração via `httpBasic()` e implementação de `UserDetailsService` |
+| ASP.NET Core | C# | Usando `.UseAuthentication()` e `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | Através de middleware personalizado ou usando o pacote `gin-contrib/auth` |
+
+## Cenários de uso
+
+Basic Auth é adequado para os seguintes cenários:
+
+1. **APIs e ferramentas internas**: Ferramentas administrativas e APIs de uso interno da empresa
+2. **Ambientes de desenvolvimento e teste**: Implementação rápida de autenticação sem sistemas complexos de login
+3. **Proteção simples de APIs**: Quando não é necessário um sistema complexo de gerenciamento de usuários
+4. **Combinação com outras medidas de segurança**: Como parte de uma arquitetura de segurança em camadas
+
+No Salvo, o middleware Basic Auth pode ser facilmente integrado às rotas, com lógica de validação personalizada através da implementação da trait `BasicAuthValidator`, oferecendo grande flexibilidade.
+
+## Considerações importantes
+
+- Sempre use com HTTPS para proteger a transmissão das credenciais
+- Não é adequado para ambientes de produção com informações sensíveis
+- Considere usar métodos de autenticação mais seguros como JWT, OAuth etc. para ambientes de produção
+
+<Tabs>
+  <Tab label="main.rs">
+    <BasicAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <BasicAuthCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:602232eaaa9e3f904ce93326845595ee */}

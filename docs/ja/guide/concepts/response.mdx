@@ -1,0 +1,97 @@
+# レスポンス
+
+`Handler` 内では、[`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) が引数として渡されます:
+* `Response` 構造体は HTTP レスポンスの全要素をカプセル化し、HTTP レスポンスを構築・操作するための完全な API を提供します
+* メソッドチェーンスタイル（例: `res.status_code(200).body("Hello")`）をサポートし、レスポンスを流暢に構築できます
+* 主な機能:
+    * ステータスコードとヘッダーの設定
+    * レスポンスボディの操作（文字列、バイト、ファイル、ストリームデータに対応）
+    * Cookie の管理
+    * 様々なコンテンツレンダリング方法
+* この構造体は可変参照モードを採用し、`&mut self` で自身の参照を返すため、ハンドラが HTTP レスポンスを簡単に構築・カスタマイズでき、様々な Web サービス要件を満たせます
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world!");
+}
+```
+
+サーバ゙ーがクライアントからのリクエストを受信した後、マッチした任意の `Handler` とミドルウェアは `Response` にデータを書き込むことができます。特定の場合、例えばあるミドルウェアが後続のミドルウェアと `Handler` の実行を阻止したい場合、`FlowCtrl` を使用できます:
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
+    ctrl.skip_rest();
+    res.render("Hello world!");
+}
+```
+
+## コンテンツの書き込み
+
+`Response` にデータを書き込むのは非常に簡単です:
+
+- プレーンテキストデータの書き込み
+
+    ```rust
+    res.render("Hello world!");
+    ```
+
+- JSON シリアライズデータの書き込み
+
+    ```rust
+    use serde::Serialize;
+    use salvo::prelude::Json;
+
+    #[derive(Serialize, Debug)]
+    struct User {
+        name: String,
+    }
+    let user = User{name: "jobs".to_string()};
+    res.render(Json(user));
+    ```
+
+:::warning
+`render` メソッドを複数回呼び出して JSON データを書き込む場合、これらのデータは 1 つの JSON オブジェクトにマージされず、独立したテキストフラグメントとして順番に連結されるため、無効な JSON フォーマットになる可能性があります。複数のデータを返す必要がある場合は、それらを 1 つのオブジェクトに組み合わせてから一度にシリアライズするか、ロジックを自行処理してください。
+:::
+
+
+- HTML の書き込み
+    
+    ```rust
+    res.render(Text::Html("<html><body>hello</body></html>"));
+    ```
+
+## HTTP エラーの書き込み
+
+
+- `render` を使用すると、`Response` に詳細なエラー情報を書き込めます。
+
+    ```rust
+    use salvo::http::errors::*;
+    res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
+    ```
+
+- カスタムエラー情報が不要な場合は、直接 `set_http_code` を呼び出せます。
+
+    ```rust
+    use salvo::http::StatusCode;
+    res.status_code(StatusCode::BAD_REQUEST);
+    ```
+
+## 他のURLへのリダイレクト
+- `render` メソッドを使用すると、`Response` にリダイレクトレスポンスを書き込み、新しいURLにナビゲートできます。Redirect::found メソッドを呼び出すと、HTTP ステータスコードが 302（Found）に設定され、一時的なリダイレクトを意味します。 
+    ```rust
+    use salvo::prelude::*;
+
+    #[handler]
+    async fn redirect(res: &mut Response) {
+        res.render(Redirect::found("https://salvo.rs/"));
+    }
+    ```
+
+
+## ResBody
+
+Response が返す Body タイプは `ResBody` です。これは列挙型で、エラーが発生した場合に `ResBody::Error` に設定されます。ここにはエラー情報が含まれており、エラー処理を遅延させるために使用されます。`StatusError` は実際には `Writer` を実装していないため、`Catcher` で独自の表示方法をカスタマイズできます。
+{/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

@@ -1,0 +1,75 @@
+---
+title: Rust Memory Allocator Alternatives  
+---
+
+# Jemallocator: Rust jemalloc Memory Allocator  
+
+import { LinkCard } from '@theme';  
+
+<LinkCard  
+  href="https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/"  
+  title="tikv-jemallocator"  
+  description="tikv-jemallocator"  
+/>  
+
+:::tip  
+The default allocator may sometimes fail to release memory promptly. It is recommended to use jemallocator instead.  
+:::  
+
+jemallocator is a library linked with the jemalloc memory allocator, providing the `Jemalloc` unit type that implements the allocator API and can be set as `#[global_allocator]`.  
+
+`tikv-jemallocator` is the successor to `jemallocator`. These two crates are identical except for their names. For new projects, it is recommended to use the `tikv-xxx` version.  
+
+## The jemalloc Ecosystem  
+
+The jemalloc support ecosystem consists of the following crates:  
+
+- **tikv-jemalloc-sys**: Builds and links to jemalloc, exposing raw C bindings to it.  
+- **tikv-jemallocator**: Provides the `Jemalloc` type, which implements the `GlobalAlloc` and `Alloc` traits.  
+- **tikv-jemalloc-ctl**: A high-level wrapper for jemalloc's control and introspection APIs (the `mallctl*()` function family and `MALLCTL NAMESPACE`).  
+
+## Usage  
+
+### Adding Dependencies  
+
+To use tikv-jemallocator, add it as a dependency:  
+
+```toml  
+[dependencies]  
+
+[target.'cfg(not(target_env = "msvc"))'.dependencies]  
+tikv-jemallocator = "0.5"  
+```  
+
+### Setting as the Global Allocator  
+
+To set `tikv_jemallocator::Jemalloc` as the global allocator, add the following code to your project:  
+
+```rust  
+#[cfg(not(target_env = "msvc"))]  
+use tikv_jemallocator::Jemalloc;  
+
+#[cfg(not(target_env = "msvc"))]  
+#[global_allocator]  
+static GLOBAL: Jemalloc = Jemalloc;  
+```  
+
+That's it! Once this static variable is defined, jemalloc will be used for all memory allocations requested by Rust code in the same program.  
+
+## Advantages  
+
+jemalloc is a general-purpose malloc implementation that focuses on:  
+
+- Reducing memory fragmentation  
+- Scalability in high-concurrency scenarios  
+- Providing rich introspection and control capabilities  
+
+It is particularly useful in the following scenarios:  
+- Long-running applications  
+- Memory-intensive workloads  
+- High-performance services requiring fine-grained memory management  
+
+## Compatibility Notes  
+
+jemalloc does not support the MSVC target environment and is therefore unavailable when using the MSVC toolchain on Windows. This is why the `cfg(not(target_env = "msvc"))` condition is included in the example code.
+{/* 本行由工具自动生成,原文哈希值:f1e3515e93e417fa34b6776be2e69244 */}

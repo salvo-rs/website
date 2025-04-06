@@ -1,0 +1,242 @@
+# Router
+
+## Was ist Routing?
+
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) definiert, welche Middleware und `Handler` eine HTTP-Anfrage verarbeiten. Dies ist die grundlegendste und zentrale Funktionalität in Salvo.
+
+Intern besteht ein `Router` aus einer Reihe von Filtern. Bei einer eingehenden Anfrage testet der Router der Reihe nach, ob er selbst oder seine Unterrouten die Anfrage matchen. Bei erfolgreichem Match werden die Middleware der gesamten Routenkette ausgeführt. Falls der `Response`-Status auf einen Fehler (4XX, 5XX) oder eine Umleitung (3XX) gesetzt wird, werden nachfolgende Middleware und `Handler` übersprungen. Sie können auch manuell `ctrl.skip_rest()` aufrufen, um die weitere Verarbeitung zu überspringen.
+
+Beim Matching gibt es einen URL-Pfad, der während des Prozesses vollständig von den Filtern verarbeitet werden muss. Nur wenn alle Filter erfolgreich sind und der gesamte Pfad verarbeitet wurde, gilt der Match als erfolgreich.
+
+Beispiel:
+
+```rust
+Router::with_path("articles").get(list_articles).post(create_article);
+```
+
+Entspricht:
+
+```rust
+Router::new()
+    // PathFilter prüft den Anfragepfad - nur Pfade mit "articles" matchen
+    // Beispiel: /articles/123 matcht, /articles_list/123 nicht
+    .filter(PathFilter::new("articles"))
+
+    // Bei erfolgreichem Root-Match: GET-Anfragen werden von list_articles verarbeitet
+    .push(Router::new().filter(filters::get()).handle(list_articles))
+
+    // Bei erfolgreichem Root-Match: POST-Anfragen werden von create_article verarbeitet
+    .push(Router::new().filter(filters::post()).handle(create_article));
+```
+
+`GET /articles/` würde erfolgreich matchen und `list_articles` ausführen. `GET /articles/123` würde jedoch fehlschlagen (404), da `Router::with_path("articles")` nur `/articles` verarbeitet, nicht den Rest `/123`. Für solch einen Fall:
+
+```rust
+Router::with_path("articles/{**}").get(list_articles).post(create_article);
+```
+
+Hier matcht `{**}` beliebige Restpfade, sodass `GET /articles/123` erfolgreich `list_articles` ausführt.
+
+## Flache Definition
+
+Routen können flach definiert werden:
+
+```rust
+Router::with_path("writers").get(list_writers).post(create_writer);
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
+Router::with_path("writers/{id}/articles").get(list_writer_articles);
+```
+
+## Baumartige Definition
+
+Empfohlene baumartige Struktur:
+
+```rust
+Router::with_path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("{id}")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
+```
+
+Diese Struktur bleibt bei komplexen Projekten übersichtlich.
+
+Viele `Router`-Methoden geben `Self` zurück für Methodenverkettung. Für bedingtes Routing gibt es `then`:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::with_path("{id}").get(show_article))
+            .then(|router|{
+                if admin_mode() {
+                    router.post(create_article).push(
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)
+                    )
+                } else {
+                    router
+                }
+            }),
+    );
+```
+
+Dies fügt nur im `admin_mode` Routen zum Erstellen/Bearbeiten/Löschen von Artikeln hinzu.
+
+## Parameter aus Routen
+
+`{id}` definiert einen Parameter, der via `Request` ausgelesen werden kann:
+
+```rust
+#[handler]
+async fn show_writer(req: &mut Request) {
+    let id = req.param::<i64>("id").unwrap();
+}
+```
+
+Für numerische IDs kann `{id:num}` mit verschiedenen Formaten verwendet werden:
+- `{id:num}`: Beliebige Ziffernfolge
+- `{id:num[10]}`: Genau 10 Ziffern
+- `{id:num(..10)}`: 1-9 Ziffern
+- `{id:num(3..10)}`: 3-9 Ziffern
+- `{id:num(..=10)}`: 1-10 Ziffern
+- `{id:num(3..=10)}`: 3-10 Ziffern
+- `{id:num(10..)}`: Mindestens 10 Ziffern
+
+Platzhalter:
+- `{**}`: Matcht optionalen Restpfad (auch leer)
+- `{*+}`: Matcht nicht-leeren Restpfad
+- `{*?}`: Matcht optionales einzelnes Pfadsegment
+
+Kombinationen sind möglich: `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+
+## Middleware hinzufügen
+
+Middleware wird via `hoop` hinzugefügt:
+
+```rust
+Router::new()
+    .hoop(check_authed)
+    .path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("{id}")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
+```
+
+Hier gilt `check_authed` für alle Unterrouten. Für selektive Anwendung:
+
+```rust
+Router::new()
+    .push(
+        Router::new()
+            .hoop(check_authed)
+            .path("writers")
+            .post(create_writer)
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),
+    )
+    .push(
+        Router::with_path("writers").get(list_writers).push(
+            Router::with_path("{id}")
+                .get(show_writer)
+                .push(Router::with_path("articles").get(list_writer_articles)),
+        ),
+    );
+```
+
+## Filter
+
+Router nutzen Filter für das Matching. Filter können mit `or`/`and` verknüpft werden. Ein Router matcht nur, wenn alle Filter erfolgreich sind.
+
+Pfadfilter sind die häufigsten Filter:
+
+```rust
+Router::with_path("articles/{id}").get(show_article);
+Router::with_path("files/{**rest_path}").get(serve_file)
+```
+
+Parameter werden via `Request` ausgelesen:
+
+```rust
+#[handler]
+pub async fn show_article(req: &mut Request) {
+    let article_id = req.param::<i64>("id");
+}
+```
+
+Methodenfilter:
+
+```rust
+Router::new().get(show_article).patch(update_article).delete(delete_article);
+```
+
+Entspricht:
+
+```rust
+Router::new()
+    .push(Router::with_filter(filters::get()).handle(show_article))
+    .push(Router::with_filter(filters::patch()).handle(update_article))
+    .push(Router::with_filter(filters::delete()).handle(delete_article));
+```
+
+## Benutzerdefinierte Wisp
+
+Für häufig verwendete Muster können Kurzformen registriert werden. Beispiel für GUIDs:
+
+```rust
+let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
+PathFilter::register_wisp_regex("guid", guid);
+Router::new()
+    .push(Router::with_path("/articles/{id:guid}").get(show_article))
+    .push(Router::with_path("/users/{id:guid}").get(show_user));
+```
+
+Danach kann einfach `{id:guid}` verwendet werden.
+
+## Vergleich mit Controller-basierten Frameworks
+
+Routing-basierte Frameworks wie Salvo bieten gegenüber MVC/Controller-Ansätzen:
+
+- **Flexibilität**: Direkte Definition von Pfad-Handlern ohne Controller-Klassen
+- **Middleware-Integration**: Präzise Middleware-Anwendung auf bestimmte Routen
+- **Code-Organisation**: Funktionsorientiert statt schichtenbasiert
+- **Leichtgewichtigkeit**: Weniger Framework-Zwänge
+
+Routing bildet die API-Struktur direkt ab und eignet sich besonders für moderne Microservices und REST-APIs.
+
+# Router-Methodenübersicht
+
+| Kategorie | Methode | Beschreibung |
+|-----------|---------|--------------|
+| **Erstellung/Zugriff** | `new()` | Neuen Router erstellen |
+| | `routers()/routers_mut()` | Unterrouter abrufen |
+| | `hoops()/hoops_mut()` | Middleware abrufen |
+| | `filters()/filters_mut()` | Filter abrufen |
+| **Routenorganisation** | `unshift()` | Router am Anfang einfügen |
+| | `insert()` | An Position einfügen |
+| | `push()` | Router anhängen |
+| | `append()` | Mehrere Router anhängen |
+| | `then()` | Bedingte Konfiguration |
+| **Middleware** | `with_hoop()/hoop()` | Middleware hinzufügen |
+| | `with_hoop_when()/hoop_when()` | Bedingte Middleware |
+| **Pfadfilter** | `with_path()/path()` | Pfadfilter hinzufügen |
+| | `with_filter()/filter()` | Filter hinzufügen |
+| | `with_filter_fn()/filter_fn()` | Funktionsfilter |
+| **Netzwerkfilter** | `scheme()` | Protokollfilter |
+| | `host()/with_host()` | Hostfilter |
+| | `port()/with_port()` | Portfilter |
+| **HTTP-Methoden** | `get()/post()/put()` | HTTP-Methodenrouten |
+| | `delete()/patch()/head()/options()` | HTTP-Methodenrouten |
+| **Handler** | `goal()` | Handler setzen |
+| **Matching** | `detect()` | Routenmatch prüfen |
+{/* 本行由工具自动生成,原文哈希值:de818471bc28a65be62c204495aada43 */}

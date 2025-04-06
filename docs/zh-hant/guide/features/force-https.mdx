@@ -1,0 +1,23 @@
+# 強制 HTTPS
+
+`force-https` 中介軟體可以強制所有的請求轉向至使用 HTTPS 協定。
+
+此中介軟體若應用於 `Router`，則只有在路由匹配成功時才會強制轉換協定，若遇到頁面不存在的情況，則不會進行轉向。
+
+但更常見的需求是期望任何請求都能自動轉向，即使在路由未能匹配、返回 `404` 錯誤時。這時可以將中介軟體添加到 `Service` 上。無論請求是否被路由成功匹配，`Service` 上添加的中介軟體總是會執行。
+
+_**範例程式碼**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import ForceHttpsCode from '../../../../codes_md/force-https/src/main.mdx';
+import ForceHttpsCargoCode from '../../../../codes_md/force-https/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <ForceHttpsCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ForceHttpsCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:acf8e135d114ff6c701ad46acd7c2854 */}

@@ -1,0 +1,63 @@
+# Compatibilità con i Middleware Tower
+
+import { Tab, Tabs } from 'rspress/theme';
+import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
+import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
+
+Salvo offre supporto alla compatibilità con l'ecosistema Tower attraverso la funzionalità `tower-compat`. Per i dettagli sulle API, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
+
+## Concetti Chiave di Tower
+
+Tower è una libreria di astrazione per servizi, basata principalmente su due tratti fondamentali:
+
+### Tratto Service
+
+```rust
+pub trait Service<Request> {
+    type Response;
+    type Error;
+    type Future: Future<Output = Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>>;
+    fn call(&mut self, req: Request) -> Self::Future;
+}
+```
+
+Il `Service` è responsabile dell'elaborazione delle richieste e della restituzione delle risposte, simile agli handler di Salvo.
+
+### Tratto Layer
+
+```rust
+pub trait Layer<S> {
+    type Service;
+    fn layer(&self, inner: S) -> Self::Service;
+}
+```
+
+Il `Layer` viene utilizzato per incapsulare i servizi e aggiungere funzionalità aggiuntive, analogamente ai middleware di Salvo.
+
+## Supporto alla Compatibilità in Salvo
+
+Salvo fornisce l'implementazione di due tratti chiave per garantire la compatibilità con l'ecosistema Tower:
+
+- **TowerLayerCompat**: Converte il `Layer` di Tower in un `Handler` di Salvo, permettendone l'uso come Hoop (middleware)
+- **TowerServiceCompat**: Converte il `Service` di Tower in un `Handler` di Salvo
+
+Esempio d'uso:
+```rust
+// Utilizza il RateLimitLayer di Tower e lo converte in formato compatibile con Salvo tramite il metodo compat()
+let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
+let router = Router::new().hoop(limit).get(hello);
+```
+
+_**Codice di Esempio**_
+
+<Tabs>
+<Tab label="main.rs">
+<WithTowerMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WithTowerCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}

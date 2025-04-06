@@ -1,0 +1,37 @@
+import { Tab, Tabs } from 'rspress/theme';
+import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
+import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+
+# Limitare la Concorrenza
+
+Il middleware Concurrency Limiter permette di controllare il numero di richieste elaborate simultaneamente. Per i dettagli sull'API, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
+
+## Casi d'Uso
+
+Il limitatore di concorrenza è particolarmente utile in questi scenari:
+
+- **Protezione di siti ad alto traffico**: Limita le richieste simultanee durante picchi di traffico per prevenire il sovraccarico del server
+- **Controllo di operazioni intensive**: Regola la concorrenza per operazioni ad alto consumo di risorse come upload di file o scritture su database
+- **Limitazione chiamate API esterne**: Gestisce le richieste a servizi terzi che impongono restrizioni sulla frequenza
+
+## Funzionalità Principali
+
+- **Previene il sovraccarico**: Mantiene la stabilità del server durante i picchi di traffico
+- **Migliora l'affidabilità**: Evita il collasso del sistema per esaurimento risorse
+- **Ottimizza le risorse**: Garantisce risorse sufficienti per i servizi critici
+
+## Come Utilizzarlo
+
+Basta aggiungere il middleware `max_concurrency(n)` alla route, dove `n` è il numero massimo di richieste concorrenti consentite. Le richieste eccedenti riceveranno una risposta `503 Service Unavailable`.
+
+_**Codice d'Esempio**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <ConcurrencyLimiterCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ConcurrencyLimiterCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:764c09662183beca5fb5634badcad7bb */}

@@ -1,0 +1,61 @@
+# 如何部署应用
+
+Salvo 项目在编译后是一个可执行文件. 部署时仅仅只需要把这个可执行文件和它依赖的静态资源一起上传到服务器就可以.
+
+对于 Rust 类的项目, 还有一个非常简单的部署平台: [shuttle.rs](https://www.shuttle.rs). shuttle 对 Salvo 类项目提供了支持, 具体可以移步[官方文档](https://docs.shuttle.rs/guide/salvo-examples.html).
+
+## Docker 部署
+
+你也可以使用 Docker 来部署 Salvo 应用。以下是一个基础的 `Dockerfile` 示例，你可以根据自己项目的需求进行调整：
+
+```dockerfile
+# 构建阶段
+FROM rust:slim AS build
+WORKDIR /app
+
+# 复制依赖文件先构建依赖（利用缓存层）
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src && \
+    echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
+    cargo build --release
+
+# 复制实际源代码并构建应用
+COPY src ./src/
+RUN touch src/main.rs && \
+    cargo build --release
+
+# 运行阶段使用精简基础镜像
+FROM debian:bookworm-slim
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# 创建非root用户运行应用
+RUN useradd -ms /bin/bash appuser
+USER appuser
+WORKDIR /app
+
+# 从构建阶段复制二进制文件
+COPY --from=build /app/target/release/your_app_name ./app
+
+# 设置容器启动命令
+CMD ["./app"]
+```
+
+### 使用说明
+
+1. 将上面的 `Dockerfile` 保存在你的项目根目录中
+2. 根据你的项目调整 `your_app_name` 为实际的二进制文件名
+3. 如果你的应用需要静态文件（如模板、CSS、JS等），可以添加相应的 `COPY` 命令
+4. 如果你的应用需要环境变量配置，可以使用 `ENV` 指令
+5. 构建 Docker 镜像：
+   ```bash
+   docker build -t your-app-name .
+   ```
+6. 运行容器：
+   ```bash
+   docker run -p 5800:5800 your-app-name
+   ```
+
+请根据你的应用实际需求调整端口号和其他配置。

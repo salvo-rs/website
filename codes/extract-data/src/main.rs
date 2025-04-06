@@ -15,10 +15,10 @@ async fn show(req: &mut Request, res: &mut Response) {
             <form action="/{}?username=jobs" method="post">
                 <label>First Name:</label><input type="text" name="first_name" />
                 <label>Last Name:</label><input type="text" name="last_name" />
-                <legend>What is Your Favorite Pet?</legend>      
-                <input type="checkbox" name="lovers" value="Cats">Cats<br>      
-                <input type="checkbox" name="lovers" value="Dogs">Dogs<br>      
-                <input type="checkbox" name="lovers" value="Birds">Birds<br>    
+                <legend>What is Your Favorite Pet?</legend>
+                <input type="checkbox" name="lovers" value="Cats">Cats<br>
+                <input type="checkbox" name="lovers" value="Dogs">Dogs<br>
+                <input type="checkbox" name="lovers" value="Birds">Birds<br>
                 <input type="submit" value="Submit" />
             </form>
         </body>
@@ -31,10 +31,10 @@ async fn show(req: &mut Request, res: &mut Response) {
 #[handler]
 async fn edit(req: &mut Request) -> String {
     let bad_man: BadMan = req.extract().await.unwrap();
-    let bad_man = format!("Bad Man: {:#?}", bad_man);
+    let bad_man = format!("Bad Man: {bad_man:#?}");
     let good_man: GoodMan = req.extract().await.unwrap();
-    let good_man = format!("Good Man: {:#?}", good_man);
-    format!("{}\r\n\r\n\r\n{}", bad_man, good_man)
+    let good_man = format!("Good Man: {good_man:#?}");
+    format!("{bad_man}\r\n\r\n\r\n{good_man}")
 }
 
 #[derive(Serialize, Deserialize, Extractible, Debug)]
@@ -44,6 +44,7 @@ async fn edit(req: &mut Request) -> String {
     default_source(from = "body")
 ))]
 struct BadMan<'a> {
+    #[serde(default)]
     id: i64,
     username: &'a str,
     first_name: String,
@@ -54,10 +55,12 @@ struct BadMan<'a> {
 #[salvo(extract(
     default_source(from = "query"),
     default_source(from = "param"),
-    default_source(from = "body")
+    default_source(from = "body"),
 ))]
 struct GoodMan<'a> {
+    #[serde(default)]
     id: i64,
+    #[serde(default)]
     username: &'a str,
     first_name: String,
     last_name: &'a str,
@@ -69,9 +72,9 @@ struct GoodMan<'a> {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    let router = Router::with_path("<id>").get(show).post(edit);
+    let router = Router::with_path("{id}").get(show).post(edit);
 
-    println!("Example url: http://127.0.0.1:5800/95");
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    println!("Example url: http://0.0.0.0:5800/95");
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }

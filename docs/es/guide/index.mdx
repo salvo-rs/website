@@ -1,0 +1,113 @@
+# Para dominar este arte
+
+## Por qué crear este framework
+
+En ese entonces, como principiante, me di cuenta de que era demasiado torpe para aprender a usar frameworks existentes como actix-web o Rocket. Cuando quise reimplementar en Rust un servicio web que había hecho en Go, a primera vista todos los frameworks parecían más complejos que sus equivalentes en Go. Ya de por sí la curva de aprendizaje de Rust es bastante empinada, ¿para qué hacer que los frameworks web sean aún más complicados?
+
+Cuando Tokio lanzó el framework Axum, me alegré pensando que ya no tendría que mantener mi propio framework web. Sin embargo, la realidad fue que Axum, aunque aparentemente simple, requería demasiada gimnasia con tipos y definiciones genéricas. Solo con un profundo conocimiento de Rust y escribiendo montones de código boilerplate críptico se podía implementar un middleware sencillo.
+
+Así que decidí seguir manteniendo este framework mío, que es bastante especial (cómodo, rico en funciones y adecuado para principiantes).
+
+## ¿Es Salvo adecuado para ti?
+
+Aunque simple, Salvo es lo suficientemente completo y potente, básicamente puede considerarse el más fuerte en el ecosistema Rust. Sin embargo, este sistema tan poderoso es en realidad muy fácil de aprender y usar. Definitivamente no te hará sufrir el dolor de "cortarte los genitales".
+
+- Es ideal para principiantes que están aprendiendo Rust. CRUD es una funcionalidad extremadamente común y frecuente. Si usas Salvo para este tipo de tareas, lo encontrarás tan simple como los frameworks web de otros lenguajes que hayas usado (como Express, Koa, gin, flask...), incluso más abstracto y conciso en algunos aspectos.
+
+- Es adecuado para quienes deseen usar Rust en producción, proporcionando servidores robustos y rápidos. Aunque Salvo no ha lanzado la versión 1.0, sus funciones principales han pasado por años de iteraciones, son lo suficientemente estables y los errores se corrigen rápidamente.
+
+- Es perfecto para ti, cuyo cabello ya no es tan abundante pero sigue cayéndose a diario.
+
+## Cómo lograr suficiente simplicidad
+
+Hyper ya implementa muchas funcionalidades de bajo nivel, por lo que para necesidades generales, basarse en Hyper no está mal. Salvo hace lo mismo. Su funcionalidad central es un sistema de enrutamiento potente y flexible, junto con muchas funciones comunes como Acme, OpenAPI, autenticación JWT, etc.
+
+En Salvo se unifican los Handlers y los Middlewares. Un Middleware es un Handler. Se añaden al Router mediante el método hoop. En esencia, tanto los Middlewares como los Handlers procesan solicitudes Request y pueden escribir datos en el Response. El Handler recibe tres parámetros: Request, Depot y Response, donde Depot se usa para almacenar datos temporales durante el procesamiento de la solicitud.
+
+Para facilitar la escritura, puedes omitir ciertos parámetros cuando no son necesarios, o ignorar el orden de los parámetros.
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    res.render("Hello world");
+}
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world");
+}
+```
+
+Además, la API proporcionada por el sistema de enrutamiento es extremadamente simple, pero potente. Para necesidades de uso normales, básicamente solo necesitas enfocarte en el tipo Router.
+Además, si una estructura implementa los traits relevantes, Salvo puede generar automáticamente documentación OpenAPI, extraer parámetros, manejar diferentes errores y devolver mensajes amigables. Esto hace que escribir handlers sea tan simple e intuitivo como escribir funciones normales. En tutoriales posteriores explicaremos estas funciones en detalle. Aquí un ejemplo:
+
+```rust
+
+#[endpoint(tags("registro de mensajes"))]
+pub async fn create_message_log_handler(
+    input: JsonBody<CreateOrUpdateMessageLog>,
+    depot: &mut Depot,
+) -> APPResult<Json<MessageLog>> {
+    let db = utils::get_db(depot)?;
+    let log = create_message_log(&input, db).await?;
+    Ok(Json(log))
+}
+```
+
+En este ejemplo, `JsonBody<CreateOrUpdateMessageLog>` automáticamente analizará los datos JSON del cuerpo de la solicitud y los convertirá al tipo `CreateOrUpdateMessageLog` (también admite múltiples fuentes de datos y tipos anidados). Además, la macro `#[endpoint]` generará automáticamente documentación OpenAPI para esta interfaz, simplificando el código para extraer parámetros y manejar errores.
+
+## Sistema de enrutamiento
+
+Siento que el sistema de enrutamiento es diferente al de otros frameworks. El Router se puede escribir de forma plana o como un árbol. Aquí distinguimos entre el árbol de lógica de negocio y el árbol de directorios de acceso. El árbol de lógica de negocio organiza la estructura del router según los requisitos de la lógica de negocio, formando un árbol de routers que no necesariamente coincide con el árbol de directorios de acceso.
+
+Normalmente escribimos las rutas así:
+
+```rust
+Router::new().path("articles").get(list_articles).post(create_article);
+Router::new()
+    .path("articles/{id}")
+    .get(show_article)
+    .patch(edit_article)
+    .delete(delete_article);
+```
+
+A menudo, ver artículos y listarlos no requiere que el usuario inicie sesión, pero crear, editar o eliminar artículos sí requiere autenticación. El sistema de enrutamiento anidado de Salvo satisface muy bien esta necesidad. Podemos agrupar las rutas que no requieren autenticación:
+
+```rust
+Router::new()
+    .path("articles")
+    .get(list_articles)
+    .push(Router::new().path("{id}").get(show_article));
+```
+
+Y luego agrupar las rutas que requieren autenticación, usando el middleware correspondiente para verificar si el usuario ha iniciado sesión:
+```rust
+Router::new()
+    .path("articles")
+    .hoop(auth_check)
+    .post(list_articles)
+    .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
+```
+
+Aunque ambas rutas tienen el mismo `path("articles")`, aún pueden añadirse al mismo router padre, por lo que el router final queda así:
+
+```rust
+Router::new()
+    .push(
+        Router::new()
+            .path("articles")
+            .get(list_articles)
+            .push(Router::new().path("{id}").get(show_article)),
+    )
+    .push(
+        Router::new()
+            .path("articles")
+            .hoop(auth_check)
+            .post(list_articles)
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
+    );
+```
+
+`{id}` coincide con un segmento de la ruta. Normalmente, el `id` de un artículo es solo un número, por lo que podemos usar una expresión regular para restringir las reglas de coincidencia: `r"{id:/\d+/}"`.
+{/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}

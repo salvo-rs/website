@@ -1,0 +1,113 @@
+# この功を練りたい
+
+## なぜこのフレームワークを作ったのか
+
+当時、初心者だった私は、actix-webやRocketなどの既存フレームワークを使いこなせないほど愚かだと気づきました。Goで書いたWebサービスをRustで実装し直そうとした時、どのフレームワークもGoの既存フレームワークより複雑に見えました。Rustの学習曲線は既に十分険しいのに、なぜWebフレームワークまでこんなに複雑にする必要があるのか？
+
+TokioがAxumフレームワークを発表した時、私はもう自分でWebフレームワークをメンテナンスしなくて済むと喜びました。しかし実際には、Axumは一見シンプルに見えても、実際に使ってみると型操作やジェネリック定義が多すぎて、Rust言語を深く理解し、大量の難解なボイラープレートコードを書かなければ、簡単なミドルウェアさえ実装できないことがわかりました。
+
+そこで私は、この特別な（使いやすく、機能豊富で初心者向けの）Webフレームワークのメンテナンスを続けることに決めたのです。
+
+## Salvo(賽風)はあなたに合っているか
+
+Salvoはシンプルですが、機能は十分に強力で、基本的にRust界で最強と考えられます。しかし、これほど強力なシステムでも、実際の学習と使用は非常に簡単です。「自らを傷つける」ような苦痛は絶対にありません。
+
+- Rustを学び始めたばかりの初心者に適しています。CRUDは極めて日常的でよく使われる機能ですが、Salvoで同様の作業を行うと、他の言語のWebフレームワーク（Express、Koa、gin、flaskなど）と同じくらい簡単だとわかるでしょう。むしろ、いくつかの点ではより抽象的で簡潔です。
+
+- Rustを本番環境で使用し、堅牢で高速なサーバーを提供したい人に適しています。Salvoはまだ1.0バージョンをリリースしていませんが、コア機能は数年かけて繰り返し改良され、十分に安定しており、問題も迅速に修正されます。
+
+- 髪の毛がもう豊かではなく、毎日抜け落ちていくあなたにも適しています。
+
+## どうやって十分なシンプルさを実現したか
+
+多くの低レベルの実装はHyperが既に提供しているので、一般的なニーズに対してHyperをベースに実装するのは正しい選択です。Salvoも同様です。コア機能は強力で柔軟なルーティングシステムと、Acme、OpenAPI、JWT認証など多くの一般的な機能です。
+
+SalvoではHandlerとMiddlewareを統一しています。MiddlewareはHandlerそのものです。ルーティングのhoopを通じてRouterに追加されます。本質的に、MiddlewareとHandlerはどちらもRequestリクエストを処理し、Responseにデータを書き込む可能性があります。HandlerはRequest、Depot、Responseの3つのパラメータを受け取り、Depotはリクエスト処理中の一時データを保存するために使用されます。
+
+記述を簡単にするため、不要な場合は特定のパラメータを省略したり、パラメータの順序を気にしたりする必要がありません。
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    res.render("Hello world");
+}
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world");
+}
+```
+
+さらに、ルーティングシステムが提供するAPIも非常にシンプルですが、機能は強力です。通常の使用ケースでは、基本的にRouterという1つの型だけに注目すれば十分です。
+また、構造体が関連するトレイトを実装している場合、Salvoは自動的にOpenAPIドキュメントを生成し、パラメータを抽出し、異なるエラーを自動処理してユーザーフレンドリーなメッセージを返します。これにより、ハンドラを書くことは普通の関数を書くのと同じくらい簡単で直感的になります。後のチュートリアルでこれらの機能を詳しく説明しますが、以下に例を示します：
+
+```rust
+
+#[endpoint(tags("メッセージログ"))]
+pub async fn create_message_log_handler(
+    input: JsonBody<CreateOrUpdateMessageLog>,
+    depot: &mut Depot,
+) -> APPResult<Json<MessageLog>> {
+    let db = utils::get_db(depot)?;
+    let log = create_message_log(&input, db).await?;
+    Ok(Json(log))
+}
+```
+
+この例では、`JsonBody<CreateOrUpdateMessageLog>`はリクエストボディからJSONデータを自動的に解析し、`CreateOrUpdateMessageLog`型に変換します（複数のデータソースやネストされた型もサポートします）。同時に、`#[endpoint]`マクロはこのインターフェースのOpenAPIドキュメントを自動生成し、パラメータ抽出とエラー処理のコードを簡素化します。
+
+## ルーティングシステム
+
+私自身、このルーティングシステムは他のフレームワークとは異なると感じています。Routerはフラットに書くことも、ツリー状に書くこともできます。ここではビジネスロジックツリーとアクセスディレクトリツリーを区別します。ビジネスロジックツリーは業務要件に基づいてrouter構造を分割し、routerツリーを形成しますが、必ずしもアクセスディレクトリツリーと一致するわけではありません。
+
+通常、私たちは次のようにルーティングを書きます：
+
+```rust
+Router::new().path("articles").get(list_articles).post(create_article);
+Router::new()
+    .path("articles/{id}")
+    .get(show_article)
+    .patch(edit_article)
+    .delete(delete_article);
+```
+
+多くの場合、記事の閲覧と一覧表示にはユーザーログインは不要ですが、作成、編集、削除には認証が必要です。Salvoのネストされたルーティングシステムはこのようなニーズをうまく満たします。ユーザーログインが不要なルートをまとめて書くことができます：
+
+```rust
+Router::new()
+    .path("articles")
+    .get(list_articles)
+    .push(Router::new().path("{id}").get(show_article));
+```
+
+そしてユーザーログインが必要なルートをまとめ、対応するミドルウェアでユーザーがログインしているかを確認します：
+```rust
+Router::new()
+    .path("articles")
+    .hoop(auth_check)
+    .post(list_articles)
+    .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
+```
+
+これらの2つのルートは同じ`path("articles")`を持っていますが、同じ親ルーターに同時に追加できるので、最終的なルーターは次のようになります：
+
+```rust
+Router::new()
+    .push(
+        Router::new()
+            .path("articles")
+            .get(list_articles)
+            .push(Router::new().path("{id}").get(show_article)),
+    )
+    .push(
+        Router::new()
+            .path("articles")
+            .hoop(auth_check)
+            .post(list_articles)
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
+    );
+```
+
+`{id}`はパスの1セグメントにマッチします。通常、記事の`id`は数字だけなので、正規表現で`id`のマッチングルールを制限できます：`r"{id:/\d+/}"`
+{/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}

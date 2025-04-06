@@ -1,0 +1,29 @@
+# Utilisation des moteurs de templates
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
+import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
+import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+
+Salvo n'intègre aucun moteur de template par défaut, car les préférences en matière de style de moteur varient selon les individus.
+
+Fondamentalement, un moteur de template repose sur : données + template = chaîne de caractères.
+
+Ainsi, tant qu'il est possible de générer la chaîne finale, n'importe quel moteur de template peut être pris en charge.
+
+Par exemple, voici comment utiliser `askama` :
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+  <Tab label="template/hello.toml">
+    <TemplateCode/>
+  </Tab>
+</Tabs>
+
+**Remarque** : Pour les projets non particulièrement complexes, nous recommandons plutôt une approche de développement séparant front-end et back-end, en utilisant des frameworks UI plus flexibles et mieux intégrés (comme React, Vue, Svelte, etc.) pour le front-end, tandis que Salvo sert de service API back-end. Cette méthode améliore l'efficacité du développement, clarifie les responsabilités entre front-end et back-end, et correspond mieux aux tendances actuelles du développement d'applications web modernes.
+{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}

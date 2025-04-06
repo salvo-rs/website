@@ -1,0 +1,59 @@
+# CSRF防御
+
+## CSRFとは？
+
+CSRF（Cross-Site Request Forgery、クロスサイトリクエストフォージェリ）は、ユーザーが認証済みの状態で意図しない操作を実行させられるセキュリティ上の脆弱性です。簡単に言えば、攻撃者がログイン済みのユーザーになりすまし、悪意のあるリクエストを送信する手法です。
+
+## CSRF攻撃の仕組み
+
+攻撃の流れは通常以下の通りです：
+1. ユーザーがターゲットサイトAにログインし、認証用クッキーを取得
+2. ユーザーが悪意あるサイトBにアクセス
+3. サイトBのコードが自動的にサイトAへリクエストを送信（ユーザーのクッキー付き）
+4. サイトAはこのリクエストが悪意あるものかユーザー本人の操作か判別できない
+
+## 防御策
+
+SalvoはCSRFミドルウェアを提供し、この種の攻撃からアプリケーションを保護します：
+
+- フォームに隠しCSRFトークンを追加
+- ユーザーからのリクエストに有効なCSRFトークンが含まれているか検証
+- デフォルトでPOST、PATCH、DELETE、PUTリクエストを検証
+
+## SalvoにおけるCSRF実装
+
+`Csrf`は`Handler`を実装した構造体で、内部に`skipper`フィールドを持ち、検証をスキップするリクエストを指定できます。デフォルトでは`Method::POST`、`Method::PATCH`、`Method::DELETE`、`Method::PUT`リクエストを検証します。
+
+Salvoは2種類のCSRFトークン保存方式をサポートしています：
+
+1. **CookieStore**：トークンをクッキーに保存し、リクエストヘッダーまたはフォームの`csrf-token`とクッキー値の一致を検証
+2. **SessionStore**：トークンをセッションに保存（セッションミドルウェアとの併用が必要）
+
+_**サンプルコード**_ (cookie store)
+
+import { Tab, Tabs } from 'rspress/theme';
+import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
+import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
+import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
+import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CsrfCookieStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CsrfCookieStoreCargoCode/>
+  </Tab>
+</Tabs>
+
+_**サンプルコード**_ (session store)
+
+<Tabs>
+  <Tab label="main.rs">
+    <CsrfSessionStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CsrfSessionStoreCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:b6e191d0fb6f25b84764f3de28171886 */}

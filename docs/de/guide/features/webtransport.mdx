@@ -1,0 +1,84 @@
+# WebTransport
+
+WebTransport ist ein auf HTTP/3 basierendes Netzwerkübertragungsprotokoll, das bidirektionale Kommunikation zwischen Client und Server ermöglicht und gleichzeitig niedrige Latenz, hohen Durchsatz und Sicherheit bietet.
+
+## Anwendungsszenarien
+
+WebTransport eignet sich besonders für folgende Szenarien:
+
+- **Echtzeitanwendungen**: Online-Spiele, Echtzeit-Kollaborationstools, Videokonferenzen und andere Anwendungen, die niedrige Latenz erfordern
+- **Große Dateiübertragungen**: Unterstützt hochdurchsatzfähige Datenübertragungen, ideal für Medienstreams und große Uploads/Downloads
+- **Multiplex-Kommunikation**: Ermöglicht gleichzeitig mehrere bidirektionale und unidirektionale Datenströme
+- **Datagramm-Kommunikation**: Unterstützt ungeordnete und unzuverlässige Datagramm-Kommunikation, perfekt für Szenarien mit extremen Echtzeitanforderungen
+
+Im Vergleich zu WebSocket bietet WebTransport niedrigere Latenz und flexiblere Kommunikationsmodi, insbesondere in instabilen Netzwerkumgebungen.
+
+## Salvo-Implementierung
+
+Das Salvo-Framework bietet native Unterstützung für WebTransport, sodass Entwickler leicht WebTransport-basierte Anwendungen erstellen können. Hauptmerkmale umfassen:
+
+- Unterstützung für WebTransport-Sitzungen
+- Bidirektionale Ströme (Bidirectional Streams)
+- Unidirektionale Ströme (Unidirectional Streams)
+- Datagramm-Übertragung
+- Server kann Kommunikationsströme initiieren
+
+### Einfaches Beispiel
+
+Hier ein vereinfachtes Beispiel für einen WebTransport-Server mit Salvo:
+
+```rust
+#[handler]
+async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
+    let session = req.web_transport_mut().await.unwrap();
+    
+    // Datagramme verarbeiten
+    if let Ok(Some((_, datagram))) = session.accept_datagram().await {
+        // Empfangene Datagramme verarbeiten
+        let mut resp = BytesMut::from(&b"Response: "[..]);
+        resp.put(datagram);
+        session.send_datagram(resp.freeze())?;
+    }
+    
+    // Bidirektionale Ströme verarbeiten
+    if let Ok(Some(webtransport::server::AcceptedBi::BidiStream(_, stream))) = session.accept_bi().await {
+        let (send, recv) = salvo::proto::quic::BidiStream::split(stream);
+        // Bidirektionale Datenströme verarbeiten
+    }
+    
+    Ok(())
+}
+```
+
+### Konfiguration und Start
+
+Zum Starten einer WebTransport-fähigen Salvo-Anwendung sind TLS-Zertifikate und ein QUIC-Listener erforderlich:
+
+```rust
+let cert = include_bytes!("../certs/cert.pem").to_vec();
+let key = include_bytes!("../certs/key.pem").to_vec();
+
+// Router konfigurieren
+let router = Router::new().push(Router::with_path("counter").goal(connect));
+
+// TLS konfigurieren
+let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+
+// Listener einrichten
+let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+let acceptor = QuinnListener::new(config, ("0.0.0.0", 5800))
+    .join(listener)
+    .bind()
+    .await;
+
+// Server starten
+Server::new(acceptor).serve(router).await;
+```
+
+## Vollständiges Beispiel
+
+Für detaillierte Informationen zur WebTransport-Nutzung in Salvo siehe das vollständige Beispiel auf GitHub:
+[https://github.com/salvo-rs/salvo/blob/main/examples/webtransport](https://github.com/salvo-rs/salvo/blob/main/examples/webtransport)
+
+Das Beispiel enthält vollständige Implementierungen für Server und Client und zeigt verschiedene WebTransport-Kommunikationsarten.
+{/* 本行由工具自动生成,原文哈希值:56518c15094059054cd812ca62f2a97c */}

@@ -1,0 +1,38 @@
+# Graceful Shutdown  
+
+Graceful shutdown refers to the process where, upon server termination, the system does not abruptly terminate all active connections. Instead, it first stops accepting new requests while allowing existing requests sufficient time to complete processing before shutting down the service. This approach prevents sudden request interruptions, enhancing both user experience and system reliability.  
+
+Salvo provides built-in support for graceful shutdown. By obtaining the server handle through the `handle` method of `Server` and then invoking the `stop_graceful` method, you can achieve this functionality. After calling this method, the server will:  
+
+- Stop accepting new connection requests  
+- Allow ongoing requests to complete processing  
+- Forcefully close any remaining connections after a specified timeout (if provided)  
+
+Here’s a simple example:  
+
+```rust
+use salvo_core::prelude::*;
+
+#[tokio::main]
+async fn main() {
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let server = Server::new(acceptor);
+    let handle = server.handle();
+
+    // Gracefully shut down the server
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        handle.stop_graceful(None);
+    });
+    server.serve(Router::new()).await;
+}
+```  
+
+In the example above:  
+
+- `server.handle()` retrieves the server handle, which can be used to control the server's lifecycle.  
+- `handle.stop_graceful(None)` initiates the graceful shutdown process. Passing `None` means no timeout is set, allowing the server to wait indefinitely for all requests to complete.  
+- To enforce a timeout, pass `Some(Duration)`, after which any remaining connections will be forcefully closed.  
+
+This approach is particularly useful for applications deployed in containerized or cloud environments, as well as for scenarios requiring hot updates while ensuring uninterrupted request handling.
+{/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

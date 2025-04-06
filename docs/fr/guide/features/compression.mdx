@@ -1,0 +1,29 @@
+# Compression des réponses
+
+Un middleware pour la compression du contenu des `Response`.
+
+Prend en charge trois formats de compression : `br`, `gzip`, `deflate`. Permet de configurer la priorité de chaque méthode de compression selon les besoins.
+
+## La compression de données dans le protocole HTTP
+
+1. Niveau format de fichier : des algorithmes de compression spécifiques pour certains types de fichiers
+2. Niveau protocole HTTP : compression des ressources de bout en bout via l'encodage du contenu
+3. Niveau connexion : compression des données entre les nœuds d'une connexion HTTP
+
+Pour plus d'informations sur la compression HTTP, consultez [la documentation du Mozilla Developer Network](https://developer.mozilla.org/fr/docs/Web/HTTP/Compression).
+
+## Exemple de code
+
+import { Tab, Tabs } from 'rspress/theme';
+import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
+import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CompressionCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CompressionCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:677ccdf714de83f86788e88c306cf8e4 */}

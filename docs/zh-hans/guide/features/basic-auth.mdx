@@ -1,0 +1,47 @@
+# 基本权限验证
+
+提供对 Basic Auth 的支持的中间件.
+
+import { Tab, Tabs } from 'rspress/theme';
+import BasicAuthCode from '../../../../codes_md/basic-auth/src/main.mdx';
+import BasicAuthCargoCode from '../../../../codes_md/basic-auth/Cargo.mdx';
+
+## Basic Auth 简介
+
+Basic Auth 是一种简单的 HTTP 认证机制，通过在 HTTP 请求头中包含 `Authorization` 字段来传递用户名和密码。格式为 `Authorization: Basic <base64(username:password)>`。虽然简单，但由于凭证仅进行 Base64 编码而非加密，通常需要与 HTTPS 一起使用以确保安全。
+
+## 常见框架中的 Basic Auth 实现对比
+
+| 框架 | 语言 | Basic Auth 实现 |
+|------|------|----------------|
+| Salvo | Rust | 通过 `BasicAuth` 中间件和自定义 `BasicAuthValidator` 实现 |
+| Express | JavaScript | 使用 `express-basic-auth` 中间件包 |
+| Spring Security | Java | 通过 `httpBasic()` 配置和 `UserDetailsService` 实现 |
+| ASP.NET Core | C# | 使用 `.UseAuthentication()` 和 `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | 通过自定义中间件或使用 `gin-contrib/auth` 包 |
+
+## 使用场景
+
+Basic Auth 适用于以下场景：
+
+1. **内部 API 和工具**：公司内部使用的管理工具和 API
+2. **开发和测试环境**：快速实现认证而不需要复杂的登录系统
+3. **简单的 API 保护**：当不需要复杂的用户管理系统时
+4. **与其他安全措施配合**：作为多层安全架构的一部分
+
+在 Salvo 中，Basic Auth 中间件可以轻松集成到路由中，通过实现 `BasicAuthValidator` trait 来自定义验证逻辑，非常灵活。
+
+## 注意事项
+
+- 始终与 HTTPS 一起使用以保护凭证传输
+- 不适合存储敏感信息的生产环境
+- 考虑使用更安全的认证方式如 JWT、OAuth 等用于生产环境
+
+<Tabs>
+  <Tab label="main.rs">
+    <BasicAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <BasicAuthCargoCode/>
+  </Tab>
+</Tabs>

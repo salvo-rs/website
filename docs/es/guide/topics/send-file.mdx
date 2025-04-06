@@ -1,0 +1,60 @@
+# Envío de Archivos
+
+Salvo ofrece varias formas de enviar archivos:
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+### NamedFile
+
+Salvo proporciona `salvo::fs::NamedFile`, que permite enviar archivos al cliente de manera eficiente. No carga todo el archivo en caché, sino que solo carga y envía las partes solicitadas según el encabezado `Range` de la petición.
+
+De hecho, `Response::send_file` es simplemente una forma simplificada de usar `NamedFile`. Si necesitas un control más detallado sobre el archivo enviado, puedes utilizar `NamedFileBuilder`.
+
+Puedes crear un `NamedFileBuilder` mediante `NamedFile::builder`:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+Puedes configurarlo y luego enviar el archivo:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### Servir Archivos Estáticos
+
+Middleware para servir archivos estáticos o incrustados.
+
+- `StaticDir` proporciona soporte para carpetas locales estáticas. Puedes pasar una lista de múltiples carpetas como parámetro. Por ejemplo:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Si no se encuentra el archivo en la primera carpeta, se buscará en la segunda.
+
+- Soporte para `rust-embed`, por ejemplo:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  `with_fallback` permite especificar un archivo alternativo cuando no se encuentra el solicitado, lo cual es útil para aplicaciones de una sola página (SPA).
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

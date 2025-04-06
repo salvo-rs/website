@@ -1,0 +1,138 @@
+---
+title: Rust Datums- und Zeitbibliothek
+---
+
+# Chrono: Rust Datums- und Zeitbibliothek
+
+
+import { LinkCard } from '@theme';
+
+
+<LinkCard
+  href="https://docs.rs/chrono/latest/chrono/"
+  title="chrono"
+  description="chrono"
+/>
+
+Chrono zielt darauf ab, alle Funktionen bereitzustellen, die für korrekte Datums- und Zeitoperationen im gregorianischen Kalender benötigt werden:
+
+- Der `DateTime`-Typ ist standardmäßig zeitzonenbewusst, bietet aber auch separate zeitzonenunabhängige Typen.
+- Operationen, die ungültige oder mehrdeutige Daten und Zeiten erzeugen könnten, geben `Option` oder `MappedLocalTime` zurück.
+- Konfigurierbares Parsen und Formatieren mit einer von strftime inspirierten Syntax für Datums- und Zeitformatierung.
+- Die `Local`-Zeitzone kann mit der aktuellen Zeitzone des Betriebssystems arbeiten.
+- Typen und Operationen sind mit Rücksicht auf vernünftige Effizienz implementiert.
+- Um die Binärgröße zu begrenzen, enthält Chrono standardmäßig keine Zeitzonendaten. Verwenden Sie das begleitende Crate `Chrono-TZ` oder `tzfile` für vollständige Zeitzonenunterstützung.
+
+## Funktionen
+
+Chrono unterstützt verschiedene Laufzeitumgebungen und Betriebssysteme und verfügt über mehrere aktivierbare oder deaktivierbare Funktionen.
+
+### Standardfunktionen:
+
+- `alloc`: Aktiviert Funktionen, die von Speicherzuweisung abhängen (hauptsächlich String-Formatierung).
+- `std`: Aktiviert Funktionen, die von der Standardbibliothek abhängen. Dies ist eine Obermenge von `alloc` und fügt Interoperabilität mit Standardbibliothekstypen und -merkmalen hinzu.
+- `clock`: Aktiviert Funktionen zum Lesen der lokalen Zeitzone (`Local`). Dies ist eine Obermenge von `now`.
+- `now`: Aktiviert Funktionen zum Lesen der Systemzeit (`now`).
+- `wasmbind`: Bietet eine Schnittstelle zur JS Date API für wasm32-Ziele.
+
+### Optionale Funktionen:
+
+- `serde`: Aktiviert Serialisierung/Deserialisierung über serde.
+- `rkyv`: Veraltet, verwenden Sie die `rkyv-*`-Funktionen.
+- `rkyv-16`, `rkyv-32`, `rkyv-64`: Aktiviert Serialisierung/Deserialisierung über rkyv mit 16-Bit-, 32-Bit- oder 64-Bit-Ganzzahlen.
+- `rkyv-validation`: Aktiviert rkyv-Validierungsunterstützung mit bytecheck.
+- `arbitrary`: Konstruiert beliebige Instanzen von Typen mit dem Arbitrary-Crate.
+- `unstable-locales`: Aktiviert Lokalisierung. Dies fügt verschiedene Methoden mit dem Suffix `_localized` hinzu.
+
+## Überblick
+
+### Zeitdifferenz/Dauer
+
+Chrono bietet den `TimeDelta`-Typ zur Darstellung von Zeitspannen. Dies ist eine "exakte" Dauer, ausgedrückt in Sekunden und Nanosekunden, und stellt keine "nominalen" Komponenten wie Tage oder Monate dar.
+
+Der `TimeDelta`-Typ hieß früher `Duration` (steht weiterhin als Typalias zur Verfügung). Ein wesentlicher Unterschied zu ähnlichen Typen wie `core::time::Duration` ist, dass es sich um einen vorzeichenbehafteten Wert handelt.
+
+### Datum und Zeit
+
+Chrono bietet den `DateTime`-Typ zur Darstellung von Datum und Zeit in einer Zeitzone.
+
+`DateTime` ist zeitzonenbewusst und muss aus einem `TimeZone`-Objekt konstruiert werden, das definiert, wie lokale Daten in UTC-Daten umgewandelt werden und umgekehrt. Es gibt drei bekannte `TimeZone`-Implementierungen:
+
+- `Utc` gibt die UTC-Zeitzone an. Sie ist am effizientesten.
+- `Local` gibt die lokale Zeitzone des Systems an.
+- `FixedOffset` gibt eine beliebige feste Zeitzone an, wie UTC+09:00 oder UTC-10:30.
+
+`DateTime`-Werte verschiedener `TimeZone`-Typen sind unterschiedlich und können nicht gemischt werden, können aber mit der Methode `DateTime::with_timezone` ineinander umgewandelt werden.
+
+Sie können das aktuelle Datum und die aktuelle Zeit in der UTC-Zeitzone (`Utc::now()`) oder in der lokalen Zeitzone (`Local::now()`) abrufen.
+
+```rust
+use chrono::prelude::*;
+
+let utc: DateTime<Utc> = Utc::now(); // z.B. `2014-11-28T12:45:59.324310806Z`
+let local: DateTime<Local> = Local::now(); // z.B. `2014-11-28T21:45:59.324310806+09:00`
+```
+
+Darüber hinaus können Sie auch eigene Datums- und Zeitangaben erstellen:
+
+```rust
+use chrono::offset::MappedLocalTime;
+use chrono::prelude::*;
+
+let dt = Utc.with_ymd_and_hms(2014, 7, 8, 9, 10, 11).unwrap(); // `2014-07-08T09:10:11Z`
+```
+
+### Formatierung und Parsen
+
+Die Formatierung erfolgt über die `format`-Methode, deren Format der bekannten strftime-Formatierung entspricht.
+
+Die Standardmethode `to_string` und der `{:?}`-Bezeichner bieten ebenfalls eine sinnvolle Darstellung. Chrono bietet außerdem die Methoden `to_rfc2822` und `to_rfc3339` für gängige Formate.
+
+Chrono bietet jetzt auch die Möglichkeit, Datumsangaben in fast jeder Sprache zu formatieren, ohne zusätzliche C-Bibliotheken. Diese Funktion ist unter dem Feature `unstable-locales` verfügbar:
+
+```rust
+use chrono::prelude::*;
+
+let dt = Utc.with_ymd_and_hms(2014, 11, 28, 12, 0, 9).unwrap();
+assert_eq!(dt.format("%Y-%m-%d %H:%M:%S").to_string(), "2014-11-28 12:00:09");
+assert_eq!(dt.format_localized("%A %e %B %Y, %T", Locale::fr_BE).to_string(), 
+           "vendredi 28 novembre 2014, 12:00:09");
+```
+
+Das Parsen kann auf zwei Arten erfolgen:
+
+1. Das Standardmerkmal `FromStr` (und die `parse`-Methode auf Strings) kann zum Parsen von `DateTime<FixedOffset>`, `DateTime<Utc>` und `DateTime<Local>`-Werten verwendet werden.
+2. `DateTime::parse_from_str` parst Datum und Zeit mit einem Offset und gibt `DateTime<FixedOffset>` zurück.
+
+```rust
+use chrono::prelude::*;
+
+let dt = "2014-11-28T12:00:09Z".parse::<DateTime<Utc>>().unwrap();
+let fixed_dt = DateTime::parse_from_str("2014-11-28 21:00:09 +09:00", "%Y-%m-%d %H:%M:%S %z").unwrap();
+```
+
+### Konvertierung mit EPOCH-Zeitstempeln
+
+Verwenden Sie `DateTime::from_timestamp(seconds, nanoseconds)`, um aus einem UNIX-Zeitstempel ein `DateTime<Utc>` zu erstellen.
+
+Verwenden Sie `DateTime.timestamp`, um den Zeitstempel (in Sekunden) aus einem `DateTime` zu erhalten. Zusätzlich können Sie mit `DateTime.timestamp_subsec_nanos` die zusätzliche Nanosekundenzahl abrufen.
+
+```rust
+use chrono::{DateTime, Utc};
+
+// Erstelle datetime aus epoch:
+let dt: DateTime<Utc> = DateTime::from_timestamp(1_500_000_000, 0).unwrap();
+assert_eq!(dt.to_rfc2822(), "Fri, 14 Jul 2017 02:40:00 +0000");
+
+// Hole epoch-Wert aus datetime:
+let dt = DateTime::parse_from_rfc2822("Fri, 14 Jul 2017 02:40:00 +0000").unwrap();
+assert_eq!(dt.timestamp(), 1_500_000_000);
+```
+
+## Einschränkungen
+
+- Es wird nur der vorwärts gerichtete gregorianische Kalender unterstützt (d.h. erweitert, um frühere Daten zu unterstützen).
+- Datumstypen sind auf etwa ±262.000 Jahre um die christliche Zeitrechnung begrenzt.
+- Zeittypen sind auf Nanosekundengenauigkeit beschränkt.
+- Schaltsekunden können dargestellt werden, aber Chrono unterstützt sie nicht vollständig.
+{/* 本行由工具自动生成,原文哈希值:8f29ad63efca7d455f7ca1249d2f7dfd */}

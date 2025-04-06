@@ -1,0 +1,26 @@
+# ログミドルウェア
+
+ログ記録はWebアプリケーションにおいて極めて重要な役割を果たします。主な利点は以下の通りです：
+- リクエスト処理プロセスの詳細情報を提供し、開発者がアプリケーションの動作を追跡するのに役立つ
+- 特に本番環境での問題調査とデバッグを支援
+- アプリケーションのパフォーマンスとリソース使用状況の監視
+- ユーザーアクセスパターンとシステム例外の記録
+- セキュリティ監査とコンプライアンス要件への対応
+
+Salvoは基本的なログ機能を提供するミドルウェアを備えています。ミドルウェアを直接`Router`に追加した場合、全ての`Router`にマッチしない404エラーをキャッチできませんので、`Service`に追加することを推奨します。
+
+_**サンプルコード**_ 
+
+import { Tab, Tabs } from 'rspress/theme';
+import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
+import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <LoggingCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <LoggingCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:b378fca9964cf2a34b48e7c0c9f74a2d */}

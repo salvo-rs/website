@@ -1,0 +1,31 @@
+# JWT 验证
+
+JWT (JSON Web Token) 是一种开放标准 (RFC 7519)，用于在各方之间安全地传输信息。它是一种紧凑的、URL安全的方式，以JSON对象形式表示声明，这些声明通常用于身份验证和信息交换。
+
+JWT由三部分组成：
+- **头部(Header)** - 指定令牌类型和使用的签名算法
+- **负载(Payload)** - 包含声明(claims)，如用户ID、角色、过期时间等
+- **签名(Signature)** - 用于验证消息在传输过程中没有被更改
+
+JWT在身份验证流程中的典型使用方式：
+1. 用户登录后，服务器生成JWT令牌
+2. 令牌返回给客户端并存储（通常在localStorage或cookie中）
+3. 后续请求中，客户端在Authorization头部携带此令牌
+4. 服务器验证令牌的有效性并授权访问
+
+提供对 JWT Auth 验证的中间件.
+
+_**示例代码**_ 
+
+import { Tab, Tabs } from 'rspress/theme';
+import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
+import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <JwtAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <JwtAuthCargoCode/>
+  </Tab>
+</Tabs>

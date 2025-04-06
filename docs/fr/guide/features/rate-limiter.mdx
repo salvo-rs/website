@@ -1,0 +1,48 @@
+# Contrôle de flux
+
+Middleware fournissant des fonctionnalités de limitation de débit.
+
+```rust
+import { Tab, Tabs } from 'rspress/theme';
+import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
+import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
+import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
+import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+```
+
+## Fonctionnalités principales
+
+* `RateIssuer` fournit une abstraction pour identifier les visiteurs via une clé. `RemoteIpIssuer` en est une implémentation qui identifie les visiteurs par leur adresse IP. La clé n'est pas nécessairement une chaîne de caractères - tout type satisfaisant les contraintes `Hash + Eq + Send + Sync + 'static` peut être utilisé comme clé.
+
+* `RateGuard` propose une abstraction d'algorithme de contrôle de flux. Deux implémentations sont fournies par défaut : fenêtre fixe (`FixedGuard`) et fenêtre glissante (`SlidingGuard`).
+
+* `RateStore` gère le stockage des données. `MokaStore` est une implémentation mémoire intégrée basée sur `moka`. Vous pouvez également créer votre propre implémentation.
+
+* `RateLimiter` est une structure implémentant `Handler`, contenant également un champ `skipper` permettant d'ignorer certaines requêtes ne nécessitant pas de limitation. Par défaut, `none_skipper` est utilisé pour ne sauter aucune requête.
+
+* `QuotaGetter` offre une abstraction pour obtenir des quotas. Il permet de récupérer un objet quota en fonction de la clé (`Key`) du visiteur, ce qui signifie que nous pouvons stocker les quotas utilisateurs dans une base de données et les modifier/récupérer dynamiquement.
+
+_**Exemple de code**_
+
+### Exemple avec quotas statiques
+
+<Tabs>
+  <Tab label="main.rs">
+    <StaticMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <StaticCargoCode/>
+  </Tab>
+</Tabs>
+
+### Exemple avec quotas dynamiques
+
+<Tabs>
+  <Tab label="main.rs">
+    <DynamicMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <DynamicCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}

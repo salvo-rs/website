@@ -1,0 +1,26 @@
+# Middleware di Logging
+
+La registrazione dei log svolge un ruolo fondamentale nelle applicazioni web, in quanto permette di:
+- Fornire dettagli sul processo di gestione delle richieste, aiutando gli sviluppatori a tracciare il comportamento dell'applicazione
+- Facilitare la risoluzione di problemi e il debug, specialmente in ambienti di produzione
+- Monitorare le prestazioni dell'applicazione e l'utilizzo delle risorse
+- Registrare modelli di accesso degli utenti e anomalie del sistema
+- Soddisfare i requisiti di audit di sicurezza e conformità
+
+Salvo offre un middleware con funzionalità di base per il logging. Se il middleware viene aggiunto direttamente a un `Router`, non sarà in grado di catturare gli errori 404 restituiti quando nessun `Router` corrisponde alla richiesta. Si consiglia pertanto di aggiungerlo al `Service`.
+
+_**Codice di esempio**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
+import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <LoggingCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <LoggingCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:b378fca9964cf2a34b48e7c0c9f74a2d */}

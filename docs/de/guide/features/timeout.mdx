@@ -1,0 +1,25 @@
+import { Tab, Tabs } from 'rspress/theme';
+import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
+import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
+
+# Timeout-Middleware
+
+Middleware zur Unterstützung von Timeouts.
+
+## Anwendungsfälle
+
+In Webdiensten können bestimmte Anfragen aufgrund verschiedener Gründe (wie langsame Datenbankabfragen, verzögerte Antworten externer Dienste etc.) zu langen Verarbeitungszeiten führen. Um zu verhindern, dass diese langlaufenden Anfragen Serverressourcen blockieren und die Bearbeitung anderer Anfragen beeinträchtigen, kann die Timeout-Middleware verwendet werden, um eine maximale Bearbeitungszeit für Anfragen festzulegen. Wird dieses Zeitlimit überschritten, wird die Anfrage automatisch abgebrochen und ein Timeout-Fehler zurückgegeben.
+
+_**Beispielcode**_
+
+<Tabs>
+<Tab label="main.rs">
+<TimeoutMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TimeoutCargoCode/>
+</Tab>
+</Tabs>
+
+In dem obigen Beispiel haben wir zwei Handler-Funktionen erstellt: einen schnell antwortenden `fast` und einen, der erst nach 6 Sekunden antwortet (`slow`). Durch `Timeout::new(Duration::from_secs(5))` wird für alle Anfragen ein Timeout-Limit von 5 Sekunden gesetzt. Beim Aufruf des `/slow`-Endpunkts wird die Anfrage aufgrund der Überschreitung der 5-Sekunden-Grenze abgebrochen, während der `/fast`-Endpunkt normal verarbeitet und ein Ergebnis zurückgibt.
+{/* 本行由工具自动生成,原文哈希值:91c35a9e679382fc5ad89433063fa043 */}

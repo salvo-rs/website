@@ -1,0 +1,69 @@
+# Depot
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/use-depot/src/main.mdx';
+import CargoCode from '../../../../codes_md/use-depot/Cargo.mdx';
+
+[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) 是用于保存一次请求中涉及到的临时数据. 中间件可以将自己处理的临时数据放入 Depot, 供后续程序使用.
+
+当一个服务器接收到一个客户浏览器发来的请求后会创建一个 `Depot` 的实例. 这个实例会在所有的中间件和 `Handler` 处理完请求后被销毁.
+
+比如说, 我们可以在登录的中间件中设置 `current_user`, 然后在后续的中间件或者 `Handler` 中读取当前用户信息.
+
+## 快速理解
+
+`Depot` 用于在请求处理过程中存储和共享数据。它实现了一个类型安全的数据容器，支持两种主要使用模式：
+
+1. **键值存储**：通过 `insert`/`get` 方法存取字符串键关联的值
+2. **类型注入**：通过 `inject`/`obtain` 方法基于类型存取值
+
+
+如示例所示，`Depot` 特别适用于在中间件和处理程序之间传递数据。中间件可以在 `Depot` 中设置值（如用户信息、认证状态），后续处理程序可以获取这些值，无需重复计算或查询。`Depot` 的设计确保了在整个请求处理链中数据的一致性和可访问性，是构建复杂 Web 应用的核心工具。
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+</Tabs>
+
+## 通过 `insert` 和 `get` 设置和取出数据
+
+ 正如上面所示, 可以通过 `insert` 把 `key` 和 `value` 插入到 `Depot` 中. 对于这一类型的值, 直接用 `get` 取出.
+
+```rust
+depot.insert("a", "b");
+assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
+```
+
+ 如果不存在这个 `key`, 或者 `key` 存在, 但是类型不匹配, 则返回 `None`.
+
+## 通过 `inject` 和 `obtain` 设置和取出数据
+
+有时, 存在一些不需要关系具体 `key`, 对于这种类型也存在唯一实例的情况. 可以使用 `inject` 插入数据, 然后使用 `obtain` 取出数据. 它们不需要你提供 `key`.
+
+```rust
+depot.inject(Config::new());
+depot.obtain::<Config>();
+```
+
+# Depot 结构体方法概览
+
+| 类别 | 方法 | 描述 |
+|------|------|------|
+| **创建/容量** | `new()` | 创建空 Depot |
+| | `with_capacity(capacity)` | 创建指定容量的 Depot |
+| | `capacity()` | 获取容量 |
+| | `inner()` | 获取内部 HashMap 引用 |
+| **类型注入/获取** | `inject<V>(value)` | 按类型注入值 |
+| | `obtain<T>()` | 获取注入值引用 |
+| | `obtain_mut<T>()` | 获取注入值可变引用 |
+| | `contains<T>()` | 检查是否包含特定类型 |
+| | `scrape<T>()` | 移除并返回注入值 |
+| **键值操作** | `insert(key, value)` | 插入键值对 |
+| | `get<V>(key)` | 获取键对应值引用 |
+| | `get_mut<V>(key)` | 获取键对应值可变引用 |
+| | `contains_key(key)` | 检查是否包含特定键 |
+| | `remove<V>(key)` | 移除键并返回值 |
+| | `delete(key)` | 删除键值对 |

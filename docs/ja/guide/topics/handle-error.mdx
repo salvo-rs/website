@@ -1,0 +1,115 @@
+# エラーハ理
+
+## Rustアプリケーションにおける一般的なエラーハンドリング手法
+
+RustのエラーハンドリングはJavaなどの言語とは異なり、`try...catch`のような仕組みは存在しません。一般的な方法は、アプリケーションレベルでグローバルなエラータイプを定義することです：
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("io: `{0}`")]
+    Io(#[from] io::Error),
+    #[error("utf8: `{0}`")]
+    FromUtf8(#[from] FromUtf8Error),
+    #[error("diesel: `{0}`")]
+    Diesel(#[from] diesel::result::Error),
+    ...
+}
+
+pub type AppResult<T> = Result<T, AppError>;
+```
+
+ここでは`thiserror`クレートを使用しており、独自のカスタムエラータイプを簡単に定義でき、コードを簡素化できます。簡潔に記述するために、`AppResult`という型エイリアスも定義しています。
+
+### thiserrorとanyhow
+
+Rustのエラーハンドリングエコシステムでは、`thiserror`と`anyhow`という2つの主要なクレートがよく使用されます：
+
+- **thiserror**: ライブラリ開発者向けで、明確なエラータイプを定義するために使用されます。派生マクロを通じて`std::error::Error`トレイトを実装し、エラーの表示方法を定義できます。ライブラリを構築する場合や、ユーザーに明確なエラータイプを提供する必要がある場合に適しています。
+
+- **anyhow**: アプリケーション開発者向けで、汎用的なエラータイプ`anyhow::Error`を提供します。`std::error::Error`トレイトを実装したあらゆるエラーを含むことができ、エラーの定義よりも伝播に重点を置いています。アプリケーション層のコードで様々なエラーを`anyhow::Error`に簡単に変換でき、ボイラープレートコードの記述を減らせます。
+
+場合によっては、これら2つのクレートを併用することもあります：ライブラリでは`thiserror`でエラータイプを定義し、アプリケーションでは`anyhow`でそれらのエラーを処理・伝播します。
+
+## Handlerにおけるエラーハンドリング
+
+Salvoでは、`Handler`も様々なエラー（データベース接続エラー、ファイルアクセスエラー、ネットワーク接続エラーなど）に遭遇することがよくあります。このようなエラーに対しては、前述の手法を適用できます：
+
+```rust
+#[handler]
+async fn home()-> AppResult<()> {
+
+}
+```
+
+ここで`home`ハンドラは`AppResult<()>`を直接返しています。しかし、このエラーをどのように表示すべきでしょうか？ `AppResult`というカスタムエラータイプに対して`Writer`トレイトを実装する必要があり、この実装でエラーの表示方法を決定できます：
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        res.render(Text::Plain("I'm a error, hahaha!"));
+    }
+}
+```
+
+Salvoの`Handler`は`Result`を返すことができ、`Result`内の`Ok`と`Err`の型がどちらも`Writer`トレイトを実装している必要があります。
+
+### anyhowを使用したエラーハンドリング
+
+anyhowの使用が広く普及していることを考慮し、Salvoは`anyhow::Error`に対する組み込みサポートを提供しています。`anyhow`機能を有効にすると、`anyhow::Error`は`Writer`トレイトを実装し、`InternalServerError`にマッピングされます：
+
+```rust
+#[cfg(feature = "anyhow")]
+#[async_trait]
+impl Writer for ::anyhow::Error {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.render(StatusError::internal_server_error());
+    }
+}
+```
+
+anyhow機能を使用するには、Cargo.tomlでSalvoの`anyhow`フィーチャーを有効にする必要があります：
+
+```toml
+[dependencies]
+salvo = { version = "*", features = ["anyhow"] }
+anyhow = "1.0"
+```
+
+これにより、ハンドラ関数は直接`anyhow::Result<T>`を返せるようになります：
+
+```rust
+#[handler]
+async fn home() -> anyhow::Result<impl Writer> {
+    let data = fetch_data().context("Failed to fetch data")?;
+    Ok(Text::Plain(data))
+}
+```
+
+エラーにはしばしば機密情報が含まれており、通常は一般ユーザーに見せたくないものです。しかし、開発者やサイト管理者であれば、エラーがすべての詳細を赤裸々に表示してくれることを望むかもしれません。
+
+`write`メソッドでは`Request`と`Depot`の参照を取得できるため、このような柔軟な処理を簡単に実装できます：
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        let user = depot.obtain::<User>();
+        if user.is_admin {
+            res.render(Text::Plain(e.to_string()));
+        } else {
+            res.render(Text::Plain("I'm a error, hahaha!"));
+        }
+    }
+}
+```
+
+## エラーページの表示
+
+Salvoに組み込まれているエラーページはほとんどの場合に十分ですが、場合によってはエラーページの表示をカスタマイズしたいこともあります。
+
+これはカスタム`Catcher`を実装することで可能です。詳細については[`Catcher`](../concepts/catcher.html)のセクションを参照してください。
+{/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

@@ -1,0 +1,69 @@
+# Depot
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/use-depot/src/main.mdx';
+import CargoCode from '../../../../codes_md/use-depot/Cargo.mdx';
+
+[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) is used to store temporary data involved in a single request. Middleware can place processed temporary data into the Depot for use by subsequent handlers.
+
+When a server receives a request from a client browser, it creates a `Depot` instance. This instance is destroyed after all middleware and `Handler` have finished processing the request.
+
+For example, we can set `current_user` in authentication middleware, then read the current user information in subsequent middleware or handlers.
+
+## Quick Understanding
+
+`Depot` is used for storing and sharing data during request processing. It implements a type-safe data container supporting two primary usage patterns:
+
+1. **Key-Value Storage**: Access values associated with string keys via `insert`/`get` methods
+2. **Type Injection**: Store and retrieve values based on type through `inject`/`obtain` methods
+
+As shown in examples, `Depot` is particularly useful for passing data between middleware and handlers. Middleware can set values (like user info, authentication status) in `Depot`, which subsequent handlers can access without recomputation or repeated queries. `Depot`'s design ensures data consistency and accessibility throughout the request processing chain, making it a core tool for building complex web applications.
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+</Tabs>
+
+## Setting and Retrieving Data via `insert` and `get`
+
+As shown above, you can insert key-value pairs into `Depot` using `insert`. For such values, simply use `get` to retrieve them.
+
+```rust
+depot.insert("a", "b");
+assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
+```
+
+Returns `None` if the key doesn't exist or if the type doesn't match the stored value.
+
+## Setting and Retrieving Data via `inject` and `obtain`
+
+For cases where values don't need specific keys and only one instance per type exists, you can use `inject` to insert data and `obtain` to retrieve it. These methods don't require keys.
+
+```rust
+depot.inject(Config::new());
+depot.obtain::<Config>();
+```
+
+# Overview of Depot Struct Methods
+
+| Category | Method | Description |
+|------|------|------|
+| **Creation/Capacity** | `new()` | Creates empty Depot |
+| | `with_capacity(capacity)` | Creates Depot with specified capacity |
+| | `capacity()` | Gets current capacity |
+| | `inner()` | Gets reference to internal HashMap |
+| **Type Injection/Retrieval** | `inject<V>(value)` | Injects value by type |
+| | `obtain<T>()` | Gets reference to injected value |
+| | `obtain_mut<T>()` | Gets mutable reference to injected value |
+| | `contains<T>()` | Checks if type exists |
+| | `scrape<T>()` | Removes and returns injected value |
+| **Key-Value Operations** | `insert(key, value)` | Inserts key-value pair |
+| | `get<V>(key)` | Gets reference to value by key |
+| | `get_mut<V>(key)` | Gets mutable reference to value by key |
+| | `contains_key(key)` | Checks if key exists |
+| | `remove<V>(key)` | Removes and returns value by key |
+| | `delete(key)` | Deletes key-value pair |
+{/* 本行由工具自动生成,原文哈希值:0a5fdeaf8cc44da931db5a32298e6afe */}

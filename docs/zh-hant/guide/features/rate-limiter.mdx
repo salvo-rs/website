@@ -1,0 +1,46 @@
+# 流量控制
+
+提供流量控制功能的中介軟體。
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
+import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
+import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
+import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+
+## 主要功能
+
+* `RateIssuer` 提供了分配識別訪問者身份鍵值的抽象。`RemoteIpIssuer` 是它的實作，可依據請求的 IP 位址確定訪問者。鍵不一定是字串類型，任何滿足 `Hash + Eq + Send + Sync + 'static` 約束的類型都可以作為鍵。
+
+* `RateGuard` 提供對流量控制演算法的抽象。預設實作了固定視窗(`FixedGuard`)和滑動視窗(`SlidingGuard`)兩種實現方式。
+
+* `RateStore` 提供對資料的存取操作。`MokaStore` 是內建的基於 `moka` 的記憶體快取實作。你也可以定義自己的實作方式。
+
+* `RateLimiter` 是實作了 `Handler` 的結構體，內部還有一個 `skipper` 欄位，可指定跳過某些不需要快取的請求。預設情況下，會使用 `none_skipper` 不跳過任何請求。
+
+* `QuotaGetter` 提供配額取得的抽象，可根據訪問者的 `Key` 取得一個配額物件，這意味著我們可以把使用者配額等資訊配置到資料庫中，動態改變，動態取得。
+
+_**範例程式碼**_
+
+### 靜態配額範例
+
+<Tabs>
+  <Tab label="main.rs">
+    <StaticMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <StaticCargoCode/>
+  </Tab>
+</Tabs>
+
+### 動態配額範例
+
+<Tabs>
+  <Tab label="main.rs">
+    <DynamicMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <DynamicCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}

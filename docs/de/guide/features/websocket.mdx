@@ -1,0 +1,40 @@
+# WebSocket
+
+import { Tab, Tabs } from 'rspress/theme';
+import WebsocketMainCode from '../../../../codes_md/websocket/src/main.mdx';
+import WebsocketCargoCode from '../../../../codes_md/websocket/Cargo.mdx';
+import WebsocketChatMainCode from '../../../../codes_md/websocket-chat/src/main.mdx';
+import WebsocketChatCargoCode from '../../../../codes_md/websocket-chat/Cargo.mdx';
+
+Middleware zur Unterstützung von `WebSocket`.
+
+## Einführung in WebSocket
+
+WebSocket ist ein Protokoll für Vollduplex-Kommunikation über eine einzelne TCP-Verbindung. Es vereinfacht den Datenaustausch zwischen Client und Server, indem es dem Server erlaubt, aktiv Daten an den Client zu pushen. Im WebSocket-Protokoll müssen Browser und Server nur einmal einen Handshake durchführen, um eine persistente Verbindung herzustellen, über die dann bidirektionale Datenübertragung möglich ist.
+
+Im Gegensatz zu traditionellen HTTP-Anfragen bleibt eine WebSocket-Verbindung nach der Herstellung geöffnet, wodurch häufige Verbindungsaufbauten und -trennungen vermieden werden. Dies reduziert den Kommunikationsaufwand erheblich. Daher eignet sich WebSocket besonders für Echtzeitanwendungen wie Online-Spiele, Chat-Apps, Börsenticker und andere Anwendungen, die Echtzeit-Updates erfordern.
+
+Salvo bietet durch sein WebSocket-Middleware eine prägnante und leistungsstarke API, die Entwicklern die einfache Integration von WebSocket-Funktionalität in ihre Anwendungen ermöglicht.
+
+_**Beispielcode**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<WebsocketMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WebsocketCargoCode/>
+</Tab>
+</Tabs>
+
+### Beispiel für ein Chat-Programm
+
+<Tabs>
+<Tab label="main.rs">
+<WebsocketChatMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WebsocketChatCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:3fb844d4872fe26a4a4923b5dcb4e68a */}

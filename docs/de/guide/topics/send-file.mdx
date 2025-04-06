@@ -1,0 +1,60 @@
+# Dateien senden
+
+Salvo bietet mehrere Möglichkeiten zum Versenden von Dateien:
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+### NamedFile
+
+Salvo stellt `salvo::fs::NamedFile` bereit, um Dateien effizient an Clients zu senden. Dabei werden die Dateien nicht vollständig in den Cache geladen, sondern basierend auf dem `Range`-Header der Anfrage nur teilweise übertragen.
+
+Tatsächlich ist `Response::send_file` nur eine vereinfachte Methode zur Verwendung von `NamedFile`. Für erweiterte Kontrolle über den Dateiversand kann `NamedFileBuilder` genutzt werden.
+
+Mit `NamedFile::builder` lässt sich ein `NamedFileBuilder` erstellen:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+Nach Konfiguration kann die Datei gesendet werden:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### Statische Dateien bereitstellen
+
+Middleware zum Bereitstellen statischer oder eingebetteter Dateien.
+
+- `StaticDir` unterstützt statische lokale Verzeichnisse. Es können mehrere Ordnerpfade übergeben werden, z.B.:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Falls eine Datei im ersten Ordner nicht gefunden wird, wird im zweiten gesucht.
+
+- Unterstützung für `rust-embed` ist vorhanden, z.B.:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  Mit `with_fallback` kann eine Ersatzdatei für den Fall definiert werden, dass die angeforderte Datei nicht existiert - besonders nützlich für Single-Page-Webanwendungen.
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

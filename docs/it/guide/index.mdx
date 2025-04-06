@@ -1,0 +1,112 @@
+# Per padroneggiare quest'arte
+
+## Perché scrivere questo framework
+
+All'epoca, essendo un principiante, mi resi conto di essere troppo inesperto per imparare a usare framework esistenti come actix-web o Rocket. Quando cercai di reimplementare in Rust un servizio web che avevo precedentemente scritto in Go, a prima vista ogni framework sembrava più complesso di quelli disponibili in Go. Già la curva di apprendimento di Rust è abbastanza ripida, perché complicare ulteriormente le cose con framework web eccessivamente intricati?
+
+Quando Tokio rilasciò il framework Axum, fui felicissimo pensando che finalmente avrei potuto smettere di mantenere il mio framework web personale. Tuttavia, mi accorsi che Axum, sebbene apparentemente semplice, richiedeva troppi giochi di tipi e definizioni generiche. Per implementare anche un semplice middleware, era necessaria una profonda comprensione di Rust e la pazienza di scrivere montagne di codice template illeggibile.
+
+Così decisi di continuare a mantenere il mio framework web, che è piuttosto unico (intuitivo, ricco di funzionalità e adatto ai principianti).
+
+## Salvo è adatto a te?
+
+Sebbene semplice, Salvo è straordinariamente potente e completo, tanto da poter essere considerato uno dei framework più robusti nell'ecosistema Rust. Eppure, nonostante la sua potenza, è incredibilmente facile da imparare e usare. Nessun dolore straziante, promesso.
+
+- **Perfetto per chi sta imparando Rust**: operazioni CRUD sono all'ordine del giorno, e con Salvo scoprirai che sono semplici come con qualsiasi altro framework web che hai usato (Express, Koa, gin, flask...). In alcuni casi, addirittura più astratto e conciso.
+
+- **Ideale per chi vuole usare Rust in produzione**: anche se Salvo non ha ancora raggiunto la versione 1.0, le sue funzionalità core sono state perfezionate in anni di iterazioni, garantendo stabilità e tempestività nei fix.
+
+- **Adatto a te**, che hai già perso metà dei capelli ma ne perdi ancora a manciate ogni giorno.
+
+## Come riesce a essere così semplice?
+
+Hyper si occupa già di gran parte del lavoro pesante a basso livello, quindi per la maggior parte delle esigenze, costruire su Hyper è la scelta giusta. Salvo non fa eccezione. Le sue funzionalità principali includono un sistema di routing potente e flessibile, oltre a strumenti comuni come Acme, OpenAPI e autenticazione JWT.
+
+In Salvo, **Handler e Middleware sono unificati**. Un Middleware è semplicemente un Handler, che viene aggiunto a un Router tramite il metodo `hoop`. Sostanzialmente, sia Middleware che Handler processano una Request e possono scrivere dati nella Response. Un Handler riceve tre parametri: Request, Depot e Response, dove Depot è uno spazio di archiviazione temporaneo per i dati durante l'elaborazione.
+
+Per comodità, è possibile omettere i parametri non necessari o ignorare il loro ordine:
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    res.render("Hello world");
+}
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world");
+}
+```
+
+Anche le API del sistema di routing sono estremamente intuitive, ma non per questo meno potenti. Nella maggior parte dei casi, ti basterà lavorare con il tipo `Router`. Inoltre, se una struttura implementa i trait necessari, Salvo può generare automaticamente documentazione OpenAPI, estrarre parametri e gestire errori con messaggi chiari. Scrivere un handler diventa così semplice come scrivere una funzione normale. Nei tutorial successivi approfondiremo queste funzionalità. Ecco un esempio:
+
+```rust
+#[endpoint(tags("messaggi"))]
+pub async fn create_message_log_handler(
+    input: JsonBody<CreateOrUpdateMessageLog>,
+    depot: &mut Depot,
+) -> APPResult<Json<MessageLog>> {
+    let db = utils::get_db(depot)?;
+    let log = create_message_log(&input, db).await?;
+    Ok(Json(log))
+}
+```
+
+Qui, `JsonBody<CreateOrUpdateMessageLog>` analizza automaticamente il JSON dalla richiesta e lo converte nel tipo specificato (supporta anche sorgenti multiple e tipi annidati). La macro `#[endpoint]` genera la documentazione OpenAPI e semplifica la gestione di parametri ed errori.
+
+## Il sistema di routing
+
+Il sistema di routing di Salvo è diverso dagli altri framework. I Router possono essere organizzati in modo lineare o ad albero, distinguendo tra **albero logico** (basato sulla business logic) e **albero di accesso** (la struttura degli URL). Spesso, i due non coincidono.
+
+Ecco un esempio classico:
+
+```rust
+Router::new().path("articles").get(list_articles).post(create_article);
+Router::new()
+    .path("articles/{id}")
+    .get(show_article)
+    .patch(edit_article)
+    .delete(delete_article);
+```
+
+Di solito, visualizzare un articolo o una lista non richiede autenticazione, mentre creare, modificare o cancellare articoli sì. Il routing annidato di Salvo gestisce perfettamente questo scenario. Possiamo raggruppare le route pubbliche:
+
+```rust
+Router::new()
+    .path("articles")
+    .get(list_articles)
+    .push(Router::new().path("{id}").get(show_article));
+```
+
+E quelle private, protette da middleware di autenticazione:
+
+```rust
+Router::new()
+    .path("articles")
+    .hoop(auth_check)
+    .post(list_articles)
+    .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
+```
+
+Nonostante entrambi i Router condividano `path("articles")`, possono essere aggiunti allo stesso Router padre, risultando in:
+
+```rust
+Router::new()
+    .push(
+        Router::new()
+            .path("articles")
+            .get(list_articles)
+            .push(Router::new().path("{id}").get(show_article)),
+    )
+    .push(
+        Router::new()
+            .path("articles")
+            .hoop(auth_check)
+            .post(list_articles)
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
+    );
+```
+
+`{id}` cattura un segmento del percorso. Se vogliamo restringere `id` a soli numeri, possiamo usare un'espressione regolare: `r"{id:/\d+/}"`.
+{/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}

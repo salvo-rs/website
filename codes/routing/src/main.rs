@@ -12,7 +12,7 @@ async fn main() {
                 .hoop(auth)
                 .post(create_user)
                 .push(
-                    Router::with_path(r"{id:num}")
+                    Router::with_path("{id:num}")
                         .post(update_user)
                         .delete(delete_user),
                 ),
@@ -20,7 +20,7 @@ async fn main() {
         .push(
             Router::with_path("users")
                 .get(list_users)
-                .push(Router::with_path(r"{id:num}").get(show_user)),
+                .push(Router::with_path("{id:num}").get(show_user)),
         )
         .then(|router| {
             if debug_mode {
@@ -36,9 +36,9 @@ async fn main() {
                 router
             }
         });
-    println!("{:#?}", router);
+    println!("{router:#?}");
 
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 

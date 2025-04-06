@@ -1,0 +1,208 @@
+---
+title: Rust HTTP客户端库
+---
+
+# Reqwest: Rust HTTP客户端库
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/reqwest/latest/reqwest/"
+  title="reqwest"
+  description="reqwest"
+/>
+
+Reqwest 是一个高级 HTTP 客户端库，它简化了 HTTP 请求的处理流程，提供了许多常用功能：
+
+- 支持异步和阻塞式 API
+- 处理各种类型的请求体：纯文本、JSON、URL编码表单、多部分表单
+- 可自定义的重定向策略
+- HTTP 代理支持
+- 默认使用 TLS 加密
+- Cookie 管理
+
+## 基本用法
+
+### 发起 GET 请求
+
+对于单个请求，可以使用 `get` 快捷方法：
+
+```rust
+let body = reqwest::get("https://www.rust-lang.org")
+    .await?
+    .text()
+    .await?;
+
+println!("body = {body:?}");
+```
+
+> 注意：如果计划执行多个请求，最好创建一个 `Client` 并重用它，以利用连接池的优势。
+
+```rust
+let client = reqwest::Client::new();
+let res = client.get("https://www.rust-lang.org")
+    .send()
+    .await?;
+```
+
+### 发起 POST 请求
+
+使用 `body()` 方法可以设置请求正文：
+
+```rust
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .body("要发送的具体内容")
+    .send()
+    .await?;
+```
+
+### 表单数据
+
+发送表单数据是一种常见的需求，可以使用任何可序列化为表单数据的类型：
+
+```rust
+// 这将发送正文为 `foo=bar&baz=quux` 的 POST 请求
+let params = [("foo", "bar"), ("baz", "quux")];
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .form(&params)
+    .send()
+    .await?;
+```
+
+### JSON 数据
+
+通过 `json` 方法可以轻松发送 JSON 数据（需要 `json` 特性）：
+
+```rust
+// 这将发送正文为 `{"lang":"rust","body":"json"}` 的 POST 请求
+let mut map = HashMap::new();
+map.insert("lang", "rust");
+map.insert("body", "json");
+
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .json(&map)
+    .send()
+    .await?;
+```
+
+### 响应处理
+
+可以以多种方式处理响应：
+
+```rust
+let res = client.get("https://www.rust-lang.org").send().await?;
+
+// 获取状态码
+let status = res.status();
+
+// 获取响应头
+let content_type = res.headers().get("content-type").unwrap();
+
+// 读取响应体为文本
+let body = res.text().await?;
+
+// 或解析为 JSON
+let json: serde_json::Value = res.json().await?;
+```
+
+## 高级功能
+
+### 重定向策略
+
+默认情况下，客户端会自动处理 HTTP 重定向，最多跟随 10 次跳转。可以使用 `ClientBuilder` 自定义此行为：
+
+```rust
+let custom_client = reqwest::Client::builder()
+    .redirect(reqwest::redirect::Policy::none()) // 禁用重定向
+    .build()?;
+```
+
+### Cookie 支持
+
+可以通过 `ClientBuilder` 启用会话 Cookie 的自动存储和发送：
+
+```rust
+let client = reqwest::Client::builder()
+    .cookie_store(true)
+    .build()?;
+```
+
+### 代理设置
+
+系统代理默认启用，会查找环境变量中的 HTTP 或 HTTPS 代理设置：
+
+- `HTTP_PROXY` 或 `http_proxy`：HTTP 连接的代理
+- `HTTPS_PROXY` 或 `https_proxy`：HTTPS 连接的代理
+- `ALL_PROXY` 或 `all_proxy`：两种连接的代理
+
+还可以通过代码显式设置代理：
+
+```rust
+let proxy = reqwest::Proxy::http("https://secure.example")?;
+let client = reqwest::Client::builder()
+    .proxy(proxy)
+    .build()?;
+
+// 或禁用代理
+let client = reqwest::Client::builder()
+    .no_proxy()
+    .build()?;
+```
+
+### TLS 配置
+
+客户端默认使用 TLS 连接到 HTTPS 目标：
+
+```rust
+// 添加额外的服务器证书
+let cert = reqwest::Certificate::from_pem(&cert_bytes)?;
+let client = reqwest::Client::builder()
+    .add_root_certificate(cert)
+    .build()?;
+
+// 配置客户端证书
+let identity = reqwest::Identity::from_pkcs12_der(&pkcs12_der, "password")?;
+let client = reqwest::Client::builder()
+    .identity(identity)
+    .build()?;
+```
+
+### 超时设置
+
+可以为请求配置超时时间：
+
+```rust
+let client = reqwest::Client::builder()
+    .timeout(std::time::Duration::from_secs(10))
+    .build()?;
+```
+
+## 可选功能
+
+Reqwest 提供了多种可选功能，可通过 Cargo 特性启用或禁用：
+
+- `http2`（默认启用）：支持 HTTP/2
+- `default-tls`（默认启用）：提供 HTTPS 的 TLS 支持
+- `rustls-tls`：使用 rustls 提供 TLS 功能
+- `blocking`：提供阻塞式客户端 API
+- `json`：提供 JSON 序列化和反序列化功能
+- `multipart`：提供多部分表单功能
+- `cookies`：提供 cookie 会话支持
+- `gzip`、`brotli`、`deflate`、`zstd`：支持各种响应体解压缩
+- `socks`：提供 SOCKS5 代理支持
+
+## 阻塞式 API
+
+当不需要异步操作时，可以使用阻塞式 API（需要 `blocking` 特性）：
+
+```rust
+let body = reqwest::blocking::get("https://www.rust-lang.org")?.text()?;
+
+let client = reqwest::blocking::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .json(&map)
+    .send()?;
+```

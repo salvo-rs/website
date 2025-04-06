@@ -1,0 +1,1695 @@
+---
+title: llm-code-explanation
+---
+
+> Salvo 是一个基于 Rust 语言构建的异步、高性能、功能丰富的 Web 服务器框架。它设计简洁、模块化，易于使用和扩展，并提供了强大的路由、中间件、数据提取、WebSocket、TLS (支持 OpenSSL/Rustls 证书热重载)、HTTP/3、反向代理、请求超时控制等支持。
+
+# concurrency-limiter
+
+> 此示例演示了如何使用 Salvo 的 `concurrency-limiter` 中间件来限制可以同时处理的并发请求数量。这对于控制资源密集型操作（如文件上传）的负载非常有用。
+
+此示例设置了两个文件上传端点：
+1.  `/limited`：此路径应用了 `max_concurrency(1)` 中间件，意味着一次只允许处理一个上传请求。后续的请求将排队等待，直到当前请求完成。
+2.  `/unlimit`：此路径没有并发限制，可以同时处理任意数量的上传请求。
+
+两个端点都使用同一个 `upload` 处理器，该处理器模拟了一个耗时 10 秒的操作（`tokio::time::sleep`），以清晰地展示并发限制的效果。`index` 处理器提供一个包含两个上传表单的 HTML 页面，分别指向这两个端点。
+
+## 文件列表
+
+*   [`Cargo.toml`](concurrency-limiter/Cargo.mdx): 定义项目依赖，并通过 `features = ["concurrency-limiter"]` 启用了 Salvo 的并发限制器功能。
+*   [`src/main.rs`](concurrency-limiter/src/main.mdx): 包含主要的应用程序逻辑：
+    *   定义 `index` 处理器以提供 HTML 表单。
+    *   定义 `upload` 处理器来处理文件上传并模拟延迟。
+    *   设置路由器，为 `/limited` 路径应用 `max_concurrency(1)` 中间件。
+    *   创建临时目录 `temp` 用于存储上传的文件。
+    *   启动服务器监听 `0.0.0.0:5800`。
+
+---
+
+# csrf-session-store
+
+> 此示例展示了如何使用 Salvo 的 CSRF (跨站请求伪造) 保护功能，并将 CSRF token 存储在会话 (Session) 中。它演示了多种不同的加密/签名算法来保护 token。
+
+为了实现 CSRF 保护，该示例依赖于 Salvo 的 `session` 功能来存储每个客户端的 CSRF token。主要步骤包括：
+1.  **会话设置**: 配置 `SessionHandler`，使用 `MemoryStore` (内存存储) 和一个密钥来管理会话数据。
+2.  **CSRF Token 生成与验证**:
+    *   使用 `FormFinder` 指定从表单的哪个字段 (`csrf_token`) 提取 token。
+    *   初始化多种 CSRF 保护中间件实例，每种使用不同的算法（Bcrypt, HMAC, AES-GCM, ChaCha20Poly1305），并将它们配置为使用会话存储 (`bcrypt_session_csrf`, `hmac_session_csrf` 等)。
+    *   在 GET 请求处理器 (`get_page`) 中，通过 `depot.csrf_token()` 获取（或生成新的）CSRF token，并将其嵌入到返回的 HTML 表单中。
+    *   在 POST 请求处理器 (`post_page`) 中，Salvo 的 CSRF 中间件会自动验证请求中提交的 token 是否与会话中存储的匹配。如果验证通过，处理器逻辑才会执行；否则，将返回错误。处理器随后会再次生成新的 token 用于下一次请求。
+3.  **路由**: 设置不同的路径 (`/bcrypt/`, `/hmac/`, `/aes_gcm/`, `/ccp/`)，每个路径应用对应算法的 CSRF 中间件。所有这些路径都共享 `get_page` 和 `post_page` 处理器。
+
+此示例的核心在于演示如何结合会话管理来实现有状态的 CSRF 保护，并提供了多种安全级别的算法选项。
+
+## 文件列表
+
+*   [`Cargo.toml`](csrf-session-store/Cargo.mdx): 引入 `salvo` 依赖，并启用 `csrf` 和 `session` 特性。同时需要 `serde` 用于表单数据的序列化/反序列化。
+*   [`src/main.rs`](csrf-session-store/src/main.mdx):
+    *   定义 `home`, `get_page`, `post_page` 处理器。
+    *   配置 `SessionHandler` 和各种基于 Session 的 `Csrf` 中间件。
+    *   在 `get_page` 中生成并显示 CSRF token。
+    *   在 `post_page` 中解析表单数据（包含 `csrf_token`），CSRF 中间件隐式执行验证。
+    *   设置路由，将不同的 CSRF 中间件应用到相应的路径。
+    *   启动服务器。
+
+---
+
+# webtransport
+
+> 此示例演示了如何使用 Salvo 和 Quinn (一个 QUIC 协议实现) 来创建一个 WebTransport 服务器。WebTransport 是一种基于 HTTP/3 的现代双向通信协议，提供低延迟的数据传输，适用于实时应用。
+
+该示例实现了一个简单的 echo 服务器，可以通过 WebTransport 连接：
+1.  **协议基础**: 它依赖于 QUIC (HTTP/3) 协议，因此需要 TLS 加密。示例中使用自签名证书进行本地测试。
+2.  **监听器**: 使用 `QuinnListener` 来处理 QUIC 连接，并通过 `join` 与一个标准的 `TcpListener` (使用 Rustls 处理 TLS) 结合，允许服务器同时处理 HTTP/1.1 或 HTTP/2（用于提供静态文件和可能的备用连接）和 HTTP/3 (用于 WebTransport)。
+3.  **连接处理**:
+    *   `connect` 处理器通过 `req.web_transport_mut().await` 获取 WebTransport 会话。
+    *   服务器在连接建立后立即主动打开一个双向流 (`session.open_bi`) 向客户端发送消息。
+    *   服务器进入循环，等待并处理来自客户端的不同类型的交互：
+        *   **数据报 (Datagrams)**: `session.accept_datagram()` 接收不可靠的数据报，并在前面加上 "Response: " 后 echo 回去。
+        *   **单向流 (Unidirectional Streams)**: `session.accept_uni()` 接收客户端发起的单向流，读取所有数据，然后通过服务器端打开的对应单向流 (`session.open_uni`) 将数据分块 echo 回去。
+        *   **双向流 (Bidirectional Streams)**: `session.accept_bi()` 接收客户端发起的双向流，将其分割为读写两半，然后同样将接收到的数据分块 echo 回去。
+4.  **静态文件服务**: 使用 `StaticDir` 提供了一个简单的 HTML/JS 客户端页面 (`static/client.html`, `static/client.js`)，用户可以通过浏览器访问此页面来与 WebTransport 服务器交互。
+
+此示例展示了 Salvo 处理高级网络协议 (如 WebTransport) 的能力，以及如何管理其不同的通信模式（数据报、单向/双向流）。
+
+## 文件列表
+
+*   [`Cargo.toml`](webtransport/Cargo.mdx):
+    *   启用 `salvo` 的 `quinn` (提供 WebTransport 和 HTTP/3 支持) 和 `serve-static` (提供静态文件服务) 特性。
+    *   包含 `anyhow` (错误处理), `bytes` (数据处理), `futures-util` (异步流处理) 等辅助库。
+*   [`src/main.rs`](webtransport/src/main.mdx):
+    *   定义 `connect` 处理器，核心的 WebTransport 会话处理逻辑。
+    *   定义 `echo_stream` 和 `send_chunked` 辅助函数处理流数据。
+    *   配置 `RustlsConfig` 加载证书。
+    *   设置 `QuinnListener` 和 `TcpListener`，并将它们绑定到端口 5800。
+    *   设置路由，将 `/counter` 路径指向 `connect` 处理器，并将其他路径用于提供静态文件。
+    *   启动服务器。
+*   [`certs/`](webtransport/certs): 包含用于本地测试的自签名证书 (`cert.pem`) 和私钥 (`key.pem`)。
+*   [`static/`](webtransport/static):
+    *   [`client.html`](webtransport/static/client.mdx): 提供给用户的 WebTransport 客户端界面。
+    *   `client.js`, `client.css`: 客户端的 JavaScript 逻辑和样式。
+
+---
+
+# catch-error
+
+> 此示例演示了 Salvo 如何捕获和处理来自处理器 (Handler) 的不同类型的错误，包括标准库错误、`anyhow::Error`、`eyre::Report` 以及自定义错误类型。
+
+Salvo 处理器可以返回 `Result<T, E>`。如果返回 `Ok(T)`，则正常处理 `T`（通常 `T` 实现了 `Writer` trait 来写入响应）。如果返回 `Err(E)`，Salvo 会尝试处理这个错误 `E`：
+1.  **内置错误处理**: Salvo 对一些常见的错误类型（如 `salvo::Error`, `std::io::Error` 等）有内置的处理逻辑，通常会转换成合适的 HTTP 状态码和响应体。
+2.  **通过 `Writer` Trait 处理**: 如果错误类型 `E` 实现了 `salvo::Writer` trait，Salvo 会调用其 `write` 方法，允许你完全自定义错误对应的 HTTP 响应。示例中的 `CustomError` 就是这样处理的，它实现了 `Writer` trait，将响应状态码设置为 500 并写入自定义消息 "custom error"。
+3.  **集成 `anyhow` 和 `eyre`**: 当启用 `salvo` 的 `anyhow` 或 `eyre` 特性时，Salvo 会自动为 `anyhow::Error` 和 `eyre::Report` 提供 `Writer` 实现。这意味着你可以直接在处理器中返回 `Result<(), anyhow::Error>` 或 `Result<(), eyre::Result>`，Salvo 会捕获这些错误并生成一个通常包含错误信息的 500 Internal Server Error 响应。
+
+此示例通过三个不同的处理器展示了这几种情况：
+*   `handle_anyhow`: 返回 `anyhow::anyhow!("handled anyhow error")`。
+*   `handle_eyre`: 返回 `eyre::Report::msg("handled eyre error")`。
+*   `handle_custom`: 返回自定义的 `Err(CustomError)`.
+
+访问对应的路径 (`/anyhow`, `/eyre`, `/custom`) 会触发相应的错误，并观察 Salvo 如何根据错误类型生成响应。
+
+## 文件列表
+
+*   [`Cargo.toml`](catch-error/Cargo.mdx):
+    *   启用 `salvo` 的 `anyhow` 和 `eyre` 特性以集成这两种错误处理库。
+    *   包含 `anyhow` 和 `eyre` 依赖。
+*   [`src/main.rs`](catch-error/src/main.mdx):
+    *   定义 `CustomError` 结构体。
+    *   为 `CustomError` 实现 `Writer` trait来自定义错误响应。
+    *   定义 `handle_anyhow`, `handle_eyre`, `handle_custom` 三个处理器，分别返回不同类型的错误。
+    *   设置路由，将路径映射到相应的错误处理器。
+    *   启动服务器。
+
+---
+
+# join-listeners
+
+> 此示例演示了如何让 Salvo 服务器同时监听多个 TCP 地址和端口。
+
+通过 `TcpListener` 的 `join()` 方法，可以将多个监听器配置组合在一起。当调用 `bind().await` 时，Salvo 会尝试绑定所有指定的地址和端口。服务器随后会接受来自任何一个监听器的连接。
+
+在这个具体的例子中：
+*   `TcpListener::new("0.0.0.0:5800")` 创建一个监听 5800 端口的配置。
+*   `.join(TcpListener::new("0.0.0.0:5801"))` 将监听 5801 端口的配置加入。
+*   `bind().await` 实际执行绑定操作，使服务器同时在 5800 和 5801 端口上接受连接。
+
+访问 `http://localhost:5800` 或 `http://localhost:5801` 都会路由到同一个 `hello` 处理器，并得到 "Hello World" 响应。
+
+## 文件列表
+
+*   [`Cargo.toml`](join-listeners/Cargo.mdx): 包含基本的 `salvo` 和 `tokio` 依赖。
+*   [`src/main.rs`](join-listeners/src/main.mdx):
+    *   定义简单的 `hello` 处理器。
+    *   使用 `TcpListener::new(...).join(...)` 配置多端口监听。
+    *   `bind().await` 绑定监听器。
+    *   启动服务器，为所有监听的端口提供相同的路由服务。
+
+---
+
+# oapi-todos
+
+> 此示例展示了如何使用 Salvo 的 `oapi` (OpenAPI) 功能来构建一个带有交互式 API 文档的 TODO List RESTful API。
+
+核心特性和步骤：
+1.  **启用 OAPI**: 在 `Cargo.toml` 中启用 `salvo` 的 `oapi` 特性。
+2.  **定义数据模型**: 创建 `Todo` 结构体，并使用 `#[derive(Serialize, Deserialize, ToSchema)]` 让它能被序列化/反序列化，并自动生成 OpenAPI Schema。可以使用 `#[salvo(schema(example = ...))]` 提供示例值。
+3.  **定义 API 端点**:
+    *   使用 `#[endpoint]` 宏标记处理 HTTP 请求的函数。这个宏会自动处理请求解析、响应序列化，并为 OpenAPI 文档收集元数据。
+    *   使用 `oapi::extract::*` 中的提取器（如 `QueryParam`, `JsonBody`, `PathParam`）来声明和获取请求参数/体。这些提取器会自动将参数信息添加到 OpenAPI 文档。
+    *   可以在 `#[endpoint]` 中添加 `tags(...)`, `status_codes(...)`, `parameters(...)` 等属性来丰富 OpenAPI 文档信息。
+4.  **实现业务逻辑**: 编写端点函数的具体逻辑，如此示例中的 `list_todos`, `create_todo`, `update_todo`, `delete_todo`，它们操作一个内存中的 `STORE` (使用 `tokio::sync::Mutex<Vec<Todo>>`) 来模拟数据库。
+5.  **生成 OpenAPI 文档**:
+    *   创建一个 `OpenApi` 实例，提供 API 的标题和版本。
+    *   调用 `.merge_router(&router)` 将路由信息和从 `#[endpoint]` 宏收集到的元数据合并到 OpenAPI 文档对象中。
+6.  **提供 API 文档 UI**:
+    *   将生成的 `OpenApi` 文档对象转换为一个路由，通常提供 JSON 格式的文档 (`doc.into_router("/api-doc/openapi.json")`)。
+    *   添加 Salvo 提供的多种 API 文档 UI 路由：`SwaggerUi`, `Scalar`, `RapiDoc`, `ReDoc`。它们都指向之前生成的 JSON 文档路径。
+7.  **组合路由并启动**: 将业务 API 路由和文档 UI 路由组合起来，然后启动服务器。
+
+访问 `/swagger-ui`, `/scalar`, `/rapidoc`, 或 `/redoc` 可以查看和交互式地测试 TODO API。
+
+## 文件列表
+
+*   [`Cargo.toml`](oapi-todos/Cargo.mdx): 启用 `salvo` 的 `oapi` 特性，并包含 `serde` (数据序列化) 和 `tokio` (异步运行时) 依赖。
+*   [`src/main.rs`](oapi-todos/src/main.mdx):
+    *   定义 `Todo` 数据结构和内存 `STORE`。
+    *   使用 `#[endpoint]` 定义 CRUD 操作的处理器 (`list_todos`, `create_todo`, `update_todo`, `delete_todo`)。
+    *   创建 `Router` 注册业务 API 路径。
+    *   创建 `OpenApi` 实例并合并路由信息。
+    *   添加 OpenAPI JSON 端点和多个 UI (Swagger, Scalar, RapiDoc, ReDoc) 的路由。
+    *   定义 `index` 处理器提供一个简单的 HTML 页面链接到各个文档 UI。
+    *   启动服务器。
+
+---
+
+# db-mongodb
+
+> 此示例演示了如何在 Salvo 应用中集成 MongoDB 数据库，实现基本的 CRUD (创建、读取、更新、删除 - 此示例主要展示创建和读取) 操作。
+
+主要步骤和概念：
+1.  **添加依赖**: 在 `Cargo.toml` 中添加 `mongodb` crate。
+2.  **数据库连接**:
+    *   在 `main` 函数中，使用 `mongodb::Client::with_uri_str` 连接到 MongoDB 实例。连接 URI 通常从环境变量读取或使用默认值。
+    *   为了在处理器中方便地访问数据库客户端，示例使用了 `std::sync::OnceLock` 将 `Client` 实例存储为全局静态变量 `MONGODB_CLIENT`。提供了一个辅助函数 `get_mongodb_client()` 来获取它。
+3.  **定义数据模型**: 创建 `User` 结构体，并使用 `#[derive(Debug, Deserialize, Serialize)]` 使其可以与 BSON (MongoDB 的文档格式) 进行相互转换。注意 `_id` 字段通常是 `Option<ObjectId>` 类型。
+4.  **创建索引 (可选但推荐)**: 示例中定义了一个 `create_username_index` 函数，在启动时为 `users` 集合的 `username` 字段创建一个唯一索引，以确保用户名的唯一性并提高查询性能。
+5.  **实现数据库操作处理器**:
+    *   `add_user`:
+        *   从请求体中解析 `User` 数据 (`req.parse_json::<User>()`)。
+        *   获取 MongoDB 集合 (`client.database(DB_NAME).collection::<Document>(COLL_NAME)`)。注意这里使用了 `Document` 类型，也可以直接用 `User` 类型 если BSON 结构匹配。
+        *   将 `User` 数据转换为 BSON `Document` (`doc!{ ... }`)。
+        *   调用 `coll_users.insert_one()` 将文档插入数据库。
+        *   根据结果向客户端返回成功或错误信息。
+    *   `get_users`:
+        *   获取 `User` 类型的集合 (`collection::<User>(COLL_NAME)`)。
+        *   调用 `coll_users.find(None, None)` 查询所有文档，返回一个 `Cursor`。
+        *   使用 `try_stream_ext::TryStreamExt` (通过 `cursor.try_next().await?`) 迭代 `Cursor`，将结果收集到 `Vec<User>` 中。
+        *   将用户列表以 JSON 格式返回 (`res.render(Json(vec_users))`)。
+    *   `get_user`:
+        *   从 URL 路径参数中获取 `username` (`req.param::<String>("username")`)。
+        *   调用 `coll_users.find_one(doc! { "username": &username }, None)` 按用户名查询单个文档。
+        *   处理查询结果：如果找到用户，返回 JSON；如果未找到，返回提示信息；如果出错，返回错误信息。
+6.  **路由设置**: 创建 `Router` 并将相应的 HTTP 方法和路径 (`/users`, `/users/{username}`) 映射到对应的处理器。
+7.  **错误处理**: 示例定义了一个简单的 `Error` 枚举来包装 `mongodb::error::Error`，并为其实现了 `Writer` trait（尽管在此示例中 `write` 方法为空，实际应用中应提供更有意义的错误响应）。处理器返回 `AppResult<T>` (即 `Result<T, Error>`)。
+
+## 文件列表
+
+*   [`Cargo.toml`](db-mongodb/Cargo.mdx): 添加 `mongodb`, `serde`, `serde_json`, `thiserror` (用于定义自定义错误) 依赖。`futures` 通常是 `mongodb` 的间接依赖，这里显式列出可能用于 `TryStreamExt`。
+*   [`src/main.rs`](db-mongodb/src/main.mdx):
+    *   定义 `User` 模型和 `Error` 枚举。
+    *   实现 `Error` 的 `Writer` trait。
+    *   初始化 MongoDB 连接并存储在 `OnceLock` 中。
+    *   实现 `add_user`, `get_users`, `get_user` 处理器，包含数据库操作逻辑。
+    *   实现 `create_username_index` 函数。
+    *   设置路由。
+    *   启动服务器。
+
+---
+
+# websocket
+
+> 此示例展示了如何在 Salvo 中处理 WebSocket 连接。WebSocket 提供了一种在客户端和服务器之间进行全双工通信的协议，常用于实时应用。
+
+主要步骤：
+1.  **启用 WebSocket**: 在 `Cargo.toml` 中启用 `salvo` 的 `websocket` 特性。
+2.  **升级请求**: WebSocket 连接始于一个标准的 HTTP GET 请求，该请求包含特殊的头部（如 `Upgrade: websocket`, `Connection: Upgrade`）来请求协议升级。
+3.  **处理器逻辑**:
+    *   创建一个处理器（如此示例中的 `connect`）。
+    *   在该处理器中，使用 `salvo::websocket::WebSocketUpgrade::new().upgrade(req, res, |mut ws| async move { ... })` 来处理升级请求。
+    *   `upgrade` 方法接收一个闭包，该闭包在 WebSocket 连接成功建立后执行。闭包接收一个 `WebSocket` 对象 `ws` 作为参数。
+    *   在闭包的 `async move` 块中，你可以使用 `ws.recv().await` 来异步地接收来自客户端的消息（`Message` 类型），并使用 `ws.send(msg).await` 来异步地向客户端发送消息。
+    *   你需要处理 `recv()` 可能返回的 `None` (表示连接已关闭) 或 `Err` (表示发生错误)。同样，`send()` 也可能返回 `Err` (通常表示客户端已断开连接)。
+    *   示例中的闭包简单地将接收到的任何消息 echo 回客户端。
+    *   示例还演示了如何在升级前从请求查询参数中解析数据 (`req.parse_queries::<User>()`)，并将这些数据（如用户信息）传递到 WebSocket 处理闭包中使用。
+4.  **路由**: 将配置了 WebSocket 升级处理器的路径（如 `/ws`）添加到路由器。
+5.  **客户端**: 示例包含一个简单的 HTML 页面 (`INDEX_HTML`)，其中使用 JavaScript 的 `WebSocket` API 连接到服务器的 `/ws` 端点。它还演示了如何在 URL 查询字符串中传递参数 (`?id=123&name=chris`)。
+
+## 文件列表
+
+*   [`Cargo.toml`](websocket/Cargo.mdx): 启用 `salvo` 的 `websocket` 特性。需要 `serde` 用于解析查询参数中的 `User` 结构。`futures-util` 可能被 `salvo` 内部或 WebSocket 处理需要。
+*   [`src/main.rs`](websocket/src/main.mdx):
+    *   定义 `User` 结构体用于从查询参数解析数据。
+    *   定义 `connect` 处理器，使用 `WebSocketUpgrade` 处理连接升级和后续的 WebSocket 消息收发（echo 逻辑）。
+    *   定义 `index` 处理器提供包含客户端 JavaScript 的 HTML 页面。
+    *   设置路由，将 `/ws` 指向 `connect` 处理器。
+    *   启动服务器。
+
+---
+
+# sse
+
+> 此示例演示了如何使用 Salvo 实现 Server-Sent Events (SSE)。SSE 是一种允许服务器向客户端单向推送更新的标准 HTTP 协议，常用于实时通知或数据流。
+
+核心概念：
+1.  **启用 SSE**: 在 `Cargo.toml` 中启用 `salvo` 的 `sse` 特性。
+2.  **事件流**: SSE 的核心是服务器向客户端发送一个事件流 (event stream)。这个流是一个遵循特定格式的文本响应 (`Content-Type: text/event-stream`)，由一系列事件组成。
+3.  **事件格式**: 每个 SSE 事件通常由一个或多个字段组成，如 `event: <event_name>`, `data: <event_data>`, `id: <event_id>`, `retry: <reconnection_time>`。事件之间用空行分隔。`Salvo` 提供了 `SseEvent` 结构体来方便地构建这些事件。
+4.  **创建事件流**:
+    *   你需要创建一个实现了 `futures_util::Stream<Item = Result<SseEvent, E>>` 的异步流，其中 `E` 是某种错误类型（如果是 infallible stream，可以用 `std::convert::Infallible`）。
+    *   此示例中使用 `tokio::time::interval` 创建一个每秒触发一次的定时器。
+    *   `tokio_stream::wrappers::IntervalStream` 将定时器转换为一个异步流。
+    *   使用 `.map()` 处理流中的每个项（定时器触发信号），递增一个计数器 `counter`，并调用 `sse_counter(counter)` 函数将计数器值包装成一个 `SseEvent`（具体是只包含 `data` 字段的事件）。
+5.  **发送流**:
+    *   在处理器（如 `handle_tick`）中，获取到准备好的事件流 `event_stream`。
+    *   调用 `salvo::sse::stream(res, event_stream)`。这个函数会设置正确的响应头 (`Content-Type: text/event-stream` 等)，并将事件流中的每个 `SseEvent` 格式化后写入响应体。
+6.  **客户端**: 客户端需要使用 JavaScript 的 `EventSource` API 来连接 SSE 端点并接收事件。本示例未包含客户端代码，但标准的 `EventSource` 用法即可。
+
+此示例实现了一个简单的计数器服务，每秒向连接的客户端发送一个包含递增数字的 SSE 事件。
+
+## 文件列表
+
+*   [`Cargo.toml`](sse/Cargo.mdx): 启用 `salvo` 的 `sse` 特性。需要 `tokio-stream` 用于将 `tokio::time::interval` 转换为流，以及 `futures-util` 来操作流 (`StreamExt`)。
+*   [`src/main.rs`](sse/src/main.mdx):
+    *   定义 `sse_counter` 函数，将 `u64` 转换为 `Result<SseEvent, Infallible>`。
+    *   定义 `handle_tick` 处理器：
+        *   创建 `IntervalStream` 作为事件源。
+        *   使用 `.map()` 将定时器信号转换为 `SseEvent` 结果流。
+        *   调用 `sse::stream()` 将事件流发送给客户端。
+    *   设置路由，将 `/ticks` 指向 `handle_tick`。
+    *   启动服务器。
+
+---
+
+# oapi-hello
+
+> 这是一个最简单的 Salvo OpenAPI (`oapi`) 示例，演示了如何为一个基本的 "Hello World" 端点自动生成 OpenAPI 文档。
+
+核心步骤：
+1.  **启用 OAPI**: 在 `Cargo.toml` 中启用 `salvo` 的 `oapi` 特性。
+2.  **定义端点**: 使用 `#[endpoint]` 宏标记 `hello` 函数。
+    *   函数接受一个可选的查询参数 `name` (类型 `QueryParam<String, false>`)。`QueryParam` 是 `salvo::oapi::extract` 提供的提取器，它会自动从请求中提取参数，并将其信息添加到 OpenAPI 文档。`false` 表示该参数是可选的。
+    *   函数返回一个 `String`。`#[endpoint]` 宏会确保返回值被正确处理并添加到 OpenAPI 文档的响应部分。
+3.  **生成文档**:
+    *   创建 `Router` 并注册 `hello` 端点到 `/hello` 路径。
+    *   创建 `OpenApi` 实例，提供 API 名称和版本。
+    *   调用 `.merge_router(&router)` 合并路由和端点元数据。
+4.  **提供文档 UI**:
+    *   将 `OpenApi` 对象转换为提供 OpenAPI JSON 的路由 (`doc.into_router("/api-doc/openapi.json")`)。
+    *   添加 `SwaggerUi` 路由 (`SwaggerUi::new("/api-doc/openapi.json").into_router("/swagger-ui")`) 以提供交互式 UI。
+5.  **启动服务器**: 组合路由并启动。
+
+访问 `/swagger-ui` 可以看到自动生成的文档，其中包含 `/hello` 端点，描述了其可选的 `name` 查询参数和返回的字符串响应。
+
+## 文件列表
+
+*   [`Cargo.toml`](oapi-hello/Cargo.mdx): 启用 `salvo` 的 `oapi` 特性。
+*   [`src/main.rs`](oapi-hello/src/main.mdx):
+    *   使用 `#[endpoint]` 定义 `hello` 处理器，使用 `QueryParam` 提取参数。
+    *   创建路由。
+    *   创建 `OpenApi` 实例并合并路由。
+    *   添加 OpenAPI JSON 和 Swagger UI 路由。
+    *   启动服务器。
+
+---
+
+# static-embed-file
+
+> 此示例演示了如何使用 `rust-embed` crate 将静态文件（如 HTML, CSS, JS, 图像）直接嵌入到编译后的二进制文件中，并通过 Salvo 提供这些嵌入的文件服务。这对于创建单文件可执行分发很有用。
+
+主要步骤：
+1.  **添加依赖**: 在 `Cargo.toml` 中添加 `rust-embed` crate 和 `salvo` (需要 `serve-static` 特性，虽然这里没直接用 `StaticDir`，但 `EmbeddedFileExt` 可能依赖相关功能)。
+2.  **定义嵌入资源**:
+    *   创建一个结构体（如 `Assets`）。
+    *   使用 `#[derive(RustEmbed)]` 宏标记该结构体。
+    *   使用 `#[folder = "static"]` 属性指定包含要嵌入文件的目录（相对于 `Cargo.toml` 的路径）。`rust-embed` 会在编译时扫描此目录并将文件内容包含在内。
+3.  **创建处理器**:
+    *   定义一个处理器（如 `serve_file`）。
+    *   从请求路径中提取所需的文件名。示例中使用 `"{**rest}"` 捕获路径的剩余部分作为文件名。
+    *   使用 `Assets::get(&path)` 尝试从嵌入的资源中获取文件。`Assets::get()` 返回一个 `Option<rust_embed::EmbeddedFile>`。
+    *   如果文件存在 (`Some(file)`):
+        *   调用 `file.render(req, res)`。`EmbeddedFileExt` trait（由 `salvo::serve_static::EmbeddedFileExt` 提供，需要 `use` 进来）为 `EmbeddedFile` 添加了 `render` 方法。这个方法会自动设置合适的 `Content-Type` 响应头（基于文件扩展名或 Mime Guess）并将文件内容写入响应体。
+    *   如果文件不存在 (`None`):
+        *   设置响应状态码为 `StatusCode::NOT_FOUND`。
+4.  **设置路由**: 将捕获所有路径的路由 (`Router::with_path("{**rest}")`) 指向 `serve_file` 处理器。
+5.  **启动服务器**: 编译并运行。现在，请求服务器上对应于 `static/` 目录下文件的路径（如 `/test1.txt`, `/test2.txt`）将返回嵌入的文件内容。
+
+## 文件列表
+
+*   [`Cargo.toml`](static-embed-file/Cargo.mdx): 添加 `rust-embed` 和 `salvo` (带有 `serve-static` 特性) 依赖。
+*   [`src/main.rs`](static-embed-file/src/main.mdx):
+    *   定义 `Assets` 结构体，使用 `#[derive(RustEmbed)]` 和 `#[folder = "static"]`。
+    *   导入 `salvo::serve_static::EmbeddedFileExt`。
+    *   定义 `serve_file` 处理器，使用 `Assets::get()` 获取嵌入文件，并使用 `file.render()` 发送响应。
+    *   设置路由捕获所有路径并指向 `serve_file`。
+    *   启动服务器。
+*   [`static/`](static-embed-file/static): 包含要嵌入到二进制文件中的静态文件。
+    *   [`test1.txt`](static-embed-file/static/test1.mdx)
+    *   [`test2.txt`](static-embed-file/static/test2.mdx)
+
+---
+
+# tls-rustls-reload
+
+> 此示例演示了如何使用 Salvo 配置基于 Rustls 的 TLS，并且能够动态地重新加载 TLS 证书和私钥，而无需重启服务器。这对于证书自动续期（例如使用 ACME）后更新配置非常有用。
+
+核心机制：
+1.  **启用 Rustls**: 在 `Cargo.toml` 中启用 `salvo` 的 `rustls` 特性。
+2.  **动态配置流**: `TcpListener::rustls()` 方法接受一个能产生 `RustlsConfig` 的异步流 (Stream)。Salvo 会在需要新的 TLS 配置时（例如，当新的客户端连接尝试建立 TLS 握手时）从此流中获取最新的配置。
+3.  **使用 `async_stream`**: 示例使用了 `async_stream::stream!` 宏来方便地创建一个无限循环的异步流：
+    *   `loop { ... }`: 无限循环。
+    *   `yield load_config();`: 在每次循环中，调用 `load_config()` 函数加载当前的证书和密钥文件，创建一个新的 `RustlsConfig` 实例，并通过 `yield` 将其发送到流中。
+    *   `tokio::time::sleep(Duration::from_secs(60)).await;`: 等待 60 秒。这意味着服务器大约每分钟会尝试重新加载一次配置。你可以根据需要调整这个间隔，或者使用更复杂的逻辑（如文件系统监控或信号通知）来触发重新加载。
+4.  **配置加载函数**: `load_config()` 函数负责从指定路径（这里使用 `include_bytes!` 在编译时嵌入证书，实际应用中通常是从文件系统读取）加载证书和私钥，并创建一个 `RustlsConfig` 实例。
+5.  **绑定和启动**: `TcpListener::new(...).rustls(stream).bind().await` 完成监听器的设置和绑定。然后启动服务器。
+
+当服务器运行时，如果 `certs/cert.pem` 或 `certs/key.pem` 文件被更新，服务器将在下一次执行 `yield load_config()` 时（最多等待 60 秒）加载新的配置，并开始使用新的证书处理后续的 TLS 连接，整个过程无需中断服务。
+
+## 文件列表
+
+*   [`Cargo.toml`](tls-rustls-reload/Cargo.mdx): 启用 `salvo` 的 `rustls` 特性。添加 `async-stream` 依赖用于创建配置流。
+*   [`src/main.rs`](tls-rustls-reload/src/main.mdx):
+    *   定义 `hello` 处理器。
+    *   定义 `load_config()` 函数，负责加载证书/密钥并创建 `RustlsConfig`。
+    *   在 `main` 函数中：
+        *   使用 `async_stream::stream!` 创建一个定期产生 `RustlsConfig` 的异步流。
+        *   将此流传递给 `TcpListener::new(...).rustls()`。
+        *   绑定监听器并启动服务器。
+*   [`certs/`](tls-rustls-reload/certs): 包含初始的证书 (`cert.pem`) 和私钥 (`key.pem`) 文件。
+
+---
+
+# craft
+
+> 此示例演示了 Salvo 的 `craft` 功能，它提供了一个 `#[craft]` 宏，可以方便地将结构体的方法转换为 Salvo 的处理器 (Handler) 或端点 (Endpoint)，简化代码编写，特别是在需要将状态注入处理器时。
+
+主要概念：
+1.  **启用 Craft**: 在 `Cargo.toml` 中启用 `salvo` 的 `craft` 特性。通常与 `oapi` 一起使用，因为 `craft` 可以自动生成 OpenAPI 信息。
+2.  **`#[craft]` 宏**: 应用在 `impl Opts { ... }` 块上。
+3.  **`#[craft(handler)]`**: 将标记的方法转换为一个 Salvo `Handler`。
+    *   方法签名可以像普通函数一样，但可以接收 `&self` 或 `&mut self` 来访问结构体实例的状态。
+    *   方法的参数通常是 Salvo 的提取器 (Extractor)，如 `QueryParam`。
+    *   返回值需要是实现了 `Writer` 的类型，或者 `Result`。
+    *   示例中的 `add1` 方法接收 `&self`，访问 `self.state`，并接收两个 `QueryParam`。
+4.  **`#[craft(endpoint)]`**: 将标记的方法转换为一个 Salvo `Endpoint`。这类似于 `#[endpoint]` 宏，会自动处理更多事情，特别是与 OpenAPI 的集成。
+    *   同样可以接收 `&self`, `&mut self`, 甚至 `self: Arc<Self>` 或 `self: &Arc<Self>` 来处理共享状态（如示例中的 `add2`）。
+    *   参数是提取器，返回值通常是可序列化的类型或 `Result`。
+    *   可以像 `#[endpoint]` 一样添加 OpenAPI 相关的属性，如 `responses(...)`（如示例中的 `add3`）。
+    *   `add3` 是一个静态方法 (`pub fn add3(...)`)，它也被标记为 `endpoint`，表明 `#[craft]` 也可以用于非实例方法。
+5.  **状态注入**:
+    *   对于 `handler` 或 `endpoint`，如果方法接收 `&self` 或 `&mut self`，你需要将结构体的实例（或其引用）传递给生成的处理器。示例中是 `opts.add1()`，这里 `add1()` 是 `#[craft]` 生成的函数，它内部会捕获 `opts` 的引用。
+    *   对于 `endpoint` 接收 `self: Arc<Self>`，你需要传递一个 `Arc` 包裹的实例，如 `opts.add2()` (这里 `opts` 是 `Arc<Opts>`)。
+6.  **路由**: 像普通处理器一样将 `craft` 生成的函数添加到路由中。
+
+`craft` 简化了将面向对象的方法集成到 Salvo 请求处理流程中的过程，使得代码更模块化和易于管理。
+
+## 文件列表
+
+*   [`Cargo.toml`](craft/Cargo.mdx): 启用 `salvo` 的 `craft` 和 `oapi` 特性。
+*   [`src/main.rs`](craft/src/main.mdx):
+    *   定义 `Opts` 结构体包含状态 `state`。
+    *   使用 `#[craft]` 实现 `Opts` 的方法：
+        *   `new`: 构造函数。
+        *   `add1`: 使用 `#[craft(handler)]`，接收 `&self`。
+        *   `add2`: 使用 `#[craft(endpoint)]`，接收 `self: Arc<Self>`。
+        *   `add3`: 使用 `#[craft(endpoint)]`，是一个静态方法。
+    *   创建 `Arc<Opts>` 实例。
+    *   设置路由，将 `opts.add1()`, `opts.add2()`, `Opts::add3()` 添加到不同路径。
+    *   生成 OpenAPI 文档并添加 Swagger UI。
+    *   启动服务器。
+
+---
+
+# affix-state
+
+> 此示例演示了 Salvo 的 `affix-state` 功能，允许你在请求处理链路的早期将共享状态（数据）注入到请求的 `Depot` 中，以便后续的中间件或处理器可以访问这些状态。
+
+核心概念：
+1.  **启用 Affix State**: 在 `Cargo.toml` 中启用 `salvo` 的 `affix-state` 特性。
+2.  **`Depot`**: Salvo 的 `Depot` 是一个与每个请求关联的类型化数据存储。它用于在处理请求的不同阶段（中间件、处理器）之间传递数据。
+3.  **`affix_state::inject()`**: 这是一个中间件构造器。
+    *   `affix_state::inject(state)`: 创建一个中间件，该中间件会将提供的 `state` 对象（需要是 `Clone + Send + Sync + 'static`）注入到 `Depot` 中。后续可以通过 `depot.obtain::<StateType>()` 来获取该状态的克隆。
+    *   `.inject(another_state)`: 可以链式调用 `.inject()` 来注入多个不同类型的状态。示例中注入了 `Config` 和 `Arc<State>`。
+    *   `.insert(key, value)`: 除了注入可以通过类型获取的状态外，还可以使用 `.insert()` 注入键值对数据。示例中注入了 `"custom_data"` 键和 `"I love this world!"` 值。后续可以通过 `depot.get::<ValueType>("key")` 来获取。
+4.  **注入时机**: `affix_state` 中间件通常通过 `hoop()` 添加到 `Router` 或服务器级别，确保在请求到达最终处理器之前状态已经被注入。
+5.  **在处理器中访问状态**:
+    *   处理器需要接收 `&mut Depot` 作为参数。
+    *   使用 `depot.obtain::<StateType>()` 获取通过 `inject()` 注入的状态。返回的是 `Option<&StateType>`，通常可以 `unwrap()` 如果你确定状态一定会被注入。注意，如果是注入的 `Arc<T>`，获取到的也是 `&Arc<T>`。
+    *   使用 `depot.get::<&ValueType>("key")` 获取通过 `insert()` 注入的数据。注意类型通常是 `&ValueType`，因为 `Depot` 存储的是引用。
+6.  **共享状态**: 示例中的 `State` 包含一个 `Mutex<Vec<String>>`，并通过 `Arc` 包裹后注入。这允许多个并发请求安全地访问和修改同一个 `State` 实例（通过 `Arc` 共享所有权，通过 `Mutex` 控制并发访问）。
+
+`affix-state` 提供了一种类型安全且灵活的方式来管理和传递请求处理所需的共享数据和配置。
+
+## 文件列表
+
+*   [`Cargo.toml`](affix-state/Cargo.mdx): 启用 `salvo` 的 `affix-state` 特性。
+*   [`src/main.rs`](affix-state/src/main.mdx):
+    *   定义 `Config` 结构体（应用配置）。
+    *   定义 `State` 结构体（包含共享的可变状态 `Mutex<Vec<String>>`）。
+    *   定义 `hello` 处理器，接收 `&mut Depot`。
+    *   在 `hello` 处理器内部：
+        *   使用 `depot.obtain::<Config>()` 获取配置。
+        *   使用 `depot.get::<&str>("custom_data")` 获取插入的数据。
+        *   使用 `depot.obtain::<Arc<State>>()` 获取共享状态，并操作其内部的 `Mutex`。
+    *   在 `main` 函数中：
+        *   创建 `Config` 实例和 `Arc<State>` 实例。
+        *   创建 `Router`。
+        *   使用 `hoop(affix_state::inject(...).inject(...).insert(...))` 将状态和数据注入应用到路由。
+        *   注册 `hello` 处理器。
+    *   启动服务器。
+
+---
+
+# size-limiter
+
+> 此示例演示了如何使用 Salvo 的 `size-limiter` 中间件来限制传入请求体的大小，防止因接收过大的请求（如超大文件上传）而耗尽服务器资源。
+
+主要步骤：
+1.  **启用 Size Limiter**: 在 `Cargo.toml` 中启用 `salvo` 的 `size-limiter` 特性。
+2.  **应用限制**:
+    *   使用 `salvo::prelude::max_size(limit_in_bytes)` 函数创建一个限制请求体大小的中间件。这个函数是 `SizeLimiter::new(limit_in_bytes)` 的便捷写法。
+    *   将此中间件通过 `hoop()` 应用到需要限制的 `Router` 或特定路径上。
+    *   示例中，`Router::new().hoop(max_size(1024 * 1024 * 10)).path("limited").post(upload)` 将 10 MiB 的大小限制应用到了 `/limited` 路径的 POST 请求。
+3.  **行为**: 当一个请求到达应用了 `max_size` 的路径时：
+    *   如果请求没有请求体（如 GET 请求），或者请求体的 `Content-Length` 头部（如果存在）小于或等于限制，请求会正常传递给后续的处理器。
+    *   如果 `Content-Length` 头部指示的大小超过了限制，Salvo 会立即拒绝请求，通常返回 `413 Payload Too Large` 状态码，而不会读取请求体内容，也不会调用后续处理器。
+    *   如果请求没有 `Content-Length` 头部（例如使用了 `Transfer-Encoding: chunked`），Salvo 会在读取请求体数据时进行检查。一旦读取的数据量超过限制，它会停止读取并返回 `413 Payload Too Large`。
+4.  **对比**: 示例还提供了一个 `/unlimit` 路径，没有应用大小限制，用于对比效果。
+
+使用 `size-limiter` 是保护服务器免受拒绝服务攻击（通过发送大量数据）或意外超大请求的重要措施。
+
+## 文件列表
+
+*   [`Cargo.toml`](size-limiter/Cargo.mdx): 启用 `salvo` 的 `size-limiter` 特性。
+*   [`src/main.rs`](size-limiter/src/main.mdx):
+    *   定义 `index` 处理器提供 HTML 上传表单。
+    *   定义 `upload` 处理器处理文件上传。
+    *   在 `main` 函数中：
+        *   创建临时目录 `temp`。
+        *   创建主 `Router`。
+        *   为 `/limited` 路径创建一个子路由，并使用 `hoop(max_size(10 * 1024 * 1024))` 应用 10 MiB 的大小限制，然后注册 `upload` 处理器。
+        *   为 `/unlimit` 路径创建一个子路由，直接注册 `upload` 处理器（无限制）。
+        *   注册 `index` 处理器。
+    *   启动服务器。
+
+---
+
+# tls-openssl
+
+> 此示例演示了如何使用 Salvo 和 OpenSSL 库来为服务器启用 TLS (HTTPS) 加密。
+
+主要步骤：
+1.  **启用 OpenSSL**: 在 `Cargo.toml` 中启用 `salvo` 的 `openssl` 特性。确保你的系统安装了 OpenSSL 开发库（如 `libssl-dev` on Debian/Ubuntu, `openssl-devel` on Fedora/CentOS）。
+2.  **准备证书和密钥**: 你需要一个有效的 TLS 证书 (`cert.pem`) 和对应的私钥 (`key.pem`)。示例中使用 `include_bytes!` 在编译时嵌入它们，实际部署中通常从文件系统加载。
+3.  **创建 OpenSSL 配置**:
+    *   使用 `salvo::conn::openssl::Keycert::new()` 创建一个证书/密钥对对象。
+    *   使用 `.with_cert(cert_bytes)` 和 `.with_key(key_bytes)` 加载证书和密钥的字节数据。
+    *   使用 `salvo::conn::openssl::OpensslConfig::new(keycert)` 创建 OpenSSL TLS 配置对象。
+4.  **配置监听器**:
+    *   创建 `TcpListener` 实例，指定要监听的地址和端口。
+    *   调用 `.openssl(config)` 方法，将之前创建的 `OpensslConfig` 应用到监听器。
+    *   调用 `.bind().await` 绑定监听器。现在这个监听器将接受 TLS 连接。
+5.  **启动服务器**: 使用配置了 OpenSSL 的 `acceptor` 创建并启动 `Server`。
+
+服务器现在将在指定端口上监听 HTTPS 连接，使用提供的证书进行加密通信。
+
+## 文件列表
+
+*   [`Cargo.toml`](tls-openssl/Cargo.mdx): 启用 `salvo` 的 `openssl` 特性。
+*   [`src/main.rs`](tls-openssl/src/main.mdx):
+    *   定义 `hello` 处理器。
+    *   在 `main` 函数中：
+        *   使用 `include_bytes!` 加载证书和密钥。
+        *   创建 `Keycert` 和 `OpensslConfig`。
+        *   创建 `TcpListener`，调用 `.openssl(config)` 应用 TLS 配置。
+        *   绑定监听器并启动服务器。
+*   [`certs/`](tls-openssl/certs): 包含示例用的证书 (`cert.pem`) 和私钥 (`key.pem`)。
+
+---
+
+# webtransport-acme-http01
+
+> 此示例结合了 WebTransport (基于 Quinn/HTTP3) 和 ACME (通过 Let's Encrypt 获取证书) 的 HTTP-01 挑战类型。它演示了如何设置一个可以通过公共域名访问的、使用有效 TLS 证书的 WebTransport 服务器，并且证书是自动获取和管理的。
+
+关键配置和流程：
+1.  **启用特性**: 在 `Cargo.toml` 中需要启用 `salvo` 的 `acme`, `quinn` (提供 WebTransport/HTTP3), `serve-static` (用于 ACME HTTP-01 挑战通常需要服务于特定路径，以及提供客户端页面) 特性。
+2.  **ACME HTTP-01 挑战**:
+    *   这种挑战类型要求你的服务器能在特定路径 (`/.well-known/acme-challenge/`) 上响应 Let's Encrypt 服务器的 HTTP 请求，以证明你对域名的控制权。
+    *   因此，你的服务器**必须**能接收来自公网的 HTTP (端口 80) 请求。
+3.  **监听器配置链**:
+    *   `TcpListener::new("0.0.0.0:443")`: 监听 HTTPS 端口 443。
+    *   `.acme()`: 启用 ACME 功能。
+    *   `.cache_path("temp/letsencrypt")`: 指定存储获取到的证书和 ACME 账户信息的路径。
+    *   `.add_domain("test.salvo.rs")`: **(极其重要)** 将 `test.salvo.rs` 替换为你实际控制的、并且 DNS 已指向你服务器公网 IP 的域名。ACME 只能为公共域名颁发证书。
+    *   `.http01_challenge(&mut router)`: 配置 ACME 使用 HTTP-01 挑战。这会**自动**向传入的 `router` 中添加处理 `/.well-known/acme-challenge/` 路径的必要路由。
+    *   `.quinn("0.0.0.0:443")`: 在配置了 ACME (它会提供 RustlsConfig) 的基础上，启用 Quinn/HTTP3 监听在同一端口 443。这意味着端口 443 将同时处理 HTTPS (HTTP/1.1, HTTP/2) 和 HTTP/3 (QUIC) 连接。
+4.  **加入 HTTP 监听器**:
+    *   `.join(TcpListener::new("0.0.0.0:80"))`: 因为 HTTP-01 挑战需要响应端口 80 的请求，所以必须同时监听端口 80。将监听端口 80 的 `TcpListener` 加入到监听器组合中。
+5.  **绑定和启动**:
+    *   `.bind().await`: 绑定配置好的监听器组合（端口 443 用于 HTTPS/HTTP3，端口 80 用于 HTTP 和 ACME 挑战）。
+    *   `Server::new(acceptor).serve(router).await`: 启动服务器。Salvo 的 ACME 实现会在需要时（如首次启动或证书即将过期时）自动执行证书获取/续期流程。
+6.  **WebTransport 逻辑**: `connect` 处理器和相关的流处理逻辑与之前的 `webtransport` 示例相同，处理 WebTransport 会话。
+7.  **静态文件**: 同样提供静态文件服务，包括 WebTransport 客户端页面。
+
+这个示例展示了 Salvo 如何将复杂的网络协议 (WebTransport/HTTP3) 和自动化证书管理 (ACME) 无缝集成。**请务必将 `add_domain` 中的域名替换为你自己的域名才能使其在公网上工作。**
+
+## 文件列表
+
+*   [`Cargo.toml`](webtransport-acme-http01/Cargo.mdx): 启用 `salvo` 的 `acme`, `quinn`, `serve-static` 特性。
+*   [`src/main.rs`](webtransport-acme-http01/src/main.mdx):
+    *   定义 WebTransport 的 `connect` 处理器和辅助函数。
+    *   在 `main` 函数中：
+        *   创建 `Router`，注册 WebTransport 路径 (`/counter`) 和静态文件服务。
+        *   配置 `TcpListener` 链：指定 HTTPS 端口，调用 `.acme()`, `.cache_path()`, **`.add_domain("your.domain.com")`**, `.http01_challenge(&mut router)`, `.quinn()`。
+        *   使用 `.join()` 添加监听端口 80 的 `TcpListener`。
+        *   绑定监听器并启动服务器。
+*   [`static/`](webtransport-acme-http01/static): 包含 WebTransport 客户端 HTML/JS 文件。
+
+---
+
+# acme-http01-quinn
+
+> 此示例演示了如何使用 Salvo 的 ACME 功能（通过 HTTP-01 挑战）来自动获取和管理 HTTPS 的 TLS 证书，并且在同一个 HTTPS 端口 (443) 上同时启用 QUIC/HTTP3 支持。
+
+这与 `webtransport-acme-http01` 非常相似，但重点更通用，在于同时为标准的 HTTPS 流量和 QUIC/HTTP3 流量提供服务，而不仅仅是 WebTransport。
+
+关键配置：
+1.  **启用特性**: `Cargo.toml` 中需要 `salvo` 的 `acme` 和 `quinn` 特性。
+2.  **监听器配置链**:
+    *   `TcpListener::new("0.0.0.0:443")`: 监听标准 HTTPS 端口。
+    *   `.acme()`: 启用 ACME。
+    *   `.cache_path("temp/letsencrypt")`: 设置证书缓存路径。
+    *   `.add_domain("test.salvo.rs")`: **(极其重要)** 替换为你的公共域名。
+    *   `.http01_challenge(&mut router)`: 配置 HTTP-01 挑战，并自动向 `router` 添加必要的处理路径。
+    *   `.quinn("0.0.0.0:443")`: 在 ACME 提供的 TLS 配置基础上，启用 Quinn/HTTP3 监听。这使得端口 443 可以同时处理 TCP 上的 TLS (HTTPS) 和 UDP 上的 QUIC (HTTP/3)。
+3.  **加入 HTTP 监听器**:
+    *   `.join(TcpListener::new("0.0.0.0:80"))`: 必须监听端口 80 以响应 ACME HTTP-01 挑战。
+4.  **绑定和启动**:
+    *   `.bind().await`: 绑定组合监听器 (443 for HTTPS/HTTP3, 80 for HTTP/ACME)。
+    *   `Server::new(acceptor).serve(router).await`: 启动服务器。
+
+服务器启动后，Salvo 会自动处理 Let's Encrypt 的证书获取流程。一旦成功，端口 443 将能够服务于使用 HTTPS (HTTP/1.1, HTTP/2) 的客户端和使用 QUIC/HTTP3 的客户端。`hello` 处理器将对这两种类型的连接都可用。
+
+**同样，请务必将 `add_domain` 中的域名替换为你自己的域名。**
+
+## 文件列表
+
+*   [`Cargo.toml`](acme-http01-quinn/Cargo.mdx): 启用 `salvo` 的 `acme` 和 `quinn` 特性。
+*   [`src/main.rs`](acme-http01-quinn/src/main.mdx):
+    *   定义简单的 `hello` 处理器。
+    *   在 `main` 函数中：
+        *   创建 `Router` 并注册 `hello` 处理器。
+        *   配置 `TcpListener` 链，包含 `.acme()`, `.add_domain()`, `.http01_challenge()`, `.quinn()`。
+        *   使用 `.join()` 添加监听端口 80 的 `TcpListener`。
+        *   绑定监听器并启动服务器。
+
+---
+
+# caching-headers
+
+> 此示例演示了如何使用 Salvo 的 `caching-headers` 中间件来自动为响应添加缓存相关的 HTTP 头部，如 `Cache-Control` 和 `ETag`。这有助于浏览器和代理服务器有效地缓存响应，减少服务器负载和提高加载速度。
+
+核心概念：
+1.  **启用特性**: 在 `Cargo.toml` 中启用 `salvo` 的 `caching-headers` 特性。通常也需要 `compression` 特性，因为缓存和压缩经常一起使用。
+2.  **`CachingHeaders` 中间件**:
+    *   `CachingHeaders::new()` 创建中间件实例。默认情况下，它会尝试为响应生成 `ETag` 头部（基于响应内容的哈希值），并设置一个默认的 `Cache-Control` 策略（通常是 `public, max-age=...`，具体取决于 Salvo 版本和配置）。
+    *   你可以通过 `CachingHeaders::new().default_policy(...)` 等方法来自定义缓存策略。
+3.  **与 `Compression` 的顺序**:
+    *   `ETag` 是基于**最终**发送给客户端的内容计算的。如果启用了压缩 (`Compression` 中间件)，响应体内容会被改变。
+    *   为了让 `ETag` 正确反映压缩后的内容，**`CachingHeaders` 中间件必须放在 `Compression` 中间件之前**。这样，`CachingHeaders` 先运行，计算未压缩内容的 `ETag`（或者不计算，取决于实现细节），然后 `Compression` 压缩内容，最后 `CachingHeaders` 可能有机会（取决于具体实现）基于压缩后的内容（或者原始未压缩内容）添加或修改 `Cache-Control` 和 `ETag`。**（修正之前的想法：通常 ETag 应该基于未压缩的内容计算，以便不同压缩算法（gzip/brotli）或不压缩时 ETag 保持一致。但 Cache-Control 可能需要考虑压缩。关键在于 `CachingHeaders` 要先运行，以便它有机会在压缩 *之前* 或 *之后* 设置正确的头部）。** 官方示例将 `CachingHeaders` 放在 `Compression` 之前，这通常是推荐的做法。
+4.  **应用中间件**: 使用 `hoop()` 将 `CachingHeaders::new()` 和 `Compression::new().min_length(0)` 添加到 `Router`。`min_length(0)` 确保即使是很小的响应也会被压缩。
+
+访问示例中的 `/` 路径，检查响应头，你会看到类似 `ETag: W/"..."` 和 `Cache-Control: public, max-age=...` 这样的头部被自动添加了。
+
+## 文件列表
+
+*   [`Cargo.toml`](caching-headers/Cargo.mdx): 启用 `salvo` 的 `caching-headers` 和 `compression` 特性。
+*   [`src/main.rs`](caching-headers/src/main.mdx):
+    *   定义 `hello` 处理器。
+    *   在 `main` 函数中：
+        *   创建 `Router`。
+        *   使用 `hoop()` **先添加 `CachingHeaders::new()`**。
+        *   再使用 `hoop()` 添加 `Compression::new().min_length(0)`。
+        *   注册 `hello` 处理器。
+    *   启动服务器。
+
+---
+
+# basic-auth
+
+> 此示例演示了如何使用 Salvo 的 `basic-auth` 中间件来实现 HTTP 基本认证 (Basic Authentication)。这是一种简单的身份验证机制，要求客户端在请求头中提供用户名和密码。
+
+主要步骤：
+1.  **启用特性**: 在 `Cargo.toml` 中启用 `salvo` 的 `basic-auth` 特性。
+2.  **实现验证器**:
+    *   你需要提供一个实现了 `salvo::basic_auth::BasicAuthValidator` trait 的结构体。
+    *   这个 trait 要求实现一个 `async fn validate(&self, username: &str, password: &str, depot: &mut Depot) -> bool` 方法。
+    *   此方法接收客户端提供的 `username` 和 `password`，以及请求的 `Depot`（可以用来访问共享状态或数据库连接等）。
+    *   你需要在此方法中实现验证逻辑，例如检查用户名和密码是否与存储的凭据匹配。如果验证通过，返回 `true`；否则返回 `false`。
+    *   示例中的 `Validator` 实现了一个简单的验证：`username == "root" && password == "pwd"`。
+3.  **创建认证中间件**:
+    *   使用 `salvo::basic_auth::BasicAuth::new(validator)` 创建 BasicAuth 中间件实例，将你实现的验证器传入。
+4.  **应用中间件**:
+    *   使用 `hoop()` 将 `auth_handler` 应用到需要保护的 `Router` 或路径上。示例中 `Router::with_hoop(auth_handler).goal(hello)` 保护了 `hello` 处理器。
+5.  **行为**:
+    *   当客户端请求受保护的资源但未提供有效的 `Authorization: Basic <credentials>` 头部时，Salvo 会返回 `40
+
+好的，继续下一个示例：
+
+---
+
+# rate-limiter-dynamic
+
+> 此示例演示了如何使用 Salvo 的 `rate-limiter` 功能实现动态速率限制。与固定限制不同，这里的速率限制额度 (Quota) 是根据请求者的身份（如此示例中的用户名）动态确定的。
+
+核心概念和实现：
+1.  **启用特性**: 在 `Cargo.toml` 中启用 `salvo` 的 `rate-limiter` 特性。
+2.  **识别请求者 (RateIssuer)**:
+    *   为了实现动态限制，首先需要一种方法来识别每个请求属于哪个“用户”或“实体”。这通过实现 `RateIssuer` trait 来完成。
+    *   示例中的 `UserIssuer` 实现了 `RateIssuer`。它的 `issue` 方法尝试从请求的查询参数中提取 `user` 的值作为请求的唯一标识符 (Key)。如果请求中没有 `user` 参数，则不应用速率限制。
+3.  **获取动态配额 (QuotaGetter)**:
+    *   确定了请求者的 Key 之后，需要为该 Key 获取对应的速率限制规则（配额）。这通过实现 `QuotaGetter<Key>` trait 来完成。
+    *   示例中的 `CustomQuotaGetter` 实现了 `QuotaGetter<String>`。它的 `get` 方法接收 `UserIssuer` 提供的用户 Key (String 类型)，然后在预定义的静态 `HashMap` (`USER_QUOTAS`) 中查找该用户的配额 (`CelledQuota`)。
+    *   `USER_QUOTAS` 为不同的用户（"user1", "user2", "user3"）定义了不同的速率限制：
+        *   `user1`: 每秒 1 次请求。
+        *   `user2`: 每 5 秒 1 次请求。
+        *   `user3`: 每 10 秒 1 次请求。
+    *   如果用户 Key 在 `USER_QUOTAS` 中找不到，`get` 方法返回错误，导致请求失败（可以自定义此行为）。
+4.  **配置 RateLimiter**:
+    *   `RateLimiter::new()` 用于创建速率限制器中间件。它需要四个参数：
+        *   `Guard`: 速率限制算法实现（示例使用 `SlidingGuard`，滑动窗口算法）。
+        *   `Store`: 存储速率限制状态的后端（示例使用 `MokaStore`，一个基于 Moka 缓存的内存存储）。
+        *   `Issuer`: 实现了 `RateIssuer` 的实例 (`UserIssuer`)。
+        *   `Getter`: 实现了 `QuotaGetter` 的实例 (`CustomQuotaGetter`)。
+5.  **应用中间件**: 将创建的 `limiter` 通过 `hoop()` 应用到需要进行动态速率限制的路径 (`/limited`)。
+6.  **用户体验**: 示例提供了一个 `home` 页面，包含指向 `/limited` 路径的链接，并带有不同的 `user` 查询参数，方便测试不同用户的速率限制效果。
+
+这个示例展示了 `rate-limiter` 的灵活性，允许根据复杂的业务逻辑为不同的用户或 API 密钥设置不同的访问速率。
+
+## 文件列表
+
+*   [`Cargo.toml`](rate-limiter-dynamic/Cargo.mdx): 启用 `salvo` 的 `rate-limiter` 特性。
+*   [`src/main.rs`](rate-limiter-dynamic/src/main.mdx):
+    *   定义静态 `USER_QUOTAS` HashMap 存储不同用户的配额。
+    *   实现 `UserIssuer` 从查询参数提取用户 Key。
+    *   实现 `CustomQuotaGetter` 从 `USER_QUOTAS` 获取用户配额。
+    *   定义 `limited` 和 `home` 处理器。
+    *   在 `main` 函数中：
+        *   使用 `SlidingGuard`, `MokaStore`, `UserIssuer`, `CustomQuotaGetter` 配置 `RateLimiter`。
+        *   创建 `Router`，将 `limiter` 应用到 `/limited` 路径。
+        *   注册 `home` 和 `limited` 处理器。
+    *   启动服务器。
+
+---
+
+# oapi-generics
+
+> 此示例演示了如何在 Salvo 的 OpenAPI (`oapi`) 功能中使用泛型结构体，并为泛型的不同具体类型自动生成合适的 OpenAPI Schema 定义。
+
+核心概念：
+1.  **启用 OAPI**: 在 `Cargo.toml` 中启用 `salvo` 的 `oapi` 特性。
+2.  **定义泛型结构体**:
+    *   创建泛型结构体 `MyObject<T>`，其中 `T` 需要满足 `ToSchema + std::fmt::Debug + 'static` trait 约束。
+    *   使用 `#[derive(Serialize, Deserialize, ToSchema, Debug)]` 为其派生必要的 trait。
+3.  **Schema 别名**:
+    *   为了在 OpenAPI 文档中为泛型结构体的具体实例化类型（如 `MyObject<String>`, `MyObject<i32>`）提供更友好的名称，可以使用 `#[salvo(schema(aliases(...)))]` 属性。
+    *   示例中 `#[salvo(schema(aliases(MyI32 = MyObject<i32>, MyStr = MyObject<String>)))]` 定义了两个别名：`MyI32` 对应 `MyObject<i32>`，`MyStr` 对应 `MyObject<String>`。当这些具体类型在端点中使用时，OpenAPI 文档会使用这些别名作为 Schema 名称。
+4.  **定义使用泛型的端点**:
+    *   创建多个 `#[endpoint]` 标记的处理器，它们接受 `JsonBody<MyObject<T>>` 作为参数，其中 `T` 是不同的具体类型（如 `String`, `i32`, `u64`）。
+    *   `use_string` 接收 `JsonBody<MyObject<String>>`。
+    *   `use_i32` 接收 `JsonBody<MyObject<i32>>`。
+    *   `use_u64` 接收 `JsonBody<MyObject<u64>>`。
+5.  **自定义命名策略 (可选)**:
+    *   示例中调用了 `salvo::oapi::naming::set_namer(...)` 来设置一个自定义的 `FlexNamer`。
+    *   `short_mode(true)` 和 `generic_delimiter('_', '_')` 会影响 OpenAPI 如何为泛型类型（尤其是没有明确别名时）生成名称，例如可能会生成类似 `MyObject_u64` 的名称（而不是默认的 `MyObject<u64>`，这在某些 OpenAPI 工具中可能不兼容）。**注意：设置 Namer 必须在创建 `OpenApi` 实例之前完成。**
+6.  **生成文档**:
+    *   创建 `Router` 并注册这些使用泛型的端点。
+    *   创建 `OpenApi` 实例并调用 `.merge_router(&router)`。Salvo 的 `oapi` 会自动识别泛型结构体的不同用法，并根据别名或命名策略为它们生成独立的 Schema 定义。
+7.  **提供文档 UI**: 添加 OpenAPI JSON 端点和 Swagger UI 路由。
+
+访问 `/swagger-ui`，在 Schemas 部分你会看到 `MyI32`, `MyStr` 以及可能由 Namer 生成的 `MyObject_u64` 的定义，同时各个端点的请求体也会引用这些正确的 Schema。
+
+## 文件列表
+
+*   [`Cargo.toml`](oapi-generics/Cargo.mdx): 启用 `salvo` 的 `oapi` 特性。需要 `serde`。
+*   [`src/main.rs`](oapi-generics/src/main.mdx):
+    *   定义泛型结构体 `MyObject<T>`，并使用 `ToSchema` 和 `aliases` 属性。
+    *   定义 `use_string`, `use_i32`, `use_u64` 端点，分别使用 `MyObject` 的不同具体类型。
+    *   (可选) 设置自定义的 `FlexNamer`。
+    *   创建路由并注册端点。
+    *   创建 `OpenApi` 实例并合并路由。
+    *   添加 OpenAPI JSON 和 Swagger UI 路由。
+    *   启动服务器。
+
+---
+
+# upload-files
+
+> 此示例演示了如何在 Salvo 中处理多个文件的上传。这通常通过在 HTML 表单中使用带有 `multiple` 属性的 `<input type="file">` 来实现。
+
+主要步骤：
+1.  **HTML 表单**: `INDEX_HTML` 包含一个表单，其文件输入字段设置了 `name="files"` 和 `multiple` 属性。这允许用户选择多个文件进行上传。表单的 `enctype` 必须是 `multipart/form-data`。
+2.  **获取多个文件**:
+    *   在处理器 (`upload`) 中，使用 `req.files("files").await` 来获取与表单字段名 "files" 相关联的所有上传文件。
+    *   `req.files()` 返回 `Option<Vec<FilePart>>`。如果用户至少上传了一个名为 "files" 的文件，则返回 `Some(Vec<FilePart>)`，其中 `Vec<FilePart>` 包含了所有上传的文件信息；否则返回 `None`。
+3.  **处理每个文件**:
+    *   如果 `req.files()` 返回 `Some(files)`，则遍历 `files` 这个 `Vec<FilePart>`。
+    *   对于每个 `FilePart` (在示例中命名为 `file`)：
+        *   获取文件名：`file.name()` 返回 `Option<&str>`。
+        *   获取临时文件路径：`file.path()` 返回上传文件在服务器上存储的临时位置 (`&Path`)。Salvo 在处理 multipart 请求时会将上传的文件先保存到临时目录。
+        *   将临时文件移动或复制到最终目的地。示例中使用 `std::fs::copy()` 将文件复制到 `temp/` 目录下，使用原始文件名（如果可用）。**注意：在生产环境中，处理文件名冲突和确保目标目录安全非常重要。**
+        *   记录处理结果或构建响应信息。
+4.  **构建响应**: 处理器收集所有成功保存的文件路径，并在响应中返回一个列表。如果未找到名为 "files" 的文件或发生复制错误，则返回相应的错误状态码和信息。
+5.  **临时目录**: 需要确保用于存储上传文件的目录（示例中的 `temp/`）存在。示例在 `main` 函数中使用 `create_dir_all("temp").unwrap()` 来创建它。
+
+这个示例展示了 Salvo 处理标准的多文件上传表单的简洁方式。
+
+## 文件列表
+
+*   [`Cargo.toml`](upload-files/Cargo.mdx): 包含基本的 `salvo` 和 `tokio` 依赖。
+*   [`src/main.rs`](upload-files/src/main.mdx):
+    *   定义 `index` 处理器提供包含 `multiple` 文件输入的 HTML 表单。
+    *   定义 `upload` 处理器：
+        *   使用 `req.files("files").await` 获取文件列表 `Vec<FilePart>`。
+        *   遍历文件列表，获取文件名和临时路径。
+        *   使用 `std::fs::copy()` 将文件保存到目标目录。
+        *   构建包含已上传文件列表的成功响应或错误响应。
+    *   在 `main` 函数中创建 `temp` 目录。
+    *   设置路由，将 POST 请求指向 `upload` 处理器。
+    *   启动服务器。
+
+---
+
+# todos-utoipa
+
+> 此示例展示了如何使用 `utoipa` crate (一个流行的 Rust OpenAPI 文档生成库) 结合 Salvo 来构建一个带有 API 文档的 TODO List 应用。这提供了 `salvo::oapi` 之外的另一种生成 OpenAPI 文档的选择。
+
+核心概念和步骤：
+1.  **添加依赖**: 在 `Cargo.toml` 中添加 `utoipa`, `utoipa-swagger-ui`，以及 `salvo`, `serde`, `tokio` 等。
+2.  **定义数据模型和 Schema**:
+    *   创建 `Todo` 结构体和可能的错误类型（如 `TodoError` 枚举）。
+    *   使用 `#[derive(Serialize, Deserialize, ToSchema)]` 标记这些结构体/枚举，其中 `ToSchema` 来自 `utoipa`，用于为它们生成 OpenAPI Schema。
+3.  **定义 API Doc 结构体**:
+    *   创建一个空结构体（如 `ApiDoc`）。
+    *   使用 `#[derive(OpenApi)]` 标记它。
+    *   使用 `#[openapi(...)]` 宏来配置 OpenAPI 文档的元数据：
+        *   `paths(...)`: 列出所有需要包含在文档中的处理器函数（如 `list_todos`, `create_todo` 等）。
+        *   `components(schemas(...))`: 列出所有需要生成 Schema 定义的数据模型（如 `models::Todo`, `models::TodoError`）。
+        *   `tags(...)`: 定义 API 的标签分组。
+        *   `modifiers(...)`: (可选) 应用修改器来进一步定制 OpenAPI 文档，如此示例中的 `SecurityAddon` 用于添加全局安全方案。
+4.  **标记处理器函数**:
+    *   对于每个需要包含在文档中的 Salvo 处理器函数，在其上方添加 `#[utoipa::path(...)]` 宏。
+    *   这个宏用于描述端点的细节，如 HTTP 方法 (`get`, `post` 等)、路径 (`path = "..."`)、请求体 (`request_body = Type`)、响应 (`responses(...)`)、路径/查询参数 (`params(...)`)、安全要求 (`security(...)`) 等。这些信息会被 `#[derive(OpenApi)]` 收集。
+5.  **实现处理器逻辑**: 编写 Salvo 处理器函数的具体实现，处理请求和操作数据（示例中使用内存中的 `STORE`）。
+6.  **提供 OpenAPI JSON**:
+    *   创建一个 Salvo 处理器（如 `openapi_json`），它调用 `ApiDoc::openapi()` 来生成 `utoipa::openapi::OpenApi` 对象，并将其序列化为 JSON 返回。
+7.  **提供 Swagger UI**:
+    *   使用 `utoipa_swagger_ui` crate 提供的功能来服务 Swagger UI 界面。
+    *   创建一个 `utoipa_swagger_ui::Config` 实例，指向之前创建的 OpenAPI JSON 端点路径。
+    *   使用 `affix_state::inject` 将 `Config` 注入 `Depot`。
+    *   创建一个 Salvo 处理器（如 `serve_swagger`），它从 `Depot` 获取 `Config`，并调用 `utoipa_swagger_ui::serve()` 来处理 Swagger UI 静态文件的请求。
+8.  **组合路由**: 将业务 API 路由、OpenAPI JSON 路由和 Swagger UI 路由组合起来。
+9.  **启动服务器**: 启动 Salvo 服务器。
+
+访问 `/swagger-ui/` 可以查看由 `utoipa` 生成的交互式 API 文档。
+
+## 文件列表
+
+*   [`Cargo.toml`](todos-utoipa/Cargo.mdx): 添加 `utoipa`, `utoipa-swagger-ui`, `salvo` (需要 `affix-state`, `size-limiter` 特性), `serde`, `tokio` 等依赖。
+*   [`src/main.rs`](todos-utoipa/src/main.mdx):
+    *   定义 `models` 模块包含 `Todo`, `TodoError`, `Db`, `ListOptions` 等，并使用 `utoipa::ToSchema`。
+    *   定义 `ApiDoc` 结构体，使用 `#[derive(OpenApi)]` 和 `#[openapi(...)]` 宏配置文档。
+    *   (可选) 定义 `SecurityAddon` 修改器。
+    *   使用 `#[utoipa::path(...)]` 宏标记 `list_todos`, `create_todo`, `update_todo`, `delete_todo` 等 Salvo 处理器。
+    *   实现这些处理器的业务逻辑。
+    *   实现 `openapi_json` 处理器返回 `ApiDoc::openapi()` 的 JSON。
+    *   实现 `serve_swagger` 处理器使用 `utoipa_swagger_ui::serve` 提供 UI。
+    *   在 `main` 函数和 `route()` 函数中组合路由并准备 Swagger UI 配置。
+    *   启动服务器。
+    *   包含测试模块 (`#[cfg(test)]`)。
+
+---
+
+# catch-panic
+
+> 此示例演示了如何使用 Salvo 的 `CatchPanic` 中间件来捕获处理器中发生的 panic，防止服务器因此崩溃，并允许你返回一个更友好的错误响应给客户端。
+
+核心概念：
+1.  **启用特性**: 在 `Cargo.toml` 中启用 `salvo` 的 `catch-panic` 特性。
+2.  **Panic 的危害**: 在 Rust 的 Web 服务器中，如果一个请求处理器发生了 panic（例如，由于 `unwrap()` 一个 `None` 值、数组越界、或者显式调用 `panic!`），默认行为通常是终止当前线程或任务。如果服务器没有特殊处理，这可能导致整个服务器进程崩溃或变得不稳定。
+3.  **`CatchPanic` 中间件**:
+    *   `CatchPanic::new()` 创建中间件实例。
+    *   当这个中间件被应用后，它会使用 `std::panic::catch_unwind` 来包裹后续中间件和处理器的执行。
+    *   如果被包裹的代码发生了 panic，`CatchPanic` 会捕获这个 panic。
+    *   捕获到 panic 后，它**不会**让 panic 继续传播导致程序崩溃。
+    *   默认情况下，`CatchPanic` 会记录一条错误日志，并将响应状态码设置为 `500 Internal Server Error`，返回一个简单的文本响应体（如 "Internal Server Error" 或类似信息，具体可能随版本变化）。你可以通过配置 `CatchPanic` 来自定义 panic 发生时的响应。
+4.  **应用中间件**: 使用 `hoop()` 将 `CatchPanic::new()` 添加到 `Router` 或服务器级别。通常建议将其放在处理链路的较早位置，以捕获尽可能多的潜在 panic 点。
+5.  **示例演示**: `hello` 处理器故意调用 `panic!("panic error!")`。由于 `CatchPanic` 中间件的存在，服务器不会崩溃。访问 `/` 路径会收到一个 500 错误响应，并且服务器日志中会记录 panic 信息。
+
+使用 `CatchPanic` 是提高 Salvo 应用健壮性的重要手段，特别是在生产环境中。
+
+## 文件列表
+
+*   [`Cargo.toml`](catch-panic/Cargo.mdx): 启用 `salvo` 的 `catch-panic` 特性。
+*   [`src/main.rs`](catch-panic/src/main.mdx):
+    *   定义 `hello` 处理器，其中包含 `panic!` 调用。
+    *   在 `main` 函数中：
+        *   创建 `Router`。
+        *   使用 `hoop(CatchPanic::new())` 将 panic 捕获中间件应用到路由。
+        *   注册 `hello` 处理器。
+    *   启动服务器。
+
+---
+
+# proxy-react-app
+
+> 此示例演示了如何使用 Salvo 作为反向代理，将前端 React 应用（通常在开发模式下运行在不同的端口，如 3000）和后端 API 集成到同一个源（Origin）下，以避免跨域请求 (CORS) 问题，并简化部署。
+
+场景：
+*   前端 React 应用通过 `npm start` 运行在 `http://localhost:3000`。
+*   后端 Salvo API 运行在 `http://localhost:5800`。
+*   目标：让用户通过访问 `http://localhost:5800` 即可同时访问到前端页面和后端 API。
+
+实现方式：
+1.  **Salvo 作为主入口**: Salvo 服务器监听主端口 (5800)。
+2.  **API 路由**: 定义后端 API 的路由，例如 `/api/*`。这些请求由 Salvo 自己的处理器处理。示例中定义了一个 `/api/hello` 端点。
+3.  **代理前端请求**: 对于所有**非** API 路径的请求（例如 `/`, `/static/css/...`, `/manifest.json` 等），Salvo 需要将这些请求转发给运行在 3000 端口的 React 开发服务器。
+    *   使用 `salvo::proxy::Proxy::new(["http://127.0.0.1:3000"]).unwrap()` 创建一个代理处理器。数组参数指定了上游服务器地址。
+    *   将这个代理处理器注册到处理所有其他路径的路由上。示例中使用 `router.push(Router::with_path("<**rest>").goal(Proxy::new...))` 来捕获所有未被 `/api` 匹配的路径，并将它们转发。
+4.  **运行**:
+    *   首先，在 `react-app` 目录下运行 `npm start` (或 `yarn start`) 启动 React 开发服务器 (端口 3000)。
+    *   然后，运行 Salvo 服务器 (端口 5800)。
+5.  **访问**: 现在访问 `http://localhost:5800`：
+    *   对 `/` 的请求会被 Salvo 代理到 `http://localhost:3000/`，返回 React 应用的 HTML 入口。
+    *   浏览器加载 HTML 后发出的对 `/static/...`, `/manifest.json` 等静态资源的请求，同样会被 Salvo 代理到 3000 端口。
+    *   React 应用内部发出的对 `/api/hello` 的请求（注意是相对路径，指向同一个源 5800），会被 Salvo 的 `/api/hello` 路由直接处理，返回 "Hello world"。
+
+这样就实现了在同一个端口 (5800) 下无缝访问前后端资源，避免了 CORS 问题。这种模式在开发阶段非常有用。对于生产部署，通常会将 React 应用构建成静态文件，然后使用 Salvo 的静态文件服务功能来提供这些文件。
+
+## 文件列表
+
+*   [`Cargo.toml`](proxy-react-app/Cargo.mdx): 包含 `salvo` 依赖（需要启用 `proxy` 特性）。
+*   [`src/main.rs`](proxy-react-app/src/main.mdx):
+    *   定义后端 API 处理器 `hello`。
+    *   在 `main` 函数中：
+        *   创建 `Router`。
+        *   注册 API 路径 `/api/hello`。
+        *   创建代理处理器 `Proxy::new(["http://127.0.0.1:3000"])`。
+        *   注册捕获所有其他路径 (`<**rest>`) 的路由，并将其指向代理处理器。
+    *   启动 Salvo 服务器 (端口 5800)。
+*   [`react-app/`](proxy-react-app/react-app): 一个标准的 Create React App 项目。
+    *   `public/`: 包含 HTML 入口文件等。
+    *   `src/`: 包含 React 组件代码。
+    *   `package.json`: 项目依赖和脚本（如 `start`）。
+
+---
+
+好的，我们来逐步生成 Salvo 框架的 LLM 友好文档。我会根据你提供的每个例子，提取其核心知识点并整合到 `/llms.txt` 结构中。
+
+**第一部分：基础结构和核心概念 (基于 `hello-world` 或通用认知)**
+
+```markdown
+# Salvo Web Framework
+
+> Salvo 是一个基于 Rust 语言构建的异步、高性能、功能丰富的 Web 服务器框架。它设计简洁、模块化，易于使用和扩展，并提供了强大的路由、中间件、数据提取、WebSocket、TLS、HTTP/3 等支持。
+
+## 文件列表
+
+*   **核心概念**:
+    *   **`Server`**: 代表 Web 服务器实例，负责接收连接并处理请求。
+    *   **`Router`**: 定义路由规则，将不同的 URL 路径和 HTTP 方法映射到相应的处理逻辑 (Handler)。
+    *   **`Handler`**: 处理请求的核心单元，通常是一个异步函数，接收 `Request`, `Depot`, `Response` 等参数，并执行业务逻辑。`#[handler]` 宏可以方便地将函数转换为 Handler。
+    *   **`Request`**: 代表传入的 HTTP 请求，包含请求头、方法、路径、查询参数、请求体等信息。
+    *   **`Response`**: 代表传出的 HTTP 响应，用于设置状态码、响应头、响应体等。
+    *   **`Depot`**: 一个数据存储容器，用于在 Handler 和中间件之间共享数据。
+    *   **`TcpListener`**: 用于创建 TCP 监听器，指定服务器监听的地址和端口。`Server` 需要一个 `Acceptor` (通常由 `TcpListener` 创建) 来启动。
+    *   **`#[tokio::main]`**: Salvo 基于 Tokio 异步运行时，入口函数需要此宏。
+    *   **`tracing` / `tracing-subscriber`**: 常用的日志和链路追踪库，用于调试和监控。
+```
+
+**第二部分：添加 `proxy-websocket` 示例知识点**
+
+```markdown
+# Salvo Web Framework
+
+> Salvo 是一个基于 Rust 语言构建的异步、高性能、功能丰富的 Web 服务器框架。它设计简洁、模块化，易于使用和扩展，并提供了强大的路由、中间件、数据提取、WebSocket、TLS、HTTP/3、反向代理等支持。
+
+## 文件列表
+
+*   **核心概念**:
+    *   **`Server`**: 代表 Web 服务器实例，负责接收连接并处理请求。
+    *   **`Router`**: 定义路由规则，将不同的 URL 路径和 HTTP 方法映射到相应的处理逻辑 (Handler)。支持路径参数 (`{name}`) 和通配符 (`{*rest}`, `{**rest}`)。
+    *   **`Handler`**: 处理请求的核心单元，通常是一个异步函数，接收 `Request`, `Depot`, `Response` 等参数，并执行业务逻辑。`#[handler]` 宏可以方便地将函数转换为 Handler。
+    *   **`Request`**: 代表传入的 HTTP 请求，包含请求头、方法、路径、查询参数、请求体等信息。
+    *   **`Response`**: 代表传出的 HTTP 响应，用于设置状态码、响应头、响应体等。
+    *   **`Depot`**: 一个数据存储容器，用于在 Handler 和中间件之间共享数据。
+    *   **`TcpListener`**: 用于创建 TCP 监听器，指定服务器监听的地址和端口。`Server` 需要一个 `Acceptor` (通常由 `TcpListener` 创建) 来启动。
+    *   **`#[tokio::main]`**: Salvo 基于 Tokio 异步运行时，入口函数需要此宏。
+    *   **`tracing` / `tracing-subscriber`**: 常用的日志和链路追踪库，用于调试和监控。
+
+*   [WebSocket 代理](proxy-websocket/): 演示了如何使用 Salvo 的 `Proxy` 功能 (`salvo::proxy::Proxy`) 将包括 WebSocket 在内的所有请求转发到后端服务器。
+    *   **特性依赖**: 需要启用 `salvo` 的 `proxy` feature (`features = ["proxy"]`)。
+    *   **用法**:
+        *   使用 `Router::with_path("{**rest}")` 创建一个捕获所有路径的路由。
+        *   使用 `Proxy::new(vec!["http://backend_addr"], HyperClient::default())` 创建代理 Handler，指定一个或多个后端服务器地址。`HyperClient` 是默认的 HTTP 客户端实现。
+        *   将 `Proxy` Handler 设置为路由的目标 (`.goal(proxy_handler)`)。
+        *   这样配置后，所有到达该路由的请求（包括 HTTP 和 WebSocket 升级请求）都会被透明地转发到指定的后端。
+```
+
+**第三部分：添加 `timeout` 示例知识点**
+
+```markdown
+# Salvo Web Framework
+
+> Salvo 是一个基于 Rust 语言构建的异步、高性能、功能丰富的 Web 服务器框架。它设计简洁、模块化，易于使用和扩展，并提供了强大的路由、中间件、数据提取、WebSocket、TLS、HTTP/3、反向代理、请求超时控制等支持。
+
+## 文件列表
+
+*   **核心概念**:
+    *   **`Server`**: 代表 Web 服务器实例，负责接收连接并处理请求。
+    *   **`Router`**: 定义路由规则，将不同的 URL 路径和 HTTP 方法映射到相应的处理逻辑 (Handler)。支持路径参数 (`{name}`) 和通配符 (`{*rest}`, `{**rest}`)。
+    *   **`Handler`**: 处理请求的核心单元，通常是一个异步函数，接收 `Request`, `Depot`, `Response` 等参数，并执行业务逻辑。`#[handler]` 宏可以方便地将函数转换为 Handler。
+    *   **`Middleware / Hoop`**: Salvo 使用 `hoop` 方法来添加中间件。中间件是在请求到达最终 Handler 
+
+好的，继续生成。
+
+**第四部分：添加 `tls-openssl-reload` 示例知识点**
+
+```markdown
+# Salvo Web Framework
+
+## 文件列表
+
+*   **核心概念**:
+    *   **`Server`**: 代表 Web 服务器实例，负责接收连接并处理请求。
+    *   **`Router`**: 定义路由规则，将不同的 URL 路径和 HTTP 方法映射到相应的处理逻辑 (Handler)。支持路径参数 (`{name}`) 和通配符 (`{*rest}`, `{**rest}`)。`.push()` 用于添加子路由。
+    *   **`Handler`**: 处理请求的核心单元，通常是一个异步函数，接收 `Request`, `Depot`, `Response` 等参数，并执行业务逻辑。`#[handler]` 宏可以方便地将函数转换为 Handler。
+    *   **`Middleware / Hoop`**: Salvo 使用 `hoop` 方法来添加中间件。中间件是在请求到达最终 Handler 之前或响应返回客户端之前执行的逻辑单元，可以用于日志、认证、修改请求/响应、超时控制等。
+    *   **`Request`**: 代表传入的 HTTP 请求，包含请求头、方法、路径、查询参数、请求体等信息。
+    *   **`Response`**: 代表传出的 HTTP 响应，用于设置状态码、响应头、响应体等。`.render()` 方法可以方便地设置响应体。
+    *   **`Depot`**: 一个数据存储容器，用于在 Handler 和中间件之间共享数据。
+    *   **`TcpListener`**: 用于创建 TCP 监听器，指定服务器监听的地址和端口。`Server` 需要一个 `Acceptor` (通常由 `TcpListener` 创建) 来启动。
+    *   **`#[tokio::main]`**: Salvo 基于 Tokio 异步运行时，入口函数需要此宏。
+    *   **`tracing` / `tracing-subscriber`**: 常用的日志和链路追踪库，用于调试和监控。
+
+*   [WebSocket 代理](proxy-websocket/): 使用 `Proxy` 将包括 WebSocket 在内的所有请求转发到后端服务器。
+    *   **特性**: `proxy`
+    *   **用法**: `Proxy::new(backends, HyperClient::default())`, `Router::with_path("{**rest}").goal(proxy)`
+
+*   [请求超时控制](timeout/): 使用 `Timeout` 中间件限制请求处理时间。
+    *   **特性**: `timeout`
+    *   **用法**: `Router::new().hoop(Timeout::new(Duration))`
+
+*   [TLS (OpenSSL) 证书热重载](tls-openssl-reload/): 配置 HTTPS 服务器，使用 OpenSSL 后端，并支持在运行时动态重新加载 TLS 证书和密钥。
+    *   **特性**: `openssl`
+    *   **用法**:
+        *   使用 `TcpListener::new(...).openssl(stream)` 配置 TLS。
+        *   `stream` 参数是一个异步 Stream (`async_stream::stream!`)，它会定期 `yield` 新的 `OpensslConfig`。
+        *   `OpensslConfig::new(Keycert::new().with_cert(...).with_key(...))` 用于加载证书和私钥文件。
+        *   服务器会在每次从流中获取到新的配置时，应用新的证书密钥，实现热重载。
+```
+
+**第五部分：添加 `proxy-simple` 示例知识点**
+
+```markdown
+# Salvo Web Framework
+
+> Salvo 是一个基于 Rust 语言构建的异步、高性能、功能丰富的 Web 服务器框架。它设计简洁、模块化，易于使用和扩展，并提供了强大的路由、中间件、数据提取、WebSocket、TLS (支持 OpenSSL/Rustls 证书热重载)、HTTP/3、多种反向代理策略、请求超时控制等支持。
+
+## 文件列表
+
+*   **核心概念**:
+    *   **`Server`**: 代表 Web 服务器实例，负责接收连接并处理请求。
+    *   **`Router`**: 定义路由规则，将不同的 URL 路径和 HTTP 方法映射到相应的处理逻辑 (Handler)。支持路径参数 (`{name}`) 和通配符 (`{*rest}`, `{**rest}`)。`.push()` 用于添加子路由。`.host()` 方法可以根据请求的 Host 头进行路由匹配。
+    *   **`Handler`**: 处理请求的核心单元，通常是一个异步函数，接收 `Request`, `Depot`, `Response` 等参数，并执行业务逻辑。`#[handler]` 宏可以方便地将函数转换为 Handler。
+    *   **`Middleware / Hoop`**: Salvo 使用 `hoop` 方法来添加中间件。中间件是在请求到达最终 Handler 之前或响应返回客户端之前执行的逻辑单元，可以用于日志、认证、修改请求/响应、超时控制等。
+    *   **`Request`**: 代表传入的 HTTP 请求，包含请求头、方法、路径、查询参数、请求体等信息。
+    *   **`Response`**: 代表传出的 HTTP 响应，用于设置状态码、响应头、响应体等。`.render()` 方法可以方便地设置响应体。
+    *   **`Depot`**: 一个数据存储容器，用于在 Handler 和中间件之间共享数据。
+    *   **`TcpListener`**: 用于创建 TCP 监听器，指定服务器监听的地址和端口。`Server` 需要一个 `Acceptor` (通常由 `TcpListener` 创建) 来启动。
+    *   **`#[tokio::main]`**: Salvo 基于 Tokio 异步运行时，入口函数需要此宏。
+    *   **`tracing` / `tracing-subscriber`**: 常用的日志和链路追踪库，用于调试和监控。
+
+*   [WebSocket 代理](proxy-websocket/): 使用 `Proxy` 将包括 WebSocket 在内的所有请求转发到后端服务器。
+    *   **特性**: `proxy`
+    *   **用法**: `Proxy::new(backends, HyperClient::default())`, `Router::with_path("{**rest}").goal(proxy)`
+
+*   [请求超时控制](timeout/): 使用 `Timeout` 中间件限制请求处理时间。
+    *   **特性**: `timeout`
+    *   **用法**: `Router::new().hoop(Timeout::new(Duration))`
+
+*   [TLS (OpenSSL) 证书热重载](tls-openssl-reload/): 配置 HTTPS 服务器 (OpenSSL)，并支持运行时动态重新加载证书密钥。
+    *   **特性**: `openssl`
+    *   **用法**: `TcpListener::openssl(stream)` 配合 `async_stream` 和 `OpensslConfig`。
+
+*   [简单 HTTP 反向代理](proxy-simple/): 根据请求的 Host 头将 HTTP 请求代理到不同的后端服务。
+    *   **特性**: `proxy`
+    *   **用法**:
+        *   使用 `Router::new().host("example.com").path("{**rest}")` 结合 `host()` 和 `path()` 来精确匹配需要代理的请求。
+        *   使用 `Proxy::use_hyper_client("https://backend.example.com")` 作为目标 Handler，将匹配的请求转发到指定后端 URL。
+```
+
+**第六部分：添加 `middleware-add-header` 示例知识点**
+
+```markdown
+# Salvo Web Framework
+
+> Salvo 是一个基于 Rust 语言构建的异步、高性能、功能丰富的 Web 服务器框架。它设计简洁、模块化，易于使用和扩展，并提供了强大的路由、中间件 (Hoop)、数据提取、WebSocket、TLS (支持 OpenSSL/Rustls 证书热重载)、HTTP/3、多种反向代理策略、请求超时控制等支持。
+
+## 文件列表
+
+*   **核心概念**:
+    *   **`Server`**: 代表 Web 服务器实例，负责接收连接并处理请求。
+    *   **`Router`**: 定义路由规则，将不同的 URL 路径和 HTTP 方法映射到相应的处理逻辑 (Handler)。支持路径参数 (`{name}`) 和通配符 (`{*rest}`, `{**rest}`)。`.push()` 用于添加子路由。`.host()` 方法可以根据请求的 Host 头进行路由匹配。
+    *   **`Handler`**: 处理请求的核心单元，通常是一个异步函数，接收 `Request`, `Depot`, `Response` 等参数，并执行业务逻辑。`#[handler]` 宏可以方便地将函数转换为 Handler。Handler 也可以作为中间件使用。
+    *   **`Middleware / Hoop`**: Salvo 使用 `hoop` 方法来添加中间件。中间件是在请求到达最终 Handler 之前或响应返回客户端之前执行的逻辑单元。可以定义一个 Handler 函数，并在 `hoop` 中使用它来修改请求或响应。
+    *   **`Request`**: 代表传入的 HTTP 请求，包含请求头、方法、路径、查询参数、请求体等信息。
+    *   **`Response`**: 代表传出的 HTTP 响应，用于设置状态码、响应头、响应体等。`.render()` 方法可以方便地设置响应体。`.headers_mut()` 可获取可变的响应头集合。
+    *   **`Depot`**: 一个数据存储容器，用于在 Handler 和中间件之间共享数据。
+    *   **`TcpListener`**: 用于创建 TCP 监听器，指定服务器监听的地址和端口。`Server` 需要一个 `Acceptor` (通常由 `TcpListener` 创建) 来启动。
+    *   **`#[tokio::main]`**: Salvo 基于 Tokio 异步运行时，入口函数需要此宏。
+    *   **`tracing` / `tracing-subscriber`**: 常用的日志和链路追踪库，用于调试和监控。
+
+*   [WebSocket 代理](proxy-websocket/): 使用 `Proxy` 将包括 WebSocket 在内的所有请求转发到后端服务器。
+    *   **特性**: `proxy`
+    *   **用法**: `Proxy::new(backends, HyperClient::default())`, `Router::with_path("{**rest}").goal(proxy)`
+
+*   [请求超时控制](timeout/): 使用 `Timeout` 中间件限制请求处理时间。
+    *   **特性**: `timeout`
+    *   **用法**: `Router::new().hoop(Timeout::new(Duration))`
+
+*   [TLS (OpenSSL) 证书热重载](tls-openssl-reload/): 配置 HTTPS 服务器 (OpenSSL)，并支持运行时动态重新加载证书密钥。
+    *   **特性**: `openssl`
+    *   **用法**: `TcpListener::openssl(stream)` 配合 `async_stream` 和 `OpensslConfig`。
+
+*   [简单 HTTP 反向代理](proxy-simple/): 根据 Host 头将 HTTP 请求代理到不同后端。
+    *   **特性**: `proxy`
+    *   **用法**: `Router::new().host(...).path(...).goal(Proxy::use_hyper_client(backend_url))`
+
+*   [中间件：添加响应头](middleware-add-header/): 演示如何创建一个简单的中间件 (Handler 作为 Hoop) 来为所有响应添加自定义 Header。
+    *   **用法**:
+        *   定义一个 Handler 函数 `async fn add_header(res: &mut Response)`。
+        *   在 Handler 内部使用 `res.headers_mut().insert(header::SERVER, HeaderValue::from_static("Salvo"))` 来修改响应头。
+        *   使用 `Router::new().hoop(add_header).get(hello)` 将此 Handler 作为中间件应用到路由或整个服务。
+```
+
+**第七部分：添加 `custom-error-page` 示例知识点**
+
+```markdown
+# Salvo Web Framework
+
+> Salvo 是一个基于 Rust 语言构建的异步、高性能、功能丰富的 Web 服务器框架。它设计简洁、模块化，易于使用和扩展，并提供了强大的路由、中间件 (Hoop)、数据提取、WebSocket、TLS (支持 OpenSSL/Rustls 证书热重载)、HTTP/3、多种反向代理策略、请求超时控制、自定义错误处理 (Catcher) 等支持。
+
+## 文件列表
+
+*   **核心概念**:
+    *   **`Server`**: 代表 Web 服务器实例，负责接收连接并处理请求。
+    *   **`Router`**: 定义路由规则，将不同的 URL 路径和 HTTP 方法映射到相应的处理逻辑 (Handler)。支持路径参数 (`{name}`) 和通配符 (`{*rest}`, `{**rest}`)。`.push()` 用于添加子路由。`.host()` 方法可以根据请求的 Host 头进行路由匹配。
+    *   **`Handler`**: 处理请求的核心单元，通常是一个异步函数，接收 `Request`, `Depot`, `Response` 等参数，并执行业务逻辑。`#[handler]` 宏可以方便地将函数转换为 Handler。Handler 也可以作为中间件或错误处理器使用。
+    *   **`Middleware / Hoop`**: Salvo 使用 `hoop` 方法来添加中间件。中间件是在请求到达最终 Handler 之前或响应返回客户端之前执行的逻辑单元。
+    *   **`Request`**: 代表传入的 HTTP 请求，包含请求头、方法、路径、查询参数、请求体等信息。
+    *   **`Response`**: 代表传出的 HTTP 响应，用于设置状态码、响应头、响应体等。`.render()` 方法可以方便地设置响应体。`.headers_mut()` 可获取可变的响应头集合。`.status_code(StatusCode::...)` 用于设置响应状态码。
+    *   **`Depot`**: 一个数据存储容器，用于在 Handler 和中间件之间共享数据。
+    *   **`TcpListener`**: 用于创建 TCP 监听器，指定服务器监听的地址和端口。`Server` 需要一个 `Acceptor` (通常由 `TcpListener` 创建) 来启动。
+    *   **`Service`**: 是路由 (Router) 和服务级中间件/Catchers 的组合。`Service::new(router)`。
+    *   **`Catcher`**: 用于捕获和处理应用程序中发生的错误（如 404 Not Found, 500 Internal Server Error）。`.catcher()` 方法添加到 `Service` 上。
+    *   **`FlowCtrl`**: 在中间件和 Catcher Handler 中可用，用于控制请求处理流程，例如 `ctrl.skip_rest()` 可以跳过后续的中间件或 Catcher。
+    *   **`#[tokio::main]`**: Salvo 基于 Tokio 异步运行时，入口函数需要此宏。
+    *   **`tracing` / `tracing-subscriber`**: 常用的日志和链路追踪库，用于调试和监控。
+
+*   [WebSocket 代理](proxy-websocket/): 使用 `Proxy` 将包括 WebSocket 在内的所有请求转发到后端服务器。
+    *   **特性**: `proxy`
+    *   **用法**: `Proxy::new(backends, HyperClient::default())`, `Router::with_path("{**rest}").goal(proxy)`
+
+*   [请求超时控制](timeout/): 使用 `Timeout` 中间件限制请求处理时间。
+    *   **特性**: `timeout`
+    *   **用法**: `Router::new().hoop(Timeout::new(Duration))`
+
+*   [TLS (OpenSSL) 证书热重载](tls-openssl-reload/): 配置 HTTPS 服务器 (OpenSSL)，并支持运行时动态重新加载证书密钥。
+    *   **特性**: `openssl`
+    *   **用法**: `TcpListener::openssl(stream)` 配合 `async_stream` 和 `OpensslConfig`。
+
+*   [简单 HTTP 反向代理](proxy-simple/): 根据 Host 头将 HTTP 请求代理到不同后端。
+    *   **特性**: `proxy`
+    *   **用法**: `Router::new().host(...).path(...).goal(Proxy::use_hyper_client(backend_url))`
+
+*   [中间件：添加响应头](middleware-add-header/): 创建简单的中间件 (Handler 作为 Hoop) 来为所有响应添加自定义 Header。
+    *   **用法**: 定义 `async fn(res: &mut Response)` Handler, 使用 `res.headers_mut().insert()`, 通过 `router.hoop(handler)` 应用。
+
+*   [自定义错误页面](custom-error-page/): 使用 `Catcher` 拦截特定状态码 (如 404 Not Found) 并返回自定义的错误响应。
+    *   **用法**:
+        *   定义一个错误处理 Handler `async fn handle_error(&self, _req: &Request, _depot: &Depot, res: &mut Response, ctrl: &mut FlowCtrl)`。
+        *   在 Handler 内部检查 `res.status_code` 是否匹配需要处理的错误码。
+        *   如果匹配，使用 `res.render(...)` 设置自定义错误页面，并调用 `ctrl.skip_rest()` 阻止其他 Catcher 处理。
+        *   使用 `Service::new(router).catcher(Catcher::default().hoop(handle_error))` 将 Catcher 添加到服务中。
+```
+好的，我们来逐个生成 Salvo 示例的 LLM 友好文档。我会按照你要求的 `/llms.txt` 结构来组织，并总结每个示例的核心知识点。
+
+**第一部分：数据库迁移 (SeaORM)**
+
+```markdown
+# Salvo Web 框架 - 数据库迁移示例 (SeaORM)
+
+> 本示例演示了如何使用 `sea-orm-migration` crate 在 Salvo (或任何 Rust) 项目中管理数据库迁移。它展示了如何设置迁移入口点、定义迁移器以及创建具体的迁移脚本。
+
+此示例的核心是利用 SeaORM 的迁移工具来自动化数据库模式的演变。
+
+-   `main.rs` 作为命令行工具的入口点，调用 `sea_orm_migration::cli::run_cli` 来执行迁移操作（如 `up`, `down`, `status` 等）。
+-   `migration/mod.rs` 定义了 `Migrator` 结构体，它实现了 `MigratorTrait`。`migrations()` 方法负责收集并按顺序返回所有的迁移脚本。
+-   `migration/m20220120_000001_create_post_table.rs` 是一个具体的迁移脚本，实现了 `MigrationTrait`，定义了 `up`（应用迁移）和 `down`（回滚迁移）操作，这里是创建一个名为 `posts` 的表。
+
+## 文件列表
+
+-   [`db-sea-orm/src/migration/main.mdx`](db-sea-orm/src/migration/main.mdx): 迁移命令行工具的入口点 Rust 代码。
+-   [`db-sea-orm/src/migration/mod.mdx`](db-sea-orm/src/migration/mod.mdx): 定义 `Migrator` 结构和收集所有迁移的 Rust 代码。
+-   [`db-sea-orm/src/migration/m20220120_000001_create_post_table.mdx`](db-sea-orm/src/migration/m20220120_000001_create_post_table.mdx): (虽然未提供，但这是 `mod.rs` 中引用的文件) 包含创建 `posts` 表的具体 SQL 或模式构建器逻辑。
+```
+
+---
+好的，我们继续生成剩余示例的 LLM 友好文档。
+
+---
+
+```markdown
+# Salvo Web 框架 - 与 Tower 集成示例
+
+> 本示例演示了如何将 Tower 生态系统中的中间件（Middleware）与 Salvo 集成。具体来说，它使用了 `tower::limit::RateLimitLayer` 来实现请求速率限制。
+
+Salvo 通过 `tower-compat` 特性提供了与 Tower Service 和 Layer 的兼容性。
+
+-   在 `Cargo.toml` 中，需要启用 Salvo 的 `tower-compat` feature，并添加 `tower` 作为依赖。
+-   使用 `tower::limit::RateLimitLayer` 创建一个速率限制层，例如限制 30 秒内最多 5 个请求。
+-   通过调用 `.compat()` 方法将 Tower Layer 转换为 Salvo `Handler`。
+-   使用 `hoop()` 方法将转换后的处理器（中间件）添加到 Salvo `Router` 或 `Service` 中，以应用于其后的路由或整个服务。
+
+## 文件列表
+
+-   [`with-tower/Cargo.mdx`](with-tower/Cargo.mdx): 项目依赖配置，展示了 `salvo` 的 `tower-compat` feature 和 `tower` 依赖。
+-   [`with-tower/src/main.mdx`](with-tower/src/main.mdx): 主要应用代码，展示了如何创建 `RateLimitLayer`，将其转换为 Salvo `Handler`，并应用到路由。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - 文件上传示例
+
+> 本示例演示了如何在 Salvo 应用中处理文件上传。它展示了如何从请求中获取上传的文件，并将其保存到服务器的文件系统中。
+
+处理文件上传是 Web 应用的常见需求。
+
+-   前端页面包含一个 `<form>`，其 `enctype` 设置为 `multipart/form-data`，以及一个 `<input type="file">` 元素。
+-   在 Salvo 的 `handler` 中，使用 `req.file("file_input_name").await` 来异步获取上传的文件。`"file_input_name"` 对应于 HTML 表单中 `input` 元素的 `name` 属性。
+-   `req.file()` 返回一个 `Option<FilePart>`。如果文件存在，`FilePart` 提供了访问文件信息（如文件名 `file.name()`）和临时路径 (`file.path()`) 的方法。
+-   获取到 `FilePart` 后，可以使用标准的 Rust 文件系统操作（如 `std::fs::copy` 或 `tokio::fs::copy`）将文件从临时位置移动或复制到目标存储位置。
+-   需要处理文件未找到或复制过程中可能出现的错误，并向客户端返回适当的响应（例如，成功消息或错误状态码）。
+
+## 文件列表
+
+-   [`upload-file/Cargo.mdx`](upload-file/Cargo.mdx): 项目依赖配置。
+-   [`upload-file/src/main.mdx`](upload-file/src/main.mdx): 主要应用代码，包含设置路由、处理 GET 请求以显示上传表单，以及处理 POST 请求以接收和保存上传文件的 `handler`。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - 响应压缩示例
+
+> 本示例演示了如何使用 Salvo 的压缩中间件来压缩 HTTP 响应体，以减少传输大小和提高性能。它展示了如何为不同的路由启用不同的压缩算法（Gzip, Brotli, Zstd）和配置。
+
+Salvo 提供了 `Compression` 中间件来自动处理响应压缩。
+
+-   在 `Cargo.toml` 中启用 `salvo` 的 `compression` feature。如果需要提供静态文件服务，同时启用 `serve-static` feature。
+-   创建 `Compression::new()` 实例。
+-   可以通过链式调用方法配置压缩行为：
+    -   `enable_gzip(CompressionLevel)`: 启用 Gzip 压缩，可选指定压缩级别（如 `Fastest`, `Best`, `Default`）。
+    -   `enable_brotli(CompressionLevel)`: 启用 Brotli 压缩。
+    -   `enable_zstd(CompressionLevel)`: 启用 Zstd 压缩。
+    -   `force_priority(true)`: 强制优先使用此中间件配置的压缩算法，即使客户端 `Accept-Encoding` 头偏好其他算法。
+-   使用 `Router::with_hoop()` 将 `Compression` 中间件应用于特定的路由或路由组。可以为不同的路径应用不同的压缩配置。
+-   示例中还结合了 `StaticFile` 和 `StaticDir` 来提供静态文件服务，压缩中间件会自动作用于这些静态文件的响应。
+
+## 文件列表
+
+-   [`compression/Cargo.mdx`](compression/Cargo.mdx): 项目依赖配置，展示了 `compression` 和 `serve-static` features。
+-   [`compression/static/ws_chat.mdx`](compression/static/ws_chat.mdx): 示例静态文本文件。
+-   [`compression/static/todos.mdx`](compression/static/todos.mdx): 示例静态文本文件。
+-   [`compression/static/sse_chat.mdx`](compression/static/sse_chat.mdx): 示例静态文本文件。
+-   [`compression/src/main.mdx`](compression/src/main.mdx): 主要应用代码，展示了如何配置和应用 `Compression` 中间件到不同的路由，并结合静态文件服务。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - CORS (跨源资源共享) 示例
+
+> 本示例演示了如何配置和使用 Salvo 的 CORS 中间件来处理跨域请求。它启动了两个服务器：一个后端服务器提供 API，一个前端服务器提供访问该 API 的 HTML 页面，以模拟真实的跨域场景。
+
+CORS 是浏览器强制执行的一种安全机制，用于限制网页从不同源加载资源。Salvo 提供了 `Cors` 中间件来配置服务器端的 CORS 策略。
+
+-   在 `Cargo.toml` 中启用 `salvo` 的 `cors` feature。
+-   创建 `Cors::new()` 实例。
+-   使用链式方法配置 CORS 策略：
+    -   `allow_origin(["http://origin1", "http://origin2"])`: 指定允许访问资源的源列表。可以使用具体 URL 或通配符（需谨慎使用）。
+    -   `allow_methods(vec![Method::GET, Method::POST, ...])`: 指定允许的 HTTP 方法。
+    -   `allow_headers(["header1", "header2"])`: 指定允许的请求头。
+    -   `allow_credentials(true)`: 是否允许携带凭证（如 Cookies）。
+    -   `expose_headers(["header1"])`: 指定客户端可以访问的响应头。
+    -   `max_age(seconds)`: 指定预检请求（OPTIONS）结果的缓存时间。
+-   调用 `.into_handler()` 将 `Cors` 配置转换为 Salvo `Handler`。
+-   使用 `Service::hoop()` 或 `Router::hoop()` 将 CORS 处理器应用于整个服务或特定路由。
+-   示例通过启动两个 `tokio::main` 任务来分别运行后端 (端口 5600) 和前端 (端口 5800) 服务器，前端页面中的 JavaScript `fetch` 请求后端 API，触发 CORS 检查。
+
+## 文件列表
+
+-   [`cors/Cargo.mdx`](cors/Cargo.mdx): 项目依赖配置，展示了 `cors` feature。
+-   [`cors/src/main.mdx`](cors/src/main.mdx): 主要应用代码，包含后端服务器（配置 CORS 并提供 API）和前端服务器（提供测试 HTML 页面）的设置和运行逻辑。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - HTTP 重定向示例
+
+> 本示例演示了如何在 Salvo handler 中执行 HTTP 重定向，将用户浏览器引导到另一个 URL。
+
+重定向是 Web 开发中的常用操作，例如在用户登录后跳转到仪表盘，或将旧 URL 指向新 URL。
+
+-   Salvo 提供了 `Redirect` 结构体来方便地创建重定向响应。
+-   可以使用不同的工厂方法来创建具有不同 HTTP 状态码的重定向：
+    -   `Redirect::found(url)`: 创建一个 302 Found（临时）重定向。这是最常用的临时重定向。
+    -   `Redirect::moved_permanently(url)`: 创建一个 301 Moved Permanently（永久）重定向。
+    -   `Redirect::temporary(url)`: 创建一个 307 Temporary Redirect。
+    -   `Redirect::permanent(url)`: 创建一个 308 Permanent Redirect。
+-   在 handler 中，通过 `res.render(Redirect::found("https://target.url/"))` 将重定向设置为响应。Salvo 会自动设置 `Location` 响应头和相应的状态码。
+
+## 文件列表
+
+-   [`redirect/Cargo.mdx`](redirect/Cargo.mdx): 项目依赖配置。
+-   [`redirect/src/main.mdx`](redirect/src/main.mdx): 主要应用代码，展示了一个简单的 handler，它使用 `Redirect::found` 将请求重定向到 Rust 官网。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - JWT OIDC 认证 (Clerk) 示例
+
+> 本示例演示了如何使用 Salvo 的 `jwt-auth` 功能结合 OIDC (OpenID Connect) 提供商（如此处的 Clerk）来实现 JWT (JSON Web Token) 身份验证。它还展示了如何代理前端请求。
+
+此示例集成了一个外部 OIDC 服务 (Clerk) 来处理用户认证，并在 Salvo 后端验证收到的 JWT。
+
+-   **依赖与特性**: 在 `Cargo.toml` 中添加 `salvo` 的 `jwt-auth` 和 `proxy` features，以及 `jsonwebtoken`, `serde`, `anyhow`, `tokio` 等依赖。
+-   **OIDC Decoder**: 使用 `OidcDecoder::new(ISSUER_URL).await` 创建一个解码器。它会自动从 OIDC 提供商的 `.well-known/openid-configuration` 端点获取公钥等信息用于验证 JWT 签名和声明。`ISSUER_URL` 是 OIDC 提供商的基础 URL。
+-   **JWT Auth 中间件**:
+    -   创建 `JwtAuth<Claims, Decoder>::new(decoder)` 实例，其中 `Claims` 是自定义的包含 JWT 载荷的结构体（需要实现 `Serialize`, `Deserialize`），`Decoder` 是 `OidcDecoder` 实例。
+    -   使用 `finders(...)` 配置如何从请求中查找 JWT (例如 `HeaderFinder::new()` 从 `Authorization: Bearer <token>` 头查找)。
+    -   `force_passed(true)` (可选): 即使没有找到 token 或验证失败，请求也会继续传递给后续 handler，但 `depot` 中的认证状态会是 `Unauthorized` 或 `Forbidden`。如果为 `false` (默认)，验证失败会直接返回 401 或 403。
+-   **应用中间件**: 使用 `Router::with_hoop(auth_handler)` 将 JWT 认证中间件应用到需要保护的路由。
+-   **访问认证数据**: 在受保护的 handler 中，通过 `depot.jwt_auth_state()` 检查认证状态 (`JwtAuthState::Authorized`, `Unauthorized`, `Forbidden`)。如果状态是 `Authorized`，可以使用 `depot.jwt_auth_data::<Claims>()` 获取解码后的 JWT 声明。
+-   **前端代理**: 使用 `Proxy::new(vec!["http://frontend.url"], HyperClient::default())` 将所有未匹配到 API 路由的请求代理到前端开发服务器 (例如 Vite 或 Create React App 服务器)，方便本地开发。
+-   **前端集成**: (在 `app/` 目录下) 前端应用 (React) 使用 Clerk 的 SDK 处理登录流程，获取 JWT，并在向后端 API 发送请求时将 JWT 包含在 `Authorization` 头中。
+
+## 文件列表
+
+-   [`jwt-oidc-clerk/Cargo.mdx`](jwt-oidc-clerk/Cargo.mdx): 后端项目依赖配置，包含 `jwt-auth`, `proxy` features。
+-   [`jwt-oidc-clerk/src/main.mdx`](jwt-oidc-clerk/src/main.mdx): 后端 Salvo 应用代码，展示了 OIDC 解码器设置、JWT 认证中间件配置、受保护路由 `welcome` 以及前端代理设置。
+-   [`jwt-oidc-clerk/app/index.mdx`](jwt-oidc-clerk/app/index.mdx): 前端 HTML 入口文件。
+-   [`jwt-oidc-clerk/vite.config.mdx`](jwt-oidc-clerk/vite.config.mdx): 前端 Vite 配置文件。
+-   [`jwt-oidc-clerk/app/static/robots.mdx`](jwt-oidc-clerk/app/static/robots.mdx): 前端静态文件。
+-   (其他 `app/` 目录下的文件，如 `main.jsx`, 组件等，共同构成了使用 Clerk SDK 的 React 前端应用)
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - TLS (HTTPS) 使用 Rustls 示例
+
+> 本示例演示了如何在 Salvo 服务器上启用 TLS (HTTPS) 加密，使用 `rustls` 作为 TLS 后端。
+
+为了安全地传输数据，Web 服务器通常需要启用 HTTPS。Salvo 支持通过不同的 TLS 后端实现 HTTPS。
+
+-   在 `Cargo.toml` 中，启用 `salvo` 的 `rustls` feature。
+-   需要有效的 TLS 证书 (`cert.pem`) 和私钥 (`key.pem`) 文件。这些文件可以从证书颁发机构 (CA) 获取，或者为了本地开发/测试，可以使用 `mkcert` 或 `openssl` 等工具生成自签名证书。
+-   使用 `salvo::conn::rustls::Keycert::new()` 创建证书/密钥对配置。
+    -   通过 `.cert(include_bytes!("path/to/cert.pem").as_ref())` 加载证书文件内容。
+    -   通过 `.key(include_bytes!("path/to/key.pem").as_ref())` 加载私钥文件内容。
+-   使用 `RustlsConfig::new(keycert)` 创建 `rustls` 配置。
+-   在创建 `TcpListener` 时，链式调用 `.rustls(config)` 方法将 TLS 配置应用到监听器。
+-   `TcpListener::bind().await` 会返回一个配置了 TLS 的 `Acceptor`。
+-   将此 `Acceptor` 传递给 `Server::new()` 即可启动支持 HTTPS 的服务器。客户端需要使用 `https://` 协议访问。
+
+## 文件列表
+
+-   [`tls-rustls/Cargo.mdx`](tls-rustls/Cargo.mdx): 项目依赖配置，展示了 `rustls` feature。
+-   [`tls-rustls/certs/`](tls-rustls/certs): 包含示例证书 (`cert.pem`) 和私钥 (`key.pem`) 的目录（实际文件内容未在 mdx 中显示）。
+-   [`tls-rustls/src/main.mdx`](tls-rustls/src/main.mdx): 主要应用代码，展示了如何加载证书和密钥，创建 `RustlsConfig`，并将其应用于 `TcpListener` 以启动 HTTPS 服务器。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - 简单缓存示例
+
+> 本示例演示了如何使用 Salvo 的缓存中间件来缓存 handler 的响应，以提高性能并减少后端负载。它使用了基于 `moka` 的内存缓存存储。
+
+缓存是提高 Web 应用响应速度的有效手段。Salvo 提供了灵活的缓存中间件。
+
+-   在 `Cargo.toml` 中启用 `salvo` 的 `cache` feature。
+-   **缓存存储 (Store)**: 选择一个缓存存储实现。本例使用 `MokaStore`，这是一个基于 `moka` crate 的高性能内存缓存。
+    -   使用 `MokaStore::builder()` 创建构建器。
+    -   通过 `.time_to_live(Duration)` 设置缓存条目的存活时间 (TTL)。
+    -   通过 `.time_to_idle(Duration)` 设置空闲超时时间 (可选)。
+    -   通过 `.max_capacity(u64)` 设置最大缓存条目数 (可选)。
+    -   调用 `.build()` 创建 `MokaStore` 实例。
+-   **请求签发器 (Issuer)**: 定义如何根据请求生成缓存键 (Cache Key)。`RequestIssuer::default()` 基于请求的 URI 和方法生成键，适用于缓存 GET 请求等幂等操作。可以自定义 `Issuer` 实现更复杂的缓存键逻辑。
+-   **缓存中间件**: 使用 `Cache::new(store, issuer)` 创建缓存中间件实例。
+-   **应用缓存**: 使用 `Router::with_path(...).hoop(cache_middleware)` 将缓存中间件应用于特定的路由。可以为不同的路由创建和应用具有不同 TTL 或配置的缓存实例。
+-   **工作流程**:
+    1.  当请求到达应用了缓存中间件的路由时，中间件使用 `Issuer` 生成缓存键。
+    2.  检查 `Store` 中是否存在该键对应的有效缓存项。
+    3.  如果存在且未过期，直接返回缓存的响应，跳过后续的 handler 执行。
+    4.  如果不存在或已过期，执行后续 handler 生成响应。
+    5.  将生成的响应存入 `Store` 中，关联之前生成的缓存键和设置的 TTL。
+    6.  将响应返回给客户端。
+
+## 文件列表
+
+-   [`cache-simple/Cargo.mdx`](cache-simple/Cargo.mdx): 项目依赖配置，展示了 `cache` feature。
+-   [`cache-simple/src/main.mdx`](cache-simple/src/main.mdx): 主要应用代码，展示了如何创建具有不同 TTL 的 `MokaStore` 和 `Cache` 中间件，并将它们应用于不同的路由 (`/short` 和 `/long`)。包含一个简单的 HTML 页面以方便测试。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - 提取嵌套数据结构示例
+
+> 本示例演示了如何使用 Salvo 的 `Extractible` 宏从请求的不同部分（路径参数, 查询参数, 请求体）自动提取数据并填充到一个（甚至是嵌套的）结构体中。
+
+Salvo 的 `Extractible` 极大地简化了从请求中解析和验证数据的过程。
+
+-   **`Extractible` 宏**: 在需要提取数据的 `struct` 上添加 `#[derive(Extractible)]`。同时，该结构体通常也需要 `#[derive(Serialize, Deserialize, Debug)]`。
+-   **`#[salvo(extract(...))]` 属性**:
+    -   **结构体级别**: `#[salvo(extract(default_source(from = "body")))]` 指定了结构体字段默认的数据来源。可选的值有 `"param"`, `"query"`, `"header"`, `"body"`, `"cookie"`。
+    -   **字段级别**: `#[salvo(extract(source(from = "param")))]` 可以覆盖默认来源，为特定字段指定来源。
+    -   **`flatten`**: `#[salvo(extract(flatten))]` 应用于一个字段，该字段的类型也必须 `impl Extractible`。这会将嵌套结构体的字段提取逻辑合并到当前结构体中，允许嵌套结构体的字段也从请求的不同部分获取数据。
+    -   **`rename`**: `#[salvo(rename = "actual_request_field_name")]` 用于当请求中的字段名与 Rust 结构体字段名不一致时进行映射。这个属性是 `serde` 的，但与提取一起工作。
+-   **`#[serde(default)]`**: 当字段来源是 `param` 或 `query` 时，这些参数在请求中可能不存在。使用 `#[serde(default)]` 可以让 `serde` 在参数缺失时使用该字段类型的默认值（需要该类型实现 `Default` trait），避免解析错误。对于 `Option<T>` 类型，默认就是 `None`，通常不需要显式 `#[serde(default)]`。
+-   **在 Handler 中使用**: 将实现了 `Extractible` 的结构体作为 handler 的参数。Salvo 会自动尝试从请求中提取数据并填充该结构体。如果提取失败（例如，缺少必需字段，类型不匹配），Salvo 会自动返回一个 400 Bad Request 错误响应。
+-   **嵌套提取**: 如示例中的 `GoodMan` 包含 `Nested` 字段，并且 `Nested` 字段标记了 `#[salvo(extract(flatten))]`。这意味着 `GoodMan` 的 `id` 和 `username` 来自参数和查询，`first_name`, `last_name`, `lovers` 来自请求体（默认来源）。同时，`Nested` 结构体的 `id` 和 `username` 也尝试从参数和查询提取（覆盖了 `GoodMan` 的同名字段），其 `first_name`, `last_name` 字段也尝试从请求体提取，而 `pets` 字段（通过 `rename` 映射到请求体中的 `lovers` 字段）也从请求体提取。
+
+## 文件列表
+
+-   [`extract-nested/Cargo.mdx`](extract-nested/Cargo.mdx): 项目依赖配置。
+-   [`extract-nested/src/main.mdx`](extract-nested/src/main.mdx): 主要应用代码，定义了 `GoodMan` 和 `Nested` 两个可提取结构体，展示了如何使用 `source`, `flatten`, `default_source` 和 `serde(default)` 等属性，并包含了一个接收提取后数据的 handler (`edit`) 和一个提供测试表单的 handler (`show`)。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - CSRF 防护 (Cookie 存储) 示例
+
+> 本示例演示了如何使用 Salvo 的 CSRF (跨站请求伪造) 防护中间件，并将 CSRF token 存储在客户端的 Cookie 中。它展示了多种不同的 token 生成和验证算法。
+
+CSRF 是一种常见的 Web 安全漏洞。Salvo 提供了 CSRF 中间件来帮助防御此类攻击。`CookieStore` 是一种常见的 CSRF token 存储策略。
+
+-   **依赖与特性**: 在 `Cargo.toml` 中启用 `salvo` 的 `csrf` feature。通常还需要 `serde` 用于表单解析。
+-   **Token Finder**: 需要告知 CSRF 中间件如何在请求中找到客户端提交的 token。
+    -   `FormFinder::new("field_name")`: 从 POST 请求的表单数据中查找指定名称的字段。
+    -   `HeaderFinder::new("header_name")`: 从请求头中查找。
+    -   `QueryFinder::new("query_param_name")`: 从 URL 查询参数中查找。
+    -   可以组合多个 Finder。
+-   **CSRF Cookie Store 实现**: Salvo 提供了多种基于 Cookie 存储的 CSRF 实现，它们使用不同的加密或签名算法来保护存储在 Cookie 中的 "真实" token，并生成用于表单的 "掩码" token：
+    -   `bcrypt_cookie_csrf(finder)`: 使用 Bcrypt 哈希比较。计算成本较高，但非常安全。
+    -   `hmac_cookie_csrf(key, finder)`: 使用 HMAC-SHA256 签名。需要一个安全的密钥 (`key` 必须是 32 字节)。
+    -   `aes_gcm_cookie_csrf(key, finder)`: 使用 AES-GCM 加密。需要一个安全的密钥 (`key` 必须是 32 字节)。
+    -   `ccp_cookie_csrf(key, finder)`: 使用 ChaCha20Poly1305 加密。需要一个安全的密钥 (`key` 必须是 32 字节)。
+-   **应用中间件**: 使用 `Router::with_hoop(csrf_middleware)` 将选择的 CSRF 中间件应用于需要保护的路由（通常是处理 POST, PUT, DELETE 等改变状态的请求的路由，以及生成包含表单的页面的 GET 路由）。
+-   **在 Handler 中**:
+    -   **生成 Token (GET 请求)**: 在处理显示表单的 GET 请求的 handler 中，使用 `depot.csrf_token().unwrap_or_default()` 获取当前的 CSRF token。这个 token 需要嵌入到 HTML 表单中（通常作为一个隐藏字段 `<input type="hidden" name="csrf_token" value="{token}">`）。
+    -   **验证 Token (POST 请求)**: 当处理表单提交的 POST 请求时，CSRF 中间件会自动运行。它会：
+        1.  从 Cookie 中读取 "真实" token。
+        2.  使用配置的 `Finder` 从请求中（如表单数据）提取客户端提交的 token。
+        3.  使用相应的算法（bcrypt, hmac, aes-gcm, ccp）验证这两个 token 是否匹配。
+        4.  如果验证失败，中间件会阻止请求继续，并通常返回 403 Forbidden 错误。
+        5.  如果验证成功，请求会继续传递给你的 handler。
+    -   **处理 POST 后的 Token**: 在成功处理 POST 请求后，通常也需要调用 `depot.csrf_token().unwrap_or_default()` 来获取一个新的 token，用于在响应中（如果需要再次显示表单）或为下一次请求做准备。CSRF 中间件通常会在验证成功后自动轮换 Cookie 中的 token。
+-   **安全性**: 选择哪种算法取决于安全需求和性能考虑。HMAC 速度较快，而 Bcrypt 更能抵抗暴力破解但计算量大。AES-GCM 和 ChaCha20Poly1305 是现代的 AEAD 加密算法。**密钥 (`key`) 必须保密且足够随机。**
+
+## 文件列表
+
+-   [`csrf-cookie-store/Cargo.mdx`](csrf-cookie-store/Cargo.mdx): 项目依赖配置，展示了 `csrf` feature。
+-   [`csrf-cookie-store/src/main.mdx`](csrf-cookie-store/src/main.mdx): 主要应用代码，展示了如何配置和使用 `FormFinder` 以及四种不同的 CSRF Cookie Store 实现 (`bcrypt`, `hmac`, `aes_gcm`, `ccp`)。包含获取 token 并渲染表单的 GET handler (`get_page`) 和处理表单提交（中间件自动验证）的 POST handler (`post_page`)。
+```
+
+---
+
+```markdown
+# Salvo Web 框架 - 自定义路由过滤器示例
+
+> 本示例演示了如何在 Salvo 中为路由定义一个自定义的过滤逻辑，该逻辑在路由匹配之后、处理器执行之前运行。
+
+有时，除了路径匹配之外，我们还需要基于请求的其他属性（如 Host 头、请求方法、特定 Header 等）来决定是否应该执行某个路由的处理器。Salvo 允许使用 `filter_fn` 来实现这种自定义过滤。
+
+-   **`Router::filter_fn(closure)`**: 这个方法接受一个闭包作为参数。该闭包接收 `&Request` 和 `&Depot` 作为输入，并需要返回一个 `bool` 值。
+-   **工作方式**: 当一个请求的路径匹配了某个 `Router` 时，如果该 `Router` 上定义了 `filter_fn`，则会调用这个闭包。
+    -   如果闭包返回 `true`，则请求被认为通过了过滤器，会继续执行该路由关联的 `Handler` (通过 `.get()`, `.post()`, `.goal()` 等设置)。
+    -   如果闭包返回 `false`，则请求被认为没有通过过滤器。Salvo 会停止处理当前路由，并继续尝试匹配后续的其他路由。如果所有路由都匹配失败或被过滤器阻止，最终会返回 404 Not Found（或其他适当的错误）。
+-   **示例场景**: 示例中 `filter_fn` 检查请求的 `HOST` 头是否等于 `"localhost:5800"`。这意味着只有通过 `http://localhost:5800/` 访问时，`hello` 处理器才会被执行。如果通过 `http://127.0.0.1:5800/` 或 `http://<your-ip>:5800/` 访问，即使路径匹配，过滤器也会返回 `false`，导致 404 错误。
+-   **用途**: 自定义过滤器可用于实现基于 Host 的虚拟主机、基于特定 Header 的 API 版本控制、或者任何其他非路径的路由决策逻辑。
+
+## 文件列表
+
+-   [`custom-filter/Cargo.mdx`](custom-filter/Cargo.mdx): 项目依赖配置。
+-   [`custom-filter/src/main.mdx`](custom-filter/src/main.mdx): 主要应用代码，展示了如何创建一个 `Router`，使用 `filter_fn` 检查 `HOST` 头，并关联一个简单的 `hello` 处理器。
+```
+---
+
+好的，我们来逐步生成 Salvo 框架的 LLM 友好文档，从 `hello` 示例开始。
+
+```markdown
+# Salvo 框架示例：基础入门 (hello)
+
+> 这个示例展示了 Salvo 框架最基本的功能：创建处理程序 (handler)、定义路由 (router) 以及启动一个简单的 Web 服务器。它演示了如何响应不同的 URL 路径并返回不同类型的响应。
+
+这是一个 "Hello World" 级别的 Salvo 应用。它包含了以下核心概念：
+
+*   **处理程序 (Handler):** 使用 `#[handler]` 宏标记异步函数，使其能够处理 HTTP 请求。处理程序可以直接返回简单类型（如 `&'static str`）或 `Result`。
+*   **路由 (Router):** 使用 `Router::new()` 创建路由实例。`get()` 方法用于将 HTTP GET 请求映射到指定的处理程序。`push()` 方法可以将一个子路由添加到当前路由下，`Router::with_path()` 用于创建带有特定路径前缀的子路由。
+*   **服务器启动:**
+    *   使用 `TcpListener::new("0.0.0.0:5800").bind().await` 监听指定地址和端口。
+    *   使用 `Server::new(acceptor).serve(router).await` 将监听器和路由绑定，并启动服务来处理传入的请求。
+*   **日志:** 使用 `tracing_subscriber::fmt().init()` 初始化基本的日志系统，便于观察服务器运行情况和请求处理。
+*   **异步运行时:** 示例使用 `#[tokio::main]` 宏来设置 Tokio 异步运行时环境。
+
+## 文件列表
+
+*   [hello/src/main.mdx](hello/src/main.mdx): 包含两个简单的 GET 请求处理程序 (`hello` 和 `hello_zh`)，分别响应根路径 `/` 和 `/你好`，并演示了基本的路由配置和服务器启动流程。
+*   [hello/Cargo.mdx](hello/Cargo.mdx): 项目的依赖配置文件，声明了对 `salvo`, `tokio`, `tracing` 和 `tracing-subscriber` 的依赖。
+
+```
+
+---
+
+Okay, here is the LLM-friendly documentation for each Salvo example provided, following the structure you requested.
+
+```markdown
+# Salvo 框架示例：基础入门 (hello)
+
+> 这个示例展示了 Salvo 框架最基本的功能：创建处理程序 (handler)、定义路由 (router) 以及启动一个简单的 Web 服务器。它演示了如何响应不同的 URL 路径并返回不同类型的响应。
+
+这是一个 "Hello World" 级别的 Salvo 应用。它包含了以下核心概念：
+
+*   **处理程序 (Handler):** 使用 `#[handler]` 宏标记异步函数，使其能够处理 HTTP 请求。处理程序可以直接返回简单类型（如 `&'static str`）或 `Result`。
+*   **路由 (Router):** 使用 `Router::new()` 创建路由实例。`get()` 方法用于将 HTTP GET 请求映射到指定的处理程序。`push()` 方法可以将一个子路由添加到当前路由下，`Router::with_path()` 用于创建带有特定路径前缀的子路由。
+*   **服务器启动:**
+    *   使用 `TcpListener::new("0.0.0.0:5800").bind().await` 监听指定地址和端口。
+    *   使用 `Server::new(acceptor).serve(router).await` 将监听器和路由绑定，并启动服务来处理传入的请求。
+*   **日志:** 使用 `tracing_subscriber::fmt().init()` 初始化基本的日志系统，便于观察服务器运行情况和请求处理。
+*   **异步运行时:** 示例使用 `#[tokio::main]` 宏来设置 Tokio 异步运行时环境。
+
+## 文件列表
+
+*   [hello/src/main.mdx](hello/src/main.mdx): 包含两个简单的 GET 请求处理程序 (`hello` 和 `hello_zh`)，分别响应根路径 `/` 和 `/你好`，并演示了基本的路由配置和服务器启动流程。
+*   [hello/Cargo.mdx](hello/Cargo.mdx): 项目的依赖配置文件，声明了对 `salvo`, `tokio`, `tracing` 和 `tracing-subscriber` 的依赖。
+
+---
+
+# Salvo 框架示例：路由配置 (routing)
+
+> 这个示例演示了 Salvo 框架更复杂的路由构建方式，包括为不同的 HTTP 方法（GET, POST, DELETE）定义处理程序、使用路径参数、添加中间件 (middleware) 以及根据条件动态添加路由。
+
+此示例展示了如何组织和构建具有不同功能和访问控制的路由结构。关键概念包括：
+
+*   **HTTP 方法路由:** 使用 `.get()`, `.post()`, `.delete()` 等方法将特定 HTTP 方法的请求路由到相应的处理程序。
+*   **路径参数:** 在路由路径中使用 `{name:type}` 的形式定义参数，例如 `{id:num}` 匹配数字类型的 ID。处理程序可以通过 `req.params()` 获取这些参数的值。
+*   **中间件 (Middleware / Hoop):** 使用 `.hoop()` 方法将中间件添加到路由或子路由。中间件可以在请求到达最终处理程序之前或之后执行逻辑，例如身份验证 (`auth` 中间件示例)。中间件会应用于它所在的路由及其所有子路由。
+*   **路由分组:** 使用 `Router::with_path()` 创建具有共同路径前缀的子路由，便于组织相关功能，例如 `/users` 下的所有用户相关操作。
+*   **条件路由:** 使用 `.then()` 方法可以根据条件（例如 `debug_mode` 或 `admin_mode` 标志）动态地向路由中添加或排除某些路径。这对于根据不同环境（开发、生产）启用不同功能非常有用。
+*   **路由调试:** `println!("{router:#?}");` 可以打印出最终构建的路由树结构，有助于调试和理解路由匹配逻辑。
+
+## 文件列表
+
+*   [routing/src/main.mdx](routing/src/main.mdx): 定义了一个多层级的路由结构，包含用户管理的 CRUD 操作示例、身份验证中间件以及基于条件的调试和管理路由。
+*   [routing/Cargo.mdx](routing/Cargo.mdx): 项目的依赖配置文件。
+
+---
+
+# Salvo 框架示例：自定义路径过滤器 (routing-guid)
+
+> 这个示例展示了如何为 Salvo 路由定义自定义的路径参数验证规则，这里以验证 GUID (全局唯一标识符) 为例。
+
+Salvo 允许通过正则表达式定义自定义的路径参数过滤器，以确保参数符合特定格式。
+
+*   **注册自定义过滤器:** 使用 `PathFilter::register_wisp_regex("filter_name", Regex::new("...").unwrap())` 来注册一个新的过滤器。这里注册了一个名为 "guid" 的过滤器，其正则表达式用于匹配标准的 GUID 格式。
+*   **使用自定义过滤器:** 在路由路径定义中，像使用内置类型（如 `num`, `string`）一样使用自定义过滤器名称，例如 `{id:guid}`。只有当路径段匹配注册的 "guid" 正则表达式时，该路由才会匹配成功。
+*   **获取参数:** 在处理程序中，仍然使用 `req.params().get::<str>("id")` 来获取匹配到的参数值。
+
+## 文件列表
+
+*   [routing-guid/src/main.mdx](routing-guid/src/main.mdx): 演示了如何注册一个基于正则表达式的 "guid" 路径过滤器，并在路由中使用它来匹配包含有效 GUID 的路径。
+*   [routing-guid/Cargo.mdx](routing-guid/Cargo.mdx): 项目依赖，增加了 `regex` 库用于定义正则表达式。
+
+---
+
+# Salvo 框架示例：提供静态文件目录服务 (static-dir-list)
+
+> 这个示例演示了如何使用 Salvo 提供静态文件服务，允许浏览器访问服务器文件系统上的文件，并支持自动生成目录列表。
+
+Salvo 的 `serve-static` 特性提供了强大的静态文件服务能力。
+
+*   **`StaticDir` 服务:** 使用 `StaticDir::new([...])` 创建一个静态文件服务处理器。可以传入一个包含多个目录路径的数组，Salvo 会按顺序在这些目录中查找请求的文件。
+*   **自动目录列表:** `.auto_list(true)` 选项启用目录列表功能。当用户访问一个目录路径而不是具体文件时，服务器会自动生成一个包含该目录内容的 HTML 页面。
+*   **默认文件:** `.defaults("index.html")` 指定当访问目录时，如果存在名为 "index.html" 的文件，则优先提供该文件，而不是显示目录列表。
+*   **隐藏点文件:** `.include_dot_files(false)` (默认行为通常是 true 或可配置) 指示服务器不应列出或提供以点 (`.`) 开头的文件或目录（通常用于隐藏配置文件）。
+*   **通配符路径:** `Router::with_path("{*path}")` 使用通配符路径来捕获所有请求路径，并将它们传递给 `StaticDir` 处理器进行处理。
+
+## 文件列表
+
+*   [static-dir-list/src/main.mdx](static-dir-list/src/main.mdx): 配置 `StaticDir` 从多个本地 `static` 目录提供文件，启用了目录列表功能，并设置了默认文件。
+*   [static-dir-list/static/](static-dir-list/static/): 包含多个示例文件和目录，用于测试静态文件服务和目录列表功能。
+*   [static-dir-list/Cargo.mdx](static-dir-list/Cargo.mdx): 项目依赖，启用了 `salvo` 的 `serve-static` 特性。
+
+---
+
+# Salvo 框架示例：嵌入静态文件到可执行程序 (static-embed-files)
+
+> 这个示例展示了如何将静态文件（如 HTML, CSS, JS, 文本文件）直接嵌入到编译后的 Rust 可执行文件中，并在运行时提供这些文件，无需依赖外部文件系统。
+
+这对于创建单文件部署的应用程序非常有用。
+
+*   **`rust-embed` 集成:** 使用 `rust-embed` crate 来处理文件嵌入。
+    *   定义一个结构体（如 `Assets`）并使用 `#[derive(RustEmbed)]` 宏。
+    *   使用 `#[folder = "static"]` 指定要嵌入的静态文件所在的目录。
+*   **`static_embed` 服务:** Salvo 提供了 `static_embed::<Assets>()` 函数，它创建一个处理器，用于从嵌入的资源中提供文件服务。`Assets` 是之前定义的 `RustEmbed` 结构体。
+*   **后备文件:** `.fallback("index.html")` 指定当请求的路径未在嵌入资源中找到时，尝试提供名为 "index.html" 的文件。这常用于单页应用 (SPA)。
+*   **通配符路径:** 同样使用 `Router::with_path("{*path}")` 来捕获所有请求路径。
+
+## 文件列表
+
+*   [static-embed-files/src/main.mdx](static-embed-files/src/main.mdx): 使用 `rust-embed` 定义嵌入资源 `Assets`，并配置 `static_embed` 服务来提供这些嵌入的文件，同时设置了 `index.html` 作为后备。
+*   [static-embed-files/static/](static-embed-files/static/): 包含将要被嵌入到二进制文件中的示例静态文件（`index.html`, `test1.txt`, `test2.txt`）。
+*   [static-embed-files/Cargo.mdx](static-embed-files/Cargo.mdx): 项目依赖，包含了 `rust-embed` 和启用了 `salvo` 的 `serve-static` 特性。
+
+---
+
+# Salvo 框架示例：流式响应体 (body-channel)
+
+> 这个示例演示了如何使用 Salvo 的响应通道 (response channel) 来实现流式响应。这对于需要逐步发送数据或处理长时间运行任务的场景非常有用，可以避免阻塞服务器线程并允许客户端尽早接收部分数据。
+
+通过响应通道，可以在后台任务中逐步将数据发送给客户端。
+
+*   **获取响应通道:** 在处理程序中，通过 `res.channel()` 获取一个发送端 (`Sender<Bytes>`)。`res` 是 `&mut Response`。
+*   **设置响应头:** 在获取通道之前，需要设置好响应头，特别是 `content-type`。
+*   **异步发送数据:** 将发送端 `tx` 移动到一个新的异步任务中 (例如使用 `tokio::spawn`)。
+*   **发送数据块:** 在异步任务中，使用 `tx.send_data("...")` 或 `tx.send(Bytes::from("..."))` 来发送数据块。`send_data` 是发送 `&'static str` 的便捷方法。每次发送都会将数据块立即发送给客户端。
+*   **通道关闭:** 当 `tx` 被丢弃（drop）时（通常是异步任务结束时），通道会自动关闭，表示响应结束。
+
+## 文件列表
+
+*   [body-channel/src/main.mdx](body-channel/src/main.mdx): 定义了一个 `hello` 处理程序，它获取响应通道，然后启动一个 Tokio 任务在后台通过通道发送 "Hello world" 字符串。
+*   [body-channel/Cargo.mdx](body-channel/Cargo.mdx): 项目的依赖配置文件。
+
+---
+
+# Salvo 框架示例：集成 GraphQL (db-graphql)
+
+> 这个示例展示了如何在 Salvo 应用中集成 Juniper 库来实现 GraphQL API 服务，并使用一个简单的内存数据库作为数据源。
+
+GraphQL 提供了一种灵活的数据查询和操作语言。Salvo 可以轻松地与 Juniper 集成。
+
+*   **GraphQL Schema 定义:**
+    *   定义 GraphQL 对象类型 (`User`)，使用 `#[derive(GraphQLObject)]`。
+    *   定义 GraphQL 输入类型 (`UserInput`)，使用 `#[derive(GraphQLInputObject)]`，用于 mutations。
+    *   定义查询根 (`QueryRoot`) 和变更根 (`MutationRoot`)，并在其 `impl` 块中使用 `#[graphql_object(context = DatabaseContext)]` 来实现解析器 (resolvers)。
+    *   定义数据库上下文 (`DatabaseContext`)，用于在解析器之间共享状态（如数据库连接或实例）。这里使用 `RwLock` 包装内存数据库 (`Database`) 以支持并发读写。
+    *   使用 `juniper::RootNode` 将查询、变更（和可选的订阅）组合成完整的 Schema (`schema::Schema`)。
+*   **数据库模拟:** 使用 `HashMap` 和 `RwLock` 实现了一个简单的线程安全的内存数据库 (`schema::Database`) 来存储用户数据。
+*   **Salvo 处理程序:**
+    *   创建一个处理 POST 请求到 `/graphql` 路径的处理程序 (`graphql` 函数)。
+    *   在处理程序中，创建 Schema 实例 (`create_schema()`) 和数据库上下文 (`DatabaseContext::new()`)。
+    *   解析请求体中的 JSON 数据为 `GraphQLRequest`。
+    *   调用 `data.execute(&schema, &context).await` 来执行 GraphQL 请求。
+    *   将执行结果 (`response`) 序列化为 JSON 并返回给客户端。
+
+## 文件列表
+
+*   [db-graphql/src/main.mdx](db-graphql/src/main.mdx): 设置 Salvo 服务器，定义 `/graphql` 路由和处理程序，协调 GraphQL 请求的接收、执行和响应。
+*   [db-graphql/src/schema.mdx](db-graphql/src/schema.mdx): 定义 GraphQL Schema、对象类型 (`User`)、输入类型 (`UserInput`)、数据库结构 (`Database`) 和上下文 (`DatabaseContext`)。
+*   [db-graphql/src/query.mdx](db-graphql/src/query.mdx): 实现 `QueryRoot`，包含获取所有用户 (`get_all_users`) 和按 ID 获取用户 (`get_user_by_id`) 的解析器逻辑。
+*   [db-graphql/src/mutation.mdx](db-graphql/src/mutation.mdx): 实现 `MutationRoot`，包含创建新用户 (`create_user`) 的解析器逻辑。
+*   [db-graphql/Cargo.mdx](db-graphql/Cargo.mdx): 项目依赖，包括 `salvo`, `tokio`, `juniper`, `parking_lot` (用于 `RwLock`)。
+
+---
+
+# Salvo 框架示例：集成 OpenTelemetry (otel-jaeger)
+
+> 这个示例演示了如何在 Salvo 应用中集成 OpenTelemetry (OTel) 来实现分布式追踪和指标收集，并将追踪数据导出到 Jaeger，指标数据通过 Prometheus 端点暴露。它包含三个部分：一个客户端和两个服务端，展示了跨服务的追踪传播。
+
+OpenTelemetry 是一个用于观测性数据（追踪、指标、日志）生成和收集的标准化框架。
+
+*   **核心概念:**
+    *   **TracerProvider:** 创建和管理 Tracer 的工厂。示例中使用 OTLP (OpenTelemetry Protocol) exporter 将追踪数据发送到收集器（如 Jaeger Agent 或 Collector）。
+    *   **Tracer:** 用于创建和管理 Spans。
+    *   **Span:** 表示一个操作单元或工作流程的一部分。Span 包含操作名称、开始/结束时间、属性 (KeyValue)、事件等。
+    *   **Context Propagation:** 在服务间传递追踪上下文（Trace ID, Span ID），以便将跨服务请求链接成单个分布式追踪。示例中使用 W3C Trace Context Propagator，通过 HTTP 头进行传播。
+    *   **Metrics:** 收集应用程序指标（如请求计数、延迟）。Salvo 提供 `salvo::otel::Metrics` 中间件。
+    *   **Tracing Middleware:** Salvo 提供 `salvo::otel::Tracing` 中间件，自动为每个请求创建根 Span，并从传入请求中提取上下文。
+*   **Tracer 初始化 (`init_tracer_provider`):**
+    *   配置 OTLP exporter（指定协议和端点）。
+    *   创建 `SdkTracerProvider`，配置 exporter 和服务名称资源 (`Resource::builder().with_service_name(...)`)。
+    *   设置全局文本映射传播器 (`TraceContextPropagator`)。
+*   **Salvo 集成:**
+    *   **`Tracing` 中间件:** `Router::new().hoop(Tracing::new(tracer))` 将 OTel 追踪集成到请求处理流程中。
+    *   **`Metrics` 中间件:** `Router::new().hoop(Metrics::new())` 自动收集基本的 HTTP 请求指标。
+    *   **共享 Tracer:** 使用 `affix_state::inject` 将 `Tracer` 实例注入到 `Depot` 中，方便在处理程序中访问。
+*   **手动创建 Span:**
+    *   在处理程序中，通过 `depot.obtain::<Arc<Tracer>>().unwrap()` 获取 Tracer。
+    *   使用 `tracer.span_builder("span_name").with_kind(SpanKind::Client/Server).start(tracer)` 创建新的子 Span。
+    *   使用 `opentelemetry::Context::current_with_span(span)` 将新 Span 设置为当前上下文。
+    *   使用 `.with_context(cx)` 将异步操作与特定 Span 的上下文关联起来。
+*   **跨服务追踪:**
+    *   在发起 HTTP 请求（如使用 `reqwest`）之前，使用 `global::get_text_map_propagator` 将当前追踪上下文注入到 HTTP 请求头中 (`HeaderInjector`)。
+    *   接收端 (Server2) 的 `Tracing` 中间件会自动从请求头中提取上下文，并将新创建的服务器端 Span 作为子 Span 连接到客户端 Span。
+*   **指标导出:**
+    *   示例包含一个自定义的 `Exporter` 处理程序 (`exporter.rs`)，它使用 `prometheus` crate 收集指标并通过 `/metrics` 端点以 Prometheus 文本格式暴露。`salvo::otel::Metrics` 中间件会自动更新这些指标。
+
+## 文件列表
+
+*   [otel-jaeger/src/server1.mdx](otel-jaeger/src/server1.mdx): 第一个服务端。接收来自客户端的请求，创建一个客户端 Span，然后向下游 (Server2) 发送请求，并将追踪上下文注入请求头。
+*   [otel-jaeger/src/server2.mdx](otel-jaeger/src/server2.mdx): 第二个服务端。接收来自 Server1 的请求，`Tracing` 中间件自动提取上下文并创建关联的服务器端 Span。
+*   [otel-jaeger/src/client.mdx](otel-jaeger/src/client.mdx): 一个独立的客户端程序。创建初始 Span，向 Server1 发送请求，并将追踪上下文注入请求头。
+*   [otel-jaeger/src/exporter.mdx](otel-jaeger/src/exporter.mdx): 定义了一个 Prometheus 指标导出器处理程序，用于暴露 `/metrics` 端点。
+*   [otel-jaeger/Cargo.mdx](otel-jaeger/Cargo.mdx): 项目依赖，包含了 `salvo` (启用 `otel`, `affix-state` 特性)、`tokio`、`opentelemetry` 相关 crates (`opentelemetry`, `opentelemetry-http`, `opentelemetry_sdk`, `opentelemetry-otlp`)、`reqwest` (用于客户端请求) 以及 `prometheus`, `opentelemetry-prometheus` (用于指标)。
+
+**注意:** 运行此示例需要一个 OpenTelemetry Collector (配置为接收 OTLP 并导出到 Jaeger) 和 Jaeger 后端正在运行。或者直接将 OTLP exporter 指向 Jaeger Collector 的 OTLP 端口（如果支持）。
+
+```
+---
+

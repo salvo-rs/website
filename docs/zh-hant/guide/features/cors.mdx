@@ -1,0 +1,72 @@
+# 跨域控制
+
+CORS (Cross-Origin Resource Sharing，跨來源資源共享) 是一種機制，允許瀏覽器向跨來源伺服器發出請求，從而克服了瀏覽器的同源政策限制。
+
+## 什麼是同源政策？
+
+同源政策是瀏覽器的安全功能，限制了從一個來源載入的文件或腳本如何與來自另一個來源的資源進行互動。所謂「同源」是指相同的通訊協定、網域名稱和連接埠號。
+
+## 為什麼需要CORS？
+
+當前端應用需要存取不同來源的API時，就需要CORS支援。例如：
+- 前端應用部署在 `https://frontend.com`
+- API服務部署在 `https://api.backend.com`
+
+沒有CORS，瀏覽器會阻止前端應用存取API服務。
+
+## CORS工作原理
+
+CORS透過一系列HTTP標頭實現跨域存取控制：
+- 簡單請求：直接發送，伺服器透過回應標頭控制是否允許
+- 預檢請求：瀏覽器先發送OPTIONS請求詢問伺服器是否允許跨域，獲得允許後再發送實際請求
+
+由於瀏覽器會發送 `Method::OPTIONS` 的預檢請求，所以需要增加對此類請求的處理，需要把CORS中介軟體添加到 `Service` 上。
+
+## 在Salvo中使用CORS
+
+Salvo提供了內建的CORS中介軟體，可以輕鬆配置和使用。以下是範例程式碼：
+
+:::warning
+注意.hoop(cors)中介軟體是作用在 `Service` 上的,注意.hoop(cors)中介軟體是作用在 `Service` 上的.注意.hoop(cors)中介軟體是作用在 `Service` 上的，而不是 `Router` 上的.
+這樣可以自動處理option預檢.
+```rust
+let cors = Cors::new()
+    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
+    .allow_headers("authorization")
+    .into_handler();
+
+// 設定帶有CORS保護的後端路由器
+let router = Router::with_path("hello").post(hello);
+let service = Service::new(router).hoop(cors);
+```
+:::
+
+_**範例程式碼**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CorsCode from '../../../../codes_md/cors/src/main.mdx';
+import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CorsCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CorsCargoCode/>
+  </Tab>
+</Tabs>
+
+## 主要配置選項
+
+CORS中介軟體提供了多種配置選項：
+
+- **允許的來源**：控制哪些網域名稱可以存取資源
+- **允許的方法**：指定允許的HTTP方法（GET, POST等）
+- **允許的標頭**：指定允許的請求標頭
+- **暴露的標頭**：指定哪些回應標頭可以被用戶端存取
+- **允許攜帶憑證**：是否允許請求包含cookies等憑證資訊
+- **預檢請求快取時間**：預檢請求結果的快取時間
+
+透過合理配置CORS，可以既保證安全性，又滿足跨域存取的需求。
+{/* 本行由工具自动生成,原文哈希值:0b191eacd5af64466fceaea928dec4d4 */}

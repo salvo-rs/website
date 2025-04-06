@@ -1,0 +1,50 @@
+# État Affix - Données partagées dans les requêtes
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
+import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+
+Le middleware Affix State permet d'ajouter des données partagées dans le Depot.
+Pour utiliser cette fonctionnalité, vous devez activer la feature `affix-state` dans Cargo.toml.
+
+## Analyse des fonctionnalités
+Affix State fournit un moyen simple de partager des données pendant le traitement des requêtes. Il vous permet de :
+
+Injecter des configurations globales ou des données partagées lors de la configuration des routes
+Accéder à ces données via le Depot dans n'importe quel handler
+Prendre en charge tout type clonable comme données d'état
+
+## Comparaison avec d'autres frameworks - Compréhension rapide
+| Framework | Langage | Gestion d'état |
+|-----------|---------|----------------|
+| Salvo (Affix State) | Rust | Stockage et accès via Depot, supporte plusieurs types |
+| Axum | Rust | Stockage via Extension, similaire mais utilisation différente |
+| Actix-web | Rust | Utilise App Data et Web::Data pour partager l'état |
+| Gin | Go | Utilise context.Set et context.Get pour accéder aux données |
+| Echo | Go | Utilise context.Set et context.Get pour gérer l'état partagé |
+| Spring | Java | Utilise ApplicationContext ou annotation @Bean pour les dépendances |
+| Quarkus | Java | Utilise CDI et le mécanisme d'injection de dépendances |
+| Express.js | JavaScript | Utilise app.locals ou req.app.locals pour stocker l'état global |
+| Nest.js | JavaScript | Utilise un système d'injection de dépendances pour les services partagés |
+| Koa.js | JavaScript | Utilise ctx.state pour stocker l'état au niveau de la requête |
+
+## Cas d'utilisation courants
+
+- Partage de pool de connexions à la base de données
+- Partage de configuration d'application
+- Partage d'instances de cache
+- Partage de clients API
+- Suivi de compteurs ou états globaux
+
+L'avantage d'Affix State réside dans sa simplicité et sa flexibilité, permettant de partager facilement tout type de données entre différentes routes et handlers sans nécessiter beaucoup de code passe-partout.
+_**Exemple de code**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:983c6e0b4ca9ff5e194da5a41d8d46f7 */}

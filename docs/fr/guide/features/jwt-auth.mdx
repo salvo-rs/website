@@ -1,0 +1,32 @@
+# Authentification JWT
+
+JWT (JSON Web Token) est un standard ouvert (RFC 7519) permettant de transmettre des informations de manière sécurisée entre parties. C'est une méthode compacte et sûre pour les URL, représentant des déclarations sous forme d'objet JSON, généralement utilisées pour l'authentification et l'échange d'informations.
+
+Un JWT se compose de trois parties :
+- **En-tête (Header)** - Spécifie le type de jeton et l'algorithme de signature utilisé
+- **Charge utile (Payload)** - Contient les déclarations (claims) comme l'ID utilisateur, les rôles, la date d'expiration, etc.
+- **Signature** - Utilisée pour vérifier que le message n'a pas été altéré pendant la transmission
+
+Utilisation typique du JWT dans un processus d'authentification :
+1. Après la connexion de l'utilisateur, le serveur génère un jeton JWT
+2. Le jeton est renvoyé au client et stocké (généralement dans localStorage ou un cookie)
+3. Dans les requêtes suivantes, le client inclut ce jeton dans l'en-tête Authorization
+4. Le serveur vérifie la validité du jeton et autorise l'accès
+
+Fournit un middleware pour l'authentification JWT.
+
+_**Exemple de code**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
+import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <JwtAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <JwtAuthCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:4d9196c8fb1dedaa4b7291d33747b794 */}

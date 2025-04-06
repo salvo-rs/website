@@ -1,0 +1,209 @@
+---
+title: Rust HTTPクライアントライブラリ
+---
+
+# Reqwest: Rust HTTPクライアントライブラリ
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/reqwest/latest/reqwest/"
+  title="reqwest"
+  description="reqwest"
+/>
+
+Reqwestは高レベルなHTTPクライアントライブラリで、HTTPリクエストの処理フローを簡素化し、多くの便利な機能を提供します：
+
+- 非同期および同期APIのサポート
+- 各種リクエストボディの処理：プレーンテキスト、JSON、URLエンコードフォーム、マルチパートフォーム
+- カスタマイズ可能なリダイレクトポリシー
+- HTTPプロキシサポート
+- デフォルトでTLS暗号化を使用
+- Cookie管理
+
+## 基本的な使い方
+
+### GETリクエストの送信
+
+単一のリクエストには`get`ショートカットメソッドが使えます：
+
+```rust
+let body = reqwest::get("https://www.rust-lang.org")
+    .await?
+    .text()
+    .await?;
+
+println!("body = {body:?}");
+```
+
+> 注意：複数のリクエストを実行する予定がある場合は、`Client`を作成して再利用し、コネクションプーリングの利点を活用するのが良いでしょう。
+
+```rust
+let client = reqwest::Client::new();
+let res = client.get("https://www.rust-lang.org")
+    .send()
+    .await?;
+```
+
+### POSTリクエストの送信
+
+`body()`メソッドでリクエストボディを設定できます：
+
+```rust
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .body("送信する具体的な内容")
+    .send()
+    .await?;
+```
+
+### フォームデータ
+
+フォームデータの送信は一般的な要件で、フォームデータにシリアライズ可能な任意の型が使用できます：
+
+```rust
+// これは`foo=bar&baz=quux`というボディのPOSTリクエストを送信します
+let params = [("foo", "bar"), ("baz", "quux")];
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .form(&params)
+    .send()
+    .await?;
+```
+
+### JSONデータ
+
+`json`メソッドで簡単にJSONデータを送信できます（`json`機能が必要）：
+
+```rust
+// これは`{"lang":"rust","body":"json"}`というボディのPOSTリクエストを送信します
+let mut map = HashMap::new();
+map.insert("lang", "rust");
+map.insert("body", "json");
+
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .json(&map)
+    .send()
+    .await?;
+```
+
+### レスポンスの処理
+
+レスポンスは複数の方法で処理できます：
+
+```rust
+let res = client.get("https://www.rust-lang.org").send().await?;
+
+// ステータスコードを取得
+let status = res.status();
+
+// レスポンスヘッダーを取得
+let content_type = res.headers().get("content-type").unwrap();
+
+// レスポンスボディをテキストとして読み取る
+let body = res.text().await?;
+
+// またはJSONとしてパース
+let json: serde_json::Value = res.json().await?;
+```
+
+## 高度な機能
+
+### リダイレクトポリシー
+
+デフォルトでは、クライアントはHTTPリダイレクトを自動的に処理し、最大10回のリダイレクトに従います。`ClientBuilder`でこの動作をカスタマイズできます：
+
+```rust
+let custom_client = reqwest::Client::builder()
+    .redirect(reqwest::redirect::Policy::none()) // リダイレクトを無効化
+    .build()?;
+```
+
+### Cookieサポート
+
+`ClientBuilder`でセッションCookieの自動保存と送信を有効化できます：
+
+```rust
+let client = reqwest::Client::builder()
+    .cookie_store(true)
+    .build()?;
+```
+
+### プロキシ設定
+
+システムプロキシはデフォルトで有効で、環境変数からHTTPまたはHTTPSプロキシ設定を探します：
+
+- `HTTP_PROXY`または`http_proxy`：HTTP接続のプロキシ
+- `HTTPS_PROXY`または`https_proxy`：HTTPS接続のプロキシ
+- `ALL_PROXY`または`all_proxy`：両方の接続のプロキシ
+
+コードで明示的にプロキシを設定することもできます：
+
+```rust
+let proxy = reqwest::Proxy::http("https://secure.example")?;
+let client = reqwest::Client::builder()
+    .proxy(proxy)
+    .build()?;
+
+// またはプロキシを無効化
+let client = reqwest::Client::builder()
+    .no_proxy()
+    .build()?;
+```
+
+### TLS設定
+
+クライアントはデフォルトでTLSを使用してHTTPSターゲットに接続します：
+
+```rust
+// 追加のサーバー証明書を追加
+let cert = reqwest::Certificate::from_pem(&cert_bytes)?;
+let client = reqwest::Client::builder()
+    .add_root_certificate(cert)
+    .build()?;
+
+// クライアント証明書を設定
+let identity = reqwest::Identity::from_pkcs12_der(&pkcs12_der, "password")?;
+let client = reqwest::Client::builder()
+    .identity(identity)
+    .build()?;
+```
+
+### タイムアウト設定
+
+リクエストにタイムアウトを設定できます：
+
+```rust
+let client = reqwest::Client::builder()
+    .timeout(std::time::Duration::from_secs(10))
+    .build()?;
+```
+
+## オプション機能
+
+Reqwestは複数のオプション機能を提供し、Cargoの機能で有効/無効にできます：
+
+- `http2`（デフォルト有効）：HTTP/2サポート
+- `default-tls`（デフォルト有効）：HTTPSのTLSサポートを提供
+- `rustls-tls`：rustlsを使用したTLS機能を提供
+- `blocking`：同期クライアントAPIを提供
+- `json`：JSONのシリアライズ/デシリアライズ機能を提供
+- `multipart`：マルチパートフォーム機能を提供
+- `cookies`：Cookieセッションサポートを提供
+- `gzip`、`brotli`、`deflate`、`zstd`：各種レスポンスボディの解凍をサポート
+- `socks`：SOCKS5プロキシサポートを提供
+
+## 同期API
+
+非同期操作が必要ない場合、同期APIが使用できます（`blocking`機能が必要）：
+
+```rust
+let body = reqwest::blocking::get("https://www.rust-lang.org")?.text()?;
+
+let client = reqwest::blocking::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .json(&map)
+    .send()?;
+```
+{/* 本行由工具自动生成,原文哈希值:32a7dacba91cf386fa534ceb5b25de71 */}

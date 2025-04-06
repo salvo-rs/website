@@ -1,0 +1,119 @@
+# Response
+
+在 `Handler` 中, [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) 会被作为参数传入:
+* `Response` 结构体封装了 HTTP 响应的所有组成部分，提供了一套完整的 API 来构建和操作 HTTP 响应
+* 支持链式调用风格（如 `res.status_code(200).body("Hello")`），便于流畅地构建响应
+* 核心功能包括：
+    * 设置状态码和请求头
+    * 操作响应体（支持字符串、字节、文件和流式数据）
+    * 管理 Cookie
+    * 多种内容渲染方式
+* 该结构体采用可变引用模式，通过 `&mut self` 返回自身引用，使得处理程序能够方便地构建和定制 HTTP 响应，满足各种 Web 服务需求
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world!");
+}
+```
+
+`Response` 在服务器接收到客户端请求后, 任何匹配到的 `Handler` 和中间件都可以向里面写入数据. 在某些情况下, 比如某个中间件希望阻止后续的中间件和 `Handler` 执行, 您可以使用 `FlowCtrl`:
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
+    ctrl.skip_rest();
+    res.render("Hello world!");
+}
+```
+
+## 写入内容
+
+向 `Response` 中写入数据是非常简单的:
+
+- 写入纯文本数据
+
+    ```rust
+    res.render("Hello world!");
+    ```
+
+- 写入 JSON 序列化数据
+
+    ```rust
+    use serde::Serialize;
+    use salvo::prelude::Json;
+
+    #[derive(Serialize, Debug)]
+    struct User {
+        name: String,
+    }
+    let user = User{name: "jobs".to_string()};
+    res.render(Json(user));
+    ```
+
+:::warning
+如果多次调用 `render` 方法写入 JSON 数据，这些数据不会被合并成一个 JSON 对象，而是作为独立的文本片段按顺序拼接在一起，可能导致无效的 JSON 格式。如果需要返回多个数据，应该将它们组合成一个对象后再一次性序列化，或自行处理逻辑。
+:::
+
+
+- 写入 HTML
+    
+    ```rust
+    res.render(Text::Html("<html><body>hello</body></html>"));
+    ```
+
+## 写入 HTTP 错误
+
+
+- 使用 `render` 可以向 `Response` 写入详细错误信息.
+
+    ```rust
+    use salvo::http::errors::*;
+    res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
+    ```
+
+- 如果您不需要自定义错误信息, 可以直接调用 `set_http_code`.
+
+    ```rust
+    use salvo::http::StatusCode;
+    res.status_code(StatusCode::BAD_REQUEST);
+    ```
+
+## 重定向到其他URL
+- 使用 `render` 方法可以向 `Response` 写入一个重定向响应，导航到一个新的URL. 当你调用 Redirect::found 方法时，它会设置 HTTP 状态码为 302（Found），表示临时重定向. 
+    ```rust
+    use salvo::prelude::*;
+
+    #[handler]
+    async fn redirect(res: &mut Response) {
+        res.render(Redirect::found("https://salvo.rs/"));
+    }
+    ```
+
+
+## ResBody
+
+Response 返回的 Body 类型是 `ResBody`, 它是一个枚举，在出错时被设置为 `ResBody::Error` ,这里包含错误的信息，用于延后处理错误，`StatusError` 实际上并没实现 `Writer`, 目的是让你可以在 `Catcher` 中自定义自己的显示方式.
+
+
+
+# Response 结构体方法概览
+
+| 类别 | 方法 | 描述 |
+|------|------|------|
+| **创建** | `new()` / `with_cookies()` | 创建新响应 |
+| **状态码** | `status_code()` | 设置状态码 |
+| **请求头** | `headers()/headers_mut()` | 获取请求头 |
+| | `set_headers()/add_header()` | 设置/添加请求头 |
+| | `content_type()` | 获取内容类型 |
+| **HTTP 版本** | `version()/version_mut()` | 获取/修改 HTTP 版本 |
+| **响应体** | `body()/body_mut()` | 设置/获取响应体 |
+| | `replace_body()/take_body()` | 替换/提取响应体 |
+| | `write_body()` | 写入数据到响应体 |
+| | `stream()/channel()` | 流式响应/创建发送通道 |
+| **Cookie 处理** | `cookies()/cookie()` | 获取 cookies/指定 cookie |
+| | `add_cookie()/remove_cookie()` | 添加/移除 cookie |
+| **内容响应** | `render()` | 渲染内容 |
+| | `stuff()` | 设置状态码并渲染内容 |
+| | `send_file()` | 发送文件 |
+| **状态查询** | `is_stamped()` | 检查响应是否准备好写回 |

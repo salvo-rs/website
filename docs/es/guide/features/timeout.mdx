@@ -1,0 +1,27 @@
+```typescript
+import { Tab, Tabs } from 'rspress/theme';
+import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
+import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
+
+# Middleware de Tiempo de Espera
+
+Proporciona soporte de timeout a través de middleware.
+
+## Casos de Uso
+
+En servicios web, ciertas solicitudes pueden demorarse excesivamente debido a diversos factores (como consultas lentas a bases de datos, respuestas tardías de servicios externos, etc.). Para evitar que estas solicitudes de larga ejecución consuman recursos del servidor y afecten el procesamiento de otras solicitudes, se puede utilizar este middleware para establecer un tiempo máximo de procesamiento. Si se excede este límite, la solicitud se interrumpirá automáticamente y devolverá un error de timeout.
+
+_**Código de Ejemplo**_
+
+<Tabs>
+<Tab label="main.rs">
+<TimeoutMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TimeoutCargoCode/>
+</Tab>
+</Tabs>
+
+En el ejemplo anterior, creamos dos funciones de manejo: una de respuesta rápida (`fast`) y otra con un retraso de 6 segundos (`slow`). Mediante `Timeout::new(Duration::from_secs(5))`, establecemos un límite de 5 segundos para todas las solicitudes. Al acceder a la ruta `/slow`, como el tiempo de procesamiento supera el límite de 5 segundos, la solicitud experimentará un timeout; mientras que al acceder a `/fast`, la solicitud se procesará normalmente y devolverá el resultado.
+```
+{/* 本行由工具自动生成,原文哈希值:91c35a9e679382fc5ad89433063fa043 */}

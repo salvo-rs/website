@@ -1,0 +1,37 @@
+# Proxy Reverso
+
+Um proxy reverso é uma arquitetura de servidor que recebe solicitações de clientes e as encaminha para um ou mais servidores back-end. Diferente de um proxy direto (que representa o cliente), o proxy reverso trabalha em nome do lado do servidor.
+
+Principais vantagens do proxy reverso:
+- Balanceamento de carga: distribui solicitações entre vários servidores
+- Melhoria na segurança: oculta informações do servidor real
+- Cache de conteúdo: aumenta o desempenho
+- Reescrever e encaminhar caminhos: roteia solicitações com flexibilidade
+
+O framework Salvo fornece um middleware com funcionalidade de proxy reverso.
+
+_**Código de Exemplo**_
+
+```rust
+use salvo::prelude::*;
+use salvo::proxy::Proxy;
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+    
+    let router = Router::new()
+        .push(
+            Router::new()
+                .path("google/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.google.com"])),
+        )
+        .push(
+            Router::new()
+                .path("baidu/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.baidu.com"])),
+        );
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
+}
+```
+{/* 本行由工具自动生成,原文哈希值:79e235201cbe5bf2b6045156f3bae7e7 */}

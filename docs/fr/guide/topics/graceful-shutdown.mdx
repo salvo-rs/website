@@ -1,0 +1,38 @@
+# Arrêt élégant
+
+L'arrêt élégant (graceful shutdown) désigne le processus où, lors de la fermeture d'un serveur, on ne termine pas immédiatement toutes les connexions, mais on cesse d'abord d'accepter de nouvelles requêtes tout en laissant aux requêtes déjà acceptées suffisamment de temps pour terminer leur traitement avant d'arrêter le service. Cette approche évite l'interruption brutale des requêtes, améliorant ainsi l'expérience utilisateur et la fiabilité du système.
+
+Salvo prend en charge l'arrêt élégant via la méthode `handle` du `Server`, qui permet d'obtenir un gestionnaire de serveur, puis en appelant la méthode `stop_graceful`. Après l'appel de cette méthode, le serveur:
+
+- Cesse d'accepter de nouvelles connexions
+- Attend que les requêtes en cours soient traitées
+- Force la fermeture des connexions restantes après le délai d'expiration spécifié (si fourni)
+
+Voici un exemple simple:
+
+```rust
+use salvo_core::prelude::*;
+
+#[tokio::main]
+async fn main() {
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let server = Server::new(acceptor);
+    let handle = server.handle();
+
+    // Arrêt élégant du serveur
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        handle.stop_graceful(None);
+    });
+    server.serve(Router::new()).await;
+}
+```
+
+Dans cet exemple:
+
+- `server.handle()` obtient un gestionnaire de serveur qui permet de contrôler son cycle de vie
+- `handle.stop_graceful(None)` initie le processus d'arrêt élégant, où `None` signifie qu'aucun délai d'expiration n'est défini - le serveur attend indéfiniment que toutes les requêtes soient traitées
+- Pour définir un délai d'expiration, on peut passer `Some(Duration)`, après quoi les connexions restantes seront fermées de force
+
+Cette méthode est particulièrement utile pour les applications déployées dans des environnements conteneurisés ou sur des plateformes cloud, ainsi que pour les mises à jour à chaud où il est essentiel d'éviter l'interruption inattendue des requêtes.
+{/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

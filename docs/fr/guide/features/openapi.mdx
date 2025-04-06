@@ -1,0 +1,166 @@
+```markdown
+import { Tab, Tabs } from 'rspress/theme';
+import OapiHelloCode from '../../../../codes_md/oapi-hello/src/main.mdx';
+import OapiHelloCargoCode from '../../../../codes_md/oapi-hello/Cargo.mdx';
+
+# Génération de documentation OpenAPI
+
+OpenAPI est une spécification open source pour décrire la conception d'interfaces d'API RESTful. Il définit au format JSON ou YAML la structure des requêtes et réponses d'API, incluant paramètres, types de retour, codes d'erreur et autres détails, clarifiant ainsi la communication entre client et serveur.
+
+Initialement version open source de la spécification Swagger, OpenAPI est désormais un projet indépendant soutenu par de grandes entreprises et développeurs. Son utilisation améliore la collaboration entre équipes, réduit les coûts de communication et accroît l'efficacité. OpenAPI fournit également des outils pour générer automatiquement documentation, données mock et cas de test.
+
+Salvo intègre OpenAPI (adapté de [utoipa](https://github.com/juhaku/utoipa)). Il extrait élégamment les informations de typage OpenAPI depuis les `Handler`. Salvo supporte aussi SwaggerUI, scalar, rapidoc et d'autres interfaces OpenAPI populaires.
+
+Pour adapter les longs noms de types Rust à OpenAPI, `salvo-oapi` propose le type `Namer` permettant de personnaliser les règles de nommage.
+
+_**Exemple de code**_  
+
+<Tabs>
+  <Tab label="main.rs">
+    <OapiHelloCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <OapiHelloCargoCode/>
+  </Tab>
+</Tabs>
+
+Accédez à `http://localhost:5800/swagger-ui` dans votre navigateur pour voir l'interface Swagger UI.
+
+L'intégration OpenAPI de Salvo est particulièrement élégante. Pour l'exemple ci-dessus, seules ces étapes diffèrent d'un projet Salvo standard :
+
+- Activer la fonctionnalité `oapi` dans `Cargo.toml` : `salvo = { workspace = true, features = ["oapi"] }`;
+- Remplacer `#[handler]` par `#[endpoint]`;
+- Utiliser `name: QueryParam<String, false>` pour récupérer les paramètres de requête. Avec `http://localhost/hello?name=chris`, la valeur sera analysée. Le `false` indique que le paramètre est optionnel - `http://localhost/hello` fonctionnera sans erreur. Avec `QueryParam<String, true>`, le paramètre devient obligatoire.
+- Créer un `OpenAPI` et son `Router`. `OpenApi::new("test api", "0.0.1").merge_router(&router)` analyse la route et ses descendantes pour générer la documentation. Les routes sans informations OpenAPI (comme celles avec `#[handler]`) sont ignorées. Cela permet une adoption progressive.
+
+## Extracteurs de données
+
+`use salvo::oapi::extract::*;` importe des extracteurs courants. Ils fournissent à Salvo les informations nécessaires pour générer la documentation OpenAPI.
+
+- `QueryParam<T, const REQUIRED: bool>`: Extrait les paramètres de requête. `false` = optionnel.
+- `HeaderParam<T, const REQUIRED: bool>`: Extrait les en-têtes HTTP. `false` = optionnel.
+- `CookieParam<T, const REQUIRED: bool>`: Extrait les cookies. `false` = optionnel.
+- `PathParam<T>`: Extrait les paramètres de chemin (toujours requis).
+- `FormBody<T>`: Extrait les données de formulaire.
+- `JsonBody<T>`: Extrait les payloads JSON.
+
+## `#[endpoint]`
+
+Pour générer la documentation OpenAPI, utilisez `#[endpoint]` au lieu de `#[handler]`. Cette macro étendue :
+
+- Infère les informations OpenAPI depuis la signature de fonction.
+- Permet de compléter via des attributs supplémentaires (prioritaires sur la signature).
+
+Le marquage `#[deprecated]` est supporté (mais sans détails comme la raison).
+
+Les commentaires de documentation servent de summary (première ligne) et description (ensemble).
+
+```rust
+/// Résumé de l'opération
+///
+/// Description détaillée.
+#[endpoint]
+fn endpoint() {}
+```
+
+## ToSchema
+
+Définissez des structures avec `#[derive(ToSchema)]` :
+
+```rust
+#[derive(ToSchema)]
+struct Animal {
+    id: u64,
+    nom: String,
+}
+```
+
+Options via `#[salvo(schema(...))]` :
+
+- `example = json!(...)` : Exemple JSON.
+- `xml(...)` : Configuration XML.
+
+## ToParameters
+
+Génère des [paramètres de chemin][path_parameters] depuis les champs d'une structure.
+
+Implémente le trait [`ToParameters`][to_parameters]. Normalement, les paramètres sont déclarés dans `#[salvo_oapi::endpoint(...parameters(...))]`. Avec une structure, cette étape devient optionnelle.
+
+Le marquage `#[deprecated]` est supporté (sans détails supplémentaires). Les commentaires servent de description.
+
+```rust
+#[derive(salvo_oapi::ToParameters, serde::Deserialize)]
+struct Requête {
+    /// Filtre les items par nom.
+    nom: String
+}
+```
+
+### Attributs de conteneur `#[salvo(parameters(...))]`
+
+- `names(...)` : Noms pour les champs non nommés.
+- `style = ...` : Style de sérialisation ([`ParameterStyle`][style]).
+- `default_parameter_in = ...` : Position par défaut ([`parameter::ParameterIn`][in_enum]).
+- `rename_all = ...` : Alternative à `serde`.
+
+### Attributs de champ `#[salvo(parameter(...))]`
+
+- Validation : `maximum`, `pattern`, etc.
+- `value_type` : Surcharge du type.
+- `schema_with` : Schéma personnalisé.
+- etc. (voir documentation originale pour liste complète).
+
+### Exemples
+
+_**Paramètres de chemin avec schéma inline :**_
+
+```rust
+#[derive(ToParameters, Deserialize)]
+#[salvo(parameters(names("id", "name")))]
+struct IdEtNom(u64, String);
+```
+
+_**Surcharge de type avec `value_type` :**_
+
+```rust
+#[derive(ToParameters)]
+struct Filtre {
+    #[salvo(parameter(value_type = i64))]
+    id: String, // Traité comme i64 dans OpenAPI
+}
+```
+
+## Gestion des erreurs
+
+Pour OpenAPI, implémentez `EndpointOutRegister` pour votre type d'erreur :
+
+```rust
+impl EndpointOutRegister for Erreur {
+    fn register(components: &mut Components, operation: &mut Operation) {
+        operation.responses.insert(
+            "500",
+            Response::new("Erreur serveur").add_content("application/json", StatusError::to_schema(components)),
+        );
+        // ...
+    }
+}
+```
+
+Filtrez les codes statuts pertinents avec `status_codes` :
+
+```rust
+#[endpoint(status_codes(201, 409))]
+async fn creer_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Erreur> {
+    Ok(StatusCode::CREATED)
+}
+```
+
+[//]: # (Liens conservés en anglais comme dans l'original)
+[to_schema]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToSchema.html
+[known_format]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.KnownFormat.html
+[to_parameters]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToParameters.html
+[path_parameters]: openapi.html#parameters-attributes
+[style]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.ParameterStyle.html
+[in_enum]: https://docs.rs/salvo-oapi/latest/salvo_oapi/enum.ParameterIn.html
+```
+{/* 本行由工具自动生成,原文哈希值:66e3964ffc9d02e6953bdf48a6d2ed87 */}

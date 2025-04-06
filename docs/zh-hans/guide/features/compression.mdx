@@ -1,0 +1,28 @@
+# 压缩响应
+
+对 `Response` 内容压缩处理的中间件.
+
+提供对三种压缩格式的支持: `br`, `gzip`, `deflate`. 可以根据需求配置各个压缩方式的优先度等.
+
+## HTTP 协议中的数据压缩
+
+1. 文件格式层面：特定文件类型使用专门的压缩算法
+2. HTTP 协议层面：通过内容编码实现端到端的资源压缩传输
+3. 连接层面：在 HTTP 连接的节点之间进行数据压缩
+
+更多关于HTTP压缩的信息可以参考 [Mozilla 开发者网络的文档](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Guides/Compression)。
+
+## 示例代码
+
+import { Tab, Tabs } from 'rspress/theme';
+import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
+import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CompressionCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CompressionCargoCode/>
+  </Tab>
+</Tabs>

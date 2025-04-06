@@ -2,7 +2,6 @@ use std::fs::create_dir_all;
 use std::path::Path;
 
 use salvo::prelude::*;
-use salvo::size_limiter::max_size;
 
 #[handler]
 async fn index(res: &mut Response) {
@@ -13,12 +12,12 @@ async fn upload(req: &mut Request, res: &mut Response) {
     let file = req.file("file").await;
     if let Some(file) = file {
         let dest = format!("temp/{}", file.name().unwrap_or("file"));
-        tracing::debug!(dest = %dest, "upload file");
-        if let Err(e) = std::fs::copy(&file.path(), Path::new(&dest)) {
+        tracing::debug!(dest, "upload file");
+        if let Err(e) = std::fs::copy(file.path(), Path::new(&dest)) {
             res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
-            res.render(Text::Plain(format!("file not found in request: {}", e)));
+            res.render(Text::Plain(format!("file not found in request: {e}")));
         } else {
-            res.render(Text::Plain(format!("File uploaded to {}", dest)));
+            res.render(Text::Plain(format!("File uploaded to {dest}")));
         }
     } else {
         res.status_code(StatusCode::BAD_REQUEST);
@@ -41,7 +40,7 @@ async fn main() {
         )
         .push(Router::with_path("unlimit").post(upload));
 
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 

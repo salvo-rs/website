@@ -1,0 +1,335 @@
+# Router
+
+## Cos'è il routing
+
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) definisce quali middleware e `Handler` elaboreranno una richiesta HTTP. Questa è la funzionalità più basilare e centrale in Salvo.
+
+Internamente, `Router` è composto da una serie di filtri (Filter). Quando arriva una richiesta, il router verifica in ordine sequenziale se sé stesso e i suoi discendenti possono corrispondere alla richiesta. Se la corrispondenza ha successo, vengono eseguiti in sequenza tutti i middleware nella catena formata dal router e dai suoi discendenti. Se durante l'elaborazione lo stato della `Response` viene impostato come errore (4XX, 5XX) o reindirizzamento (3XX), i middleware e `Handler` successivi verranno saltati. Puoi anche chiamare manualmente `ctrl.skip_rest()` per saltare i middleware e `Handler` successivi.
+
+Durante il processo di corrispondenza, esiste un'informazione sul percorso URL che può essere considerata un oggetto che deve essere completamente consumato dai filtri durante la corrispondenza. Se tutti i filtri in un router hanno successo e l'informazione sul percorso URL è stata completamente consumata, si considera che la "corrispondenza abbia avuto successo".
+
+Ad esempio:
+
+```rust
+Router::with_path("articles").get(list_articles).post(create_article);
+```
+
+Equivale in realtà a:
+
+```rust
+Router::new()
+    // PathFilter può filtrare il percorso della richiesta, avrà successo solo se il percorso contiene il segmento articles,
+    // altrimenti fallirà. Ad esempio: /articles/123 avrà successo, mentre /articles_list/123
+    // contiene articles ma ha anche _list, quindi non avrà successo.
+    .filter(PathFilter::new("articles"))
+
+    // Se la root ha successo e il metodo della richiesta è get, il router interno avrà successo
+    // e la richiesta sarà gestita da list_articles.
+    .push(Router::new().filter(filters::get()).handle(list_articles))
+
+    // Se la root ha successo e il metodo della richiesta è post, il router interno avrà successo
+    // e la richiesta sarà gestita da create_article.
+    .push(Router::new().filter(filters::post()).handle(create_article));
+```
+
+Se si accede a `GET /articles/`, la corrispondenza avrà successo e verrà eseguito `list_articles`. Ma se si accede a `GET /articles/123`, la corrispondenza fallirà e restituirà un errore 404, perché `Router::with_path("articles")` consuma solo `/articles` dal percorso URL, lasciando `/123` non consumato, quindi la corrispondenza fallisce. Per far sì che la corrispondenza abbia successo, il router può essere modificato in:
+
+```rust
+Router::with_path("articles/{**}").get(list_articles).post(create_article);
+```
+
+Qui `{**}` corrisponderà a qualsiasi percorso rimanente, quindi potrà corrispondere a `GET /articles/123` ed eseguire `list_articles`.
+
+## Definizione piatta
+
+Possiamo definire i router in uno stile piatto:
+
+```rust
+Router::with_path("writers").get(list_writers).post(create_writer);
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
+Router::with_path("writers/{id}/articles").get(list_writer_articles);
+```
+
+## Definizione ad albero
+
+Possiamo anche definire i router in una struttura ad albero, che è il metodo consigliato:
+
+```rust
+Router::with_path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("{id}")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
+```
+
+Questa forma di definizione per progetti complessi rende la struttura dei router chiara e semplice.
+
+Molti metodi in `Router` restituiscono sé stessi (Self) per consentire la scrittura di codice concatenato. A volte, è necessario decidere come instradare in base a determinate condizioni. Il sistema di routing fornisce anche la funzione `then`, facile da usare:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::with_path("{id}").get(show_article))
+            .then(|router|{
+                if admin_mode() {
+                    router.post(create_article).push(
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)
+                    )
+                } else {
+                    router
+                }
+            }),
+    );
+```
+
+Questo esempio mostra che solo quando il server è in `admin_mode`, verranno aggiunti i router per creare, modificare ed eliminare articoli.
+
+## Ottenere parametri dal routing
+
+Nel codice sopra, `{id>` definisce un parametro. Possiamo ottenerne il valore dall'istanza `Request`:
+
+```rust
+#[handler]
+async fn show_writer(req: &mut Request) {
+    let id = req.param::<i64>("id").unwrap();
+}
+```
+
+`{id}` corrisponde a un segmento del percorso. Normalmente l'`id` di un articolo è solo un numero, quindi possiamo usare un'espressione regolare per limitare la corrispondenza di `id` a `r"{id|\d+}"`.
+
+Per questo tipo di numeri, c'è un metodo più semplice usando `<id:num>`, con le seguenti varianti:
+- `{id:num}`: corrisponde a qualsiasi numero di caratteri numerici;
+- `{id:num[10]}`: corrisponde esattamente a 10 caratteri numerici;
+- `{id:num(..10)}`: corrisponde da 1 a 9 caratteri numerici;
+- `{id:num(3..10)}`: corrisponde da 3 a 9 caratteri numerici;
+- `{id:num(..=10)}`: corrisponde da 1 a 10 caratteri numerici;
+- `{id:num(3..=10)}`: corrisponde da 3 a 10 caratteri numerici;
+- `{id:num(10..)}`: corrisponde ad almeno 10 caratteri numerici.
+
+È anche possibile usare `{**}`, `{*+}` o `{*?}` per corrispondere a tutti i segmenti rimanenti del percorso. Per migliorare la leggibilità, si può aggiungere un nome appropriato per rendere il percorso più chiaro, ad esempio: `{**file_path}`.
+
+- `{**}`: corrisponde anche a una stringa vuota, ad esempio il percorso `/files/{**rest_path}` corrisponderà a `/files`, `/files/abc.txt`, `/files/dir/abc.txt`;
+- `{*+}`: corrisponde solo se esiste almeno un segmento, non corrisponde a stringa vuota, ad esempio `/files/{*+rest_path}` non corrisponderà a `/files` ma corrisponderà a `/files/abc.txt`, `/files/dir/abc.txt`;
+- `{*?}`: corrisponde a una stringa vuota, ma solo a un singolo segmento, ad esempio `/files/{*？rest_path}` non corrisponderà a `/files/dir/abc.txt` ma corrisponderà a `/files`, `/files/abc.txt`;
+
+È consentito combinare più espressioni per corrispondere allo stesso segmento di percorso, ad esempio `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+
+## Aggiungere middleware
+
+È possibile aggiungere middleware usando la funzione `hoop` sul router:
+
+```rust
+Router::new()
+    .hoop(check_authed)
+    .path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("{id}")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
+```
+
+In questo esempio, il router radice usa `check_authed` per verificare se l'utente corrente ha effettuato l'accesso. Tutti i router discendenti saranno influenzati da questo middleware.
+
+Se gli utenti devono solo visualizzare informazioni e articoli degli scrittori senza necessità di accesso, possiamo definire il router così:
+
+```rust
+Router::new()
+    .push(
+        Router::new()
+            .hoop(check_authed)
+            .path("writers")
+            .post(create_writer)
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),
+    )
+    .push(
+        Router::with_path("writers").get(list_writers).push(
+            Router::with_path("{id}")
+                .get(show_writer)
+                .push(Router::with_path("articles").get(list_writer_articles)),
+        ),
+    );
+```
+
+Anche se ci sono due router con lo stesso percorso `path("articles")`, possono comunque essere aggiunti allo stesso router genitore.
+
+## Filtri
+
+`Router` determina la corrispondenza attraverso filtri interni. I filtri supportano operazioni logiche di base come `or` o `and`. Un router può contenere più filtri e corrisponderà solo se tutti i filtri hanno successo.
+
+La struttura del percorso del sito è ad albero, ma questa struttura non è necessariamente la stessa dell'organizzazione dei router. Un percorso del sito può corrispondere a più nodi del router. Ad esempio, alcuni contenuti sotto il percorso `articles/` richiedono l'accesso, mentre altri no. Possiamo organizzare i sotto-percorsi che richiedono autenticazione sotto un router con middleware di verifica, e quelli che non la richiedono sotto un altro router senza autenticazione:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::new().path("{id}").get(show_article)),
+    )
+    .push(
+        Router::with_path("articles")
+            .hoop(auth_check)
+            .post(list_articles)
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
+    );
+```
+
+Il routing utilizza filtri per indirizzare le richieste ai middleware e agli `Handler` corrispondenti.
+
+`path` e `method` sono due dei filtri più comuni. `path` corrisponde alle informazioni sul percorso; `method` corrisponde al metodo della richiesta, come GET, POST, PATCH, ecc.
+
+Possiamo connettere i filtri del router usando `and`, `or`:
+
+```rust
+Router::with_filter(filters::path("hello").and(filters::get()));
+```
+
+### Filtri di percorso
+
+I filtri basati sul percorso della richiesta sono i più utilizzati. Nei filtri di percorso si possono definire parametri, ad esempio:
+
+```rust
+Router::with_path("articles/{id}").get(show_article);
+Router::with_path("files/{**rest_path}").get(serve_file)
+```
+
+Negli `Handler`, è possibile ottenere i parametri attraverso la funzione `get_param` dell'oggetto `Request`:
+
+```rust
+#[handler]
+pub async fn show_article(req: &mut Request) {
+    let article_id = req.param::<i64>("id");
+}
+
+#[handler]
+pub async fn serve_file(req: &mut Request) {
+    let rest_path = req.param::<i64>("rest_path");
+}
+```
+
+### Filtri di metodo
+
+Filtrano le richieste in base al metodo `HTTP`, ad esempio:
+
+```rust
+Router::new().get(show_article).patch(update_article).delete(delete_article);
+```
+
+Qui `get`, `patch`, `delete` sono tutti filtri di metodo. Equivalgono a:
+
+```rust
+use salvo::routing::filter;
+
+let mut root_router = Router::new();
+let show_router = Router::with_filter(filters::get()).handle(show_article);
+let update_router = Router::with_filter(filters::patch()).handle(update_article);
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);
+Router::new().push(show_router).push(update_router).push(delete_router);
+```
+
+## Wisp personalizzati
+
+Per alcune espressioni di corrispondenza ricorrenti, possiamo assegnare un nome abbreviato usando `PathFilter::register_wisp_regex` o `PathFilter::register_wisp_builder`. Ad esempio, il formato GUID appare spesso nei percorsi e normalmente sarebbe scritto così ogni volta:
+
+```rust
+Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+```
+
+Scrivere ogni volta questa complessa espressione regolare è soggetto a errori e antiestetico. Possiamo invece fare così:
+
+```rust
+use salvo::routing::filter::PathFilter;
+
+#[tokio::main]
+async fn main() {
+    let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
+    PathFilter::register_wisp_regex("guid", guid);
+    Router::new()
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))
+        .push(Router::with_path("/users/{id:guid}").get(show_user));
+}
+```
+
+Basta registrarlo una volta, e poi si può usare la sintassi semplice `{id:guid}` per corrispondere ai GUID, semplificando il codice.
+
+## Come comprendere Router se si è abituati a framework web basati su Controller?
+Le principali differenze tra framework web basati sul routing (come Salvo) e framework tradizionali MVC o basati su Controller sono:
+
+- **Flessibilità**: Il design del routing consente una definizione più flessibile del flusso di elaborazione delle richieste, permettendo un controllo preciso sulla logica di elaborazione di ogni percorso. Ad esempio, in Salvo puoi definire direttamente la funzione di gestione per un percorso specifico:
+  ```rust
+  Router::with_path("articles").get(list_articles).post(create_article);
+  ```
+  Mentre nei design basati su Controller, di solito è necessario definire prima una classe Controller e poi definire metodi diversi per gestire richieste diverse:
+  ```java
+  @Controller
+  public class ArticleController {
+      @GetMapping("/articles")
+      public List<Article> listArticles() { /* ... */ }
+      
+      @PostMapping("/articles")
+      public Article createArticle(@RequestBody Article article) { /* ... */ }
+  }
+  ```
+
+- **Integrazione middleware**: I framework basati su routing di solito offrono modi più semplici per integrare middleware, applicabili a rotte specifiche. Il middleware in Salvo può essere applicato precisamente a rotte specifiche:
+  ```rust
+  Router::new()
+      .push(
+          Router::with_path("admin/articles")
+              .hoop(admin_auth_middleware)  // Applica middleware di autenticazione solo alle rotte admin
+              .get(list_all_articles)
+              .post(create_article),
+      )
+      .push(
+          Router::with_path("articles")  // Rotte pubbliche senza autenticazione
+              .get(list_public_articles),
+      );
+  ```
+
+- **Organizzazione del codice**: Il design basato su routing tende a organizzare il codice in base alla funzionalità o agli endpoint API, piuttosto che agli strati modello-vista-controller del MVC.
+  Il design basato su routing incoraggia l'organizzazione del codice in base alla funzionalità degli endpoint API:
+  ```rust
+  // user_routes.rs - Rotte e logica relative agli utenti
+  pub fn user_routes() -> Router {
+      Router::with_path("users")
+          .get(list_users)
+          .post(create_user)
+          .push(Router::with_path("{id}").get(get_user).delete(delete_user))
+  }
+  
+  // article_routes.rs - Rotte e logica relative agli articoli
+  pub fn article_routes() -> Router {
+      Router::with_path("articles")
+          .get(list_articles)
+          .post(create_article)
+  }
+  
+  // Combinare le rotte nell'app principale
+  let router = Router::new()
+      .push(user_routes())
+      .push(article_routes());
+  ```
+
+- **Leggerezza**: Solitamente il design basato su routing è più leggero, riducendo i concetti e i vincoli imposti dal framework. Puoi includere solo i componenti necessari, senza seguire una struttura rigida.
+
+Il design basato su routing rende lo sviluppo di API più intuitivo, particolarmente adatto alla costruzione di microservizi moderni e API RESTful. In framework come Salvo, il routing è un concetto centrale che riflette direttamente la struttura e il comportamento dell'API, rendendo il codice più facile da comprendere e mantenere. Al contrario, i design tradizionali basati su Controller spesso richiedono più configurazione e convenzioni per ottenere le stesse funzionalità.
+
+# Panoramica dei metodi della struttura Router
+
+| Categoria | Metodo | Descrizione |
+|------|------|------|
+| **Creazione/Accesso** | `new()` | Crea un nuovo router |
+| | `routers()/routers_mut()` | Ottieni riferimenti/mutabili ai router fig
+{/* 本行由工具自动生成,原文哈希值:de818471bc28a65be62c204495aada43 */}

@@ -1,0 +1,101 @@
+# Um diese Kunst zu meistern
+
+## Warum dieses Framework geschrieben wurde
+
+Als Anfänger stellte ich fest, dass ich zu unbeholfen war, um Frameworks wie actix-web oder Rocket zu erlernen. Als ich meine früheren Go-Webdienste mit Rust neu implementieren wollte, schien jedes Framework auf den ersten Blick komplexer zu sein als die bestehenden Go-Frameworks. Die Lernkurve von Rust ist bereits steil genug – warum sollten Webframeworks zusätzlich so kompliziert sein?
+
+Als Tokio das Axum-Framework veröffentlichte, war ich froh zu glauben, ich müsste mein eigenes Webframework nicht mehr pflegen. Doch die Realität zeigte, dass Axum zwar einfach aussieht, aber in der Praxis erfordert es fortgeschrittene Rust-Kenntnisse und mühsame Template-Arbeit, um selbst einfache Middleware zu schreiben.
+
+Daher entschied ich mich, mein eigenes, besonderes Framework weiterzuentwickeln – eines, das intuitiv, funktionsreich und für Anfänger geeignet ist.
+
+## Ist Salvo das Richtige für Sie?
+
+Salvo ist einfach, aber dennoch umfassend und leistungsfähig. Es gilt als eines der stärksten Frameworks in der Rust-Welt, bleibt dabei aber leicht zu erlernen und zu nutzen – ohne schmerzhafte Kompromisse.
+
+- **Für Rust-Einsteiger**: CRUD-Operationen sind alltäglich. Mit Salvo sind sie so einfach wie in anderen Sprachen (z. B. Express, Koa, Gin, Flask), manchmal sogar abstrakter und eleganter.  
+- **Für Produktionseinsatz**: Obwohl Salvo noch nicht Version 1.0 erreicht hat, ist der Kern stabil, ausgereift und wird zeitnah aktualisiert.  
+- **Für Sie**, deren Haarpracht täglich schwindet, während Sie Code schreiben.  
+
+## Wie es so einfach bleibt
+
+Viele Low-Level-Funktionen sind bereits in Hyper implementiert, daher baut Salvo darauf auf. Sein Kern besteht aus einem leistungsstarken Routingsystem und gängigen Features wie ACME, OpenAPI und JWT-Authentifizierung.
+
+In Salvo sind **Handler** und **Middleware** vereinheitlicht: Middleware **ist** Handler und wird über `hoop` zum Router hinzugefügt. Beide verarbeiten Requests und können Responses schreiben. Ein Handler empfängt drei Parameter:  
+- `Request`: Die Anfragedaten  
+- `Depot`: Temporärer Speicher während der Verarbeitung  
+- `Response`: Die Ausgabe  
+
+Für einfachen Code können überflüssige Parameter weggelassen oder in beliebiger Reihenfolge angegeben werden:
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hello_world(_req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+    res.render("Hello world");
+}
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world");
+}
+```
+
+Das Routing-API ist minimalistisch, aber mächtig. Meist genügt der Typ `Router`.  
+Salvo kann außerdem automatisch OpenAPI-Dokumentation generieren, Parameter extrahieren und Fehler behandeln – wie in diesem Beispiel:
+
+```rust
+#[endpoint(tags("Nachrichtenprotokoll"))]
+pub async fn create_message_log_handler(
+    input: JsonBody<CreateOrUpdateMessageLog>,
+    depot: &mut Depot,
+) -> APPResult<Json<MessageLog>> {
+    let db = utils::get_db(depot)?;
+    let log = create_message_log(&input, db).await?;
+    Ok(Json(log))
+}
+```
+
+Hier wird `input` automatisch aus dem JSON-Request geparst (auch für komplexe Typen), und `#[endpoint]` generiert die OpenAPI-Dokumentation.
+
+## Das Routingsystem
+
+Salvos Routing unterscheidet sich von anderen Frameworks: Router können flach oder baumartig strukturiert sein – je nach Logik, nicht zwingend nach URL-Pfaden.  
+
+Normales Routing:
+```rust
+Router::new().path("articles").get(list_articles).post(create_article);
+Router::new()
+    .path("articles/{id}")
+    .get(show_article)
+    .patch(edit_article)
+    .delete(delete_article);
+```
+
+Oft erfordern nur bestimmte Routen Authentifizierung. Salvo ermöglicht dies durch verschachtelte Router:  
+
+```rust
+// Öffentliche Routen
+Router::new()
+    .path("articles")
+    .get(list_articles)
+    .push(Router::new().path("{id}").get(show_article));
+
+// Geschützte Routen mit Middleware
+Router::new()
+    .path("articles")
+    .hoop(auth_check)
+    .post(create_article)
+    .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
+```
+
+Beide Router können unter einem Eltern-Router kombiniert werden:  
+
+```rust
+Router::new()
+    .push( /* öffentliche Routen */ )
+    .push( /* geschützte Routen */ );
+```
+
+Mit `{id:/\d+/}` lässt sich die ID zudem per Regex validieren.
+
+{/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}

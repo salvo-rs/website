@@ -1,0 +1,54 @@
+# Написание тестов
+
+## Важность тестирования
+
+Написание тестов — это признак ответственного инженера и секрет спокойного сна. Хорошо продуманный набор тестов не только повышает качество кода и предотвращает регрессионные ошибки, но и позволяет вам спать спокойно даже после развертывания. Пока ваши коллеги получают ночные оповещения о падении системы, ваше приложение остается устойчивым, как скала. Это спокойствие и уверенность, которые дают тесты.
+
+## Инструменты тестирования Salvo
+
+Salvo предоставляет модуль `test`, который помогает тестировать проекты на основе Salvo.
+
+[Актуальная документация](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)
+
+**Простой пример:**
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hello_world() -> &'static str {
+    "Hello World"
+}
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+
+    tracing::info!("Listening on http://127.0.0.1:5800");
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(route()).await;
+}
+
+fn route() -> Router {
+    Router::new().get(hello_world)
+}
+
+#[cfg(test)]
+mod tests {
+    use salvo::prelude::*;
+    use salvo::test::{ResponseExt, TestClient};
+
+    #[tokio::test]
+    async fn test_hello_world() {
+        let service = Service::new(super::route());
+
+        let content = TestClient::get(format!("http://127.0.0.1:5800/"))
+            .send(&service)
+            .await
+            .take_string()
+            .await
+            .unwrap();
+        assert_eq!(content, "Hello World");
+    }
+}
+```
+{/* 本行由工具自动生成,原文哈希值:0a03588b2b7cfbb4bdfe3afb32a9763b */}

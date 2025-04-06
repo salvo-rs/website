@@ -1,0 +1,138 @@
+---
+title: Rust 日付と時刻ライブラリ
+---
+
+# Chrono: Rust 日付と時刻ライブラリ
+
+
+import { LinkCard } from '@theme';
+
+
+<LinkCard
+  href="https://docs.rs/chrono/latest/chrono/"
+  title="chrono"
+  description="chrono"
+/>
+
+Chronoはグレゴリオ暦における正確な日付と時刻操作に必要なすべての機能を提供します：
+
+- `DateTime`型はデフォルトでタイムゾーンを認識し、同時にタイムゾーン非依存型も提供します
+- 無効または曖昧な日付・時刻を生成する可能性のある操作は`Option`または`MappedLocalTime`を返します
+- strftimeにインスパイアされた日付・時刻フォーマット構文による設定可能な解析・フォーマット機能
+- `Local`タイムゾーンはOSの現在タイムゾーンで動作します
+- 合理的な効率性を考慮した型と操作の実装
+- バイナリサイズを制限するため、Chronoはデフォルトでタイムゾーンデータを含みません。完全なタイムゾーンサポートには`Chrono-TZ`または`tzfile`クレートを使用してください
+
+## 機能特性
+
+Chronoは様々な実行環境とOSをサポートし、いくつかの有効化/無効化可能な機能を持ちます
+
+### デフォルト機能：
+
+- `alloc`：メモリ割り当てに依存する機能（主に文字列フォーマット）を有効化
+- `std`：標準ライブラリに依存する機能を有効化。`alloc`のスーパーセットで、標準ライブラリ型との相互運用を追加
+- `clock`：ローカルタイムゾーン（`Local`）読み取り機能を有効化。`now`のスーパーセット
+- `now`：システム時刻（`now`）読み取り機能を有効化
+- `wasmbind`：wasm32ターゲット向けにJS Date APIとのインターフェースを提供
+
+### オプション機能：
+
+- `serde`：serdeによるシリアライズ/デシリアライズを有効化
+- `rkyv`：非推奨、代わりに`rkyv-*`機能を使用
+- `rkyv-16`、`rkyv-32`、`rkyv-64`：rkyvによるシリアライズ/デシリアライズを有効化（それぞれ16/32/64ビット整数使用）
+- `rkyv-validation`：bytecheckによるrkyv検証サポートを有効化
+- `arbitrary`：Arbitraryクレートを使用して型の任意インスタンスを構築
+- `unstable-locales`：ローカライゼーションを有効化。`_localized`サフィックス付きの各種メソッドを追加
+
+## 概要
+
+### 時間差/期間
+
+Chronoは`TimeDelta`型で時間スパンを表現します。これは秒とナノ秒で表される「正確な」期間で、「日」や「月」などの「名目上」の要素は含みません
+
+`TimeDelta`型は以前`Duration`という名前でした（現在も型エイリアスとして利用可能）。類似の`core::time::Duration`との主な違いは符号付き値である点です
+
+### 日付と時刻
+
+Chronoは`DateTime`型でタイムゾーン内の日付と時刻を表現します
+
+`DateTime`はタイムゾーンを認識し、`TimeZone`オブジェクトから構築する必要があります。主要な`TimeZone`実装は3つ：
+
+- `Utc`：UTCタイムゾーンを指定。最も効率的
+- `Local`：システムのローカルタイムゾーンを指定
+- `FixedOffset`：UTC+09:00やUTC-10:30などの任意の固定オフセットタイムゾーンを指定
+
+異なる`TimeZone`型の`DateTime`は互換性がなく混在できませんが、`DateTime::with_timezone`メソッドで相互変換可能です
+
+現在の日付と時刻はUTC（`Utc::now()`）またはローカルタイムゾーン（`Local::now()`）で取得できます
+
+```rust
+use chrono::prelude::*;
+
+let utc: DateTime<Utc> = Utc::now(); // 例：`2014-11-28T12:45:59.324310806Z`
+let local: DateTime<Local> = Local::now(); // 例：`2014-11-28T21:45:59.324310806+09:00`
+```
+
+また、独自の日付と時刻も作成可能です：
+
+```rust
+use chrono::offset::MappedLocalTime;
+use chrono::prelude::*;
+
+let dt = Utc.with_ymd_and_hms(2014, 7, 8, 9, 10, 11).unwrap(); // `2014-07-08T09:10:11Z`
+```
+
+### フォーマットと解析
+
+フォーマットは`format`メソッドで行い、strftimeと同等のフォーマットを使用します
+
+デフォルトの`to_string`メソッドと`{:?}`指定子も適切な表現を提供します。Chronoは一般的なフォーマット用に`to_rfc2822`と`to_rfc3339`メソッドも提供します
+
+Chronoは現在、追加のCライブラリなしでほぼすべての言語の日付フォーマットをサポートします。この機能は`unstable-locales`機能で利用可能：
+
+```rust
+use chrono::prelude::*;
+
+let dt = Utc.with_ymd_and_hms(2014, 11, 28, 12, 0, 9).unwrap();
+assert_eq!(dt.format("%Y-%m-%d %H:%M:%S").to_string(), "2014-11-28 12:00:09");
+assert_eq!(dt.format_localized("%A %e %B %Y, %T", Locale::fr_BE).to_string(), 
+           "vendredi 28 novembre 2014, 12:00:09");
+```
+
+解析には2つの方法があります：
+
+1. 標準の`FromStr`トレイト（および文字列の`parse`メソッド）で`DateTime<FixedOffset>`、`DateTime<Utc>`、`DateTime<Local>`値を解析可能
+2. `DateTime::parse_from_str`はオフセット付き日付時刻を解析し、`DateTime<FixedOffset>`を返します
+
+```rust
+use chrono::prelude::*;
+
+let dt = "2014-11-28T12:00:09Z".parse::<DateTime<Utc>>().unwrap();
+let fixed_dt = DateTime::parse_from_str("2014-11-28 21:00:09 +09:00", "%Y-%m-%d %H:%M:%S %z").unwrap();
+```
+
+### EPOCHタイムスタンプとの変換
+
+`DateTime::from_timestamp(seconds, nanoseconds)`でUNIXタイムスタンプから`DateTime<Utc>`を構築
+
+`DateTime.timestamp`で`DateTime`からタイムスタンプ（秒単位）を取得。さらに`DateTime.timestamp_subsec_nanos`でナノ秒部分も取得可能
+
+```rust
+use chrono::{DateTime, Utc};
+
+// epochからdatetime構築：
+let dt: DateTime<Utc> = DateTime::from_timestamp(1_500_000_000, 0).unwrap();
+assert_eq!(dt.to_rfc2822(), "Fri, 14 Jul 2017 02:40:00 +0000");
+
+// datetimeからepoch値を取得：
+let dt = DateTime::parse_from_rfc2822("Fri, 14 Jul 2017 02:40:00 +0000").unwrap();
+assert_eq!(dt.timestamp(), 1_500_000_000);
+```
+
+## 制限事項
+
+- 順方向のグレゴリオ暦のみサポート（より早い日付をサポートするように拡張）
+- 日付型は紀元前後約262,000年に制限
+- 時刻型はナノ秒精度に制限
+- 閏秒は表現可能だが、Chronoは完全にサポートしていない
+{/* 本行由工具自动生成,原文哈希值:8f29ad63efca7d455f7ca1249d2f7dfd */}

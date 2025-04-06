@@ -1,0 +1,38 @@
+# Apagado elegante
+
+El apagado elegante se refiere a que, cuando un servidor se cierra, no termina todas las conexiones de inmediato, sino que primero deja de aceptar nuevas solicitudes y permite que las solicitudes ya aceptadas tengan tiempo suficiente para completar su procesamiento antes de cerrar el servicio. Este enfoque evita la interrupción abrupta de solicitudes, mejorando la experiencia del usuario y la confiabilidad del sistema.
+
+Salvo ofrece soporte para el apagado elegante a través del método `handle` del `Server`, que obtiene un manejador del servidor, seguido de la llamada al método `stop_graceful`. Después de invocar este método, el servidor:
+
+- Deja de aceptar nuevas conexiones
+- Espera a que las solicitudes existentes terminen de procesarse
+- Si se proporciona un tiempo de espera, fuerza el cierre de las conexiones restantes una vez transcurrido dicho tiempo
+
+Aquí tienes un ejemplo sencillo:
+
+```rust
+use salvo_core::prelude::*;
+
+#[tokio::main]
+async fn main() {
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let server = Server::new(acceptor);
+    let handle = server.handle();
+
+    // Cierre elegante del servidor
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        handle.stop_graceful(None);
+    });
+    server.serve(Router::new()).await;
+}
+```
+
+En el ejemplo anterior:
+
+- `server.handle()` obtiene un manejador del servidor, que puede usarse para controlar su ciclo de vida
+- `handle.stop_graceful(None)` inicia el proceso de apagado elegante; `None` indica que no hay tiempo de espera definido, por lo que esperará indefinidamente a que todas las solicitudes finalicen
+- Si deseas establecer un tiempo de espera, puedes pasar `Some(Duration)`; una vez transcurrido este tiempo, se forzará el cierre de las conexiones restantes
+
+Este método es especialmente útil para aplicaciones desplegadas en entornos de contenedores o plataformas en la nube, así como para actualizaciones en caliente donde es crucial evitar la interrupción inesperada de solicitudes.
+{/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

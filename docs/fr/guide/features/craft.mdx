@@ -1,0 +1,190 @@
+---
+title: Fonctionnalité Craft
+---
+
+# Fonctionnalité Craft
+
+Craft permet aux développeurs de générer automatiquement des fonctions de traitement et des points de terminaison grâce à de simples annotations, tout en s'intégrant parfaitement à la génération de documentation OpenAPI.
+
+## Cas d'utilisation
+
+La fonctionnalité Craft est particulièrement utile dans les situations suivantes :
+
+- Lorsque vous avez besoin de créer rapidement des fonctions de gestion de routes à partir de méthodes de structure
+- Lorsque vous souhaitez réduire le code passe-partout lié à l'extraction de paramètres et à la gestion d'erreurs
+- Lorsque vous devez générer automatiquement une documentation OpenAPI pour votre API
+- Lorsque vous voulez découpler la logique métier du framework web
+
+## Utilisation de base
+
+Pour utiliser la fonctionnalité Craft, vous devez importer les modules suivants :
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+```
+
+### Création d'une structure de service
+
+Annotez votre bloc impl avec la macro `#[craft]` pour convertir les méthodes de structure en fonctions de traitement ou en points de terminaison.
+
+```rust
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    // Constructeur
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+    
+    // Plus de méthodes...
+}
+```
+
+### Création d'une fonction de traitement
+
+Utilisez `#[craft(handler)]` pour convertir une méthode en fonction de traitement :
+
+```rust
+#[craft(handler)]
+fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+Cette méthode deviendra une fonction de traitement qui :
+- Extrait automatiquement les valeurs `left` et `right` des paramètres de requête
+- Accède à l'état `state` dans la structure
+- Retourne le résultat du calcul sous forme de chaîne de réponse
+
+### Création d'un point de terminaison
+
+Utilisez `#[craft(endpoint)]` pour convertir une méthode en point de terminaison :
+
+```rust
+#[craft(endpoint)]
+pub(crate) fn add2(
+    self: ::std::sync::Arc<Self>,
+    left: QueryParam<i64>,
+    right: QueryParam<i64>,
+) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+Les points de terminaison peuvent utiliser `Arc` pour partager l'état, ce qui est particulièrement utile pour traiter des requêtes concurrentes.
+
+### Point de terminaison statique
+
+Vous pouvez également créer des points de terminaison statiques qui ne dépendent pas de l'état d'une instance :
+
+```rust
+#[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (*left + *right).to_string()
+}
+```
+
+Dans cet exemple, une description personnalisée de réponse d'erreur est ajoutée, qui sera reflétée dans la documentation OpenAPI générée.
+
+## Extracteurs de paramètres
+
+Le module `oapi::extract` de Salvo fournit plusieurs extracteurs de paramètres, les plus courants étant :
+
+- `QueryParam<T>` : Extrait un paramètre de la chaîne de requête
+- `PathParam<T>` : Extrait un paramètre du chemin URL
+- `FormData<T>` : Extrait un paramètre des données de formulaire
+- `JsonBody<T>` : Extrait un paramètre du corps de requête JSON
+
+Ces extracteurs effectuent automatiquement l'analyse et la conversion des paramètres, simplifiant grandement l'écriture des fonctions de traitement.
+
+## Intégration avec OpenAPI
+
+La fonctionnalité Craft peut générer automatiquement une documentation d'API conforme aux spécifications OpenAPI. Dans l'exemple :
+
+```rust
+let router = Router::new()
+    .push(Router::with_path("add1").get(opts.add1()))
+    .push(Router::with_path("add2").get(opts.add2()))
+    .push(Router::with_path("add3").get(Opts::add3()));
+
+// Génère la documentation OpenAPI
+let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+
+// Ajoute les routes pour la documentation OpenAPI et l'interface Swagger UI
+let router = router
+    .push(doc.into_router("/api-doc/openapi.json"))
+    .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+```
+
+Avec cette configuration, la documentation de l'API sera disponible à l'adresse `/api-doc/openapi.json`, et l'interface Swagger UI sera accessible via le chemin `/swagger-ui`.
+
+## Exemple complet
+
+Voici un exemple complet illustrant l'utilisation de la fonctionnalité Craft pour créer trois types différents de points de terminaison :
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+use std::sync::Arc;
+
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+
+    #[craft(handler)]
+    fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint)]
+    pub(crate) fn add2(
+        self: ::std::sync::Arc<Self>,
+        left: QueryParam<i64>,
+        right: QueryParam<i64>,
+    ) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+    pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (*left + *right).to_string()
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    // Crée un état partagé avec une valeur initiale de 1
+    let opts = Arc::new(Opts::new(1));
+
+    // Configure les routes pour les trois points de terminaison
+    let router = Router::new()
+        .push(Router::with_path("add1").get(opts.add1()))
+        .push(Router::with_path("add2").get(opts.add2()))
+        .push(Router::with_path("add3").get(Opts::add3()));
+
+    // Génère la documentation OpenAPI
+    let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+    
+    // Ajoute les routes pour la documentation OpenAPI et l'interface Swagger UI
+    let router = router
+        .push(doc.into_router("/api-doc/openapi.json"))
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+
+    // Démarre le serveur sur localhost:5800
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
+}
+```
+{/* 本行由工具自动生成,原文哈希值:2eb3d6ef348beb8a71682d2ad3a8bfd6 */}

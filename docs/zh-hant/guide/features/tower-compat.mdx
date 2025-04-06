@@ -1,0 +1,63 @@
+# 相容 Tower 中介軟體
+
+import { Tab, Tabs } from 'rspress/theme';
+import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
+import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
+
+Salvo 透過 `tower-compat` 功能提供對 tower 生態系的相容性支援。具體 API 請[查閱文件](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html)。
+
+## Tower 核心概念
+
+Tower 是一個服務抽象庫，主要基於兩個核心 trait：
+
+### Service trait
+
+```rust
+pub trait Service<Request> {
+    type Response;
+    type Error;
+    type Future: Future<Output = Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>>;
+    fn call(&mut self, req: Request) -> Self::Future;
+}
+```
+
+`Service` 負責處理請求並回傳響應，類似於 Salvo 的處理器。
+
+### Layer trait
+
+```rust
+pub trait Layer<S> {
+    type Service;
+    fn layer(&self, inner: S) -> Self::Service;
+}
+```
+
+`Layer` 用於包裝服務並添加額外功能，類似於 Salvo 的中介軟體。
+
+## Salvo 相容性支援
+
+Salvo 提供兩個關鍵 trait 實現 Tower 生態系的相容：
+
+- **TowerLayerCompat**：將 Tower 的 `Layer` 轉換為 Salvo 的 `Handler`，使其可作為 Hoop（中介軟體）使用
+- **TowerServiceCompat**：將 Tower 的 `Service` 轉換為 Salvo 的 `Handler`
+
+使用範例：
+```rust
+// 使用 Tower 的 RateLimitLayer 並透過 compat() 方法轉換為 Salvo 相容格式
+let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
+let router = Router::new().hoop(limit).get(hello);
+```
+
+_**範例程式碼**_
+
+<Tabs>
+<Tab label="main.rs">
+<WithTowerMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WithTowerCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}

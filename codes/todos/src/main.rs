@@ -1,11 +1,11 @@
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
 
 use salvo::prelude::*;
 use salvo::size_limiter;
 
 use self::models::*;
 
-static STORE: Lazy<Db> = Lazy::new(new_store);
+static STORE: LazyLock<Db> = LazyLock::new(new_store);
 
 #[tokio::main]
 async fn main() {
@@ -14,7 +14,29 @@ async fn main() {
 }
 
 pub(crate) async fn start_server() {
-    let router = Router::with_path("todos")
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    Server::new(acceptor).serve(route()).await;
+}
+
+#[handler]
+fn index(res: &mut Response) {
+    res.render(Text::Html(
+        "<html>
+            <body>
+                <a href=\"/todos\">going to the todo page</a>
+            </body>
+        </html>",
+    ));
+}
+
+fn route() -> Router {
+    Router::new()
+        .push(Router::new().get(index))
+        .push(Router::new().path("todos").push(todo_route()))
+}
+
+fn todo_route() -> Router {
+    Router::new()
         .hoop(size_limiter::max_size(1024 * 16))
         .get(list_todos)
         .post(create_todo)
@@ -22,10 +44,7 @@ pub(crate) async fn start_server() {
             Router::with_path("{id}")
                 .put(update_todo)
                 .delete(delete_todo),
-        );
-
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
-    Server::new(acceptor).serve(router).await;
+        )
 }
 
 #[handler]
@@ -36,7 +55,7 @@ pub async fn list_todos(req: &mut Request, res: &mut Response) {
         .clone()
         .into_iter()
         .skip(opts.offset.unwrap_or(0))
-        .take(opts.limit.unwrap_or(std::usize::MAX))
+        .take(opts.limit.unwrap_or(usize::MAX))
         .collect();
     res.render(Json(todos));
 }
@@ -75,14 +94,14 @@ pub async fn update_todo(req: &mut Request, res: &mut Response) {
         }
     }
 
-    tracing::debug!(id = ?id, "todo is not found");
+    tracing::debug!(?id, "todo is not found");
     res.status_code(StatusCode::NOT_FOUND);
 }
 
 #[handler]
 pub async fn delete_todo(req: &mut Request, res: &mut Response) {
     let id = req.param::<u64>("id").unwrap();
-    tracing::debug!(id = ?id, "delete todo");
+    tracing::debug!(?id, "delete todo");
 
     let mut vec = STORE.lock().await;
 
@@ -93,7 +112,7 @@ pub async fn delete_todo(req: &mut Request, res: &mut Response) {
     if deleted {
         res.status_code(StatusCode::NO_CONTENT);
     } else {
-        tracing::debug!(id = ?id, "todo is not found");
+        tracing::debug!(?id, "todo is not found");
         res.status_code(StatusCode::NOT_FOUND);
     }
 }
@@ -119,5 +138,41 @@ mod models {
     pub struct ListOptions {
         pub offset: Option<usize>,
         pub limit: Option<usize>,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use salvo::http::StatusCode;
+    use salvo::test::TestClient;
+
+    use super::models::Todo;
+
+    #[tokio::test]
+    async fn test_todo_create() {
+        tokio::task::spawn(async {
+            super::start_server().await;
+        });
+        tokio::time::sleep(tokio::time::Duration::from_secs(2)).await;
+        let res = TestClient::post("http://0.0.0.0:5800/todos")
+            .json(&test_todo())
+            .send(super::route())
+            .await;
+
+        assert_eq!(res.status_code.unwrap(), StatusCode::CREATED);
+        let res = TestClient::post("http://0.0.0.0:5800/todos")
+            .json(&test_todo())
+            .send(super::route())
+            .await;
+
+        assert_eq!(res.status_code.unwrap(), StatusCode::BAD_REQUEST);
+    }
+
+    fn test_todo() -> Todo {
+        Todo {
+            id: 1,
+            text: "test todo".into(),
+            completed: false,
+        }
     }
 }

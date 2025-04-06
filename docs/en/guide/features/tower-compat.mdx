@@ -1,0 +1,63 @@
+# Tower Middleware Compatibility  
+
+import { Tab, Tabs } from 'rspress/theme';  
+import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';  
+import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';  
+
+Salvo provides compatibility support for the Tower ecosystem through the `tower-compat` feature. For detailed APIs, please [refer to the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).  
+
+## Core Concepts of Tower  
+
+Tower is a service abstraction library primarily built around two core traits:  
+
+### Service Trait  
+
+```rust  
+pub trait Service<Request> {  
+    type Response;  
+    type Error;  
+    type Future: Future<Output = Result<Self::Response, Self::Error>>;  
+
+    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>>;  
+    fn call(&mut self, req: Request) -> Self::Future;  
+}  
+```  
+
+The `Service` trait handles requests and returns responses, similar to Salvo's handler.  
+
+### Layer Trait  
+
+```rust  
+pub trait Layer<S> {  
+    type Service;  
+    fn layer(&self, inner: S) -> Self::Service;  
+}  
+```  
+
+The `Layer` trait wraps services to add additional functionality, analogous to Salvo's middleware.  
+
+## Salvo Compatibility Support  
+
+Salvo offers two key traits to enable compatibility with the Tower ecosystem:  
+
+- **TowerLayerCompat**: Converts Tower's `Layer` into Salvo's `Handler`, allowing it to be used as a Hoop (middleware).  
+- **TowerServiceCompat**: Converts Tower's `Service` into Salvo's `Handler`.  
+
+Usage Example:  
+```rust  
+// Apply Tower's RateLimitLayer and convert it to a Salvo-compatible format using compat()  
+let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();  
+let router = Router::new().hoop(limit).get(hello);  
+```  
+
+_**Example Code**_  
+
+<Tabs>  
+<Tab label="main.rs">  
+<WithTowerMainCode/>  
+</Tab>  
+<Tab label="Cargo.toml">  
+<WithTowerCargoCode/>  
+</Tab>  
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}

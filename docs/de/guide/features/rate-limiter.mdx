@@ -1,0 +1,46 @@
+# Verkehrssteuerung
+
+Middleware, die Funktionen zur Verkehrssteuerung bereitstellt.
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
+import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
+import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
+import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+
+## Hauptfunktionen
+
+* `RateIssuer` bietet eine Abstraktion für die Zuweisung von Schlüsselwerten zur Identifizierung von Besuchern. `RemoteIpIssuer` ist eine Implementierung davon, die Besucher anhand ihrer IP-Adresse identifiziert. Der Schlüssel muss nicht unbedingt ein String sein – jeder Typ, der die Einschränkungen `Hash + Eq + Send + Sync + 'static` erfüllt, kann als Schlüssel verwendet werden.
+
+* `RateGuard` bietet eine Abstraktion für den Verkehrssteuerungsalgorithmus. Standardmäßig sind zwei Implementierungen verfügbar: Festes Fenster (`FixedGuard`) und Gleitendes Fenster (`SlidingGuard`).
+
+* `RateStore` stellt Operationen zum Speichern und Abrufen von Daten bereit. `MokaStore` ist eine integrierte, speicherbasierte Cache-Implementierung auf Basis von `moka`. Sie können auch Ihre eigene Implementierung definieren.
+
+* `RateLimiter` ist eine Struktur, die `Handler` implementiert und intern ein `skipper`-Feld enthält, mit dem Anfragen übersprungen werden können, die nicht zwischengespeichert werden müssen. Standardmäßig wird `none_skipper` verwendet, der keine Anfragen überspringt.
+
+* `QuotaGetter` bietet eine Abstraktion für die Kontingentbeschaffung. Basierend auf dem `Key` des Besuchers kann ein Kontingentobjekt abgerufen werden, was bedeutet, dass wir Benutzerkontingente und ähnliche Informationen in einer Datenbank konfigurieren und dynamisch ändern oder abrufen können.
+
+_**Beispielcode**_
+
+### Beispiel für statisches Kontingent
+
+<Tabs>
+  <Tab label="main.rs">
+    <StaticMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <StaticCargoCode/>
+  </Tab>
+</Tabs>
+
+### Beispiel für dynamisches Kontingent
+
+<Tabs>
+  <Tab label="main.rs">
+    <DynamicMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <DynamicCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}

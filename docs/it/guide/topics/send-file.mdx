@@ -1,0 +1,60 @@
+# Invio di file
+
+Salvo offre diversi metodi per inviare file:
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+### NamedFile
+
+Salvo fornisce `salvo::fs::NamedFile` per inviare file ai client in modo efficiente. Invece di caricare l'intero file in memoria, legge solo le porzioni richieste in base all'intestazione `Range` della richiesta.
+
+In pratica, `Response::send_file` è una versione semplificata di `NamedFile`. Per un controllo più granulare, è possibile utilizzare `NamedFileBuilder`.
+
+Si crea un `NamedFileBuilder` con `NamedFile::builder`:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+Dopo aver configurato le opzioni, si può inviare il file:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### Servire contenuti statici
+
+Middleware per servire file statici o incorporati.
+
+- `StaticDir` supporta cartelle locali. Accetta una lista di percorsi:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Se il file non è trovato nella prima cartella, viene cercato nella successiva.
+
+- Supporto integrato per `rust-embed`:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  `with_fallback` specifica un file alternativo quando il richiesto non esiste, utile per applicazioni single-page.
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

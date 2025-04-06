@@ -1,0 +1,59 @@
+# Protection contre le CSRF
+
+## Qu'est-ce que le CSRF ?
+
+Le CSRF (Cross-Site Request Forgery, ou falsification de requête intersite) est une vulnérabilité de sécurité où un attaquant incite un utilisateur authentifié à exécuter des actions non désirées à son insu. En clair, l'attaquant exploite la session ouverte de l'utilisateur pour envoyer des requêtes malveillantes en son nom.
+
+## Mécanisme d'attaque CSRF
+
+Le déroulement typique est le suivant :
+1. L'utilisateur se connecte au site A et obtient un cookie d'authentification
+2. L'utilisateur visite un site malveillant B
+3. Le site B envoie automatiquement des requêtes au site A en utilisant le cookie de l'utilisateur
+4. Le site A ne peut pas distinguer si la requête provient de l'utilisateur légitime ou de l'attaquant
+
+## Stratégies de protection
+
+Salvo fournit un middleware CSRF pour protéger votre application :
+
+- Ajout d'un jeton CSRF caché dans les formulaires
+- Vérification de la présence d'un jeton CSRF valide dans les requêtes utilisateur
+- Validation par défaut des requêtes POST, PATCH, DELETE et PUT
+
+## Implémentation du CSRF dans Salvo
+
+`Csrf` est une structure implémentant `Handler`, contenant un champ `skipper` permettant d'exclure certaines requêtes de la vérification. Par défaut, les méthodes `Method::POST`, `Method::PATCH`, `Method::DELETE` et `Method::PUT` sont vérifiées.
+
+Salvo propose deux modes de stockage des jetons CSRF :
+
+1. **CookieStore** : Stocke le jeton dans un cookie et vérifie sa correspondance avec le champ `csrf-token` dans l'en-tête ou le formulaire
+2. **SessionStore** : Stocke le jeton en session, nécessitant l'utilisation conjointe du middleware de session
+
+_**Exemple de code**_ (cookie store)
+
+import { Tab, Tabs } from 'rspress/theme';
+import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
+import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
+import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
+import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CsrfCookieStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CsrfCookieStoreCargoCode/>
+  </Tab>
+</Tabs>
+
+_**Exemple de code**_ (session store)
+
+<Tabs>
+  <Tab label="main.rs">
+    <CsrfSessionStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CsrfSessionStoreCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:b6e191d0fb6f25b84764f3de28171886 */}

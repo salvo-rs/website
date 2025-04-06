@@ -1,0 +1,33 @@
+# Barre oblique finale
+
+Un middleware pour ajouter ou supprimer automatiquement la barre oblique `/` à la fin des URLs.
+
+## Cas d'utilisation
+
+Le middleware Trailing Slash est particulièrement utile dans les situations suivantes :
+
+- **Normalisation des URLs** : Garantit que toutes les URLs suivent un format cohérent (en ajoutant ou supprimant systématiquement la barre oblique finale), ce qui améliore le référencement naturel (SEO) et évite les problèmes de contenu dupliqué.
+
+- **Simplification du routage** : Évite d'avoir à écrire une logique de routage distincte pour les URLs avec ou sans barre oblique finale, le middleware gère automatiquement cette conversion.
+
+- **Compatibilité** : Certains clients peuvent automatiquement ajouter ou supprimer la barre oblique finale des URLs, ce middleware assure que les requêtes sont correctement routées.
+
+- **Gestion des redirections** : Peut être configuré pour rediriger automatiquement les URLs avec barre oblique vers celles sans barre oblique (ou vice versa), améliorant ainsi l'expérience utilisateur.
+
+- **Prévention des conflits de routage** : Dans de nombreux frameworks web, `/path` et `/path/` peuvent être considérés comme des routes différentes, ce middleware permet de les traiter de manière unifiée.
+
+import { Tab, Tabs } from 'rspress/theme';
+import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
+import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+
+_**Exemple de code**_
+
+<Tabs>
+<Tab label="main.rs">
+<TrailingMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TrailingCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}

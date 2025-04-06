@@ -1,0 +1,27 @@
+# Ограничение размера загружаемых файлов (Middleware)
+
+import { Tab, Tabs } from 'rspress/theme';
+import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
+import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+
+Middleware для ограничения размера загружаемых файлов в запросах.
+
+## Сценарии использования
+
+Size Limiter применяется в следующих случаях:
+- Предотвращение загрузки слишком больших файлов, которые могут занять ресурсы сервера
+- Защита от злоумышленников, пытающихся вызвать переполнение памяти сервера путем загрузки больших объемов данных
+- Установка различных ограничений на размер запросов для разных API-эндпоинтов
+- Повышение эффективности и стабильности обработки запросов сервером
+
+_**Пример кода**_
+
+<Tabs>
+<Tab label="main.rs">
+<SizeLimiterMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SizeLimiterCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:7bf2c000bd32696677fc70ca8e62af44 */}

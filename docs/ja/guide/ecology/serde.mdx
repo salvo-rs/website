@@ -1,0 +1,159 @@
+---
+title: Rust シリアライゼーションフレームワーク
+---
+
+# Serde: Rustのシリアライズ・デシリアライズフレームワーク
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/serde/latest/serde/"
+  title="serde"
+  description="serde"
+/>
+
+Serde は Rust エコシステムの中核ライブラリで、効率的かつ汎用的なシリアライゼーションとデシリアライゼーションのフレームワークを提供します。その名称は「**Ser**ialization（シリアライゼーション）」と「**De**serialization（デシリアライゼーション）」の組み合わせに由来しています。
+
+## 主な特徴
+
+- **汎用性**: JSON、YAML、TOML、MessagePack など複数のデータ形式をサポート
+- **ゼロコスト抽象化**: コンパイル時に生成されるコードは手書きコードと同等の効率性
+- **柔軟性**: シリアライズ・デシリアライズ動作をカスタマイズ可能
+- **強力な型システム**: Rustの型システムを活用してデータ整合性を確保
+- **広範な採用**: Rustエコシステムにおけるデータ交換の標準ライブラリとして定着
+
+## 動作原理
+
+Serde の中核は中間表現（Intermediate Representation）設計で、シリアライズとデシリアライズのプロセスを2段階に分けます:
+
+1. **シリアライズ**: Rustデータ構造 → 共通中間表現 → 対象形式
+2. **デシリアライズ**: 入力形式 → 共通中間表現 → Rustデータ構造
+
+この設計により、Serdeを使用するアプリケーションを変更せずに新しいデータ形式を追加できます。
+
+## 基本的な使い方
+
+### 依存関係の設定
+
+```toml
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0" # または serde_yaml、toml などの他の形式ライブラリ
+```
+
+### 派生マクロの使用
+
+構造体に自動的にシリアライズ・デシリアライズ特性を実装する最も一般的な方法:
+
+```rust
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let point = Point { x: 1, y: 2 };
+
+    // PointをJSON文字列に変換
+    let serialized = serde_json::to_string(&point).unwrap();
+    println!("シリアライズ結果: {}", serialized); // 出力: {"x":1,"y":2}
+
+    // JSON文字列からPointに変換
+    let deserialized: Point = serde_json::from_str(&serialized).unwrap();
+    println!("デシリアライズ結果: {:?}", deserialized); // 出力: Point { x: 1, y: 2 }
+}
+```
+
+### 属性によるカスタマイズ
+
+Serde は豊富な属性でシリアライズ動作をカスタマイズ可能:
+
+```rust
+#[derive(Serialize, Deserialize, Debug)]
+struct User {
+    #[serde(rename = "user_id")]
+    id: u64,
+    
+    #[serde(default)]
+    name: String,
+    
+    #[serde(skip_serializing_if = "Option::is_none")]
+    email: Option<String>,
+    
+    #[serde(skip)]
+    temporary_data: usize,
+}
+```
+
+### サポートデータ形式
+
+Serde は様々なデータ形式と統合可能で、各形式に独立したcrateが存在:
+
+- **serde_json**: JSON形式
+- **serde_yaml**: YAML形式
+- **toml**: TOML形式
+- **bincode**: バイナリ形式
+- **postcard**: スペース最適化バイナリ形式
+- **rmp/rmp-serde**: MessagePack形式
+- **ciborium**: CBOR形式
+- ...その他の形式
+
+## 高度な使い方
+
+### 手動での特性実装
+
+特殊な要件には、`Serialize`と`Deserialize`特性を手動実装可能:
+
+```rust
+use serde::{Serialize, Serializer, Deserialize, Deserializer};
+
+struct MyType {
+    // フィールド...
+}
+
+impl Serialize for MyType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // カスタムシリアライズロジック
+    }
+}
+
+impl<'de> Deserialize<'de> for MyType {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // カスタムデシリアライズロジック
+    }
+}
+```
+
+### 型マッピング
+
+異なるデータ表現間でマッピングを作成可能:
+
+```rust
+#[derive(Serialize, Deserialize)]
+#[serde(remote = "chrono::DateTime<chrono::Utc>")]
+struct DateTimeRef {
+    #[serde(with = "chrono::serde::ts_seconds")]
+    pub inner: chrono::DateTime<chrono::Utc>,
+}
+```
+
+## 学習リソース
+
+Serde は機能豊富なライブラリで、本稿は基礎のみをカバーしています。Serdeを最大限活用するには:
+
+1. [Serde公式ドキュメント](https://serde.rs/)で詳細なAPIと例を確認
+2. [GitHubリポジトリ](https://github.com/serde-rs/serde)でソースコードと最新更新をチェック
+
+## まとめ
+
+Serde はRustエコシステムの基盤ライブラリとして、データ交換に強力で柔軟なツールを提供します。Serdeを習得することで、様々な形式のデータ交換要件を容易に処理でき、アプリケーションをより強力で相互運用可能にできます。
+{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}

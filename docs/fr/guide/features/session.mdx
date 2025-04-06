@@ -1,0 +1,33 @@
+# Session
+
+import { Tab, Tabs } from 'rspress/theme';
+import SessionLoginMainCode from '../../../../codes_md/session-login/src/main.mdx';
+import SessionLoginCargoCode from '../../../../codes_md/session-login/Cargo.mdx';
+
+Middleware fournissant la prise en charge des `Session`.
+
+## Qu'est-ce qu'une Session ?
+
+Une Session est un ensemble de données utilisateur stockées côté serveur, généralement utilisées pour suivre l'état de l'utilisateur et sauvegarder des données temporaires. Dans les applications web, les Sessions permettent de résoudre le problème du protocole HTTP sans état, en permettant au serveur de reconnaître les requêtes multiples provenant du même utilisateur.
+
+## Utilisation des Sessions dans Salvo
+
+Dans Salvo, le middleware Session fournit une API simple pour lire et écrire des données de session. L'instance de session peut être obtenue via `SessionDepot`, et les données de session peuvent être gérées grâce aux méthodes `get`, `set`, `remove`, etc.
+
+## Utilisations courantes
+
+- Authentification utilisateur et gestion de l'état de connexion
+- Stockage temporaire de données de formulaire
+- Sauvegarde des préférences utilisateur
+
+_**Exemple de code**_
+
+<Tabs>
+<Tab label="main.rs">
+<SessionLoginMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SessionLoginCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:88af59e67d10a27580b5c0792b125c79 */}

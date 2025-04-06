@@ -1,0 +1,27 @@
+# Limiteur de taille de fichier uploadé - Middleware
+
+import { Tab, Tabs } from 'rspress/theme';
+import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
+import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+
+Un middleware pour limiter la taille des fichiers uploadés dans les requêtes.
+
+## Cas d'utilisation
+
+Le Size Limiter est principalement utilisé dans les situations suivantes :
+- Empêcher les utilisateurs d'uploader des fichiers trop volumineux qui consommeraient les ressources du serveur
+- Éviter que des attaquants ne provoquent un débordement de mémoire du serveur en uploadant de grandes quantités de données
+- Définir des stratégies de limitation de taille différentes selon les endpoints API
+- Améliorer l'efficacité et la stabilité du traitement des requêtes par le serveur
+
+_**Exemple de code**_
+
+<Tabs>
+<Tab label="main.rs">
+<SizeLimiterMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SizeLimiterCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:7bf2c000bd32696677fc70ca8e62af44 */}

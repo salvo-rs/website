@@ -1,0 +1,37 @@
+# Concurrency Limiter
+
+import { Tab, Tabs } from 'rspress/theme';
+import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
+import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+
+The Concurrency Limiter middleware controls the number of concurrent requests that can be processed simultaneously. For detailed API information, please [check the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
+
+## Use Cases
+
+The concurrency limiter is particularly useful in the following scenarios:
+
+- **High-traffic website protection**: Limiting the number of requests processed simultaneously during traffic surges to prevent server overload
+- **Resource-intensive operation control**: Restricting concurrent resource-intensive operations such as file uploads and database writes
+- **Third-party API call limitation**: Controlling concurrent requests when calling external services with rate limits
+
+## Key Benefits
+
+- **Server overload prevention**: Maintaining server stability during peak traffic by limiting concurrent requests
+- **Improved system reliability**: Avoiding system crashes caused by resource exhaustion
+- **Optimized resource allocation**: Ensuring critical services have sufficient resources to process requests
+
+## Usage
+
+Simply add the `max_concurrency(n)` middleware to your routes, where `n` is the maximum number of concurrent requests allowed. Requests exceeding this limit will receive a `503 Service Unavailable` response.
+
+_**Example Code**_ 
+
+<Tabs>
+  <Tab label="main.rs">
+    <ConcurrencyLimiterCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ConcurrencyLimiterCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:764c09662183beca5fb5634badcad7bb */}

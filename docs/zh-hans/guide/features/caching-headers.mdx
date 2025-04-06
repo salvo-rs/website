@@ -1,0 +1,26 @@
+# 缓存头
+
+提供对缓存头配置支持的中间件.
+
+缓存控制是Web性能优化的重要部分，通过正确设置缓存头，可以减少不必要的网络请求，提高应用性能。[Cache-Control](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Headers/Cache-Control) 是HTTP响应头中用于指定浏览器缓存策略的指令，可以控制谁在什么条件下可以缓存响应以及缓存多长时间。
+
+实际上实现内部包含了 `CachingHeaders`, `Modified`, `ETag` 三个 `Handler` 的实现, `CachingHeaders` 是后两者的组合. 正常情况下使用 `CachingHeaders`.
+
+- `Modified`：基于资源的最后修改时间提供缓存验证
+- `ETag`：使用实体标签(Entity Tag)提供更精确的资源验证机制
+- `CachingHeaders`：结合了上述两种机制，提供完整的缓存控制支持
+
+_**示例代码**_ 
+
+import { Tab, Tabs } from 'rspress/theme';
+import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
+import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CachingHeadersCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CachingHeadersCargoCode/>
+  </Tab>
+</Tabs>

@@ -1,0 +1,24 @@
+import { Tab, Tabs } from 'rspress/theme';
+import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
+import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
+
+# 超时中间件
+
+提供对超时支持的中间件.
+
+## 使用场景
+
+在 Web 服务中，某些请求可能因为各种原因（如数据库查询缓慢、外部服务响应慢等）导致处理时间过长。为避免这些长时间运行的请求占用服务器资源，影响其他请求的处理，可以使用超时中间件为请求设置最大处理时间限制。超过这个时间限制，请求将被自动中断，并返回超时错误。
+
+_**示例代码**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<TimeoutMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TimeoutCargoCode/>
+</Tab>
+</Tabs>
+
+在上面的示例中，我们创建了两个处理函数：一个快速响应的 `fast` 和一个延迟 6 秒才响应的 `slow`。通过 `Timeout::new(Duration::from_secs(5))` 为所有请求设置了 5 秒的超时限制。当访问 `/slow` 路径时，由于处理时间超过了 5 秒的限制，请求将会超时；而访问 `/fast` 路径时，请求会正常处理并返回结果。

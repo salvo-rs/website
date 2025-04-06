@@ -1,0 +1,27 @@
+# 快取標頭
+
+提供對快取標頭配置支援的中介軟體。
+
+快取控制是網路效能優化的重要環節，透過正確設定快取標頭，可以減少不必要的網路請求，提升應用程式效能。[Cache-Control](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Headers/Cache-Control) 是HTTP回應標頭中用於指定瀏覽器快取策略的指令，能控制誰在什麼條件下可以快取回應以及快取多久。
+
+實際實作內部包含了 `CachingHeaders`、`Modified`、`ETag` 三個 `Handler` 的實作，`CachingHeaders` 是後兩者的組合。正常情況下建議使用 `CachingHeaders`。
+
+- `Modified`：基於資源的最後修改時間提供快取驗證
+- `ETag`：使用實體標籤(Entity Tag)提供更精確的資源驗證機制
+- `CachingHeaders`：結合上述兩種機制，提供完整的快取控制支援
+
+_**範例程式碼**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
+import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CachingHeadersCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CachingHeadersCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}

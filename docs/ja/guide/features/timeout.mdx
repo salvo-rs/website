@@ -1,0 +1,27 @@
+```javascript
+import { Tab, Tabs } from 'rspress/theme';
+import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
+import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
+```
+
+# タイムアウトミドルウェア
+
+リクエストのタイムアウト制御を提供するミドルウェアです。
+
+## 使用シナリオ
+
+Webサービスにおいて、データベースの低速なクエリや外部サービスの遅延などにより、リクエスト処理が長時間化する場合があります。このような長時間実行されるリクエストがサーバーリソースを占有し、他のリクエストの処理に影響を与えないよう、タイムアウトミドルウェアを使用して最大処理時間を設定できます。制限時間を超えたリクエストは自動的に中断され、タイムアウトエラーが返されます。
+
+_**サンプルコード**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<TimeoutMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TimeoutCargoCode/>
+</Tab>
+</Tabs>
+
+上記のサンプルでは、2つのハンドラ関数を作成しています：即時応答する`fast`と6秒遅延する`slow`です。`Timeout::new(Duration::from_secs(5))`ですべてのリクエストに5秒のタイムアウト制限を設定しています。`/slow`パスにアクセスすると、処理時間が5秒制限を超えるためリクエストはタイムアウトします。一方`/fast`パスへのアクセスは正常に処理され結果が返されます。
+{/* 本行由工具自动生成,原文哈希值:91c35a9e679382fc5ad89433063fa043 */}

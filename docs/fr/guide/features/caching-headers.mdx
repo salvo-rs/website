@@ -1,0 +1,27 @@
+# En-têtes de cache
+
+Un middleware fournissant un support pour la configuration des en-têtes de cache.
+
+Le contrôle du cache est une partie essentielle de l'optimisation des performances web. En configurant correctement les en-têtes de cache, on peut réduire les requêtes réseau inutiles et améliorer les performances de l'application. [Cache-Control](https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Cache-Control) est un en-tête de réponse HTTP utilisé pour spécifier les directives de stratégie de cache du navigateur, contrôlant qui peut mettre en cache la réponse, sous quelles conditions et pendant combien de temps.
+
+L'implémentation comprend en réalité trois `Handler` : `CachingHeaders`, `Modified` et `ETag`. `CachingHeaders` est une combinaison des deux derniers. Normalement, on utilise `CachingHeaders`.
+
+- `Modified` : Fournit une validation de cache basée sur la date de dernière modification de la ressource
+- `ETag` : Utilise une balise d'entité (Entity Tag) pour un mécanisme de validation des ressources plus précis
+- `CachingHeaders` : Combine les deux mécanismes ci-dessus pour fournir un support complet de contrôle de cache
+
+_**Exemple de code**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
+import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CachingHeadersCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CachingHeadersCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}

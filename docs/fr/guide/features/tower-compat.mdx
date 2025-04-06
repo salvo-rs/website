@@ -1,0 +1,63 @@
+# Compatibilité avec les Middlewares Tower
+
+import { Tab, Tabs } from 'rspress/theme';
+import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
+import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
+
+Salvo offre une prise en charge de la compatibilité avec l'écosystème Tower via la fonctionnalité `tower-compat`. Pour les API spécifiques, veuillez [consulter la documentation](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
+
+## Concepts clés de Tower
+
+Tower est une bibliothèque d'abstraction de services, principalement basée sur deux traits fondamentaux :
+
+### Le trait Service
+
+```rust
+pub trait Service<Request> {
+    type Response;
+    type Error;
+    type Future: Future<Output = Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>>;
+    fn call(&mut self, req: Request) -> Self::Future;
+}
+```
+
+Le `Service` est responsable du traitement des requêtes et de la génération des réponses, similaire aux gestionnaires de Salvo.
+
+### Le trait Layer
+
+```rust
+pub trait Layer<S> {
+    type Service;
+    fn layer(&self, inner: S) -> Self::Service;
+}
+```
+
+Le `Layer` permet d'encapsuler un service pour y ajouter des fonctionnalités supplémentaires, à l'instar des middlewares de Salvo.
+
+## Prise en charge de la compatibilité par Salvo
+
+Salvo propose deux implémentations de traits clés pour assurer la compatibilité avec l'écosystème Tower :
+
+- **TowerLayerCompat** : Convertit un `Layer` de Tower en `Handler` de Salvo, permettant son utilisation comme Hoop (middleware)
+- **TowerServiceCompat** : Convertit un `Service` de Tower en `Handler` de Salvo
+
+Exemple d'utilisation :
+```rust
+// Utilisation de RateLimitLayer de Tower converti au format compatible Salvo via la méthode compat()
+let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
+let router = Router::new().hoop(limit).get(hello);
+```
+
+_**Exemple de code**_
+
+<Tabs>
+<Tab label="main.rs">
+<WithTowerMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WithTowerCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}

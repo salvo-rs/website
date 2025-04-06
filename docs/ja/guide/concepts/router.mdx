@@ -1,0 +1,318 @@
+# ルーター
+
+## ルーティングとは
+
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html)は、どのHTTPリクエストがどのミドルウェアと`Handler`によって処理されるかを定義します。これはSalvoにおいて最も基本的かつ中核的な機能です。
+
+`Router`内部は実際には一連のフィルター(Filter)で構成されており、リクエストが到着すると、ルーターは追加された順序で、自身とその子孫がリクエストにマッチするかどうかを上から順にテストします。マッチが成功した場合、ルーターとその子孫ルーターによって形成されるチェーン上のミドルウェアが順次実行されます。処理中に`Response`の状態がエラー(4XX, 5XX)またはリダイレクト(3XX)に設定された場合、後続のミドルウェアと`Handler`はスキップされます。また、`ctrl.skip_rest()`を手動で呼び出して後続のミドルウェアと`Handler`をスキップすることもできます。
+
+マッチングプロセスでは、Urlパス情報が存在し、これはマッチングプロセス中に完全にFilterによって消費される必要があるオブジェクトと考えることができます。あるRouter内のすべてのFilterがマッチに成功し、このUrlパス情報が完全に消費された場合、「マッチ成功」と見なされます。
+
+例えば:
+
+```rust
+Router::with_path("articles").get(list_articles).post(create_article);
+```
+
+これは実際には以下と同等です:
+
+```rust
+Router::new()
+    // PathFilterはリクエストパスをフィルタリングし、リクエストパスにarticlesセグメントが含まれている場合のみマッチ成功、
+    // それ以外はマッチ失敗。例: /articles/123はマッチ成功、/articles_list/123
+    // はarticlesを含んでいますが、後ろに_listがあるためマッチしません。
+    .filter(PathFilter::new("articles"))
+
+    // rootのマッチが成功した場合、リクエストのmethodがgetであれば、内部の子ルーターがマッチ成功し、
+    // list_articlesがリクエストを処理します。
+    .push(Router::new().filter(filters::get()).handle(list_articles))
+
+    // rootのマッチが成功した場合、リクエストのmethodがpostであれば、内部の子ルーターがマッチ成功し、
+    // create_articleがリクエストを処理します。
+    .push(Router::new().filter(filters::post()).handle(create_article));
+```
+
+`GET /articles/`にアクセスするとマッチ成功と見なされ、`list_articles`が実行されます。しかし、`GET /articles/123`にアクセスするとルーティングのマッチに失敗し404エラーが返されます。これは`Router::with_path("articles")`がUrlパス情報の`/articles`のみを消費し、`/123`部分が未消費のため、マッチ失敗と見なされるからです。マッチを成功させるには、ルーターを次のように変更できます:
+
+```rust
+Router::with_path("articles/{**}").get(list_articles).post(create_article);
+```
+
+ここで`{**}`は任意の余分なパスにマッチするため、`GET /articles/123`にマッチして`list_articles`を実行できます。
+
+## フラットな定義
+
+フラットスタイルでルートを定義できます:
+
+```rust
+Router::with_path("writers").get(list_writers).post(create_writer);
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
+Router::with_path("writers/{id}/articles").get(list_writer_articles);
+```
+
+## ツリー状の定義
+
+ルートをツリー状に定義することもでき、これが推奨される定義方法です:
+
+```rust
+Router::with_path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("{id}")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
+```
+この形式の定義は複雑なプロジェクトにおいて、Routerの定義を階層的に明確かつシンプルにします。
+
+`Router`には多くのメソッドがあり、呼び出し後に自身(Self)を返すため、メソッドチェーンでコードを記述できます。場合によっては、特定の条件に基づいてルーティング方法を決定する必要があり、ルーティングシステムは`then`関数も提供しており、簡単に使用できます:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::with_path("{id}").get(show_article))
+            .then(|router|{
+                if admin_mode() {
+                    router.post(create_article).push(
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)
+                    )
+                } else {
+                    router
+                }
+            }),
+    );
+```
+この例は、サーバーが`admin_mode`の場合のみ、記事作成、編集、削除などのルートを追加することを示しています。
+
+## ルートからパラメータを取得
+
+上記のコードでは、`{id}`がパラメータを定義しています。`Request`インスタンスからその値を取得できます:
+
+```rust
+#[handler]
+async fn show_writer(req: &mut Request) {
+    let id = req.param::<i64>("id").unwrap();
+}
+```
+
+`{id}`はパスのセグメントにマッチします。通常、記事の`id`は数字だけなので、正規表現を使用して`id`のマッチングルールを制限できます: `r"{id|\d+}"`.
+
+このような数値型に対して、もっと簡単な方法は`<id:num>`を使用することです。具体的な書き方は:
+- `{id:num}`: 任意の数の数字文字にマッチ;
+- `{id:num[10]}`: 特定の数の数字文字にのみマッチ（ここでは10桁）;
+- `{id:num(..10)}`: 1～9桁の数字文字にマッチ;
+- `{id:num(3..10)}`: 3～9桁の数字文字にマッチ;
+- `{id:num(..=10)}`: 1～10桁の数字文字にマッチ;
+- `{id:num(3..=10)}`: 3～10桁の数字文字にマッチ;
+- `{id:num(10..)}`: 10桁以上の数字文字にマッチ.
+
+また、`{**}`, `{*+}`または`{*?}`を使用して残りのパスセグメントすべてにマッチさせることができます。コードの可読性を高めるために、適切な名前を追加してパスの意味を明確にすることもできます。例えば: `{**file_path}`.
+
+- `{**}`: 空文字列もマッチ可能。例: `/files/{**rest_path}`は`/files`、`/files/abc.txt`、`/files/dir/abc.txt`にマッチ;
+- `{*+}`: 空文字列にはマッチせず、存在しなければならない。例: `/files/{*+rest_path}`は`/files`にはマッチせず、`/files/abc.txt`、`/files/dir/abc.txt`にマッチ;
+- `{*?}`: 空文字列もマッチ可能だが、1つのパスセグメントのみ。例: `/files/{*？rest_path}`は`/files/dir/abc.txt`にはマッチせず、`/files`、`/files/abc.txt`にマッチ;
+
+複数の式を組み合わせて同じパスセグメントにマッチさせることも可能です。例: `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+
+## ミドルウェアの追加
+
+ルートの`hoop`関数を使用してミドルウェアを追加できます:
+
+```rust
+Router::new()
+    .hoop(check_authed)
+    .path("writers")
+    .get(list_writers)
+    .post(create_writer)
+    .push(
+        Router::with_path("{id}")
+            .get(show_writer)
+            .patch(edit_writer)
+            .delete(delete_writer)
+            .push(Router::with_path("articles").get(list_writer_articles)),
+    );
+```
+
+この例では、ルートルーターは`check_authed`を使用して現在のユーザーがログインしているかどうかを確認します。すべての子孫ルーターはこのミドルウェアの影響を受けます。
+
+ユーザーが単に`writer`の情報や記事を閲覧するだけであれば、ログインなしで閲覧できるようにしたい場合があります。その場合、ルーティングを次のように定義できます:
+
+```rust
+Router::new()
+    .push(
+        Router::new()
+            .hoop(check_authed)
+            .path("writers")
+            .post(create_writer)
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),
+    )
+    .push(
+        Router::with_path("writers").get(list_writers).push(
+            Router::with_path("{id}")
+                .get(show_writer)
+                .push(Router::with_path("articles").get(list_writer_articles)),
+        ),
+    );
+```
+
+`path("articles")`という同じパス定義を持つ2つのルーターがあっても、同じ親ルーターに追加することができます。
+
+## フィルター
+
+`Router`内部では、すべてフィルターを使用してルーティングがマッチするかどうかを決定します。フィルターは`or`または`and`を使用した基本的な論理演算をサポートしています。1つのルーターには複数のフィルターを含めることができ、すべてのフィルターがマッチした場合にルーティングが成功します。
+
+ウェブサイトのパス情報はツリー構造ですが、このツリー構造はルーターを組織するツリー構造と同じではありません。ウェブサイトの1つのパスが複数のルーターノードに対応する場合があります。例えば、`articles/`パス下の一部のコンテンツはログインが必要で、他のコンテンツはログイン不要の場合があります。ログインが必要なサブパスを、ログイン検証ミドルウェアを含むルーターの下に組織し、ログイン検証が不要なものを別のルーターの下に組織できます:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::new().path("{id}").get(show_article)),
+    )
+    .push(
+        Router::with_path("articles")
+            .hoop(auth_check)
+            .post(list_articles)
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
+    );
+```
+
+ルーターはフィルターを使用してリクエストをフィルタリングし、対応するミドルウェアと`Handler`に送信して処理します。
+
+`path`と`method`は最もよく使用される2つのフィルターです。`path`はパス情報のマッチングに使用され、`method`はリクエストのメソッド（GET、POST、PATCHなど）のマッチングに使用されます。
+
+`and`、`or`を使用してルーターのフィルターを接続できます:
+
+```rust
+Router::with_filter(filters::path("hello").and(filters::get()));
+```
+
+### パスフィルター
+
+リクエストパスに基づくフィルターが最も頻繁に使用されます。パスフィルターではパラメータを定義できます。例えば:
+
+```rust
+Router::with_path("articles/{id}").get(show_article);
+Router::with_path("files/{**rest_path}").get(serve_file)
+```
+
+`Handler`では、`Request`オブジェクトの`get_param`関数を使用して取得できます:
+
+```rust
+#[handler]
+pub async fn show_article(req: &mut Request) {
+    let article_id = req.param::<i64>("id");
+}
+
+#[handler]
+pub async fn serve_file(req: &mut Request) {
+    let rest_path = req.param::<i64>("rest_path");
+}
+```
+
+### メソッドフィルター
+
+`HTTP`リクエストの`Method`に基づいてリクエストをフィルタリングします。例えば:
+
+```rust
+Router::new().get(show_article).patch(update_article).delete(delete_article);
+```
+
+ここでの`get`、`patch`、`delete`はすべてメソッドフィルターです。実際には以下と同等です:
+
+```rust
+use salvo::routing::filter;
+
+let mut root_router = Router::new();
+let show_router = Router::with_filter(filters::get()).handle(show_article);
+let update_router = Router::with_filter(filters::patch()).handle(update_article);
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);
+Router::new().push(show_router).push(update_router).push(delete_router);
+```
+
+## カスタムWisp
+
+頻繁に出現するマッチング式に対して、`PathFilter::register_wisp_regex`または`PathFilter::register_wisp_builder`を使用して短い名前を付けることができます。例えば、GUID形式はパスで頻繁に出現します。通常はマッチングが必要な度に次のように記述します:
+
+```rust
+Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+```
+
+毎回このような複雑な正規表現を記述するとエラーが発生しやすく、コードも美しくありません。代わりに次のようにできます:
+
+```rust
+use salvo::routing::filter::PathFilter;
+
+#[tokio::main]
+async fn main() {
+    let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
+    PathFilter::register_wisp_regex("guid", guid);
+    Router::new()
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))
+        .push(Router::with_path("/users/{id:guid}").get(show_user));
+}
+```
+
+一度登録すれば、今後は`{id:guid}`のような簡単な記法でGUIDにマッチさせることができ、コードの記述が簡素化されます。
+
+## 以前にControllerクラスのWebフレームワークを学んだ場合、Routerをどう理解すべきか？
+ルーティング設計のWebフレームワーク（Salvoなど）と従来のMVCまたはController設計フレームワークの主な違いは以下の通りです：
+
+- **柔軟性**：ルーティング設計では、リクエスト処理フローをより柔軟に定義でき、各パスの処理ロジックを正確に制御できます。例えば、Salvoでは特定のパスの処理関数を直接定義できます：
+  ```rust
+  Router::with_path("articles").get(list_articles).post(create_article);
+  ```
+  一方、Controller設計では通常、まずコントローラークラスを定義し、そのクラス内で異なるリクエストを処理する複数のメソッドを定義する必要があります：
+  ```java
+  @Controller
+  public class ArticleController {
+      @GetMapping("/articles")
+      public List<Article> listArticles() { /* ... */ }
+      
+      @PostMapping("/articles")
+      public Article createArticle(@RequestBody Article article) { /* ... */ }
+  }
+  ```
+
+- **ミドルウェア統合**：ルーティングフレームワークでは通常、より簡潔なミドルウェア統合方法が提供され、特定のルートにミドルウェアを適用できます。Salvoのミドルウェアは特定のルートに正確に適用できます：
+  ```rust
+  Router::new()
+      .push(
+          Router::with_path("admin/articles")
+              .hoop(admin_auth_middleware)  // 管理者ルートにのみ認証ミドルウェアを適用
+              .get(list_all_articles)
+              .post(create_article),
+      )
+      .push(
+          Router::with_path("articles")  // 公開ルートは認証不要
+              .get(list_public_articles),
+      );
+  ```
+
+- **コード組織**：ルーティング設計では、MVCのモデル-ビュー-コントローラー層ではなく、機能またはAPIエンドポイントに基づいてコードを組織する傾向があります。
+  ルーティング設計では、APIエンドポイント機能に基づいてコードを組織することを推奨します：
+  ```rust
+  // user_routes.rs - ユーザー関連ルートと処理ロジック
+  pub fn user_routes() -> Router {
+      Router::with_path("users")
+          .get(list_users)
+          .post(create_user)
+          .push(Router::with_path("{id}").get(get_user).delete(delete_user))
+  }
+  
+  // article_routes.rs - 記事関連ルートと処理ロジック
+  pub fn article_routes() -> Router {
+      Router::with_path("articles")
+          .get(list_articles)
+          .post(create_article)
+  }
+  
+  // メインアプリケーションでルートを組み
+{/* 本行由工具自动生成,原文哈希值:de818471bc28a65be62c204495aada43 */}

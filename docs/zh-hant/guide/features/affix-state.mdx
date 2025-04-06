@@ -1,0 +1,50 @@
+# Affix State 請求中共享數據
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
+import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+
+Affix State 中介軟體用於往 Depot 中添加共享數據。
+要使用 Affix State 功能，需要在 Cargo.toml 中開啟 `affix-state` feature
+
+## 功能解析
+Affix State 提供了一種在請求處理過程中共享數據的簡單方式。它允許你：
+
+在路由配置階段注入全局配置或共享數據
+在任何處理器中通過 Depot 訪問這些數據
+支援任何可克隆的類型作為狀態數據
+
+## 與其他框架對比 快速理解概念
+| 框架 | 語言 | 狀態管理方式 |
+|------|------|-------------|
+| Salvo (Affix State) | Rust | 通過 Depot 存儲和訪問，支援多種類型 |
+| Axum | Rust | 通過 Extension 存儲狀態，類似但使用方式不同 |
+| Actix-web | Rust | 使用 App Data 和 Web::Data 共享狀態 |
+| Gin | Go | 使用 context.Set 和 context.Get 存取數據 |
+| Echo | Go | 使用 context.Set 和 context.Get 管理共享狀態 |
+| Spring | Java | 使用 ApplicationContext 或 @Bean 註解管理依賴 |
+| Quarkus | Java | 使用 CDI 和依賴注入機制 |
+| Express.js | JavaScript | 使用 app.locals 或 req.app.locals 存儲全局狀態 |
+| Nest.js | JavaScript | 使用依賴注入系統管理共享服務 |
+| Koa.js | JavaScript | 使用 ctx.state 存儲請求級別狀態 |
+
+## 常見使用場景
+
+- 數據庫連接池共享
+- 應用配置共享
+- 緩存實例共享
+- API 客戶端共享
+- 全局計數器或狀態追蹤
+
+Affix State 的優勢在於它的簡潔性和靈活性，可以輕鬆地在不同路由和處理器之間共享任何類型的數據，而無需大量的樣板代碼。
+_**示例代碼**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:983c6e0b4ca9ff5e194da5a41d8d46f7 */}

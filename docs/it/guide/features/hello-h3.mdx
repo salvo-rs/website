@@ -1,0 +1,102 @@
+# Supporto per HTTP/3
+
+Salvo offre supporto per HTTP/3, abilitabile tramite la feature `quinn`. Basato sul protocollo QUIC, HTTP/3 garantisce latenze inferiori e prestazioni migliori rispetto ai tradizionali HTTP/1.1 e HTTP/2, specialmente in ambienti di rete instabili.
+
+## Abilitare il supporto HTTP/3
+
+Per attivare HTTP/3 in Salvo, è necessario abilitare la feature `quinn` nel file `Cargo.toml`:
+
+```toml
+salvo = { workspace = true, features = ["quinn"] }
+```
+
+## Casi d'uso per HTTP/3
+
+HTTP/3 è particolarmente indicato per:
+
+- Applicazioni su dispositivi mobili e reti instabili
+- Applicazioni in tempo reale che richiedono basse latenze
+- Download paralleli di numerosi file di piccole dimensioni
+- Applicazioni che necessitano di migrazione di connessione (ad esempio passaggio da WiFi a rete mobile senza interruzioni)
+
+## Codice d'esempio
+
+Ecco un semplice esempio di server che supporta sia HTTP/3 (QUIC) che HTTPS (TCP):
+
+```rust
+use salvo::conn::rustls::{Keycert, RustlsConfig};
+use salvo::prelude::*;
+
+// Handler che risponde con "Hello World"
+#[handler]
+async fn hello() -> &'static str {
+    "Hello World"
+}
+
+#[tokio::main]
+async fn main() {
+    // Inizializzazione del sistema di logging
+    tracing_subscriber::fmt().init();
+
+    // Caricamento certificato TLS e chiave privata da file PEM incorporati
+    let cert = include_bytes!("../certs/cert.pem").to_vec();
+    let key = include_bytes!("../certs/key.pem").to_vec();
+
+    // Creazione router con un endpoint
+    let router = Router::new().get(hello);
+
+    // Configurazione TLS con Rustls
+    let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+
+    // Listener TCP con TLS sulla porta 5800
+    let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+    // Listener QUIC combinato con TCP
+    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+        .join(listener)
+        .bind()
+        .await;
+
+    // Avvio server con supporto HTTP/3 (QUIC) e HTTPS (TCP)
+    Server::new(acceptor).serve(router).await;
+}
+```
+
+## Analisi del codice chiave
+
+### Configurazione TLS
+
+```rust
+// Configurazione TLS con Rustls
+let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+```
+
+HTTP/3 si basa su QUIC che richiede TLS 1.3. In Salvo utilizziamo `RustlsConfig` per configurare certificati e chiavi TLS.
+
+### Combinazione listener
+
+```rust
+// Listener TCP con TLS
+let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+// Listener QUIC combinato con TCP
+let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+    .join(listener)
+    .bind()
+    .await;
+```
+
+Questo codice è fondamentale per HTTP/3 in Salvo. Crea un listener TCP con TLS (per HTTP/1.1/2) e un listener QUIC (per HTTP/3), combinandoli per gestire richieste su diversi protocolli.
+
+## Esecuzione dell'esempio
+
+Per eseguire questo esempio servono certificati TLS validi. In sviluppo si possono usare certificati autofirmati. Il codice completo è disponibile nel [repository GitHub di Salvo](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
+
+Nota: molti client non supportano ancora pienamente HTTP/3, quindi il supporto combinato è essenziale.
+
+## Avvertenze
+
+1. HTTP/3 richiede TLS 1.3 con certificati validi
+2. I client devono supportare HTTP/3, altrimenti si torna a HTTP/1.1/2
+3. In produzione usare certificati firmati da CA affidabili, non autofirmati
+{/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

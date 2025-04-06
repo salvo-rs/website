@@ -1,0 +1,33 @@
+# Barra Final
+
+Middleware para adicionar ou remover automaticamente a barra `/` no final de URLs.
+
+## Casos de Uso
+
+O middleware Trailing Slash é particularmente útil nos seguintes cenários:
+
+- **Normalização de URLs**: Garante que todas as URLs sigam um formato consistente (adicionando ou removendo a barra final), o que ajuda no SEO e evita problemas de conteúdo duplicado.
+  
+- **Simplificação do roteamento**: Elimina a necessidade de escrever lógicas de roteamento separadas para URLs com e sem barra final, pois o middleware faz essa conversão automaticamente.
+
+- **Compatibilidade**: Alguns clientes podem adicionar ou remover automaticamente a barra final das URLs. Este middleware garante que as requisições sejam roteadas corretamente.
+
+- **Gerenciamento de redirecionamentos**: Pode ser configurado para redirecionar automaticamente URLs com barra final para versões sem barra (ou vice-versa), melhorando a experiência do usuário.
+
+- **Evitar conflitos de roteamento**: Em muitos frameworks web, `/path` e `/path/` podem ser tratados como rotas diferentes. Este middleware unifica o tratamento.
+
+import { Tab, Tabs } from 'rspress/theme';
+import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
+import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+
+_**Código de Exemplo**_
+
+<Tabs>
+<Tab label="main.rs">
+<TrailingMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TrailingCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}

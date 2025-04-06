@@ -1,0 +1,32 @@
+# Session
+
+import { Tab, Tabs } from 'rspress/theme';
+import SessionLoginMainCode from '../../../../codes_md/session-login/src/main.mdx';
+import SessionLoginCargoCode from '../../../../codes_md/session-login/Cargo.mdx';
+
+提供对 `Session` 支持的中间件.
+
+## 什么是Session
+
+Session是在服务器端存储的一段用户数据，通常用于跟踪用户状态和保存临时数据。在Web应用中，Session能够解决HTTP协议无状态的问题，让服务器能够识别来自同一用户的多次请求。
+
+## Salvo中的Session使用
+
+在Salvo中，Session中间件提供了简单的API来读取和写入会话数据。通过`SessionDepot`可以获取会话实例，通过`get`、`set`、`remove`等方法可以管理会话数据。
+
+## 常见用途
+
+- 用户身份验证与登录状态管理
+- 表单数据暂存
+- 用户偏好设置存储
+
+_**示例代码**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<SessionLoginMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SessionLoginCargoCode/>
+</Tab>
+</Tabs>

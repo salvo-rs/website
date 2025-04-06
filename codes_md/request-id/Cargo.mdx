@@ -1,0 +1,13 @@
+```toml  title="request-id/Cargo.toml"
+[package]
+name = "example-request-id"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+salvo = { version = "0.77.1", features = ["request-id"]}
+tokio = { version = "1", features = ["macros"] }
+tracing = "0.1"
+tracing-subscriber = "0.3"
+
+```

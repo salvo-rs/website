@@ -1,0 +1,134 @@
+---
+title: Rust 错误处理库
+---
+
+# Rust 错误处理库
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/thiserror/latest/thiserror/"
+  title="thiserror"
+  description="为自定义错误类型提供便捷的派生宏"
+/>
+
+<LinkCard
+  href="https://docs.rs/snafu/latest/snafu/"
+  title="snafu"
+  description="具有上下文的错误处理和报告框架"
+/>
+
+<LinkCard
+  href="https://docs.rs/anyhow/latest/anyhow/"
+  title="anyhow"
+  description="灵活的错误处理和报告库"
+/>
+
+## thiserror vs snafu
+
+### thiserror
+
+thiserror 是一个轻量级库，提供派生宏使错误定义变得简单。
+
+特点：
+- 简洁的语法，低仪式感
+- 适合创建错误类型库和 API
+- 一般用于创建供他人使用的库
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum DataError {
+    #[error("数据库错误: {0}")]
+    DatabaseError(#[from] sqlx::Error),
+    
+    #[error("验证错误: {0}")]
+    ValidationError(String),
+    
+    #[error("找不到记录")]
+    NotFound,
+}
+```
+
+### snafu
+
+snafu 提供一个更完整的错误处理框架，重点关注错误上下文和错误链。
+
+特点：
+- 以"上下文选择器"模式鼓励更精确地添加错误上下文
+- 推荐"每个模块一个错误枚举"的模式
+- 支持结构体和元组风格的错误变体
+- 内置的回溯支持
+
+```rust
+use snafu::{Snafu, ResultExt, Backtrace};
+
+#[derive(Debug, Snafu)]
+pub enum Error {
+    #[snafu(display("无法读取配置文件 {filename:?}"))]
+    ReadConfig {
+        filename: String,
+        source: std::io::Error,
+        backtrace: Backtrace,
+    },
+    
+    // 也可以使用元组风格
+    #[snafu(display("IO 错误"))]
+    Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
+}
+
+// 上下文选择器示例
+fn read_config(path: &str) -> Result<Config, Error> {
+    std::fs::read_to_string(path).context(ReadConfigSnafu { filename: path })?;
+    // ...
+}
+```
+
+### 比较
+
+| 特性 | thiserror | snafu |
+|------|-----------|-------|
+| 语法简洁性 | 更简洁 | 较冗长 |
+| 错误上下文 | 基础支持 | 丰富的上下文机制 |
+| 适用规模 | 小型到中型项目 | 中型到大型项目 |
+| 代码行数 | 每个错误约 2 行 | 每个错误约 5 行 |
+| 错误组织 | 通常是单一错误枚举 | 鼓励模块级错误枚举 |
+| 回溯支持 | 无内置支持 | 内置支持 |
+
+**选择建议**:
+- **选择 thiserror** 当你需要简单明了的错误类型，尤其是在库中
+- **选择 snafu** 当你需要更多结构化的错误处理，特别是在大型应用中
+
+## anyhow
+
+anyhow 是一个与上述两者不同的错误处理库，它专注于应用程序而非库。
+
+特点：
+- 设计用于应用程序的错误处理，而非库
+- 提供动态 `anyhow::Error` 类型，可包含任何实现 `Error` 特征的错误
+- 简化了跨越多个错误类型的处理
+- 不需要定义自定义错误类型
+
+```rust
+use anyhow::{Context, Result};
+
+fn main() -> Result<()> {
+    let config = std::fs::read_to_string("config.json")
+        .context("无法读取配置文件")?;
+        
+    let app_config: AppConfig = serde_json::from_str(&config)
+        .context("配置格式无效")?;
+        
+    // 使用 Result<T> 作为 Result<T, anyhow::Error> 的类型别名
+    Ok(())
+}
+```
+
+**anyhow vs thiserror/snafu**:
+- anyhow 专注于快速开发应用程序时的错误处理
+- thiserror/snafu 专注于创建精确的错误类型层次结构
+- anyhow 通常用于应用程序代码
+- thiserror/snafu 通常用于库代码
+
+在实践中，anyhow 和 thiserror 经常一起使用：库使用 thiserror 定义精确的错误类型，而应用程序使用 anyhow 处理各种错误来源。

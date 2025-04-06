@@ -1,0 +1,63 @@
+# Compatibilidade com Middleware Tower
+
+import { Tab, Tabs } from 'rspress/theme';
+import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
+import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
+
+O Salvo oferece suporte à compatibilidade com o ecossistema Tower através do recurso `tower-compat`. Para APIs específicas, consulte a [documentação](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
+
+## Conceitos Fundamentais do Tower
+
+Tower é uma biblioteca de abstração de serviços, baseada principalmente em dois traits centrais:
+
+### Trait Service
+
+```rust
+pub trait Service<Request> {
+    type Response;
+    type Error;
+    type Future: Future<Output = Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>>;
+    fn call(&mut self, req: Request) -> Self::Future;
+}
+```
+
+O `Service` é responsável por processar requisições e retornar respostas, semelhante aos manipuladores do Salvo.
+
+### Trait Layer
+
+```rust
+pub trait Layer<S> {
+    type Service;
+    fn layer(&self, inner: S) -> Self::Service;
+}
+```
+
+O `Layer` é usado para encapsular serviços e adicionar funcionalidades extras, análogo aos middlewares do Salvo.
+
+## Suporte à Compatibilidade do Salvo
+
+O Salvo fornece a implementação de dois traits essenciais para compatibilidade com o ecossistema Tower:
+
+- **TowerLayerCompat**: Converte o `Layer` do Tower em um `Handler` do Salvo, permitindo seu uso como Hoop (middleware)
+- **TowerServiceCompat**: Transforma o `Service` do Tower em um `Handler` do Salvo
+
+Exemplo de uso:
+```rust
+// Utiliza o RateLimitLayer do Tower e o converte para o formato compatível com Salvo via método compat()
+let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
+let router = Router::new().hoop(limit).get(hello);
+```
+
+_**Código de Exemplo**_
+
+<Tabs>
+<Tab label="main.rs">
+<WithTowerMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WithTowerCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}

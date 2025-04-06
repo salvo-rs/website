@@ -1,0 +1,33 @@
+# Attrapeur
+
+```rust
+import { Tab, Tabs } from 'rspress/theme';
+import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
+import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+```
+
+Si le code d'état de la `Response` est une erreur et que le `Body` de la page est vide, Salvo tentera alors d'utiliser un `Attrapeur` pour intercepter cette erreur et afficher une page d'erreur conviviale.
+
+Vous pouvez obtenir un `Attrapeur` par défaut du système en utilisant `Attrapeur::default()`, puis l'ajouter à un `Service`.
+
+```rust
+use salvo::catcher::Attrapeur;
+
+Service::new(routeur).attrapeur(Attrapeur::default());
+```
+
+L'`Attrapeur` par défaut prend en charge l'envoi de pages d'erreur aux formats `XML`, `JSON`, `HTML` et `Texte`.
+
+Il est possible d'ajouter des programmes personnalisés de capture d'erreurs à l'`Attrapeur` en lui ajoutant des `hoop`. Ces programmes de capture d'erreurs personnalisés restent des `Handler`.
+
+Vous pouvez ajouter plusieurs programmes personnalisés de capture d'erreurs à l'`Attrapeur` via des `hoop`. Un gestionnaire d'erreurs personnalisé peut appeler la méthode `FlowCtrl::skip_next` après avoir traité l'erreur pour sauter les programmes suivants et retourner prématurément.
+
+<Tabs>
+  <Tab label="main.rs">
+    <CustomErrorPageCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CustomErrorPageCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:f904ca235acae374d6a236a1bd7a027a */}

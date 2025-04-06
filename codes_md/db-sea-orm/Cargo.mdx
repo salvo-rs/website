@@ -1,0 +1,24 @@
+```toml  title="db-sea-orm/Cargo.toml"
+[package]
+name = "example-db-sea-orm"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+salvo = { version = "0.77.1", features = ["affix-state", "serve-static"] }
+tracing .workspace = true
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde = { version = "1", features = ["derive"] }
+tera .workspace = true
+sea-orm = { workspace = true, features = [
+  "debug-print",
+  "runtime-tokio-native-tls",
+  "sqlx-sqlite",
+  # "sqlx-postgres",
+  # "sqlx-mysql",
+] }
+async-std = { workspace = true, features = ["attributes", "tokio1"] }
+sea-orm-migration .workspace = true
+
+```

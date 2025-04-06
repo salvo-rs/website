@@ -1,0 +1,36 @@
+# 寫入器
+
+`Writer` 用於將內容寫入到 `Response` 中:
+
+```rust
+#[async_trait]
+pub trait Writer {
+    async fn write(mut self, req: &mut Request, depot: &mut Depot, res: &mut Response);
+}
+```
+
+與 Handler 的比較:
+
+```rust
+#[async_trait]
+pub trait Handler: Send + Sync + 'static {
+    async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl);
+}
+```
+
+它們的主要區別在於:
+- 用途不同，`Writer` 代表將具體內容寫入 `Response`，由具體內容實現，如字符串、錯誤訊息等。而 `Handler` 是用於處理整個請求的。
+- `Writer` 在 `Handler` 中被創建，會在 `write` 函數調用時消耗自身，屬於一次性調用。而 `Handler` 是所有請求共用的。
+- `Writer` 可以作為 `Handler` 返回的 `Result` 中的內容。
+- `Writer` 中沒有 `FlowCtrl` 參數，無法控制整個請求的執行流程。
+
+`Scribe` 實現了 `Writer`，但功能比 `Writer` 更有限:
+
+```rust
+pub trait Scribe {
+    fn render(self, res: &mut Response);
+}
+```
+
+`Scribe` 的渲染函數僅是將數據寫入 `Response`，這個過程無法從 `Request` 或 `Depot` 中獲取資訊。
+{/* 本行由工具自动生成,原文哈希值:a88019b69f080567caf2af39cb1d17e5 */}

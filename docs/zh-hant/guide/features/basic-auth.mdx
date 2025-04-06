@@ -1,0 +1,48 @@
+# 基本權限驗證
+
+提供對 Basic Auth 支援的中介軟體。
+
+import { Tab, Tabs } from 'rspress/theme';
+import BasicAuthCode from '../../../../codes_md/basic-auth/src/main.mdx';
+import BasicAuthCargoCode from '../../../../codes_md/basic-auth/Cargo.mdx';
+
+## Basic Auth 簡介
+
+Basic Auth 是一種簡單的 HTTP 認證機制，透過在 HTTP 請求頭中包含 `Authorization` 欄位來傳遞使用者名稱和密碼。格式為 `Authorization: Basic <base64(username:password)>`。雖然簡單，但由於憑證僅進行 Base64 編碼而非加密，通常需要與 HTTPS 一起使用以確保安全。
+
+## 常見框架中的 Basic Auth 實作對比
+
+| 框架 | 語言 | Basic Auth 實作 |
+|------|------|----------------|
+| Salvo | Rust | 透過 `BasicAuth` 中介軟體和自訂 `BasicAuthValidator` 實作 |
+| Express | JavaScript | 使用 `express-basic-auth` 中介軟體套件 |
+| Spring Security | Java | 透過 `httpBasic()` 配置和 `UserDetailsService` 實作 |
+| ASP.NET Core | C# | 使用 `.UseAuthentication()` 和 `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | 透過自訂中介軟體或使用 `gin-contrib/auth` 套件 |
+
+## 使用場景
+
+Basic Auth 適用於以下場景：
+
+1. **內部 API 和工具**：公司內部使用的管理工具和 API
+2. **開發和測試環境**：快速實現認證而不需要複雜的登入系統
+3. **簡單的 API 保護**：當不需要複雜的使用者管理系統時
+4. **與其他安全措施配合**：作為多層安全架構的一部分
+
+在 Salvo 中，Basic Auth 中介軟體可以輕鬆整合到路由中，透過實作 `BasicAuthValidator` trait 來自訂驗證邏輯，非常靈活。
+
+## 注意事項
+
+- 始終與 HTTPS 一起使用以保護憑證傳輸
+- 不適合儲存敏感資訊的生產環境
+- 考慮使用更安全的認證方式如 JWT、OAuth 等用於生產環境
+
+<Tabs>
+  <Tab label="main.rs">
+    <BasicAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <BasicAuthCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:602232eaaa9e3f904ce93326845595ee */}

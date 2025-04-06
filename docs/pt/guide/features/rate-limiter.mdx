@@ -1,0 +1,46 @@
+# Controle de Tráfego
+
+Middleware que fornece funcionalidade de controle de tráfego.
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
+import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
+import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
+import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+
+## Funcionalidades Principais
+
+* `RateIssuer` fornece uma abstração para identificar chaves de visitantes atribuídas. `RemoteIpIssuer` é uma de suas implementações, capaz de determinar visitantes com base no endereço IP da requisição. A chave não precisa ser necessariamente do tipo string - qualquer tipo que satisfaça as restrições `Hash + Eq + Send + Sync + 'static` pode ser usado como chave.
+
+* `RateGuard` oferece uma abstração para algoritmos de controle de tráfego. Implementações padrão incluem janela fixa (`FixedGuard`) e janela deslizante (`SlidingGuard`).
+
+* `RateStore` provê operações de armazenamento e recuperação de dados. `MokaStore` é uma implementação embutida de cache em memória baseada em `moka`. Você também pode definir sua própria implementação.
+
+* `RateLimiter` é uma estrutura que implementa `Handler`, contendo internamente um campo `skipper` para especificar requisições que podem ser ignoradas pelo cache. Por padrão, utiliza `none_skipper` que não ignora nenhuma requisição.
+
+* `QuotaGetter` fornece uma abstração para obtenção de cotas, permitindo adquirir um objeto de cota baseado na `Key` do visitante. Isso significa que podemos configurar informações como cotas de usuário em bancos de dados, permitindo alterações e recuperações dinâmicas.
+
+_**Código de Exemplo**_
+
+### Exemplo de Cota Estática
+
+<Tabs>
+  <Tab label="main.rs">
+    <StaticMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <StaticCargoCode/>
+  </Tab>
+</Tabs>
+
+### Exemplo de Cota Dinâmica
+
+<Tabs>
+  <Tab label="main.rs">
+    <DynamicMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <DynamicCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}

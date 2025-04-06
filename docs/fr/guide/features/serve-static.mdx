@@ -1,0 +1,59 @@
+# Serveur statique
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+Middleware permettant de servir des fichiers statiques ou embarqués. Pour l'API détaillée, veuillez [consulter la documentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+
+## Cas d'utilisation
+Le service de fichiers statiques a de nombreuses applications dans les applications web :
+- Fournir des ressources statiques comme des fichiers CSS, JavaScript, images, etc.
+- Héberger des applications monopage (SPA)
+- Distribuer des documents, fichiers multimédias, contenus téléchargeables
+- Solution complète d'hébergement pour des sites simples
+
+## Fonctionnalités principales
+
+- `StaticDir` prend en charge les dossiers locaux statiques. Plusieurs dossiers peuvent être spécifiés en paramètre. Par exemple :
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticDirListMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Si le fichier n'est pas trouvé dans le premier dossier, la recherche se poursuit dans le second.
+
+`StaticDir` prend en charge l'envoi prioritaire des fichiers compressés lorsqu'ils existent. Par exemple, s'il existe `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br`, alors `index.html.gz`, `index.html.zst`, `index.html.br` sont considérés comme des versions précompressées de `index.html` et seront envoyés selon les informations de la requête.
+
+- Prise en charge de `rust-embed`, par exemple :
+
+## Avantages et inconvénients de rust-embed
+
+**Avantages :**
+- Compilation des fichiers statiques dans le binaire, simplifiant le déploiement
+- Pas besoin de gérer séparément les fichiers statiques en production
+- Meilleures performances potentielles (accès mémoire vs I/O disque)
+- Plus sécurisé, les fichiers ne peuvent pas être modifiés accidentellement
+
+**Inconvénients :**
+- Augmente la taille du binaire
+- Mise à jour du contenu statique nécessite une recompilation et redéploiement
+- Non adapté pour du contenu statique volumineux et fréquemment modifié
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticEmbedFilesMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+
+Il est possible de définir une page par défaut avec `default`. `with_fallback` et `fallback` permettent de spécifier un fichier de repli lorsqu'un fichier n'est pas trouvé, ce qui est utile pour certaines applications monopages.
+{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}

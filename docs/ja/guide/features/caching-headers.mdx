@@ -1,0 +1,27 @@
+# キャッシュヘッダー
+
+キャッシュヘッダー設定をサポートするミドルウェアを提供します。
+
+キャッシュ制御はWebパフォーマンス最適化の重要な要素であり、適切にキャッシュヘッダーを設定することで不要なネットワークリクエストを減らし、アプリケーションのパフォーマンスを向上させることができます。[Cache-Control](https://developer.mozilla.org/ja/docs/Web/HTTP/Headers/Cache-Control)はHTTPレスポンスヘッダーで、ブラウザのキャッシュ戦略を指定するためのディレクティブであり、誰がどの条件下でレスポンスをキャッシュできるか、またどのくらいの期間キャッシュするかを制御します。
+
+内部実装では`CachingHeaders`、`Modified`、`ETag`の3つの`Handler`が実装されており、`CachingHeaders`は後ろ2つの組み合わせとなっています。通常は`CachingHeaders`を使用します。
+
+- `Modified`：リソースの最終更新時刻に基づいたキャッシュ検証を提供
+- `ETag`：エンティティタグ(Entity Tag)を使用したより精密なリソース検証メカニズムを提供
+- `CachingHeaders`：上記2つのメカニズムを組み合わせた完全なキャッシュ制御サポートを提供
+
+_**サンプルコード**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
+import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CachingHeadersCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CachingHeadersCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}

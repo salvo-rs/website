@@ -1,0 +1,190 @@
+---
+title: Craft 機能
+---
+
+# Craft 機能
+
+Craft は、開発者がシンプルなアノテーション方式で処理関数とエンドポイントを自動生成し、OpenAPI ドキュメント生成とシームレスに連携できる機能を提供します。
+
+## 使用シナリオ
+
+Craft 機能が特に有用なケース:
+
+- 構造体メソッドから迅速にルート処理関数を作成する必要がある場合
+- 手動でのパラメータ抽出やエラー処理の定型コードを削減したい場合
+- API の OpenAPI ドキュメントを自動生成したい場合
+- ビジネスロジックと Web フレームワークを疎結合にしたい場合
+
+## 基本使用方法
+
+Craft 機能を使用するには以下のモジュールをインポート:
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+```
+
+### サービス構造体の作成
+
+`#[craft]` マクロで impl ブロックを注釈すると、構造体メソッドを処理関数またはエンドポイントに変換できます。
+
+```rust
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    // コンストラクタ
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+    
+    // その他のメソッド...
+}
+```
+
+### 処理関数の作成
+
+`#[craft(handler)]` でメソッドを処理関数に変換:
+
+```rust
+#[craft(handler)]
+fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+この関数は以下の特徴を持つ処理関数になります:
+- クエリパラメータから `left` と `right` 値を自動抽出
+- 構造体内の `state` 状態にアクセス
+- 計算結果を文字列レスポンスとして返却
+
+### エンドポイントの作成
+
+`#[craft(endpoint)]` でメソッドをエンドポイントに変換:
+
+```rust
+#[craft(endpoint)]
+pub(crate) fn add2(
+    self: ::std::sync::Arc<Self>,
+    left: QueryParam<i64>,
+    right: QueryParam<i64>,
+) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+エンドポイントは `Arc` を使用して状態を共有可能で、並行リクエスト処理に特に有用です。
+
+### 静的エンドポイント
+
+インスタンス状態に依存しない静的エンドポイントも作成可能:
+
+```rust
+#[craft(endpoint(responses((status_code = 400, description = "不正なリクエストパラメータ"))))]
+pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (*left + *right).to_string()
+}
+```
+
+この例では、カスタムエラーレスポンスの説明も追加されており、生成される OpenAPI ドキュメントに反映されます。
+
+## パラメータ抽出器
+
+Salvo の `oapi::extract` モジュールは様々なパラメータ抽出器を提供:
+
+- `QueryParam<T>`: クエリ文字列からパラメータ抽出
+- `PathParam<T>`: URL パスからパラメータ抽出
+- `FormData<T>`: フォームデータからパラメータ抽出
+- `JsonBody<T>`: JSON リクエストボディからパラメータ抽出
+
+これらの抽出器はパラメータ解析と型変換を自動化し、処理関数の記述を大幅に簡素化します。
+
+## OpenAPI 連携
+
+Craft 機能は OpenAPI 仕様に準拠した API ドキュメントを自動生成。例:
+
+```rust
+let router = Router::new()
+    .push(Router::with_path("add1").get(opts.add1()))
+    .push(Router::with_path("add2").get(opts.add2()))
+    .push(Router::with_path("add3").get(Opts::add3()));
+
+// OpenAPI ドキュメント生成
+let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+
+// OpenAPI ドキュメントと Swagger UI ルート追加
+let router = router
+    .push(doc.into_router("/api-doc/openapi.json"))
+    .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+```
+
+この設定で、API ドキュメントは `/api-doc/openapi.json` エンドポイントで提供され、Swagger UI は `/swagger-ui` パスで利用可能になります。
+
+## 完全なサンプル
+
+Craft 機能を使用して3種類のエンドポイントを作成する完全なサンプル:
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+use std::sync::Arc;
+
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+
+    #[craft(handler)]
+    fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint)]
+    pub(crate) fn add2(
+        self: ::std::sync::Arc<Self>,
+        left: QueryParam<i64>,
+        right: QueryParam<i64>,
+    ) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint(responses((status_code = 400, description = "不正なリクエストパラメータ")))]
+    pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (*left + *right).to_string()
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    // 初期値1で共有状態を作成
+    let opts = Arc::new(Opts::new(1));
+
+    // 3つのエンドポイントルートを設定
+    let router = Router::new()
+        .push(Router::with_path("add1").get(opts.add1()))
+        .push(Router::with_path("add2").get(opts.add2()))
+        .push(Router::with_path("add3").get(Opts::add3()));
+
+    // OpenAPIドキュメント生成
+    let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+    
+    // OpenAPIドキュメントとSwagger UIルートを追加
+    let router = router
+        .push(doc.into_router("/api-doc/openapi.json"))
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+
+    // localhost:5800でサーバー起動
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
+}
+```
+{/* 本行由工具自动生成,原文哈希值:2eb3d6ef348beb8a71682d2ad3a8bfd6 */}

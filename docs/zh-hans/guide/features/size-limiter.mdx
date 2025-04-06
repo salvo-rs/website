@@ -1,0 +1,26 @@
+# 上传文件大小限制 中间件
+
+import { Tab, Tabs } from 'rspress/theme';
+import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
+import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+
+提供对请求上传文件大小限制的中间件.
+
+## 应用场景
+
+Size Limiter 主要用于以下场景：
+- 防止用户上传过大的文件占用服务器资源
+- 避免恶意攻击者通过上传大量数据导致服务器内存溢出
+- 为不同的 API 端点设置不同的请求大小限制策略
+- 提高服务器处理请求的效率和稳定性
+
+_**示例代码**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<SizeLimiterMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SizeLimiterCargoCode/>
+</Tab>
+</Tabs>

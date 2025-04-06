@@ -1,0 +1,37 @@
+# Proxy inverso
+
+Un proxy inverso es una arquitectura de servidor que recibe solicitudes de los clientes y las reenvía a uno o varios servidores backend. A diferencia de un proxy directo (que representa al cliente), el proxy inverso actúa en nombre del lado del servidor.
+
+Principales ventajas del proxy inverso:
+- Balanceo de carga: distribuye las solicitudes entre múltiples servidores
+- Mayor seguridad: oculta la información del servidor real
+- Almacenamiento en caché de contenido: mejora el rendimiento
+- Reescribir y reenviar rutas: enrutamiento flexible de solicitudes
+
+El framework Salvo proporciona un middleware con funcionalidad de proxy inverso.
+
+_**Código de ejemplo**_
+
+```rust
+use salvo::prelude::*;
+use salvo::proxy::Proxy;
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+    
+    let router = Router::new()
+        .push(
+            Router::new()
+                .path("google/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.google.com"])),
+        )
+        .push(
+            Router::new()
+                .path("baidu/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.baidu.com"])),
+        );
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
+}
+```
+{/* 本行由工具自动生成,原文哈希值:79e235201cbe5bf2b6045156f3bae7e7 */}

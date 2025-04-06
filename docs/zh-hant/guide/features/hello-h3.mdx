@@ -1,0 +1,102 @@
+# HTTP/3 支援
+
+Salvo 提供了對 HTTP/3 的支援，透過啟用 `quinn` 功能即可使用此特性。HTTP/3 基於 QUIC 協定，相較於傳統的 HTTP/1.1 和 HTTP/2，能提供更低的延遲與更佳的性能表現，特別是在不穩定的網路環境中。
+
+## 啟用 HTTP/3 支援
+
+要在 Salvo 中啟用 HTTP/3 支援，您需要在 `Cargo.toml` 檔案中啟用 `quinn` 功能：
+
+```toml
+salvo = { workspace = true, features = ["quinn"] }
+```
+
+## HTTP/3 使用情境
+
+HTTP/3 特別適用於以下場景：
+
+- 行動裝置與不穩定網路環境下的應用
+- 需要低延遲的即時應用
+- 大量小檔案平行下載的情境
+- 對連線遷移有需求的應用（例如從 WiFi 切換到行動網路時保持連線不中斷）
+
+## 範例程式碼
+
+以下是一個簡單的 HTTP/3 伺服器範例，同時支援 HTTP/3（QUIC）與 HTTPS（TCP）：
+
+```rust
+use salvo::conn::rustls::{Keycert, RustlsConfig};
+use salvo::prelude::*;
+
+// 處理函式，回應 "Hello World"
+#[handler]
+async fn hello() -> &'static str {
+    "Hello World"
+}
+
+#[tokio::main]
+async fn main() {
+    // 初始化日誌系統
+    tracing_subscriber::fmt().init();
+
+    // 從嵌入的 PEM 檔案載入 TLS 憑證與私鑰
+    let cert = include_bytes!("../certs/cert.pem").to_vec();
+    let key = include_bytes!("../certs/key.pem").to_vec();
+
+    // 建立路由，新增一個端點
+    let router = Router::new().get(hello);
+
+    // 使用 Rustls 設定 TLS 配置
+    let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+
+    // 建立帶有 TLS 加密的 TCP 監聽器，監聽 5800 連接埠
+    let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+    // 建立 QUIC 監聽器並與 TCP 監聽器組合
+    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+        .join(listener)
+        .bind()
+        .await;
+
+    // 啟動同時支援 HTTP/3 (QUIC) 與 HTTPS (TCP) 的伺服器
+    Server::new(acceptor).serve(router).await;
+}
+```
+
+## 關鍵程式碼解析
+
+### TLS 配置
+
+```rust
+// 使用 Rustls 設定 TLS 配置
+let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+```
+
+由於 HTTP/3 基於 QUIC 協定，而 QUIC 要求使用 TLS 1.3 進行加密，因此需要配置 TLS 憑證與私鑰。在 Salvo 中，我們使用 `RustlsConfig` 來設定 TLS。
+
+### 組合監聽器
+
+```rust
+// 建立帶有 TLS 加密的 TCP 監聽器
+let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+// 建立 QUIC 監聽器並與 TCP 監聽器組合
+let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+    .join(listener)
+    .bind()
+    .await;
+```
+
+這段程式碼是 Salvo 中處理 HTTP/3 的核心部分。它首先建立了一個支援 TLS 的 TCP 監聽器（用於 HTTP/1.1 和 HTTP/2），然後建立了一個 QUIC 監聽器（用於 HTTP/3）。透過 `join` 方法，將這兩個監聽器組合在一起，使伺服器能夠同時處理不同協定的請求。
+
+## 執行範例
+
+要執行此範例，您需要有可用的 TLS 憑證與私鑰。在開發環境中，可以使用自簽署憑證。完整的範例程式碼可以在 [Salvo GitHub 儲存庫](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3) 中找到。
+
+需要注意的是，目前許多用戶端還不完全支援 HTTP/3，因此這個伺服器同時支援 HTTP/3 和 HTTPS 是很有必要的。
+
+## 注意事項
+
+1. HTTP/3 需要 TLS 1.3 支援，因此必須配置有效的憑證與私鑰。
+2. 用戶端需要支援 HTTP/3 協定才能利用此功能，否則會退回使用 HTTP/1.1 或 HTTP/2。
+3. 在生產環境中，應該使用憑證授權機構簽發的憑證，而非自簽署憑證。
+{/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

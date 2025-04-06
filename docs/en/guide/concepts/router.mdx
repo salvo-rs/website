@@ -1,0 +1,355 @@
+# Router  
+
+## What is Routing  
+
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) defines which middleware and `Handler` will process an HTTP request. This is the most fundamental and core functionality in Salvo.  
+
+Internally, `Router` consists of a series of filters. When a request arrives, the router tests itself and its descendants in the order they were added, from top to bottom, to see if they can match the request. If a match is successful, the middleware along the entire chain formed by the router and its descendants is executed sequentially. If during processing, the `Response` status is set to an error (4XX, 5XX) or a redirect (3XX), subsequent middleware and `Handler` will be skipped. You can also manually call `ctrl.skip_rest()` to skip the remaining middleware and `Handler`.  
+
+During the matching process, there is a URL path component that can be considered an object to be fully consumed by the filters. If all filters in a router succeed and the URL path component is completely consumed, it is considered a "successful match."  
+
+For example:  
+
+```rust  
+Router::with_path("articles").get(list_articles).post(create_article);  
+```  
+
+This is equivalent to:  
+
+```rust  
+Router::new()  
+    // PathFilter filters the request path, matching only if the path contains the "articles" segment.  
+    // Otherwise, the match fails. For example: /articles/123 matches successfully, while /articles_list/123  
+    // contains "articles" but fails to match due to the trailing "_list".  
+    .filter(PathFilter::new("articles"))  
+
+    // If the root matches successfully and the request method is GET, the inner sub-router matches successfully,  
+    // and the request is handled by list_articles.  
+    .push(Router::new().filter(filters::get()).handle(list_articles))  
+
+    // If the root matches successfully and the request method is POST, the inner sub-router matches successfully,  
+    // and the request is handled by create_article.  
+    .push(Router::new().filter(filters::post()).handle(create_article));  
+```  
+
+If accessing `GET /articles/`, the match is successful, and `list_articles` is executed. However, if accessing `GET /articles/123`, the route match fails and returns a 404 error because `Router::with_path("articles")` only consumes the `/articles` part of the URL path, leaving `/123` unconsumed, resulting in a failed match. To make the match successful, the route can be modified as:  
+
+```rust  
+Router::with_path("articles/{**}").get(list_articles).post(create_article);  
+```  
+
+Here, `{**}` matches any remaining path, so it can handle `GET /articles/123` and execute `list_articles`.  
+
+## Flat Definition  
+
+We can define routes in a flat style:  
+
+```rust  
+Router::with_path("writers").get(list_writers).post(create_writer);  
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);  
+Router::with_path("writers/{id}/articles").get(list_writer_articles);  
+```  
+
+## Hierarchical Definition  
+
+We can also define routes hierarchically, which is the recommended approach:  
+
+```rust  
+Router::with_path("writers")  
+    .get(list_writers)  
+    .post(create_writer)  
+    .push(  
+        Router::with_path("{id}")  
+            .get(show_writer)  
+            .patch(edit_writer)  
+            .delete(delete_writer)  
+            .push(Router::with_path("articles").get(list_writer_articles)),  
+    );  
+```  
+
+This form of definition makes the router structure clear and simple for complex projects.  
+
+Many methods in `Router` return `Self` to enable method chaining. Sometimes, you may need to conditionally determine how to route. The routing system also provides the `then` function for easy use:  
+
+```rust  
+Router::new()  
+    .push(  
+        Router::with_path("articles")  
+            .get(list_articles)  
+            .push(Router::with_path("{id}").get(show_article))  
+            .then(|router|{  
+                if admin_mode() {  
+                    router.post(create_article).push(  
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)  
+                    )  
+                } else {  
+                    router  
+                }  
+            }),  
+    );  
+```  
+
+This example shows that routes for creating, editing, and deleting articles are only added when the server is in `admin_mode`.  
+
+## Extracting Parameters from Routes  
+
+In the above code, `{id}` defines a parameter. We can retrieve its value from the `Request` instance:  
+
+```rust  
+#[handler]  
+async fn show_writer(req: &mut Request) {  
+    let id = req.param::<i64>("id").unwrap();  
+}  
+```  
+
+`{id}` matches a segment in the path. Normally, an article `id` is just a number, so we can use a regular expression to restrict the matching rule, such as `r"{id|\d+}"`.  
+
+For numeric types, a simpler method is to use `<id:num>` with the following syntax:  
+- `{id:num}`: Matches any number of digits.  
+- `{id:num[10]}`: Matches exactly 10 digits.  
+- `{id:num(..10)}`: Matches 1 to 9 digits.  
+- `{id:num(3..10)}`: Matches 3 to 9 digits.  
+- `{id:num(..=10)}`: Matches 1 to 10 digits.  
+- `{id:num(3..=10)}`: Matches 3 to 10 digits.  
+- `{id:num(10..)}`: Matches at least 10 digits.  
+
+You can also use `{**}`, `{*+}`, or `{*?}` to match all remaining path segments. For better readability, you can add descriptive names to make the path semantics clearer, such as `{**file_path}`.  
+
+- `{**}`: Matches any remaining path, including an empty string. For example, `/files/{**rest_path}` matches `/files`, `/files/abc.txt`, and `/files/dir/abc.txt`.  
+- `{*+}`: Matches any remaining path but excludes empty strings. For example, `/files/{*+rest_path}` does not match `/files` but matches `/files/abc.txt` and `/files/dir/abc.txt`.  
+- `{*?}`: Matches any remaining path but only a single segment. For example, `/files/{*?rest_path}` does not match `/files/dir/abc.txt` but matches `/files` and `/files/abc.txt`.  
+
+Multiple expressions can be combined to match the same path segment, such as `/articles/article_{id:num}/` or `/images/{name}.{ext}`.  
+
+## Adding Middleware  
+
+Middleware can be added using the `hoop` function on a router:  
+
+```rust  
+Router::new()  
+    .hoop(check_authed)  
+    .path("writers")  
+    .get(list_writers)  
+    .post(create_writer)  
+    .push(  
+        Router::with_path("{id}")  
+            .get(show_writer)  
+            .patch(edit_writer)  
+            .delete(delete_writer)  
+            .push(Router::with_path("articles").get(list_writer_articles)),  
+    );  
+```  
+
+In this example, the root router uses `check_authed` to verify whether the current user is logged in. All descendant routers are affected by this middleware.  
+
+If users only need to browse writer information and articles without logging in, we can structure the routes as follows:  
+
+```rust  
+Router::new()  
+    .push(  
+        Router::new()  
+            .hoop(check_authed)  
+            .path("writers")  
+            .post(create_writer)  
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),  
+    )  
+    .push(  
+        Router::with_path("writers").get(list_writers).push(  
+            Router::with_path("{id}")  
+                .get(show_writer)  
+                .push(Router::with_path("articles").get(list_writer_articles)),  
+        ),  
+    );  
+```  
+
+Even though two routers have the same path definition `path("articles")`, they can still be added to the same parent router.  
+
+## Filters  
+
+`Router` internally uses filters to determine whether a route matches. Filters support basic logical operations like `or` and `and`. A router can contain multiple filters, and the route matches successfully only if all filters succeed.  
+
+A website's path structure is hierarchical, but this hierarchy does not necessarily align with the router's organizational structure. A single website path may correspond to multiple router nodes. For example, some content under the `articles/` path may require login, while others do not. We can organize login-required subpaths under a router with authentication middleware and non-login-required subpaths under another router without it:  
+
+```rust  
+Router::new()  
+    .push(  
+        Router::with_path("articles")  
+            .get(list_articles)  
+            .push(Router::new().path("{id}").get(show_article)),  
+    )  
+    .push(  
+        Router::with_path("articles")  
+            .hoop(auth_check)  
+            .post(list_articles)  
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),  
+    );  
+```  
+
+Routers use filters to match requests and forward them to the corresponding middleware and `Handler` for processing.  
+
+`path` and `method` are the two most commonly used filters. `path` matches path components, while `method` matches HTTP request methods like GET, POST, and PATCH.  
+
+Filters can be combined using `and` and `or`:  
+
+```rust  
+Router::with_filter(filters::path("hello").and(filters::get()));  
+```  
+
+### Path Filters  
+
+Path-based filters are the most frequently used. Path filters can define parameters, such as:  
+
+```rust  
+Router::with_path("articles/{id}").get(show_article);  
+Router::with_path("files/{**rest_path}").get(serve_file);  
+```  
+
+In the `Handler`, these parameters can be retrieved using the `Request` object's `get_param` function:  
+
+```rust  
+#[handler]  
+pub async fn show_article(req: &mut Request) {  
+    let article_id = req.param::<i64>("id");  
+}  
+
+#[handler]  
+pub async fn serve_file(req: &mut Request) {  
+    let rest_path = req.param::<i64>("rest_path");  
+}  
+```  
+
+### Method Filters  
+
+Method filters match requests based on HTTP methods, such as:  
+
+```rust  
+Router::new().get(show_article).patch(update_article).delete(delete_article);  
+```  
+
+Here, `get`, `patch`, and `delete` are method filters. This is equivalent to:  
+
+```rust  
+use salvo::routing::filter;  
+
+let mut root_router = Router::new();  
+let show_router = Router::with_filter(filters::get()).handle(show_article);  
+let update_router = Router::with_filter(filters::patch()).handle(update_article);  
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);  
+Router::new().push(show_router).push(update_router).push(delete_router);  
+```  
+
+## Custom Wisp  
+
+For frequently used matching patterns, we can assign a shorthand name using `PathFilter::register_wisp_regex` or `PathFilter::register_wisp_builder`. For example, GUID formats often appear in paths. Normally, we would write:  
+
+```rust  
+Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");  
+Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");  
+```  
+
+Writing such complex regex patterns repeatedly is error-prone and unaesthetic. Instead, we can do this:  
+
+```rust  
+use salvo::routing::filter::PathFilter;  
+
+#[tokio::main]  
+async fn main() {  
+    let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();  
+    PathFilter::register_wisp_regex("guid", guid);  
+    Router::new()  
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))  
+        .push(Router::with_path("/users/{id:guid}").get(show_user));  
+}  
+```  
+
+After registering once, we can simply use `{id:guid}` to match GUIDs, simplifying the code.  
+
+## Coming from Controller-Based Web Frameworks? How to Understand Router?  
+
+The main differences between routing-based web frameworks (like Salvo) and traditional MVC or Controller-based frameworks are:  
+
+- **Flexibility**: Routing allows more flexible definition of request handling, enabling precise control over each path's logic. For example, in Salvo, you can directly define handlers for specific paths:  
+  ```rust  
+  Router::with_path("articles").get(list_articles).post(create_article);  
+  ```  
+  In Controller-based designs, you typically define a controller class with methods for different requests:  
+  ```java  
+  @Controller  
+  public class ArticleController {  
+      @GetMapping("/articles")  
+      public List<Article> listArticles() { /* ... */ }  
+        
+      @PostMapping("/articles")  
+      public Article createArticle(@RequestBody Article article) { /* ... */ }  
+  }  
+  ```  
+
+- **Middleware Integration**: Routing frameworks often provide cleaner middleware integration, allowing middleware to be applied to specific routes. In Salvo, middleware can be precisely targeted:  
+  ```rust  
+  Router::new()  
+      .push(  
+          Router::with_path("admin/articles")  
+              .hoop(admin_auth_middleware)  // Applies only to admin routes  
+              .get(list_all_articles)  
+              .post(create_article),  
+      )  
+      .push(  
+          Router::with_path("articles")  // Public routes without auth  
+              .get(list_public_articles),  
+      );  
+  ```  
+
+- **Code Organization**: Routing encourages organizing code by functionality or API endpoints rather than strict MVC layers.  
+  For example:  
+  ```rust  
+  // user_routes.rs - User-related routes and logic  
+  pub fn user_routes() -> Router {  
+      Router::with_path("users")  
+          .get(list_users)  
+          .post(create_user)  
+          .push(Router::with_path("{id}").get(get_user).delete(delete_user))  
+  }  
+    
+  // article_routes.rs - Article-related routes and logic  
+  pub fn article_routes() -> Router {  
+      Router::with_path("articles")  
+          .get(list_articles)  
+          .post(create_article)  
+  }  
+    
+  // Combining routes in the main app  
+  let router = Router::new()  
+      .push(user_routes())  
+      .push(article_routes());  
+  ```  
+
+- **Lightweight**: Routing designs are typically more lightweight, reducing framework-imposed constraints. You only need to include necessary components without adhering to rigid structures.  
+
+Routing makes API development more intuitive, especially for modern microservices and RESTful APIs. In frameworks like Salvo, routing is the core concept, directly reflecting API structure and behavior, making code easier to understand and maintain. In contrast, traditional Controller designs often require more configuration and conventions for the same functionality.  
+
+# Router Method Overview  
+
+| Category | Method | Description |  
+|----------|--------|-------------|  
+| **Creation/Access** | `new()` | Creates a new router |  
+| | `routers()/routers_mut()` | Gets references/mutable references to child routers |  
+| | `hoops()/hoops_mut()` | Gets references/mutable references to middleware |  
+| | `filters()/filters_mut()` | Gets references/mutable references to filters |  
+| **Routing Organization** | `unshift()` | Inserts a child router at the beginning |  
+| | `insert()` | Inserts a child router at a specified position |  
+| | `push()` | Adds a child router |  
+| | `append()` | Adds multiple child routers |  
+| | `then()` | Customizes router chain configuration |  
+| **Middleware** | `with_hoop()/hoop()` | Creates/adds middleware |  
+| | `with_hoop_when()/hoop_when()` | Creates/adds conditional middleware |  
+| **Path Filtering** | `with_path()/path()` | Creates/adds path filters |  
+| | `with_filter()/filter()` | Creates/adds filters |  
+| | `with_filter_fn()/filter_fn()` | Creates/adds function-based filters |  
+| **Network Filtering** | `scheme()` | Adds protocol filters |  
+| | `host()/with_host()` | Adds/creates host filters |  
+| | `port()/with_port()` | Adds/creates port filters |  
+| **HTTP Methods** | `get()/post()/put()` | Creates routes for corresponding HTTP methods |  
+| | `delete()/patch()/head()/options()` | Creates routes for corresponding HTTP methods |  
+| **Handlers** | `goal()` | Sets the route handler |  
+| **Matching Detection** | `detect()` | Checks if the router matches a request |
+{/* 本行由工具自动生成,原文哈希值:de818471bc28a65be62c204495aada43 */}

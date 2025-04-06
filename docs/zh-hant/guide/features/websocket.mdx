@@ -1,0 +1,40 @@
+# WebSocket
+
+import { Tab, Tabs } from 'rspress/theme';
+import WebsocketMainCode from '../../../../codes_md/websocket/src/main.mdx';
+import WebsocketCargoCode from '../../../../codes_md/websocket/Cargo.mdx';
+import WebsocketChatMainCode from '../../../../codes_md/websocket-chat/src/main.mdx';
+import WebsocketChatCargoCode from '../../../../codes_md/websocket-chat/Cargo.mdx';
+
+提供對 `WebSocket` 支援的中介軟體。
+
+## WebSocket 簡介
+
+WebSocket 是一種在單個 TCP 連線上進行全雙工通訊的協定。WebSocket 使得客戶端和伺服器之間的資料交換變得更加簡單，允許服務端主動向客戶端推送資料。在 WebSocket 協定中，瀏覽器和伺服器只需完成一次握手，兩者之間就能建立持久性連線，並進行雙向資料傳輸。
+
+與傳統的 HTTP 請求不同，WebSocket 連線在建立後保持開啟狀態，避免了頻繁的連線建立和斷開，大大減少了通訊開銷。這使得 WebSocket 特別適合於即時應用場景，如線上遊戲、聊天應用、股票行情等需要即時更新的應用程式。
+
+Salvo 透過其 WebSocket 中介軟體提供了簡潔而強大的 API，使開發者能夠輕鬆地在應用中整合 WebSocket 功能。
+
+_**範例程式碼**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<WebsocketMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WebsocketCargoCode/>
+</Tab>
+</Tabs>
+
+### 聊天程式範例
+
+<Tabs>
+<Tab label="main.rs">
+<WebsocketChatMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WebsocketChatCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:3fb844d4872fe26a4a4923b5dcb4e68a */}

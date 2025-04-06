@@ -1,0 +1,106 @@
+# リクエスト中のPanicをキャッチ
+
+Catch Panicは、リクエスト処理中に発生するクラッシュをキャッチするために使用されます。詳細なAPIについては[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html)。
+
+> **注意**: `CatchPanic`を使用するには、`Cargo.toml`で`catch-panic` featureを有効にする必要があります:
+> ```toml
+> salvo= { version = "xxx", features = ["catch-panic"] }
+> ```
+
+## ミドルウェアの紹介
+
+`CatchPanic`は、ハンドラ内で発生したpanicをキャッチするミドルウェアです。リクエスト処理中にpanicが発生すると、サーバー全体がクラッシュする代わりに、これらのpanicをキャッチし、500 Internal Server Errorをレスポンスに書き込みます。
+
+**重要**: このミドルウェアは、他のミドルウェアやハンドラ内のpanicを確実にキャッチするために、最初のミドルウェアとして使用する必要があります。
+
+## 基本的な使い方
+
+```rust
+use salvo_core::prelude::*;
+use salvo_extra::catch_panic::CatchPanic;
+
+#[handler]
+async fn hello() {
+    panic!("panic error!");
+}
+
+#[tokio::main]
+async fn main() {
+    let router = Router::new().hoop(CatchPanic::new()).get(hello);
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
+}
+```
+
+## 他のフレームワークとの比較 概念の簡単な理解
+
+### Axum
+
+Axumでは、`Tower`の`catch_panic`ミドルウェアに相当します:
+
+```rust
+use axum::{
+    Router,
+    routing::get,
+    http::StatusCode,
+};
+use tower::ServiceBuilder;
+use tower_http::catch_panic::CatchPanicLayer;
+
+async fn panic_handler() -> &'static str {
+    panic!("panic error!");
+}
+
+#[tokio::main]
+async fn main() {
+    let app = Router::new()
+        .route("/", get(panic_handler))
+        .layer(
+            ServiceBuilder::new()
+                .layer(CatchPanicLayer::new())
+        );
+    
+    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
+}
+```
+
+### Gin (Go)
+
+Go言語のGinフレームワークでは、Recoveryミドルウェアが類似の機能を提供します:
+
+```go
+package main
+
+import (
+    "github.com/gin-gonic/gin"
+)
+
+func main() {
+    r := gin.Default() // デフォルトでRecoveryミドルウェアを含む
+    
+    r.GET("/", func(c *gin.Context) {
+        panic("panic error!")
+    })
+    
+    r.Run(":8080")
+}
+```
+
+## サンプルコード
+
+import { Tab, Tabs } from 'rspress/theme';
+import CatchPanicCode from '../../../../codes_md/catch-panic/src/main.mdx';
+import CatchPanicCargoCode from '../../../../codes_md/catch-panic/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CatchPanicCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CatchPanicCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:216fd74acc010904e48610d9b567866d */}

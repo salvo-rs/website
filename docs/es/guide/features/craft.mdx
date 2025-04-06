@@ -1,0 +1,190 @@
+---
+title: Características de Craft
+---
+
+# Características de Craft
+
+Craft permite a los desarrolladores generar automáticamente funciones de manejo y endpoints mediante simples anotaciones, integrando además de manera fluida la generación de documentación OpenAPI.
+
+## Casos de uso
+
+Las características de Craft son especialmente útiles en los siguientes escenarios:
+
+- Cuando necesitas crear rápidamente funciones de manejo de rutas a partir de métodos de estructuras
+- Cuando deseas reducir el código repetitivo de extracción de parámetros y manejo de errores
+- Cuando necesitas generar automáticamente documentación OpenAPI para tu API
+- Cuando buscas desacoplar la lógica de negocio del framework web
+
+## Uso básico
+
+Para utilizar las características de Craft, es necesario importar los siguientes módulos:
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+```
+
+### Crear una estructura de servicio
+
+Usando la macro `#[craft]` en tu bloque impl, puedes convertir los métodos de la estructura en funciones de manejo o endpoints.
+
+```rust
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    // Constructor
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+    
+    // Más métodos...
+}
+```
+
+### Crear funciones de manejo
+
+Usa `#[craft(handler)]` para convertir un método en una función de manejo:
+
+```rust
+#[craft(handler)]
+fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+Este método se convertirá en una función de manejo que:
+- Extrae automáticamente los valores `left` y `right` de los parámetros de consulta
+- Accede al estado `state` de la estructura
+- Devuelve el resultado del cálculo como una cadena de respuesta
+
+### Crear endpoints
+
+Usa `#[craft(endpoint)]` para convertir un método en un endpoint:
+
+```rust
+#[craft(endpoint)]
+pub(crate) fn add2(
+    self: ::std::sync::Arc<Self>,
+    left: QueryParam<i64>,
+    right: QueryParam<i64>,
+) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+Los endpoints pueden aprovechar `Arc` para compartir estado, lo que es especialmente útil al manejar solicitudes concurrentes.
+
+### Endpoints estáticos
+
+También puedes crear endpoints estáticos que no dependan del estado de una instancia:
+
+```rust
+#[craft(endpoint(responses((status_code = 400, description = "Parámetros de solicitud incorrectos."))))]
+pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (*left + *right).to_string()
+}
+```
+
+En este ejemplo, también se añadió una descripción personalizada para respuestas de error, que se reflejará en la documentación OpenAPI generada.
+
+## Extractores de parámetros
+
+El módulo `oapi::extract` de Salvo proporciona varios extractores de parámetros, los más comunes incluyen:
+
+- `QueryParam<T>`: Extrae parámetros de la cadena de consulta
+- `PathParam<T>`: Extrae parámetros de la ruta URL
+- `FormData<T>`: Extrae parámetros de los datos del formulario
+- `JsonBody<T>`: Extrae parámetros del cuerpo de la solicitud JSON
+
+Estos extractores realizan automáticamente el análisis y conversión de tipos, simplificando enormemente la escritura de funciones de manejo.
+
+## Integración con OpenAPI
+
+Las características de Craft pueden generar automáticamente documentación API conforme a la especificación OpenAPI. En el ejemplo:
+
+```rust
+let router = Router::new()
+    .push(Router::with_path("add1").get(opts.add1()))
+    .push(Router::with_path("add2").get(opts.add2()))
+    .push(Router::with_path("add3").get(Opts::add3()));
+
+// Generar documentación OpenAPI
+let doc = OpenApi::new("API de ejemplo", "0.0.1").merge_router(&router);
+
+// Añadir rutas para la documentación OpenAPI y Swagger UI
+let router = router
+    .push(doc.into_router("/api-doc/openapi.json"))
+    .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+```
+
+Con esta configuración, la documentación API estará disponible en el endpoint `/api-doc/openapi.json`, y la interfaz Swagger UI en la ruta `/swagger-ui`.
+
+## Ejemplo completo
+
+A continuación, un ejemplo completo que muestra cómo usar las características de Craft para crear tres tipos diferentes de endpoints:
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+use std::sync::Arc;
+
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+
+    #[craft(handler)]
+    fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint)]
+    pub(crate) fn add2(
+        self: ::std::sync::Arc<Self>,
+        left: QueryParam<i64>,
+        right: QueryParam<i64>,
+    ) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint(responses((status_code = 400, description = "Parámetros de solicitud incorrectos."))))]
+    pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (*left + *right).to_string()
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    // Crear estado compartido, con valor inicial de 1
+    let opts = Arc::new(Opts::new(1));
+
+    // Configurar rutas para los tres endpoints
+    let router = Router::new()
+        .push(Router::with_path("add1").get(opts.add1()))
+        .push(Router::with_path("add2").get(opts.add2()))
+        .push(Router::with_path("add3").get(Opts::add3()));
+
+    // Generar documentación OpenAPI
+    let doc = OpenApi::new("API de ejemplo", "0.0.1").merge_router(&router);
+    
+    // Añadir rutas para la documentación OpenAPI y Swagger UI
+    let router = router
+        .push(doc.into_router("/api-doc/openapi.json"))
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+
+    // Iniciar el servidor en localhost:5800
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
+}
+```
+{/* 本行由工具自动生成,原文哈希值:2eb3d6ef348beb8a71682d2ad3a8bfd6 */}

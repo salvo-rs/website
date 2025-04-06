@@ -1,0 +1,115 @@
+# Обработка ошибок
+
+## Обычные способы обработки ошибок в приложениях на Rust
+
+Обработка ошибок в Rust отличается от таких языков, как Java — здесь нет конструкции `try...catch`. Обычно на уровне приложения определяют глобальный тип для обработки ошибок:
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("io: `{0}`")]
+    Io(#[from] io::Error),
+    #[error("utf8: `{0}`")]
+    FromUtf8(#[from] FromUtf8Error),
+    #[error("diesel: `{0}`")]
+    Diesel(#[from] diesel::result::Error),
+    ...
+}
+
+pub type AppResult<T> = Result<T, AppError>;
+```
+
+Здесь используется библиотека `thiserror`, которая упрощает создание пользовательских типов ошибок. Для удобства также определяется тип `AppResult`.
+
+### thiserror и anyhow
+
+В экосистеме Rust для обработки ошибок часто используют две библиотеки:
+
+- **thiserror**: Подходит для разработчиков библиотек, позволяет чётко определять типы ошибок. С помощью производных макросов помогает реализовать трейт `std::error::Error` для пользовательских типов ошибок, а также задавать их представление. Лучший выбор при создании библиотек или когда необходимо предоставить пользователям ясные типы ошибок.
+
+- **anyhow**: Предназначена для разработчиков приложений, предоставляет универсальный тип ошибки `anyhow::Error`, который может содержать любую ошибку, реализующую трейт `std::error::Error`. Акцент сделан на распространении ошибок, а не их определении, что особенно удобно для кода уровня приложения. Позволяет быстро преобразовывать различные ошибки в `anyhow::Error`, уменьшая количество шаблонного кода.
+
+Иногда эти библиотеки используют вместе: в библиотеках определяют типы ошибок через `thiserror`, а в приложениях обрабатывают и распространяют их через `anyhow`.
+
+## Обработка ошибок в Handler
+
+В Salvo `Handler` часто сталкивается с различными ошибками, такими как ошибки подключения к базе данных, ошибки доступа к файлам, сетевые ошибки и т.д. Для таких случаев можно применить описанный выше подход:
+
+```rust
+#[handler]
+async fn home()-> AppResult<()> {
+
+}
+```
+
+Здесь `home` возвращает `AppResult<()>`. Но как отобразить эту ошибку? Нам нужно реализовать для `AppResult` трейт `Writer`, где можно определить формат вывода ошибки:
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        res.render(Text::Plain("I'm a error, hahaha!"));
+    }
+}
+```
+
+`Handler` в Salvo может возвращать `Result`, при условии, что типы `Ok` и `Err` реализуют трейт `Writer`.
+
+### Использование anyhow для обработки ошибок
+
+Учитывая популярность anyhow, Salvo предоставляет встроенную поддержку для `anyhow::Error`. При включении функции `anyhow`, `anyhow::Error` реализует трейт `Writer` и отображается как `InternalServerError`:
+
+```rust
+#[cfg(feature = "anyhow")]
+#[async_trait]
+impl Writer for ::anyhow::Error {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.render(StatusError::internal_server_error());
+    }
+}
+```
+
+Для использования anyhow необходимо активировать соответствующую функцию в Cargo.toml:
+
+```toml
+[dependencies]
+salvo = { version = "*", features = ["anyhow"] }
+anyhow = "1.0"
+```
+
+Теперь обработчик может напрямую возвращать `anyhow::Result<T>`:
+
+```rust
+#[handler]
+async fn home() -> anyhow::Result<impl Writer> {
+    let data = fetch_data().context("Failed to fetch data")?;
+    Ok(Text::Plain(data))
+}
+```
+
+Ошибки часто содержат конфиденциальную информацию, которую нежелательно показывать обычным пользователям из соображений безопасности. Однако разработчикам или администраторам сайта, наоборот, могут потребоваться подробные сведения об ошибке.
+
+Метод `write` предоставляет доступ к ссылкам на `Request` и `Depot`, что позволяет реализовать подобную логику:
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        let user = depot.obtain::<User>();
+        if user.is_admin {
+            res.render(Text::Plain(e.to_string()));
+        } else {
+            res.render(Text::Plain("I'm a error, hahaha!"));
+        }
+    }
+}
+```
+
+## Отображение страниц ошибок
+
+Стандартные страницы ошибок в Salvo удовлетворяют большинству потребностей, автоматически отображая содержимое в формате Html, Json или Xml в зависимости от типа запроса. Однако иногда может потребоваться настроить их отображение.
+
+Это можно сделать, реализовав пользовательский `Catcher`. Подробнее см. раздел [`Catcher`](../concepts/catcher.html).
+{/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}
