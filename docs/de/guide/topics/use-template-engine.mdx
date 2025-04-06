@@ -1,0 +1,29 @@
+# Verwendung von Template-Engines
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
+import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
+import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+
+Salvo bietet keine integrierte Template-Engine, da die Vorlieben für bestimmte Template-Stile individuell unterschiedlich sind.
+
+Im Wesentlichen funktioniert eine Template-Engine nach dem Prinzip: Daten + Vorlage = Zeichenkette.
+
+Daher kann jede beliebige Template-Engine unterstützt werden, solange sie letztendlich eine Zeichenkette rendern kann.
+
+Ein Beispiel für die Unterstützung von `askama`:
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+  <Tab label="template/hello.toml">
+    <TemplateCode/>
+  </Tab>
+</Tabs>
+
+**Hinweis**: Für nicht besonders komplexe Projekte empfehlen wir eher einen Ansatz mit getrennter Frontend- und Backend-Entwicklung. Dabei kommen flexiblere und besser etablierte UI-Frameworks (wie React, Vue, Svelte etc.) für das Frontend zum Einsatz, während Salvo als Backend-API dient. Diese Methode bietet höhere Entwicklungseffizienz, klarere Verantwortungsbereiche und entspricht eher den modernen Trends in der Webentwicklung.
+{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}

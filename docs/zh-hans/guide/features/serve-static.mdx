@@ -1,0 +1,58 @@
+# 静态服务器
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+将静态文件或者内嵌的文件作为服务提供的中间件. 具体 API 请[查看文档](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+
+## 应用场景
+静态文件服务在web应用中有广泛的应用场景：
+- 提供网站的静态资源如CSS、JavaScript、图片等文件
+- 托管单页应用(SPA)
+- 分发文档、媒体文件、下载内容等
+- 作为简单网站的完整托管方案
+
+## 主要功能
+
+- `StaticDir` 提供了对静态本地文件夹的支持. 可以将多个文件夹的列表作为参数. 比如:
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticDirListMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  如果在第一个文件夹中找不到对应的文件, 则会到第二个文件夹中找.
+
+`StaticDir` 支持在存在压缩文件的情况下，优先发送压缩文件. 比如存在 `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br` 这几个文件，则 `index.html.gz`, `index.html.zst`, `index.html.br` 被认为是 `index.html` 的预压缩版本，会根据请求信息，发送对应的压缩文件.
+
+- 提供了对 `rust-embed` 的支持, 比如:
+
+## rust-embed的优缺点
+
+**优点：**
+- 将静态文件编译进二进制文件中，简化部署流程
+- 无需在生产环境中单独管理静态文件
+- 可能获得更好的性能（内存访问vs磁盘I/O）
+- 更安全，文件不会被意外修改
+
+**缺点：**
+- 增加应用二进制文件的大小
+- 更新静态内容需要重新编译和部署整个应用
+- 不适合频繁变更的大型静态内容
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticEmbedFilesMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+
+可以通过 default 设置默认显示页面. `with_fallback` 和 `fallback` 可以设置在文件找不到时, 用这里设置的文件代替, 这个对应某些单页网站应用来还是有用的.

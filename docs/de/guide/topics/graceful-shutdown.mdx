@@ -1,0 +1,38 @@
+# Graceful Shutdown
+
+Graceful Shutdown bedeutet, dass der Server beim Herunterfahren nicht sofort alle Verbindungen beendet, sondern zunächst keine neuen Anfragen mehr annimmt und gleichzeitig bereits angenommene Anfragen ausreichend Zeit zur Bearbeitung lässt, bevor der Dienst geschlossen wird. Diese Methode vermeidet ein abruptes Abbrechen von Anfragen und verbessert sowohl die Benutzererfahrung als auch die Systemzuverlässigkeit.
+
+Salvo bietet Unterstützung für Graceful Shutdown durch die `handle`-Methode des `Server`-Objekts, mit der ein Server-Handle abgerufen wird, und anschließend den Aufruf der `stop_graceful`-Methode. Nach dem Aufruf dieser Methode wird der Server:
+
+- Keine neuen Verbindungsanfragen mehr annehmen
+- Warten, bis bestehende Anfragen abgeschlossen sind
+- Nach einer optional angegebenen Timeout-Zeit verbleibende Verbindungen gewaltsam schließen
+
+Hier ein einfaches Beispiel:
+
+```rust
+use salvo_core::prelude::*;
+
+#[tokio::main]
+async fn main() {
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let server = Server::new(acceptor);
+    let handle = server.handle();
+
+    // Server elegant herunterfahren
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        handle.stop_graceful(None);
+    });
+    server.serve(Router::new()).await;
+}
+```
+
+In diesem Beispiel:
+
+- `server.handle()` ruft einen Server-Handle ab, der zur Steuerung des Server-Lebenszyklus verwendet werden kann
+- `handle.stop_graceful(None)` initiiert den Graceful-Shutdown-Prozess, wobei `None` bedeutet, dass keine Timeout-Zeit gesetzt wird und auf den Abschluss aller Anfragen gewartet wird
+- Um eine Timeout-Zeit festzulegen, kann `Some(Duration)` übergeben werden, wonach verbleibende Verbindungen nach Ablauf der Zeit gewaltsam geschlossen werden
+
+Dieser Ansatz ist besonders nützlich für Anwendungen, die in Container-Umgebungen oder Cloud-Plattformen bereitgestellt werden, sowie für Fälle, in denen Hot-Updates durchgeführt werden müssen, ohne dass Anfragen unerwartet abgebrochen werden.
+{/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

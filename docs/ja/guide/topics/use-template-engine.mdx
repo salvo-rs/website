@@ -1,0 +1,31 @@
+# テンプレートエンジンの利用
+
+```javascript
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
+import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
+import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+```
+
+Salvoはデフォルトで特定のテンプレートエンジンを組み込んでいません。使用するテンプレートエンジンの好みは人それぞれ異なるからです。
+
+テンプレートエンジンの本質は：データ + テンプレート = 文字列。
+
+したがって、最終的に文字列をレンダリングできれば、どのようなテンプレートエンジンでもサポート可能です。
+
+例えば`askama`のサポート例：
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+  <Tab label="template/hello.toml">
+    <TemplateCode/>
+  </Tab>
+</Tabs>
+
+**注意**: 特に複雑でないプロジェクトの場合、フロントエンドとバックエンドを分離した開発方式を推奨します。より柔軟でエコシステムの充実したUIフレームワーク（React、Vue、Svelteなど）を使用してフロントエンドを構築し、SalvoをバックエンドAPIサービスとして利用する方法です。この方式は開発効率が高く、フロントエンドとバックエンドの責任範囲が明確で、現代的なWebアプリケーション開発のトレンドにも適しています。
+{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}

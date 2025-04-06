@@ -1,0 +1,38 @@
+# Desligamento Elegante
+
+O desligamento elegante refere-se ao processo em que, ao encerrar um servidor, não se interrompem imediatamente todas as conexões. Em vez disso, primeiro para-se de aceitar novas requisições, enquanto as requisições já aceitas têm tempo suficiente para serem processadas antes do serviço ser desativado. Essa abordagem evita a interrupção abrupta de requisições, melhorando a experiência do usuário e a confiabilidade do sistema.
+
+O Salvo oferece suporte a desligamento elegante através do método `handle` do `Server`, que obtém um manipulador do servidor, permitindo então chamar o método `stop_graceful` para implementar essa funcionalidade. Após chamar esse método, o servidor:
+
+- Para de aceitar novas conexões
+- Aguarda a conclusão do processamento das requisições existentes
+- Após o tempo limite especificado (se fornecido), força o encerramento das conexões remanescentes
+
+Aqui está um exemplo simples:
+
+```rust
+use salvo_core::prelude::*;
+
+#[tokio::main]
+async fn main() {
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let server = Server::new(acceptor);
+    let handle = server.handle();
+
+    // Desligar o servidor elegantemente
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        handle.stop_graceful(None);
+    });
+    server.serve(Router::new()).await;
+}
+```
+
+No exemplo acima:
+
+- `server.handle()` obtém um manipulador do servidor, que pode ser usado para controlar seu ciclo de vida
+- `handle.stop_graceful(None)` inicia o processo de desligamento elegante, onde `None` indica que não há tempo limite definido - o servidor aguardará indefinidamente até que todas as requisições sejam concluídas
+- Para definir um tempo limite, pode-se passar `Some(Duration)`, após o qual as conexões remanescentes serão forçadamente encerradas
+
+Essa abordagem é particularmente útil para aplicações implantadas em ambientes de contêineres ou plataformas em nuvem, bem como para atualizações em tempo real onde é essencial garantir que as requisições não sejam interrompidas inesperadamente.
+{/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

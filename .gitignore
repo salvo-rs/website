@@ -1,26 +1,14 @@
-/target
-**/*.rs.bk
-/Cargo.lock
-/.idea
-/.vscode
-**/target
-/.vs
-/examples/_*.rs
-/examples/target
-/examples/*/target
-cobertura.xml
-debug.log
-temp
-tarpaulin-report.*
-
+# Local
 .DS_Store
+*.local
+*.log*
 
+# Dist
+node_modules
+dist/
+doc_build/
 
-**/node_modules/
-ss files
-**/.vuepress/.temp/
-**/.vuepress/.cache/
-**/.vuepress/dist/
-
-package-lock.json
-pnpm-lock.yaml
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea

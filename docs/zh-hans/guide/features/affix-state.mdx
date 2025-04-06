@@ -1,0 +1,49 @@
+# Affix State 请求中共享数据
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
+import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+
+Affix State 中间件用于往 Depot 中添加共享数据.
+要使用 Affix State 功能，需要在 Cargo.toml 中开启 `affix-state` feature
+
+## 功能解析
+Affix State 提供了一种在请求处理过程中共享数据的简单方式。它允许你：
+
+在路由配置阶段注入全局配置或共享数据
+在任何处理器中通过 Depot 访问这些数据
+支持任何可克隆的类型作为状态数据
+
+## 与其他框架对比 快速理解概念
+| 框架 | 语言 | 状态管理方式 |
+|------|------|-------------|
+| Salvo (Affix State) | Rust | 通过 Depot 存储和访问，支持多种类型 |
+| Axum | Rust | 通过 Extension 存储状态，类似但使用方式不同 |
+| Actix-web | Rust | 使用 App Data 和 Web::Data 共享状态 |
+| Gin | Go | 使用 context.Set 和 context.Get 存取数据 |
+| Echo | Go | 使用 context.Set 和 context.Get 管理共享状态 |
+| Spring | Java | 使用 ApplicationContext 或 @Bean 注解管理依赖 |
+| Quarkus | Java | 使用 CDI 和依赖注入机制 |
+| Express.js | JavaScript | 使用 app.locals 或 req.app.locals 存储全局状态 |
+| Nest.js | JavaScript | 使用依赖注入系统管理共享服务 |
+| Koa.js | JavaScript | 使用 ctx.state 存储请求级别状态 |
+
+## 常见使用场景
+
+- 数据库连接池共享
+- 应用配置共享
+- 缓存实例共享
+- API 客户端共享
+- 全局计数器或状态跟踪
+
+Affix State 的优势在于它的简洁性和灵活性，可以轻松地在不同路由和处理器之间共享任何类型的数据，而无需大量的样板代码。
+_**示例代码**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+</Tabs>

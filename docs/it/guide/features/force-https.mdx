@@ -1,0 +1,23 @@
+# Forzare HTTPS
+
+Il middleware `force-https` può reindirizzare tutte le richieste per utilizzare il protocollo HTTPS.
+
+Se applicato a un `Router`, questo middleware forzerà il cambio di protocollo solo quando la route corrisponde. In caso di pagina non trovata, non avverrà alcun reindirizzamento.
+
+Tuttavia, l'esigenza più comune è che qualsiasi richiesta venga reindirizzata automaticamente, anche quando la route non corrisponde e viene restituito un errore `404`. In questo caso, è possibile aggiungere il middleware al `Service`. Indipendentemente dal fatto che la richiesta corrisponda a una route, i middleware aggiunti al `Service` verranno sempre eseguiti.
+
+_**Codice di esempio**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import ForceHttpsCode from '../../../../codes_md/force-https/src/main.mdx';
+import ForceHttpsCargoCode from '../../../../codes_md/force-https/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <ForceHttpsCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ForceHttpsCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:acf8e135d114ff6c701ad46acd7c2854 */}

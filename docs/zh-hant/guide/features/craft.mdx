@@ -1,0 +1,190 @@
+---
+title: Craft 特性
+---
+
+# Craft 特性
+
+Craft 允許開發者通過簡單的註解方式自動生成處理函數和端點，同時與 OpenAPI 文件生成無縫整合。
+
+## 使用場景
+
+Craft 特性在以下場景特別有用：
+
+- 當你需要從結構體方法快速建立路由處理函數時
+- 當你想要減少手動編寫參數提取和錯誤處理的樣板程式碼時
+- 當你需要為你的 API 自動生成 OpenAPI 文件時
+- 當你希望將業務邏輯與 Web 框架解耦時
+
+## 基本用法
+
+使用 Craft 特性需要引入以下模組：
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+```
+
+### 建立服務結構體
+
+使用 `#[craft]` 巨集標註你的 impl 塊，可以將結構體方法轉換為處理函數或端點。
+
+```rust
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    // 建構函數
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+    
+    // 更多方法...
+}
+```
+
+### 建立處理函數
+
+使用 `#[craft(handler)]` 將方法轉換為處理函數：
+
+```rust
+#[craft(handler)]
+fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+這個方法將成為一個處理函數，它：
+- 自動從查詢參數提取 `left` 和 `right` 值
+- 存取結構體中的 `state` 狀態
+- 回傳計算結果作為字串回應
+
+### 建立端點
+
+使用 `#[craft(endpoint)]` 將方法轉換為端點：
+
+```rust
+#[craft(endpoint)]
+pub(crate) fn add2(
+    self: ::std::sync::Arc<Self>,
+    left: QueryParam<i64>,
+    right: QueryParam<i64>,
+) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+端點可以利用 `Arc` 來共享狀態，這在處理並行請求時特別有用。
+
+### 靜態端點
+
+你也可以建立不依賴於實例狀態的靜態端點：
+
+```rust
+#[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (*left + *right).to_string()
+}
+```
+
+在這個例子中，還添加了自訂錯誤回應的描述，這將反映在生成的 OpenAPI 文件中。
+
+## 參數提取器
+
+Salvo 的 `oapi::extract` 模組提供了多種參數提取器，最常見的包括：
+
+- `QueryParam<T>`: 從查詢字串提取參數
+- `PathParam<T>`: 從URL路徑提取參數
+- `FormData<T>`: 從表單資料提取參數
+- `JsonBody<T>`: 從JSON請求體提取參數
+
+這些提取器會自動完成參數解析和類型轉換，大大簡化了處理函數的編寫。
+
+## 與 OpenAPI 整合
+
+Craft 特性能自動生成符合 OpenAPI 規範的 API 文件。在範例中：
+
+```rust
+let router = Router::new()
+    .push(Router::with_path("add1").get(opts.add1()))
+    .push(Router::with_path("add2").get(opts.add2()))
+    .push(Router::with_path("add3").get(Opts::add3()));
+
+// 生成 OpenAPI 文件
+let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+
+// 添加 OpenAPI 文件和 Swagger UI 路由
+let router = router
+    .push(doc.into_router("/api-doc/openapi.json"))
+    .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+```
+
+這樣配置後，API 文件將在 `/api-doc/openapi.json` 端點提供，Swagger UI 將在 `/swagger-ui` 路徑可用。
+
+## 完整範例
+
+下面是一個完整的範例，展示了如何使用 Craft 特性建立三種不同類型的端點：
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+use std::sync::Arc;
+
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+
+    #[craft(handler)]
+    fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint)]
+    pub(crate) fn add2(
+        self: ::std::sync::Arc<Self>,
+        left: QueryParam<i64>,
+        right: QueryParam<i64>,
+    ) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+    pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (*left + *right).to_string()
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    // 建立共享狀態，初始值為1
+    let opts = Arc::new(Opts::new(1));
+
+    // 配置三個端點的路由
+    let router = Router::new()
+        .push(Router::with_path("add1").get(opts.add1()))
+        .push(Router::with_path("add2").get(opts.add2()))
+        .push(Router::with_path("add3").get(Opts::add3()));
+
+    // 生成OpenAPI文件
+    let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+    
+    // 添加OpenAPI文件和Swagger UI路由
+    let router = router
+        .push(doc.into_router("/api-doc/openapi.json"))
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+
+    // 在localhost:5800啟動伺服器
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
+}
+```
+{/* 本行由工具自动生成,原文哈希值:2eb3d6ef348beb8a71682d2ad3a8bfd6 */}

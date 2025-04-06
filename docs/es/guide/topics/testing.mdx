@@ -1,0 +1,54 @@
+# Escribiendo Pruebas
+
+## La importancia de las pruebas
+
+Escribir pruebas es una muestra de responsabilidad como ingeniero y el secreto para dormir tranquilo. Un conjunto completo de pruebas no solo mejora la calidad del código y previene errores de regresión, sino que también te permite descansar plácidamente después del despliegue. Mientras tus colegas reciben alertas de fallos del sistema a medianoche, tu aplicación permanece firme como una roca. Esta es la tranquilidad y confianza que brindan las pruebas.
+
+## Herramientas de prueba de Salvo
+
+El módulo `test` proporcionado por Salvo ayuda a probar proyectos basados en Salvo.
+
+[Documentación más reciente](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)
+
+**Ejemplo básico:**
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hola_mundo() -> &'static str {
+    "Hola Mundo"
+}
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+
+    tracing::info!("Escuchando en http://127.0.0.1:5800");
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(ruta()).await;
+}
+
+fn ruta() -> Router {
+    Router::new().get(hola_mundo)
+}
+
+#[cfg(test)]
+mod pruebas {
+    use salvo::prelude::*;
+    use salvo::test::{ResponseExt, TestClient};
+
+    #[tokio::test]
+    async fn prueba_hola_mundo() {
+        let servicio = Service::new(super::ruta());
+
+        let contenido = TestClient::get(format!("http://127.0.0.1:5800/"))
+            .send(&servicio)
+            .await
+            .take_string()
+            .await
+            .unwrap();
+        assert_eq!(contenido, "Hola Mundo");
+    }
+}
+```
+{/* 本行由工具自动生成,原文哈希值:0a03588b2b7cfbb4bdfe3afb32a9763b */}

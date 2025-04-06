@@ -5,16 +5,18 @@ use salvo::serve_static::StaticDir;
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    let router = Router::with_path("{**path}").get(
+    let router = Router::with_path("{*path}").get(
         StaticDir::new([
-            "examples/static-dir-list/static/boy",
-            "examples/static-dir-list/static/girl",
+            "static-dir-list/static/boy",
+            "static-dir-list/static/girl",
+            "static/boy",
+            "static/girl",
         ])
+        .include_dot_files(false)
         .defaults("index.html")
-        .fallback("index.html")
         .auto_list(true),
     );
 
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }

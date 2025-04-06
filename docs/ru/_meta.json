@@ -1,0 +1,37 @@
+[
+  {
+    "text": "Guide",
+    "link": "/guide/",
+    "activeMatch": "/guide/"
+  },
+  {
+    "text": "Concepts",
+    "link": "/guide/Concepts/",
+    "activeMatch": "/guide/Concepts/"
+  },
+  {
+    "text": "Topics",
+    "link": "/guide/Topics/",
+    "activeMatch": "/guide/Topics/"
+  }
+  ,
+  {
+    "text": "Features",
+    "link": "/guide/features/",
+    "activeMatch": "/guide/features/"
+  },
+  {
+    "text": "Ecology",
+    "link": "/guide/ecology/",
+    "activeMatch": "/guide/ecology/"
+  },
+  {
+    "text": "API",
+    "link": "https://docs.rs/salvo/latest/salvo/"
+  },
+  {
+    "text": "donate",
+    "link": "/donate/",
+    "activeMatch": "/donate/"
+  }
+]

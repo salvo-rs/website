@@ -1,0 +1,132 @@
+import { Tab, Tabs } from 'rspress/theme';
+import CargoCode from '../../../codes_md/hello/Cargo.mdx';
+import HelloCode from '../../../codes_md/hello/src/main.mdx';
+import HelloH3CargoCode from '../../../codes_md/hello-h3/Cargo.mdx';
+import HelloH3Code from '../../../codes_md/hello-h3/src/main.mdx';
+import { LinkCard } from '@theme';
+import { Steps } from '@theme';
+
+# Schnellstart
+
+## Rust installieren
+Falls Sie Rust noch nicht installiert haben, können Sie es mit dem offiziellen `rustup`-Tool installieren.
+
+<LinkCard
+  href="https://doc.rust-lang.org/book/ch01-01-installation.html"
+  title="Offizielles Rust-Tutorial"
+  description="Detaillierte Anleitung zur Rust-Installation"
+/>
+:::tip
+Die derzeit von Salvo unterstützte Mindest-Rust-Version ist 1.85. Führen Sie `rustup update` aus, um sicherzustellen, dass Sie eine kompatible Rust-Version installiert haben.
+:::
+
+## Ihr erstes Salvo-Programm
+
+Erstellen Sie ein neues Projekt:
+
+```bash
+cargo new hello --bin
+```
+
+Fügen Sie Abhängigkeiten in der `Cargo.toml` hinzu:
+
+<CargoCode/>
+
+Erstellen Sie in `main.rs` einen einfachen Funktions-Handler namens `hello`, der einfach den Text `"Hello world"` ausgibt.
+
+<HelloCode/>
+
+Glückwunsch! Ihr erstes Salvo-Programm ist fertig. Führen Sie einfach `cargo run` aus und öffnen Sie `http://127.0.0.1:5800` in Ihrem Browser.
+
+## Detaillierte Erklärung
+
+Hier ist `hello_world` ein `Handler`, der Benutzeranfragen verarbeitet. `#[handler]` ermöglicht es einer Funktion, einfach das `Handler`-Trait zu implementieren. Außerdem erlaubt es uns, Funktionsparameter auf verschiedene Weise zu vereinfachen.
+
+- Ursprüngliche Form:
+
+    ```rust
+    #[handler]
+    async fn hello(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
+        res.render("Hello world");
+    }
+    ```
+
+- Sie können ungenutzte Parameter weglassen, wie z.B. `_req`, `_depot`, `_ctrl`:
+
+    ```rust
+    #[handler]
+    async fn hello(res: &mut Response) {
+        res.render("Hello world");
+    }
+    ```
+
+- Jeder Typ kann als Rückgabetyp verwendet werden, solange er das `Writer`-Trait implementiert. Zum Beispiel implementiert `&str` `Writer` und gibt bei Rückgabe einfachen Text aus:
+
+    ```rust
+    #[handler]
+    async fn hello(res: &mut Response) -> &'static str {
+        "Hello world"
+    }
+    ```
+
+- Häufiger ist die Verwendung von `Result<T, E>` als Rückgabetyp, um Fehler während der Ausführung zu behandeln. Wenn sowohl `T` als auch `E` `Writer` implementieren, kann `Result<T, E>` als Rückgabewert dienen:
+  
+    ```rust
+    #[handler]
+    async fn hello(res: &mut Response) -> Result<&'static str, ()> {
+        Ok("Hello world")
+    }
+    ```
+
+## Verspieltes HTTP3
+
+Man sagt, HTTP3 sei federleicht – viele Entwickler träumen davon, aber Salvo macht es Ihnen leicht, die Vorzüge von HTTP3 zu genießen!
+
+Aktivieren Sie zunächst die HTTP3-Funktion in der `Cargo.toml` und ändern Sie `main.rs` wie folgt:
+<Tabs>
+  <Tab label="main.rs">
+  <HelloH3Code/>
+  </Tab>
+  <Tab label="Cargo.toml">
+  <HelloH3CargoCode/>
+  </Tab>
+</Tabs>
+
+## Salvo CLI-Werkzeug 🛠️
+
+[Salvo CLI](https://github.com/salvo-rs/salvo-cli) ist ein Werkzeug für das Salvo-Webframework, das sauberen, lesbaren Code erzeugt und Ihnen Zeit für die schöneren Dinge des Lebens spart.
+
+Wenn Sie Ideen zur Verbesserung der CLI haben oder Probleme entdecken, zögern Sie nicht! Eröffnen Sie ein Issue – wir freuen uns auf Ihre Beiträge.
+
+<Steps>
+  ### Schritt 1
+
+  Installieren Sie das CLI-Werkzeug:
+  
+  ```bash
+  cargo install salvo-cli
+  ```
+
+  ### Schritt 2
+
+  > Erstellen Sie ein neues Salvo-Projekt mit dem Befehl `new` gefolgt vom Projektnamen:
+  >
+  > ```bash
+  > salvo new projektname
+  > ```
+</Steps>
+
+Mit diesem einfachen CLI-Werkzeug können Sie schnell Salvo-Projekte starten und sich auf Ihre Geschäftslogik konzentrieren, anstatt auf den Projektaufbau. ✨
+
+## Weitere Beispiele
+
+Es wird empfohlen, das Salvo-Repository direkt zu klonen und die Beispiele im `examples`-Verzeichnis auszuführen. Der folgende Befehl führt beispielsweise das `hello`-Beispiel aus:
+
+```sh
+git clone https://github.com/salvo-rs/salvo
+cd salvo/examples
+cargo run --bin example-hello
+```
+
+Im `examples`-Verzeichnis finden Sie viele Beispiele. Alle können mit Befehlen wie `cargo run --bin example-<name>` ausgeführt werden.
+{/* 本行由工具自动生成,原文哈希值:65dfa5fd9de64b383478b1da835dcf15 */}

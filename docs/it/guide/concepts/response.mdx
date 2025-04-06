@@ -1,0 +1,95 @@
+# Risposta
+
+Nel framework `Handler`, la [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) viene passata come parametro:
+* La struttura `Response` incapsula tutti i componenti di una risposta HTTP, fornendo un'API completa per costruire e manipolare le risposte HTTP
+* Supporta uno stile di chiamata concatenata (es. `res.status_code(200).body("Hello")`), facilitando la costruzione fluida delle risposte
+* Le funzionalità principali includono:
+    * Impostazione del codice di stato e degli header
+    * Gestione del corpo della risposta (supporta stringhe, byte, file e dati in streaming)
+    * Gestione dei Cookie
+    * Multiple modalità di rendering dei contenuti
+* La struttura utilizza un modello di riferimento mutabile, restituendo un riferimento a sé stessa tramite `&mut self`, permettendo agli handler di costruire e personalizzare facilmente le risposte HTTP per soddisfare varie esigenze dei servizi web
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world!");
+}
+```
+
+Dopo che il server riceve una richiesta dal client, qualsiasi `Handler` o middleware corrispondente può scrivere dati nella `Response`. In alcuni casi, ad esempio quando un middleware vuole impedire l'esecuzione dei middleware e `Handler` successivi, è possibile utilizzare `FlowCtrl`:
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
+    ctrl.skip_rest();
+    res.render("Hello world!");
+}
+```
+
+## Scrittura dei contenuti
+
+Scrivere dati nella `Response` è molto semplice:
+
+- Scrittura di dati di testo semplice
+
+    ```rust
+    res.render("Hello world!");
+    ```
+
+- Scrittura di dati serializzati in JSON
+
+    ```rust
+    use serde::Serialize;
+    use salvo::prelude::Json;
+
+    #[derive(Serialize, Debug)]
+    struct User {
+        name: String,
+    }
+    let user = User{name: "jobs".to_string()};
+    res.render(Json(user));
+    ```
+
+:::warning
+Se si chiama più volte il metodo `render` per scrivere dati JSON, questi non verranno uniti in un unico oggetto JSON, ma concatenati come frammenti di testo indipendenti, potenzialmente generando un formato JSON non valido. Se è necessario restituire più dati, è consigliabile combinarli in un unico oggetto prima della serializzazione o gestire la logica manualmente.
+:::
+
+- Scrittura di HTML
+    
+    ```rust
+    res.render(Text::Html("<html><body>hello</body></html>"));
+    ```
+
+## Scrittura di errori HTTP
+
+- Utilizzando `render` è possibile scrivere informazioni dettagliate sull'errore nella `Response`.
+
+    ```rust
+    use salvo::http::errors::*;
+    res.render(StatusError::internal_server_error().brief("errore durante la serializzazione dell'oggetto in json"))
+    ```
+
+- Se non sono necessarie informazioni personalizzate sull'errore, è possibile chiamare direttamente `set_http_code`.
+
+    ```rust
+    use salvo::http::StatusCode;
+    res.status_code(StatusCode::BAD_REQUEST);
+    ```
+
+## Reindirizzamento a un altro URL
+- Il metodo `render` può essere utilizzato per scrivere una risposta di reindirizzamento nella `Response`, navigando verso un nuovo URL. Quando si chiama il metodo Redirect::found, viene impostato il codice di stato HTTP a 302 (Found), indicando un reindirizzamento temporaneo. 
+    ```rust
+    use salvo::prelude::*;
+
+    #[handler]
+    async fn redirect(res: &mut Response) {
+        res.render(Redirect::found("https://salvo.rs/"));
+    }
+    ```
+
+
+## ResBody
+
+Il tipo Body restituito dalla Response è `ResBody`, un'enumerazione che in caso di errore viene impostata su `ResBody::Error`, contenente informazioni sull'errore per una gestione posticipata. `StatusError` in realtà non implementa `Writer`, con lo scopo di permettere la personalizzazione della visualizzazione nel `Catcher`.
+{/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

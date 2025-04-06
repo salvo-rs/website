@@ -1,0 +1,35 @@
+# Flash
+
+提供 Flash Message 的功能的中间件.
+
+`FlashStore` 提供对数据的存取操作. `CookieStore` 会在 `Cookie` 中存储数据. 而 `SessionStore` 把数据存储在 `Session` 中, `SessionStore` 必须和 `session` 功能一起使用.
+
+_**示例代码**_ 
+
+### Cookie 存储示例
+
+import { Tab, Tabs } from 'rspress/theme';
+import FlashCookieStoreCode from '../../../../codes_md/flash-cookie-store/src/main.mdx';
+import FlashCookieStoreCargoCode from '../../../../codes_md/flash-cookie-store/Cargo.mdx';
+import FlashSessionStoreCode from '../../../../codes_md/flash-session-store/src/main.mdx';
+import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <FlashCookieStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <FlashCookieStoreCargoCode/>
+  </Tab>
+</Tabs>
+
+### Session 存储示例
+
+<Tabs>
+  <Tab label="main.rs">
+    <FlashSessionStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <FlashSessionStoreCargoCode/>
+  </Tab>
+</Tabs>

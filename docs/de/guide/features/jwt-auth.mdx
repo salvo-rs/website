@@ -1,0 +1,32 @@
+# JWT-Authentifizierung
+
+JWT (JSON Web Token) ist ein offener Standard (RFC 7519) zur sicheren Übertragung von Informationen zwischen Parteien. Es handelt sich um eine kompakte, URL-sichere Methode zur Darstellung von Ansprüchen in JSON-Objektform, die typischerweise für Authentifizierung und Informationsaustausch verwendet werden.
+
+Ein JWT besteht aus drei Teilen:
+- **Header** - Legt den Tokentyp und den verwendeten Signaturalgorithmus fest
+- **Payload** - Enthält Ansprüche (claims) wie Benutzer-ID, Rolle, Ablaufzeit etc.
+- **Signatur** - Dient zur Überprüfung, dass die Nachricht während der Übertragung nicht verändert wurde
+
+Typischer Ablauf der JWT-Authentifizierung:
+1. Nach erfolgreicher Anmeldung generiert der Server ein JWT-Token
+2. Das Token wird an den Client zurückgegeben und gespeichert (üblicherweise in localStorage oder Cookie)
+3. Bei nachfolgenden Anfragen sendet der Client das Token im Authorization-Header mit
+4. Der Server überprüft die Gültigkeit des Tokens und gewährt Zugriff
+
+Bietet Middleware zur JWT-Authentifizierungsüberprüfung.
+
+_**Beispielcode**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
+import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <JwtAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <JwtAuthCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:4d9196c8fb1dedaa4b7291d33747b794 */}

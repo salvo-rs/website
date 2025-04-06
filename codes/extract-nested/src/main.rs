@@ -16,13 +16,13 @@ async fn show(req: &mut Request, res: &mut Response) {
             <form id="form" method="post">
                 <label>First Name:</label><input type="text" name="first_name" />
                 <label>Last Name:</label><input type="text" name="last_name" />
-                <legend>What is Your Favorite Pet?</legend>      
-                <input type="checkbox" name="lovers" value="Cats">Cats<br>      
-                <input type="checkbox" name="lovers" value="Dogs">Dogs<br>      
-                <input type="checkbox" name="lovers" value="Birds">Birds<br>    
+                <legend>What is Your Favorite Pet?</legend>
+                <input type="checkbox" name="lovers" value="Cats">Cats<br>
+                <input type="checkbox" name="lovers" value="Dogs">Dogs<br>
+                <input type="checkbox" name="lovers" value="Birds">Birds<br>
                 <input type="submit" value="Submit" />
             </form>
-            <script> 
+            <script>
             let form = document.getElementById("form");
             form.addEventListener("submit", async (e) => {{
                 e.preventDefault();
@@ -57,8 +57,10 @@ async fn edit<'a>(good_man: GoodMan<'a>, res: &mut Response) {
 #[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
     #[salvo(extract(source(from = "param")))]
+    #[serde(default)]
     id: i64,
     #[salvo(extract(source(from = "query")))]
+    #[serde(default)]
     username: &'a str,
     first_name: String,
     last_name: String,
@@ -71,12 +73,14 @@ struct GoodMan<'a> {
 #[salvo(extract(default_source(from = "body")))]
 struct Nested<'a> {
     #[salvo(extract(source(from = "param")))]
+    #[serde(default)]
     id: i64,
     #[salvo(extract(source(from = "query")))]
+    #[serde(default)]
     username: &'a str,
     first_name: String,
     last_name: String,
-    #[salvo(extract(rename = "lovers"))]
+    #[salvo(rename = "lovers")]
     #[serde(default)]
     pets: Vec<String>,
 }
@@ -87,7 +91,7 @@ async fn main() {
 
     let router = Router::with_path("{id}").get(show).post(edit);
 
-    println!("Example url: http://127.0.0.1:5800/95");
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    println!("Example url: http://0.0.0.0:5800/95");
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }

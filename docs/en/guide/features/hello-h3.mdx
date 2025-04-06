@@ -1,0 +1,102 @@
+# HTTP/3 Support
+
+Salvo provides support for HTTP/3, which can be enabled via the `quinn` feature. HTTP/3 is based on the QUIC protocol and offers lower latency and better performance compared to traditional HTTP/1.1 and HTTP/2, especially in unstable network environments.
+
+## Enabling HTTP/3 Support
+
+To enable HTTP/3 support in Salvo, you need to activate the `quinn` feature in your `Cargo.toml` file:
+
+```toml
+salvo = { workspace = true, features = ["quinn"] }
+```
+
+## HTTP/3 Use Cases
+
+HTTP/3 is particularly suitable for the following scenarios:
+
+- Applications on mobile devices and in unstable network environments
+- Real-time applications requiring low latency
+- Scenarios involving parallel downloads of many small files
+- Applications needing connection migration (e.g., switching from WiFi to cellular without interrupting the connection)
+
+## Example Code
+
+The following is a simple HTTP/3 server example that supports both HTTP/3 (QUIC) and HTTPS (TCP) simultaneously:
+
+```rust
+use salvo::conn::rustls::{Keycert, RustlsConfig};
+use salvo::prelude::*;
+
+// Handler function that responds with "Hello World"
+#[handler]
+async fn hello() -> &'static str {
+    "Hello World"
+}
+
+#[tokio::main]
+async fn main() {
+    // Initialize the logging system
+    tracing_subscriber::fmt().init();
+
+    // Load TLS certificate and private key from embedded PEM files
+    let cert = include_bytes!("../certs/cert.pem").to_vec();
+    let key = include_bytes!("../certs/key.pem").to_vec();
+
+    // Create a router and add an endpoint
+    let router = Router::new().get(hello);
+
+    // Configure TLS settings using Rustls
+    let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+
+    // Create a TCP listener with TLS encryption, listening on port 5800
+    let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+    // Create a QUIC listener and combine it with the TCP listener
+    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+        .join(listener)
+        .bind()
+        .await;
+
+    // Start the server supporting both HTTP/3 (QUIC) and HTTPS (TCP)
+    Server::new(acceptor).serve(router).await;
+}
+```
+
+## Key Code Analysis
+
+### TLS Configuration
+
+```rust
+// Configure TLS settings using Rustls
+let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+```
+
+Since HTTP/3 is based on the QUIC protocol, and QUIC requires encryption using TLS 1.3, it's necessary to configure TLS certificates and keys. In Salvo, we use `RustlsConfig` to configure TLS.
+
+### Combining Listeners
+
+```rust
+// Create a TCP listener with TLS encryption
+let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+// Create a QUIC listener and combine it with the TCP listener
+let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+    .join(listener)
+    .bind()
+    .await;
+```
+
+This code is the core part of handling HTTP/3 in Salvo. It first creates a TLS-enabled TCP listener (for HTTP/1.1 and HTTP/2), then creates a QUIC listener (for HTTP/3). By using the `join` method, these two listeners are combined, allowing the server to handle requests from different protocols simultaneously.
+
+## Running the Example
+
+To run this example, you need available TLS certificates and private keys. In a development environment, you can use self-signed certificates. The complete example code can be found in the [Salvo GitHub repository](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
+
+It's important to note that many clients do not yet fully support HTTP/3, so it is essential for this server to support both HTTP/3 and HTTPS simultaneously.
+
+## Important Notes
+
+1. HTTP/3 requires TLS 1.3 support, so valid certificates and keys must be configured.
+2. Clients need to support the HTTP/3 protocol to utilize this feature; otherwise, they will fall back to HTTP/1.1 or HTTP/2.
+3. In a production environment, you should use certificates issued by a trusted Certificate Authority (CA), not self-signed certificates.
+{/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

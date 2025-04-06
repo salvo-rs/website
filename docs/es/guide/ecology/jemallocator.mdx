@@ -1,0 +1,75 @@
+---
+title: Alternativas al asignador de memoria en Rust
+---
+
+# Jemallocator: Asignador de memoria jemalloc para Rust
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/"
+  title="tikv-jemallocator"
+  description="tikv-jemallocator"
+/>
+
+:::tip
+El asignador predeterminado a veces no libera memoria oportunamente. Se recomienda usar jemallocator.
+:::
+
+jemallocator es una biblioteca que enlaza con el asignador de memoria jemalloc, proporcionando el tipo `Jemalloc` que implementa la API de asignación y puede configurarse como `#[global_allocator]`.
+
+`tikv-jemallocator` es el sucesor de `jemallocator`. Ambos crates son idénticos excepto por el nombre. Para nuevos proyectos, se recomienda usar la versión `tikv-xxx`.
+
+## Ecosistema jemalloc
+
+El ecosistema de soporte para jemalloc consta de los siguientes crates:
+
+- **tikv-jemalloc-sys**: Compila y enlaza con jemalloc, exponiendo sus enlaces C originales.
+- **tikv-jemallocator**: Proporciona el tipo `Jemalloc` que implementa los traits `GlobalAlloc` y `Alloc`.
+- **tikv-jemalloc-ctl**: Encapsulamiento de alto nivel para las API de control e introspección de jemalloc (familia de funciones `mallctl*()` y `MALLCTL NAMESPACE`).
+
+## Cómo usarlo
+
+### Añadir dependencia
+
+Para usar tikv-jemallocator, añádelo como dependencia:
+
+```toml
+[dependencies]
+
+[target.'cfg(not(target_env = "msvc"))'.dependencies]
+tikv-jemallocator = "0.5"
+```
+
+### Configurar como asignador global
+
+Para establecer `tikv_jemallocator::Jemalloc` como asignador global, añade este código a tu proyecto:
+
+```rust
+#[cfg(not(target_env = "msvc"))]
+use tikv_jemallocator::Jemalloc;
+
+#[cfg(not(target_env = "msvc"))]
+#[global_allocator]
+static GLOBAL: Jemalloc = Jemalloc;
+```
+
+¡Eso es todo! Una vez definida esta variable estática, jemalloc se usará para todas las asignaciones de memoria solicitadas por el código Rust en el mismo programa.
+
+## Ventajas
+
+jemalloc es una implementación de propósito general de malloc que se enfoca en:
+
+- Reducir la fragmentación de memoria
+- Escalabilidad en escenarios de alta concurrencia
+- Ofrecer capacidades avanzadas de introspección y control
+
+Es especialmente útil en:
+- Aplicaciones de larga duración
+- Cargas de trabajo intensivas en memoria
+- Servicios de alto rendimiento que requieren gestión granular de memoria
+
+## Notas de compatibilidad
+
+jemalloc no es compatible con entornos objetivo MSVC, por lo que no está disponible al usar la cadena de herramientas MSVC en Windows. Por eso el código de ejemplo incluye la condición `cfg(not(target_env = "msvc"))`.
+{/* 本行由工具自动生成,原文哈希值:f1e3515e93e417fa34b6776be2e69244 */}

@@ -1,0 +1,37 @@
+# 优雅地停机
+
+优雅停机指在服务器关闭时，不是立即终止所有连接，而是先停止接收新的请求，同时让已接受的请求有足够的时间完成处理后再关闭服务。这种方式可以避免请求被突然中断，提高用户体验和系统可靠性。
+
+Salvo 提供了优雅停机的支持，通过 `Server` 的 `handle` 方法获取服务器句柄，然后调用 `stop_graceful` 方法来实现。在调用该方法后，服务器会:
+
+- 停止接受新的连接请求
+- 等待现有请求处理完成
+- 在指定的超时时间后（如果提供），强制关闭剩余连接
+
+以下是一个简单示例:
+
+```rust
+use salvo_core::prelude::*;
+
+#[tokio::main]
+async fn main() {
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let server = Server::new(acceptor);
+    let handle = server.handle();
+
+    // 优雅地关闭服务器
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
+        handle.stop_graceful(None);
+    });
+    server.serve(Router::new()).await;
+}
+```
+
+在上面的示例中:
+
+- `server.handle()` 获取服务器的句柄，可用于控制服务器的生命周期
+- `handle.stop_graceful(None)` 开始优雅停机过程，`None` 表示不设置超时时间，会一直等待所有请求处理完毕
+- 如需设置超时时间，可以传入 `Some(Duration)`，超时后会强制关闭剩余连接
+
+这种方式特别适用于需要在容器环境或云平台上部署的应用，以及需要进行热更新时确保请求不会被意外中断.

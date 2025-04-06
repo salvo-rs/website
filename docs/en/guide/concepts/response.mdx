@@ -1,0 +1,115 @@
+# Response
+
+In a `Handler`, the [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) is passed as a parameter:
+* The `Response` struct encapsulates all components of an HTTP response, providing a comprehensive API to construct and manipulate HTTP responses
+* Supports fluent chaining style (e.g., `res.status_code(200).body("Hello")`) for streamlined response building
+* Core features include:
+    * Setting status codes and headers
+    * Manipulating response bodies (supports strings, bytes, files, and streaming data)
+    * Managing cookies
+    * Multiple content rendering methods
+* The struct follows a mutable reference pattern, returning self-references via `&mut self`, enabling handlers to conveniently construct and customize HTTP responses to meet various web service requirements
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response) {
+    res.render("Hello world!");
+}
+```
+
+After the server receives a client request, any matched `Handler` or middleware can write data to the `Response`. In certain cases, such as when middleware wants to prevent subsequent middleware and `Handler` execution, you can use `FlowCtrl`:
+
+```rust
+#[handler]
+async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
+    ctrl.skip_rest();
+    res.render("Hello world!");
+}
+```
+
+## Writing Content
+
+Writing data to `Response` is straightforward:
+
+- Writing plain text data
+
+    ```rust
+    res.render("Hello world!");
+    ```
+
+- Writing JSON serialized data
+
+    ```rust
+    use serde::Serialize;
+    use salvo::prelude::Json;
+
+    #[derive(Serialize, Debug)]
+    struct User {
+        name: String,
+    }
+    let user = User{name: "jobs".to_string()};
+    res.render(Json(user));
+    ```
+
+:::warning
+If the `render` method is called multiple times to write JSON data, these data fragments will not be merged into a single JSON object. Instead, they will be concatenated as independent text segments, potentially resulting in invalid JSON format. If multiple data items need to be returned, they should be combined into a single object before serialization, or handled through custom logic.
+:::
+
+- Writing HTML
+    
+    ```rust
+    res.render(Text::Html("<html><body>hello</body></html>"));
+    ```
+
+## Writing HTTP Errors
+
+- Use `render` to write detailed error information to `Response`.
+
+    ```rust
+    use salvo::http::errors::*;
+    res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
+    ```
+
+- If custom error messages are unnecessary, you can directly call `set_http_code`.
+
+    ```rust
+    use salvo::http::StatusCode;
+    res.status_code(StatusCode::BAD_REQUEST);
+    ```
+
+## Redirecting to Another URL
+- The `render` method can write a redirect response to `Response`, navigating to a new URL. When calling `Redirect::found`, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
+    ```rust
+    use salvo::prelude::*;
+
+    #[handler]
+    async fn redirect(res: &mut Response) {
+        res.render(Redirect::found("https://salvo.rs/"));
+    }
+    ```
+
+## ResBody
+
+The body type returned by Response is `ResBody`, an enum that is set to `ResBody::Error` in case of errors. This contains error information for deferred error handling. Note that `StatusError` does not implement `Writer`, allowing you to customize display methods in `Catcher`.
+
+# Response Struct Method Overview
+
+| Category | Method | Description |
+|------|------|------|
+| **Creation** | `new()` / `with_cookies()` | Create new response |
+| **Status Code** | `status_code()` | Set status code |
+| **Headers** | `headers()/headers_mut()` | Get headers |
+| | `set_headers()/add_header()` | Set/add headers |
+| | `content_type()` | Get content type |
+| **HTTP Version** | `version()/version_mut()` | Get/modify HTTP version |
+| **Response Body** | `body()/body_mut()` | Set/get response body |
+| | `replace_body()/take_body()` | Replace/extract response body |
+| | `write_body()` | Write data to response body |
+| | `stream()/channel()` | Streaming response/create send channel |
+| **Cookie Handling** | `cookies()/cookie()` | Get cookies/specific cookie |
+| | `add_cookie()/remove_cookie()` | Add/remove cookie |
+| **Content Response** | `render()` | Render content |
+| | `stuff()` | Set status code and render content |
+| | `send_file()` | Send file |
+| **Status Check** | `is_stamped()` | Check if response is ready to be written back |
+{/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

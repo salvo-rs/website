@@ -1,0 +1,113 @@
+# Gestion des erreurs
+
+## Méthodes courantes de gestion des erreurs dans les applications Rust
+
+La gestion des erreurs en Rust diffère de langages comme Java - il n'y a pas de `try...catch`. L'approche habituelle consiste à définir un type d'erreur global au niveau applicatif :
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("io: `{0}`")]
+    Io(#[from] io::Error),
+    #[error("utf8: `{0}`")]
+    FromUtf8(#[from] FromUtf8Error),
+    #[error("diesel: `{0}`")]
+    Diesel(#[from] diesel::result::Error),
+    ...
+}
+
+pub type AppResult<T> = Result<T, AppError>;
+```
+
+Ici, nous utilisons la crate `thiserror` qui facilite la définition de types d'erreur personnalisés et simplifie le code. Pour plus de concision, nous définissons également un `AppResult`.
+
+### thiserror vs anyhow
+
+Dans l'écosystème Rust, deux crates sont couramment utilisées pour la gestion des erreurs :
+
+- **thiserror** : Destiné aux développeurs de bibliothèques pour définir des types d'erreur clairs. Il implémente automatiquement le trait `std::error::Error` via une macro derive, tout en permettant de personnaliser l'affichage des erreurs. C'est le choix idéal pour les bibliothèques ou quand des types d'erreur explicites sont nécessaires.
+
+- **anyhow** : Destiné aux applications, fournissant un type d'erreur générique `anyhow::Error` pouvant englober toute erreur implémentant `std::error::Error`. Il se concentre sur la propagation plutôt que la définition des erreurs, réduisant le code passe-partout.
+
+Dans certains cas, les deux crates peuvent être combinées : `thiserror` pour définir les erreurs dans les bibliothèques, et `anyhow` pour les traiter dans l'application.
+
+## Gestion des erreurs dans les Handlers
+
+Dans Salvo, les `Handler` rencontrent fréquemment divers types d'erreurs (connexion DB, accès fichiers, réseau etc.). Ces erreurs peuvent être gérées comme précédemment :
+
+```rust
+#[handler]
+async fn home()-> AppResult<()> {
+
+}
+```
+
+Ici, `home` retourne directement un `AppResult<()>`. Mais comment afficher cette erreur ? Nous devons implémenter le trait `Writer` pour notre type d'erreur personnalisé :
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        res.render(Text::Plain("Je suis une erreur, hahaha !"));
+    }
+}
+```
+
+Les `Handler` de Salvo peuvent retourner un `Result` à condition que les types `Ok` et `Err` implémentent le trait `Writer`.
+
+### Utilisation d'anyhow
+
+Étant donné la popularité d'anyhow, Salvo fournit un support natif pour `anyhow::Error`. Lorsque la fonctionnalité `anyhow` est activée, `anyhow::Error` implémente `Writer` et est mappé sur `InternalServerError` :
+
+```rust
+#[cfg(feature = "anyhow")]
+#[async_trait]
+impl Writer for ::anyhow::Error {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.render(StatusError::internal_server_error());
+    }
+}
+```
+
+Pour l'utiliser, activez la fonctionnalité dans Cargo.toml :
+
+```toml
+[dependencies]
+salvo = { version = "*", features = ["anyhow"] }
+anyhow = "1.0"
+```
+
+Vos handlers peuvent alors retourner directement `anyhow::Result<T>` :
+
+```rust
+#[handler]
+async fn home() -> anyhow::Result<impl Writer> {
+    let data = fetch_data().context("Échec de récupération des données")?;
+    Ok(Text::Plain(data))
+}
+```
+
+Les erreurs contiennent souvent des informations sensibles qu'on ne souhaite pas exposer aux utilisateurs normaux. Mais pour les développeurs ou administrateurs, un accès détaillé peut être utile. Grâce aux paramètres de `write()`, nous pouvons implémenter ce comportement :
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        let user = depot.obtain::<User>();
+        if user.is_admin {
+            res.render(Text::Plain(e.to_string()));
+        } else {
+            res.render(Text::Plain("Je suis une erreur, hahaha !"));
+        }
+    }
+}
+```
+
+## Affichage des pages d'erreur
+
+Les pages d'erreur intégrées à Salvo conviennent à la plupart des cas, s'adaptant automatiquement au format (HTML, JSON, XML). Cependant, il est parfois nécessaire de les personnaliser.
+
+Ceci peut être réalisé en implémentant un `Catcher` personnalisé. Voir la section [`Catcher`](../concepts/catcher.html) pour plus de détails.
+{/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

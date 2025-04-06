@@ -1,0 +1,21 @@
+# Middleware de Tempo Limite
+
+Fornece um middleware para suporte a tempo limite.
+
+## Cenários de Uso
+
+Em serviços web, algumas requisições podem demorar muito para serem processadas devido a vários motivos (como consultas lentas ao banco de dados, respostas lentas de serviços externos, etc.). Para evitar que essas requisições de longa duração ocupem recursos do servidor e afetem o processamento de outras requisições, pode-se usar o middleware de tempo limite para definir um tempo máximo de processamento. Se esse limite for excedido, a requisição será automaticamente interrompida e retornará um erro de tempo limite.
+
+_**Código de Exemplo**_
+
+<Tabs>
+<Tab label="main.rs">
+<TimeoutMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TimeoutCargoCode/>
+</Tab>
+</Tabs>
+
+No exemplo acima, criamos duas funções de processamento: uma `fast` que responde rapidamente e uma `slow` que demora 6 segundos para responder. Através de `Timeout::new(Duration::from_secs(5))`, definimos um limite de tempo de 5 segundos para todas as requisições. Ao acessar o caminho `/slow`, como o tempo de processamento excede o limite de 5 segundos, a requisição atingirá o tempo limite; enquanto ao acessar o caminho `/fast`, a requisição será processada normalmente e retornará o resultado.
+{/* 本行由工具自动生成,原文哈希值:91c35a9e679382fc5ad89433063fa043 */}

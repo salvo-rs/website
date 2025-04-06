@@ -1,0 +1,73 @@
+# 跨域控制
+
+CORS (Cross-Origin Resource Sharing，跨源资源共享) 是一种机制，允许浏览器向跨源服务器发出请求，从而克服了浏览器的同源策略限制。
+
+## 什么是同源策略？
+
+同源策略是浏览器的安全功能，限制了从一个源加载的文档或脚本如何与来自另一个源的资源进行交互。所谓"同源"是指相同的协议、域名和端口号。
+
+## 为什么需要CORS？
+
+当前端应用需要访问不同源的API时，就需要CORS支持。例如：
+- 前端应用部署在 `https://frontend.com`
+- API服务部署在 `https://api.backend.com`
+
+没有CORS，浏览器会阻止前端应用访问API服务。
+
+## CORS工作原理
+
+CORS通过一系列HTTP头实现跨域访问控制：
+- 简单请求：直接发送，服务器通过响应头控制是否允许
+- 预检请求：浏览器先发送OPTIONS请求询问服务器是否允许跨域，得到允许后再发送实际请求
+
+由于浏览器会发送 `Method::OPTIONS` 的预检请求，所以需要增加对此类请求的处理，需要把CORS中间件添加到 `Service` 上.
+
+## 在Salvo中使用CORS
+
+Salvo提供了内置的CORS中间件，可以轻松配置和使用。以下是示例代码：
+
+
+:::warning
+注意.hoop(cors)中间件是作用在 `Service` 上的,注意.hoop(cors)中间件是作用在 `Service` 上的.注意.hoop(cors)中间件是作用在 `Service` 上的，而不是 `Router` 上的.
+这样可以自动处理option预检.
+```rust
+let cors = Cors::new()
+    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
+    .allow_headers("authorization")
+    .into_handler();
+
+// Set up backend router with CORS protection
+let router = Router::with_path("hello").post(hello);
+let service = Service::new(router).hoop(cors);
+```
+:::
+
+
+_**示例代码**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CorsCode from '../../../../codes_md/cors/src/main.mdx';
+import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CorsCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CorsCargoCode/>
+  </Tab>
+</Tabs>
+
+## 主要配置选项
+
+CORS中间件提供了多种配置选项：
+
+- **允许的源**：控制哪些域名可以访问资源
+- **允许的方法**：指定允许的HTTP方法（GET, POST等）
+- **允许的头部**：指定允许的请求头
+- **暴露的头部**：指定哪些响应头可以被客户端访问
+- **允许携带凭证**：是否允许请求包含cookies等凭证信息
+- **预检请求缓存时间**：预检请求结果的缓存时间
+
+通过合理配置CORS，可以既保证安全性，又满足跨域访问的需求.

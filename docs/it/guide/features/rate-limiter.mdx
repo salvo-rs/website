@@ -1,0 +1,46 @@
+# Controllo del Traffico
+
+Middleware che fornisce funzionalità di controllo del traffico.
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
+import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
+import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
+import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+
+## Funzionalità Principali
+
+* `RateIssuer` fornisce un'astrazione per identificare le chiavi degli visitatori assegnate. `RemoteIpIssuer` è una sua implementazione che determina il visitatore in base all'indirizzo IP della richiesta. La chiave non deve essere necessariamente di tipo stringa; qualsiasi tipo che soddisfi i vincoli `Hash + Eq + Send + Sync + 'static` può essere utilizzato come chiave.
+
+* `RateGuard` offre un'astrazione per gli algoritmi di controllo del traffico. Sono già implementate di default due modalità: finestra fissa (`FixedGuard`) e finestra scorrevole (`SlidingGuard`).
+
+* `RateStore` fornisce operazioni di accesso ai dati. `MokaStore` è un'implementazione integrata di cache in memoria basata su `moka`. Puoi anche definire la tua implementazione personalizzata.
+
+* `RateLimiter` è una struttura che implementa `Handler` e include anche un campo `skipper` per specificare quali richieste possono essere saltate senza caching. Per impostazione predefinita, utilizza `none_skipper` per non saltare alcuna richiesta.
+
+* `QuotaGetter` offre un'astrazione per l'ottenimento delle quote, permettendo di recuperare un oggetto quota in base alla `Key` del visitatore. Ciò significa che possiamo configurare informazioni come le quote utente in un database, modificarle dinamicamente e recuperarle in tempo reale.
+
+_**Codice di Esempio**_
+
+### Esempio di Quote Statiche
+
+<Tabs>
+  <Tab label="main.rs">
+    <StaticMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <StaticCargoCode/>
+  </Tab>
+</Tabs>
+
+### Esempio di Quote Dinamiche
+
+<Tabs>
+  <Tab label="main.rs">
+    <DynamicMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <DynamicCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}

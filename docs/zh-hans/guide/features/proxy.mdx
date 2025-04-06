@@ -1,0 +1,36 @@
+# 反向代理
+
+反向代理是一种服务器架构，它接收来自客户端的请求并将其转发到后端的一个或多个服务器。与正向代理(代表客户端)不同，反向代理代表服务器端工作。
+
+反向代理的主要优势：
+- 负载均衡：分散请求到多个服务器
+- 安全性提升：隐藏真实服务器信息
+- 内容缓存：提高性能
+- 路径重写与转发：灵活地路由请求
+
+Salvo 框架提供反向代理功能的中间件.
+
+_**示例代码**_ 
+
+```rust
+use salvo::prelude::*;
+use salvo::proxy::Proxy;
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+    
+    let router = Router::new()
+        .push(
+            Router::new()
+                .path("google/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.google.com"])),
+        )
+        .push(
+            Router::new()
+                .path("baidu/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.baidu.com"])),
+        );
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
+}
+```

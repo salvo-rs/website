@@ -1,0 +1,21 @@
+# Request Chain ID
+
+import { Tab, Tabs } from 'rspress/theme';
+import RequestIdMainCode from '../../../../codes_md/request-id/src/main.mdx';
+import RequestIdCargoCode from '../../../../codes_md/request-id/Cargo.mdx';
+
+The Request ID middleware is highly flexible. The generator (IdGenerator) is used to create IDs, and you can define your own ID generator as long as it implements the `IdGenerator` trait. The default generator provided is `UlidGenerator`.
+
+Additionally, you can control whether to overwrite an existing `requestid`. You can also configure settings such as `header_name`. For details, please [refer to the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+
+_**Example Code**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <RequestIdMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <RequestIdCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:c4254b7ef23c0b7cd5e4b30f6fc58cc8 */}

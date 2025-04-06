@@ -1,0 +1,12 @@
+```toml  title="unix-socket/Cargo.toml"
+[package]
+name = "example-unix-socket"
+version = "0.1.0"
+edition = "2024"
+
+
+[dependencies]
+salvo = { version = "0.77.1", features = ["serve-static"] }
+tokio = { version = "1", features = ["macros"] }
+
+```

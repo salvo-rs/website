@@ -1,0 +1,132 @@
+import { Tab, Tabs } from 'rspress/theme';
+import CargoCode from '../../../codes_md/hello/Cargo.mdx';
+import HelloCode from '../../../codes_md/hello/src/main.mdx';
+import HelloH3CargoCode from '../../../codes_md/hello-h3/Cargo.mdx';
+import HelloH3Code from '../../../codes_md/hello-h3/src/main.mdx';
+import { LinkCard } from '@theme';
+import { Steps } from '@theme';
+
+# 快速開始
+
+## 安裝 Rust
+若您尚未安裝 Rust，可使用官方提供的 `rustup` 進行安裝。
+
+<LinkCard
+  href="https://doc.rust-lang.org/book/ch01-01-installation.html"
+  title="Rust 官方教學"
+  description="詳細介紹如何安裝 Rust"
+/>
+:::tip
+當前 Salvo 支援的最低 Rust 版本為 1.85。執行 `rustup update` 確認您的 Rust 版本符合要求。
+:::
+
+## 編寫第一個 Salvo 程式
+
+建立全新專案：
+
+```bash
+cargo new hello --bin
+```
+
+將相依項目加入 `Cargo.toml`
+
+<CargoCode/>
+
+在 `main.rs` 中建立一個簡單的函式處理器，命名為 `hello`，此函式僅會印出文字 `"Hello world"`。
+
+<HelloCode/>
+
+恭喜您，您的第一個 Salvo 程式已完成。只需在命令列執行 `cargo run`，然後在瀏覽器開啟 `http://127.0.0.1:5800` 即可。
+
+## 詳細解讀
+
+此處的 `hello_world` 是一個 `Handler`，用於處理使用者請求。`#[handler]` 巨集可讓函式方便實作 `Handler` trait，並允許我們以不同方式簡化函式參數。
+
+- 原始形式：
+
+    ```rust
+    #[handler]
+    async fn hello(_req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
+        res.render("Hello world");
+    }
+    ```
+
+- 可省略未使用的參數，如本例中的 `_req`、`_depot`、`_ctrl` 皆可略去不寫：
+
+    ```rust
+    #[handler]
+    async fn hello(res: &mut Response) {
+        res.render("Hello world");
+    }
+    ```
+
+- 任何實作 `Writer` trait 的型別皆可作為函式回傳值。例如 `&str` 實作了 `Writer`，當其作為回傳值時會輸出純文字：
+
+    ```rust
+    #[handler]
+    async fn hello(res: &mut Response) -> &'static str {
+        "Hello world"
+    }
+    ```
+
+- 更常見的情況是使用 `Result<T, E>` 作為回傳型別以處理函式執行中的錯誤。若 `T` 和 `E` 皆實作 `Writer`，則 `Result<T, E>` 可作為回傳值：
+  
+    ```rust
+    #[handler]
+    async fn hello(res: &mut Response) -> Result<&'static str, ()> {
+        Ok("Hello world")
+    }
+    ```
+
+## 風騷的 HTTP3
+
+傳聞 HTTP3 身輕如燕，令無數程式設計師心嚮往之。如今 Salvo 助您圓夢，輕鬆享受 HTTP3 帶來的絕妙服務！
+
+首先在 `Cargo.toml` 中啟用 HTTP3 功能，然後將 `main.rs` 修改如下：
+<Tabs>
+  <Tab label="main.rs">
+  <HelloH3Code/>
+  </Tab>
+  <Tab label="Cargo.toml">
+  <HelloH3CargoCode/>
+  </Tab>
+</Tabs>
+
+## Salvo CLI 工具 🛠️
+
+[Salvo CLI](https://github.com/salvo-rs/salvo-cli) 是專為 Salvo web 框架設計的工具，能建立整潔易讀的程式碼，讓您省下時間享受生活樂趣。
+
+若有改進 CLI 的想法或發現問題，請不吝提出 issue，我們歡迎您的寶貴意見。
+
+<Steps>
+  ### 第 1 步
+
+  安裝 CLI 工具：
+  
+  ```bash
+  cargo install salvo-cli
+  ```
+
+  ### 第 2 步
+
+  > 建立新 Salvo 專案，使用 `new` 指令後接專案名稱：
+  >
+  > ```bash
+  > salvo new project_name
+  > ```
+</Steps>
+
+透過這個簡潔的 CLI 工具，您能快速啟動 Salvo 專案，專注於業務邏輯實現而非專案結構搭建。✨
+
+## 更多範例
+
+建議直接複製 Salvo 儲存庫，然後執行 examples 目錄下的範例。例如以下指令可執行 `hello` 範例：
+
+```sh
+git clone https://github.com/salvo-rs/salvo
+cd salvo/examples
+cargo run --bin example-hello
+```
+
+examples 目錄包含眾多範例，皆可透過類似 `cargo run --bin example-<名稱>` 的指令執行。
+{/* 本行由工具自动生成,原文哈希值:65dfa5fd9de64b383478b1da835dcf15 */}

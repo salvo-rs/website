@@ -1,0 +1,112 @@
+---
+title: salvo llms
+---
+
+```markdown
+# Marco Web Salvo
+
+> Salvo es un marco de servidor web asíncrono, de alto rendimiento y rico en funciones, construido con el lenguaje Rust. Diseñado para ser simple, modular, fácil de usar y extender, ofrece potentes capacidades como enrutamiento, middleware (Hoop), extracción de datos, WebSocket, TLS (con recarga en caliente de certificados OpenSSL/Rustls), HTTP/3, gestión automática de certificados ACME, múltiples estrategias de proxy inverso, control de tiempo de espera de solicitudes, manejo personalizado de errores (Catcher), soporte para OpenAPI y más.
+
+Unificación y simplicidad conceptual: Uno de los diseños centrales de Salvo es la unificación de los manejadores (Handler) y middleware (Middleware). Ambos son esencialmente implementaciones del trait Handler, responsables de procesar solicitudes (Request) y potencialmente modificar respuestas (Response). Esta unificación reduce la cantidad de conceptos a aprender, haciendo el marco más fácil de entender y usar. El middleware se aplica mediante métodos de enrutamiento específicos (como hoop).
+
+# Prioridad en la experiencia del desarrollador (DX):
+
+Firma flexible de Handler: La macro #[handler] mejora significativamente la facilidad para escribir manejadores. Los desarrolladores no necesitan preocuparse por listas completas de parámetros o su orden fijo. Basta con declarar en la firma de la función los parámetros realmente necesarios (como &mut Request, &mut Depot, &mut Response), omitiendo los no utilizados o reordenándolos libremente. Esto simplifica enormemente el código, permitiendo enfocarse en la lógica de negocio.
+
+Los dos ejemplos de funciones hello_world ilustran esto perfectamente: una usa una firma completa (aunque con parámetros marcados como no utilizados), mientras que la otra solo incluye &mut Response necesario.
+
+Compartición práctica de datos en el ámbito de la solicitud: Proporciona Depot como almacenamiento temporal de datos durante el ciclo de vida de una solicitud. Middleware y manejadores pueden compartir información a través de Depot (por ejemplo, middleware de autenticación almacena información de usuario para que la lean manejadores posteriores).
+
+Minimización de dependencias e integración con el ecosistema: Como se ve en Cargo.toml, una aplicación básica de Salvo tiene pocas dependencias principales, aprovechando bibliotecas maduras del ecosistema como tokio (tiempo de ejecución asíncrono) y tracing (registro/seguimiento), en lugar de reinventar la rueda.
+
+## Lista de archivos
+
+*   **Conceptos centrales**:
+    *   **`Server`**: Representa una instancia del servidor web, encargada de aceptar conexiones y manejar solicitudes.
+    *   **`Router`**: Define reglas de enrutamiento, mapeando diferentes rutas URL y métodos HTTP a lógicas de manejo (Handler). Soporta parámetros de ruta (`{name}` o `{id:num}`), comodines (`{*rest}`, `{**rest}`), y coincidencias más complejas mediante `.host()` o `.filter_fn()`. `.push()` añade subrutas, `.then()` para enrutamiento condicional.
+    *   **`Handler`**: Unidad central para manejar solicitudes, típicamente una función asíncrona. La macro `#[handler]` facilita la conversión de funciones en Handler, permitiendo omitir o reordenar parámetros (`Request`, `Depot`, `Response`, `FlowCtrl`). Los Handler también pueden actuar como middleware o manejadores de errores. Pueden devolver tipos que implementen `Writer` o `Scribe`, o `Result<T, E>` (donde T y E implementen `Writer`).
+    *   **`Middleware / Hoop`**: Salvo usa el método `hoop` para añadir middleware. El middleware son unidades lógicas ejecutadas antes de que la solicitud llegue al Handler final o antes de que la respuesta se envíe al cliente.
+    *   **`Request`**: Representa una solicitud HTTP entrante, incluyendo cabeceras, método, ruta, parámetros de consulta, cuerpo, etc. Ofrece varios métodos `.parse_*()` y `.extract()` para analizar datos en estructuras tipadas. `.file()` y `.files()` manejan subidas de archivos. `.remote_addr()` obtiene la dirección del cliente.
+    *   **`Response`**: Representa una respuesta HTTP saliente, usada para establecer código de estado (`.status_code()`), cabeceras (`.headers_mut()`, `.add_header()`), cuerpo, etc. El método `.render()` facilita establecer el cuerpo de la respuesta (texto, HTML, JSON, redirecciones, etc.). `.channel()` permite respuestas en flujo.
+    *   **`Depot`**: Almacén de datos tipados asociado a una solicitud, para compartir datos entre Handler y middleware. Usa `.insert("key", value)`/`.get::<T>("key")` o `.inject(value)`/`.obtain::<T>()`.
+    *   **`TcpListener` / `UnixListener`**: Para crear escuchas de red. `.bind().await` devuelve `Acceptor`. Soporta TLS mediante `.rustls()`, `.openssl()`, `.native_tls()`, `.acme()` para gestión automática de certificados, `.quinn()` para QUIC/HTTP3. `.join()` combina múltiples escuchas.
+    *   **`Service`**: Combinación de enrutador (Router) y middleware/Catchers a nivel de servicio. `Service::new(router)`.
+    *   **`Catcher`**: Para capturar y manejar errores en la aplicación (como 404, 500). Se añade con `Service::catcher()`. Soporta añadir `hoop` para personalizar la lógica de manejo.
+    *   **`FlowCtrl`**: Disponible en middleware y Catcher Handler, controla el flujo de procesamiento de solicitudes (como `ctrl.skip_rest()`).
+    *   **`Writer` / `Scribe`**: Traits para escribir datos en `Response`.
+    *   **`Extractible`**: Macro derivable para extraer automáticamente datos de múltiples fuentes a una estructura.
+    *   **`#[endpoint]`**: Versión mejorada de `#[handler]`, genera automáticamente documentación OpenAPI.
+    *   **`OpenApi`**: Para generar documentación OpenAPI. `.merge_router()` recoge información de rutas. `.into_router()` crea rutas que sirven la especificación JSON.
+    *   **`SwaggerUi`, `Scalar`, `RapiDoc`, `ReDoc`**: Interfaz interactiva para documentación OpenAPI.
+    *   **`#[craft]`**: Macro para convertir métodos de estructuras en Handler o Endpoint, simplificando lógica de manejo con estado.
+    *   **`#[tokio::main]`**: Salvo se basa en el tiempo de ejecución asíncrono Tokio.
+    *   **`tracing` / `tracing-subscriber`**: Bibliotecas comunes para registro.
+
+*   [Introducción básica (hello)](hello/): Aplicación Salvo más simple, muestra Handler, Router y arranque del servidor.
+    *   **Uso**: `#[handler] async fn hello()...`, `Router::new().get(hello)`, `Server::new(acceptor).serve(router)`.
+*   [Inicio rápido (Quick Start)](guide/quick-start.mdx): Guía para instalar Rust, crear el primer proyecto Salvo, uso de la macro `#[handler]`, ejemplo HTTP/3 y herramienta CLI Salvo.
+*   [Conceptos básicos (Concepts)](guide/concepts/):
+    *   [Handler](guide/concepts/handler.md): Definición de Handler, uso como middleware (hoop) y objetivo (goal), detalles de la macro `#[handler]`, manejo de errores (`Result<T: Writer, E: Writer>`).
+    *   [Request](guide/concepts/request.md): Obtención de parámetros de consulta (`.query()`), datos de formulario (`.form()`), datos JSON (`.parse_json()`), parámetros de ruta (`.param()`), cabeceras (`.header()`). Presenta la macro `Extractible` y extractores integrados (`JsonBody`, `FormBody`, `QueryParam`, etc.) para extracción automática de datos.
+    *   [Response](guide/concepts/response.md): Uso de `.render()` para escribir texto, JSON, HTML; establecer código de estado (`.status_code()`); redireccionar (`Redirect::found()`).
+    *   [Router](guide/concepts/router.mdx): Definición de rutas (plana vs árbol), coincidencia de rutas (estática, parámetros `{id}`, números `{id:num}`, regex `{id:regex}`, comodines `{*rest}`, `{**rest}`), filtros (`.filter()`, `.filter_fn()`), middleware (`.hoop()`), enrutamiento condicional (`.then()`).
+    *   [Depot](guide/concepts/depot.mdx): Uso de `insert`/`get` e `inject`/`obtain` para compartir datos durante el manejo de solicitudes.
+    *   [Catcher](guide/concepts/catcher.mdx): Manejo de errores (como 404) mediante `Service::catcher()` y Handler personalizados.
+    *   [Writer & Scribe](guide/concepts/writer.mdx): Traits para definir cómo escribir tipos personalizados en `Response`.
+*   [Características principales (Features)](guide/features/):
+    *   [ACME (Let's Encrypt)](guide/features/acme.mdx): Obtención y renovación automática de certificados TLS.
+        *   **Característica**: `acme`
+        *   [Desafío HTTP-01](acme-http01/): Usa el puerto 80 para verificación. **Uso**: `TcpListener::new(...):443.acme().cache_path(...).add_domain(...).http01_challenge(&mut router).join(TcpListener::new(...):80).bind()`.
+        *   [Desafío HTTP-01 + QUIC/HTTP3](acme-http01-quinn/): Habilita ACME y HTTP3 simultáneamente. **Uso**: Tras `http01_challenge`, añade `.quinn("0.0.0.0:443")`.
+        *   [Desafío TLS-ALPN-01](acme-tls-alpn01/): Usa el puerto 443 para verificación, sin necesidad de escuchar en el puerto 80. **Uso**: `TcpListener::new(...):443.acme().cache_path(...).add_domain(...).bind()` (usa TLS-ALPN-01 por defecto).
+    *   [Inyección de estado (Affix State)](guide/features/affix-state.mdx): Uso de `affix_state::inject()` y `affix_state::insert()` para inyectar datos compartidos en `Depot`.
+        *   **Característica**: `affix-state`
+        *   **Uso**: `router.hoop(affix_state::inject(config).insert("key", value))`, en Handler `depot.obtain::<Config>()` o `depot.get::<T>("key")`.
+    *   [Autenticación básica (Basic Auth)](guide/features/basic-auth.mdx): Implementa autenticación HTTP Basic.
+        *   **Característica**: `basic-auth`
+        *   **Uso**: Implementa el trait `BasicAuthValidator`, crea middleware `BasicAuth::new(validator)` y añádelo con `hoop()`.
+    *   [Caché de respuestas (Cache)](guide/features/cache.mdx): Almacena en caché respuestas de Handler.
+        *   **Característica**: `cache`
+        *   **Uso**: Configura `CacheStore` (como `MokaStore`, establece TTL) y `CacheIssuer` (como `RequestIssuer`), crea middleware `Cache::new(store, issuer)` y añádelo con `hoop()`.
+    *   [Cabeceras de caché (Caching Headers)](guide/features/caching-headers.mdx): Añade automáticamente cabeceras `ETag` y `Cache-Control`.
+        *   **Característica**: `caching-headers`
+        *   **Uso**: `Router::with_hoop(CachingHeaders::new())`, debe colocarse antes de `Compression`.
+    *   [Captura de pánico (Catch Panic)](guide/features/catch-panic.mdx): Evita que el servidor falle por panic en Handler.
+        *   **Característica**: `catch-panic`
+        *   **Uso**: `Router::new().hoop(CatchPanic::new())`, recomendado como primer middleware.
+    *   [Compresión de respuestas (Compression)](guide/features/compression.mdx): Comprime el cuerpo de la respuesta (gzip, brotli, zstd).
+        *   **Característica**: `compression`
+        *   **Uso**: `Compression::new().enable_gzip(...).enable_brotli(...).hoop(middleware)`.
+    *   [Limitador de concurrencia (Concurrency Limiter)](guide/features/concurrency-limiter.mdx): Limita el número de solicitudes procesadas simultáneamente.
+        *   **Característica**: `concurrency-limiter`
+        *   **Uso**: `Router::new().hoop(max_concurrency(n))`.
+    *   [CORS (Intercambio de Recursos de Origen Cruzado)](guide/features/cors.mdx): Configura política para solicitudes entre dominios.
+        *   **Característica**: `cors`
+        *   **Uso**: Configura `Cors::new().allow_origin(...).allow_methods(...).into_handler()` y añádelo a `Service` (normalmente con `hoop`).
+    *   [Característica Craft](guide/features/craft.mdx): Usa la macro `#[craft]` para convertir métodos de estructuras en Handler o Endpoint.
+        *   **Característica**: `craft`, `oapi` (recomendado)
+        *   **Uso**: `#[craft]` en `impl`, `#[craft(handler)]` o `#[craft(endpoint)]` en métodos. En rutas, llama como `opts.method_name()` o `Struct::method_name()`.
+    *   [Protección CSRF](guide/features/csrf.mdx): Previene ataques de falsificación de solicitud entre sitios.
+        *   **Característica**: `csrf`
+        *   [Almacenamiento en cookie](csrf-cookie-store/): Guarda Token en cookie. **Uso**: Configura `Finder` (como `FormFinder`) y `Store` (como `bcrypt_cookie_csrf(finder)`), añade middleware con `hoop()`, obtén token con `depot.csrf_token()`.
+        *   [Almacenamiento en sesión](csrf-session-store/): Guarda Token en sesión. **Característica**: `session`. **Uso**: Similar a CookieStore, pero requiere añadir `SessionHandler` primero, usa `bcrypt_session_csrf(finder)`.
+    *   [Mensajes flash](guide/features/flash.mdx): Almacena mensajes temporales antes de redireccionar.
+        *   **Característica**: `flash`
+        *   [Almacenamiento en cookie](flash-cookie-store/): **Uso**: `Router::new().hoop(CookieStore::new().into_handler())`. En Handler, `depot.outgoing_flash_mut().info(...)` para establecer, `depot.incoming_flash()` para leer.
+        *   [Almacenamiento en sesión](flash-session-store/): **Característica**: `session`. **Uso**: Añade `SessionHandler` primero, luego `hoop(SessionStore::new().into_handler())`.
+    *   [Forzar HTTPS](guide/features/force-https.mdx): Redirige solicitudes HTTP a HTTPS.
+        *   **Característica**: `force-https`, `rustls` (u otro TLS)
+        *   **Uso**: `Service::new(router).hoop(ForceHttps::new().https_port(443))`. Normalmente requiere escuchar en puertos HTTP y HTTPS simultáneamente.
+    *   [Soporte HTTP/3 (Quinn)](guide/features/hello-h3.mdx): Habilita HTTP/3 y QUIC.
+        *   **Característica**: `quinn`
+        *   **Uso**: Configura TLS (`RustlsConfig`), usa `QuinnListener::new(quinn_config, addr).join(tcp_listener).bind()`.
+    *   [Autenticación JWT](guide/features/jwt-auth.mdx): Verifica JSON Web Token.
+        *   **Característica**: `jwt-auth`
+        *   **Uso**: Define estructura `Claims`, crea `Decoder` (como `ConstDecoder`, `OidcDecoder`), configura middleware `JwtAuth::new(decoder).finders(...).force_passed(...)`. En Handler, usa `depot.jwt_auth_state()` y `depot.jwt_auth_data()`.
+        *   [Integración Clerk OIDC](jwt-oidc-clerk/): Usa proveedor OIDC (Clerk) para autenticación.
+        *   [Integración Clerk con clave pública](jwt-clerk/): Verifica directamente con clave pública proporcionada por Clerk.
+    *   [Registro de solicitudes (Logging)](guide/features/logging.mdx): Registra información de solicitudes HTTP.
+        *   **Característica**: `logging`
+        *   **Uso**: `Service::new(router).hoop(Logger::new())`.
+        *   [Exportación OTLP](
+{/* 本行由工具自动生成,原文哈希值:1b65997e58714cf1ee60f5e6f978e706 */}

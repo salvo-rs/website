@@ -1,0 +1,27 @@
+# Encabezados de caché
+
+Middleware que proporciona soporte para la configuración de encabezados de caché.
+
+El control de caché es una parte fundamental de la optimización del rendimiento web. Al configurar correctamente los encabezados de caché, se pueden reducir solicitudes de red innecesarias y mejorar el rendimiento de la aplicación. [Cache-Control](https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control) es un encabezado de respuesta HTTP que especifica directivas para las políticas de caché del navegador, controlando quién puede almacenar en caché la respuesta, bajo qué condiciones y por cuánto tiempo.
+
+Internamente, la implementación incluye tres manejadores (`Handler`): `CachingHeaders`, `Modified` y `ETag`. `CachingHeaders` es una combinación de los dos últimos. Normalmente se recomienda usar `CachingHeaders`.
+
+- `Modified`: Proporciona validación de caché basada en la última fecha de modificación del recurso.
+- `ETag`: Utiliza etiquetas de entidad (Entity Tag) para ofrecer un mecanismo de validación de recursos más preciso.
+- `CachingHeaders`: Combina ambos mecanismos anteriores, brindando soporte completo para el control de caché.
+
+_**Código de ejemplo**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
+import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CachingHeadersCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CachingHeadersCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}

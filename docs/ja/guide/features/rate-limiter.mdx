@@ -1,0 +1,48 @@
+# 流量制御
+
+流量制御機能を提供するミドルウェア。
+
+```rust
+import { Tab, Tabs } from 'rspress/theme';
+import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
+import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
+import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
+import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+```
+
+## 主な機能
+
+* `RateIssuer` は訪問者を識別するキーを割り当てる抽象化を提供します。`RemoteIpIssuer` はその実装の一つで、リクエストのIPアドレスに基づいて訪問者を特定します。キーは文字列型である必要はなく、`Hash + Eq + Send + Sync + 'static` 制約を満たす任意の型を使用できます。
+
+* `RateGuard` は流量制御アルゴリズムの抽象化を提供します。デフォルトで固定ウィンドウ(`FixedGuard`)とスライディングウィンドウ(`SlidingGuard`)の2つの実装が用意されています。
+
+* `RateStore` はデータの存取操作を提供します。`MokaStore` は組み込みの`moka`ベースのメモリキャッシュ実装です。独自の実装を定義することも可能です。
+
+* `RateLimiter` は`Handler`を実装した構造体で、内部に`skipper`フィールドを持ち、キャッシュが不要なリクエストをスキップするように指定できます。デフォルトでは`none_skipper`が使用され、全てのリクエストが処理されます。
+
+* `QuotaGetter` はクォータ取得の抽象化を提供し、訪問者の`Key`に基づいてクォータオブジェクトを取得できます。これにより、ユーザークォータなどの情報をデータベースに設定し、動的に変更・取得することが可能になります。
+
+_**サンプルコード**_
+
+### 静的クォータの例
+
+<Tabs>
+  <Tab label="main.rs">
+    <StaticMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <StaticCargoCode/>
+  </Tab>
+</Tabs>
+
+### 動的クォータの例
+
+<Tabs>
+  <Tab label="main.rs">
+    <DynamicMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <DynamicCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}

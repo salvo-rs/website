@@ -1,0 +1,135 @@
+---
+title: Bibliotecas de manejo de errores en Rust
+---
+
+# Bibliotecas de manejo de errores en Rust
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/thiserror/latest/thiserror/"
+  title="thiserror"
+  description="Proporciona macros derivados convenientes para tipos de error personalizados"
+/>
+
+<LinkCard
+  href="https://docs.rs/snafu/latest/snafu/"
+  title="snafu"
+  description="Marco para manejo y reporte de errores con contexto"
+/>
+
+<LinkCard
+  href="https://docs.rs/anyhow/latest/anyhow/"
+  title="anyhow"
+  description="Biblioteca flexible para manejo y reporte de errores"
+/>
+
+## thiserror vs snafu
+
+### thiserror
+
+thiserror es una biblioteca ligera que proporciona macros derivados para simplificar la definición de errores.
+
+Características:
+- Sintaxis concisa, con poca ceremonia
+- Ideal para crear bibliotecas de tipos de error y APIs
+- Comúnmente usado en bibliotecas destinadas a ser utilizadas por otros
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum DataError {
+    #[error("Error de base de datos: {0}")]
+    DatabaseError(#[from] sqlx::Error),
+    
+    #[error("Error de validación: {0}")]
+    ValidationError(String),
+    
+    #[error("Registro no encontrado")]
+    NotFound,
+}
+```
+
+### snafu
+
+snafu ofrece un marco más completo para manejo de errores, enfocándose en contexto y cadena de errores.
+
+Características:
+- Fomenta agregar contexto preciso mediante el patrón "selectores de contexto"
+- Recomienda el patrón "un enum de error por módulo"
+- Soporta variantes de error estilo struct y tuple
+- Incluye soporte integrado para backtraces
+
+```rust
+use snafu::{Snafu, ResultExt, Backtrace};
+
+#[derive(Debug, Snafu)]
+pub enum Error {
+    #[snafu(display("No se pudo leer el archivo de configuración {filename:?}"))]
+    ReadConfig {
+        filename: String,
+        source: std::io::Error,
+        backtrace: Backtrace,
+    },
+    
+    // También se puede usar estilo tuple
+    #[snafu(display("Error de IO"))]
+    Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
+}
+
+// Ejemplo de selector de contexto
+fn read_config(path: &str) -> Result<Config, Error> {
+    std::fs::read_to_string(path).context(ReadConfigSnafu { filename: path })?;
+    // ...
+}
+```
+
+### Comparación
+
+| Característica | thiserror | snafu |
+|---------------|-----------|-------|
+| Concisión sintáctica | Más conciso | Más verboso |
+| Contexto de error | Soporte básico | Mecanismos ricos de contexto |
+| Escala adecuada | Pequeños a medianos proyectos | Medianos a grandes proyectos |
+| Líneas de código | ~2 líneas por error | ~5 líneas por error |
+| Organización de errores | Normalmente un solo enum de error | Fomenta enums de error por módulo |
+| Soporte para backtrace | No incluido | Incluido |
+
+**Recomendaciones**:
+- **Elige thiserror** cuando necesites tipos de error simples y claros, especialmente en bibliotecas
+- **Elige snafu** cuando requieras manejo de errores más estructurado, particularmente en aplicaciones grandes
+
+## anyhow
+
+anyhow es una biblioteca diferente, enfocada en aplicaciones más que en bibliotecas.
+
+Características:
+- Diseñado para manejo de errores en aplicaciones, no en bibliotecas
+- Proporciona el tipo dinámico `anyhow::Error` que puede contener cualquier error que implemente el trait `Error`
+- Simplifica el manejo entre múltiples tipos de error
+- No requiere definir tipos de error personalizados
+
+```rust
+use anyhow::{Context, Result};
+
+fn main() -> Result<()> {
+    let config = std::fs::read_to_string("config.json")
+        .context("No se pudo leer el archivo de configuración")?;
+        
+    let app_config: AppConfig = serde_json::from_str(&config)
+        .context("Formato de configuración inválido")?;
+        
+    // Usa Result<T> como alias para Result<T, anyhow::Error>
+    Ok(())
+}
+```
+
+**anyhow vs thiserror/snafu**:
+- anyhow se enfoca en manejo rápido de errores durante desarrollo de aplicaciones
+- thiserror/snafu se enfocan en crear jerarquías precisas de tipos de error
+- anyhow se usa típicamente en código de aplicación
+- thiserror/snafu se usan típicamente en código de bibliotecas
+
+En la práctica, anyhow y thiserror suelen usarse juntos: las bibliotecas definen tipos precisos con thiserror, mientras las aplicaciones manejan diversas fuentes de error con anyhow.
+{/* 本行由工具自动生成,原文哈希值:ac682487abf5cc66b7b4ee2508c7386d */}

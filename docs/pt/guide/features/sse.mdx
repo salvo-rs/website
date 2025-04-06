@@ -1,0 +1,43 @@
+# SSE (Server-Sent Events)
+
+import { Tab, Tabs } from 'rspress/theme';
+import SseMainCode from '../../../../codes_md/sse/src/main.mdx';
+import SseCargoCode from '../../../../codes_md/sse/Cargo.mdx';
+import SseChatMainCode from '../../../../codes_md/sse-chat/src/main.mdx';
+import SseChatCargoCode from '../../../../codes_md/sse-chat/Cargo.mdx';
+
+## O que é SSE
+
+Server-Sent Events (SSE) é uma tecnologia web que permite que um servidor envie dados por push para um cliente. Diferente do WebSocket, o SSE é unidirecional - apenas o servidor pode enviar dados para o cliente, sendo ideal para cenários onde é necessário que o servidor envie dados em tempo real sem que o cliente precise enviar informações frequentemente. O SSE é baseado no protocolo HTTP, tem implementação simples e possui mecanismo de reconexão automática.
+
+Oferece um middleware com suporte a `SSE`.
+
+_**Código de exemplo**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<SseMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SseCargoCode/>
+</Tab>
+</Tabs>
+
+
+## Exemplo de aplicativo de chat
+
+<Tabs>
+<Tab label="main.rs">
+<SseChatMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SseChatCargoCode/>
+</Tab>
+</Tabs>
+
+## Integração com modelos de linguagem grandes
+
+Ao utilizar SDKs como o OpenAI ou outros SDKs de modelos de linguagem grandes para integrar IA, o retorno de resultados em fluxo contínuo (Stream) é um cenário de demanda comum. O SSE fornece uma solução perfeita, permitindo que o conteúdo gerado pela IA seja enviado em tempo real para o front-end, proporcionando uma melhor experiência do usuário.
+
+Por exemplo, ao integrar a API de Chat Completion da OpenAI com resposta em fluxo, é possível utilizar a funcionalidade SSE do Salvo para enviar gradualmente o conteúdo gerado pela IA para o cliente, evitando a sensação de latência causada pela espera da resposta completa.
+{/* 本行由工具自动生成,原文哈希值:c23a2cf16be4c8144514b22523991634 */}

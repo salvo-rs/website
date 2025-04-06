@@ -1,0 +1,33 @@
+# Barra Final
+
+Middleware para agregar o eliminar automáticamente la barra final `/`.
+
+## Casos de Uso
+
+El middleware Barra Final es especialmente útil en los siguientes escenarios:
+
+- **Normalización de URLs**: Asegura que todas las URLs sigan un formato consistente (agregando o eliminando uniformemente la barra final), lo que ayuda a mejorar el SEO y evita problemas de contenido duplicado.
+  
+- **Simplificación del manejo de rutas**: Elimina la necesidad de escribir lógica de manejo de rutas separada para casos con y sin barra final, ya que el middleware gestiona automáticamente esta conversión.
+
+- **Compatibilidad**: Algunos clientes pueden agregar o eliminar automáticamente la barra final de una URL; este middleware garantiza que las solicitudes se enruten correctamente.
+
+- **Gestión de redirecciones**: Puede configurarse para redirigir automáticamente URLs con barra final a URLs sin ella (o viceversa), mejorando la experiencia del usuario.
+
+- **Evitar conflictos de rutas**: En muchos frameworks web, `/ruta` y `/ruta/` pueden tratarse como rutas diferentes; este middleware unifica su manejo.
+
+import { Tab, Tabs } from 'rspress/theme';
+import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
+import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+
+_**Código de Ejemplo**_
+
+<Tabs>
+<Tab label="main.rs">
+<TrailingMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TrailingCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}

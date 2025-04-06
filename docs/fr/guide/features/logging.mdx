@@ -1,0 +1,27 @@
+# Middleware de journalisation
+
+La journalisation joue un rôle essentiel dans les applications web, permettant de :
+
+- Fournir des détails sur le traitement des requêtes pour suivre le comportement de l'application
+- Faciliter le dépannage et le débogage, particulièrement en environnement de production
+- Surveiller les performances et l'utilisation des ressources
+- Enregistrer les modèles d'accès utilisateurs et les anomalies système
+- Satisfaire aux exigences d'audit de sécurité et de conformité
+
+Salvo propose un middleware basique de fonctionnalité de journal. Si le middleware est ajouté directement à un `Router`, il ne pourra pas capturer les erreurs 404 retournées quand aucun `Router` ne correspond. Il est recommandé de l'ajouter au `Service`.
+
+_**Exemple de code**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
+import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <LoggingCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <LoggingCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:b378fca9964cf2a34b48e7c0c9f74a2d */}

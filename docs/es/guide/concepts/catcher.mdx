@@ -1,0 +1,31 @@
+# Catcher
+
+import { Tab, Tabs } from 'rspress/theme';
+import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
+import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+
+Si el código de estado de `Response` es un error y el `Body` de la página está vacío, Salvo intentará capturar este error usando `Catcher` para mostrar una página de error amigable.
+
+Puedes usar `Catcher::default()` para obtener un `Catcher` predeterminado del sistema y luego agregarlo al `Service`.
+
+```rust
+use salvo::catcher::Catcher;
+
+Service::new(router).catcher(Catcher::default());
+```
+
+El `Catcher` predeterminado admite el envío de páginas de error en formatos `XML`, `JSON`, `HTML` y `Text`.
+
+Puedes agregar manejadores de errores personalizados al `Catcher` añadiéndolos mediante `hoop`. Estos manejadores siguen siendo `Handler`.
+
+Puedes agregar múltiples manejadores de errores personalizados al `Catcher` usando `hoop`. Los manejadores personalizados pueden llamar al método `FlowCtrl::skip_next` después de procesar el error para omitir los siguientes manejadores y retornar anticipadamente.
+
+<Tabs>
+  <Tab label="main.rs">
+    <CustomErrorPageCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CustomErrorPageCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:f904ca235acae374d6a236a1bd7a027a */}

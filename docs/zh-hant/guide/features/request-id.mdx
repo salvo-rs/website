@@ -1,0 +1,21 @@
+# 請求鏈路Id
+
+import { Tab, Tabs } from 'rspress/theme';
+import RequestIdMainCode from '../../../../codes_md/request-id/src/main.mdx';
+import RequestIdCargoCode from '../../../../codes_md/request-id/Cargo.mdx';
+
+Request Id 中介軟體具有高度靈活性，生成器(IdGenerator) 用於產生 ID，您可以定義自己的 ID 生成器，只需實現 `IdGenerator` 這個 trait。預設提供的生成器是 `UlidGenerator`。
+
+此外，您可以控制是否覆蓋現有已存在的 `requestid`。還能設置 `header_name` 等參數，詳情請[查閱文件](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
+
+_**範例程式碼**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <RequestIdMainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <RequestIdCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:c4254b7ef23c0b7cd5e4b30f6fc58cc8 */}

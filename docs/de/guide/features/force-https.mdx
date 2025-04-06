@@ -1,0 +1,23 @@
+# HTTPS erzwingen
+
+Der `force-https`-Middleware kann alle Anfragen zwingen, auf das HTTPS-Protokoll umzuleiten.
+
+Wenn diese Middleware auf einen `Router` angewendet wird, erfolgt die Protokollumleitung nur bei erfolgreicher Routenübereinstimmung. Falls die Seite nicht existiert, wird keine Umleitung durchgeführt.
+
+Häufiger ist jedoch der Wunsch, dass alle Anfragen automatisch umgeleitet werden sollen – selbst wenn keine Route gefunden wird und ein `404`-Fehler zurückgegeben wird. In diesem Fall kann die Middleware dem `Service` hinzugefügt werden. Middlewares, die auf `Service`-Ebene hinzugefügt werden, werden immer ausgeführt, unabhängig davon, ob die Anfrage erfolgreich einer Route zugeordnet wurde oder nicht.
+
+_**Beispielcode**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import ForceHttpsCode from '../../../../codes_md/force-https/src/main.mdx';
+import ForceHttpsCargoCode from '../../../../codes_md/force-https/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <ForceHttpsCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ForceHttpsCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:acf8e135d114ff6c701ad46acd7c2854 */}

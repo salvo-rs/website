@@ -1,0 +1,36 @@
+# 快閃訊息
+
+提供快閃訊息功能的 middleware。
+
+`FlashStore` 提供資料存取操作。`CookieStore` 會將資料儲存在 `Cookie` 中。而 `SessionStore` 則將資料儲存在 `Session` 裡，`SessionStore` 必須與 `session` 功能搭配使用。
+
+_**範例程式碼**_
+
+### Cookie 儲存範例
+
+import { Tab, Tabs } from 'rspress/theme';
+import FlashCookieStoreCode from '../../../../codes_md/flash-cookie-store/src/main.mdx';
+import FlashCookieStoreCargoCode from '../../../../codes_md/flash-cookie-store/Cargo.mdx';
+import FlashSessionStoreCode from '../../../../codes_md/flash-session-store/src/main.mdx';
+import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <FlashCookieStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <FlashCookieStoreCargoCode/>
+  </Tab>
+</Tabs>
+
+### Session 儲存範例
+
+<Tabs>
+  <Tab label="main.rs">
+    <FlashSessionStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <FlashSessionStoreCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:65b5daf888b80bc91076aaaee868b95c */}

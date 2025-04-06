@@ -15,9 +15,9 @@ async fn upload(req: &mut Request, res: &mut Response) {
         let mut msgs = Vec::with_capacity(files.len());
         for file in files {
             let dest = format!("temp/{}", file.name().unwrap_or("file"));
-            if let Err(e) = std::fs::copy(&file.path(), Path::new(&dest)) {
+            if let Err(e) = std::fs::copy(file.path(), Path::new(&dest)) {
                 res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
-                res.render(Text::Plain(format!("file not found in request: {}", e)));
+                res.render(Text::Plain(format!("file not found in request: {e}")));
             } else {
                 msgs.push(dest);
             }
@@ -39,7 +39,7 @@ async fn main() {
     create_dir_all("temp").unwrap();
     let router = Router::new().get(index).post(upload);
 
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 

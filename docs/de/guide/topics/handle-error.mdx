@@ -1,0 +1,115 @@
+# Fehlerbehandlung
+
+## Konventionelle Fehlerbehandlung in Rust-Anwendungen
+
+Die Fehlerbehandlung in Rust unterscheidet sich von Sprachen wie Java – es gibt kein `try...catch`. Üblicherweise definiert man auf Anwendungsebene einen globalen Fehlertyp:
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("io: `{0}`")]
+    Io(#[from] io::Error),
+    #[error("utf8: `{0}`")]
+    FromUtf8(#[from] FromUtf8Error),
+    #[error("diesel: `{0}`")]
+    Diesel(#[from] diesel::result::Error),
+    ...
+}
+
+pub type AppResult<T> = Result<T, AppError>;
+```
+
+Hier wird die Bibliothek `thiserror` verwendet, die das Definieren eigener Fehlertypen vereinfacht. Zur besseren Lesbarkeit wird zusätzlich ein `AppResult` definiert.
+
+### thiserror vs. anyhow
+
+Im Rust-Ökosystem zur Fehlerbehandlung sind zwei Bibliotheken besonders verbreitet: `thiserror` und `anyhow`:
+
+- **thiserror**: Ideal für Bibliotheksentwickler, um klare Fehlertypen zu definieren. Durch abgeleitete Makros hilft es beim Implementieren des `std::error::Error`-Traits für benutzerdefinierte Fehlertypen und ermöglicht die Festlegung der Fehlerdarstellung. Bei der Entwicklung von Bibliotheken oder wenn klare Fehlertypen für Nutzer benötigt werden, ist `thiserror` die bessere Wahl.
+
+- **anyhow**: Geeignet für Anwendungsentwickler, bietet einen universellen Fehlertyp `anyhow::Error`, der jeden Fehler, der den `std::error::Error`-Trait implementiert, enthalten kann. Der Fokus liegt mehr auf der Fehlerweitergabe als auf der Definition, was es besonders für Anwendungscode geeignet macht. Verschiedene Fehler können schnell in `anyhow::Error` umgewandelt werden, wodurch sich der Bedarf an Boilerplate-Code reduziert.
+
+In manchen Fällen können beide Bibliotheken kombiniert werden: `thiserror` für Fehlertypen in Bibliotheken und `anyhow` zur Behandlung und Weitergabe dieser Fehler in der Anwendung.
+
+## Fehlerbehandlung in Handlern
+
+In Salvo können `Handler` auf verschiedene Fehler stoßen, wie Datenbankverbindungsfehler, Dateizugriffsfehler oder Netzwerkverbindungsprobleme. Für solche Fehler kann der oben beschriebene Ansatz verwendet werden:
+
+```rust
+#[handler]
+async fn home()-> AppResult<()> {
+
+}
+```
+
+Hier gibt `home` direkt ein `AppResult<()>` zurück. Doch wie soll dieser Fehler angezeigt werden? Wir müssen für den benutzerdefinierten Fehlertyp `AppResult` das `Writer`-Trait implementieren, um die Fehlerdarstellung festzulegen:
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        res.render(Text::Plain("Ich bin ein Fehler, hahaha!"));
+    }
+}
+```
+
+Handler in Salvo können `Result` zurückgeben, solassen `Ok` und `Err` des `Result` das `Writer`-Trait implementieren.
+
+### Fehlerbehandlung mit anyhow
+
+Da `anyhow` weit verbreitet ist, bietet Salvo integrierte Unterstützung für `anyhow::Error`. Wenn das `anyhow`-Feature aktiviert ist, implementiert `anyhow::Error` das `Writer`-Trait und wird als `InternalServerError` abgebildet:
+
+```rust
+#[cfg(feature = "anyhow")]
+#[async_trait]
+impl Writer for ::anyhow::Error {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.render(StatusError::internal_server_error());
+    }
+}
+```
+
+Um das `anyhow`-Feature zu nutzen, muss es in der `Cargo.toml` aktiviert werden:
+
+```toml
+[dependencies]
+salvo = { version = "*", features = ["anyhow"] }
+anyhow = "1.0"
+```
+
+Dadurch können Handler direkt `anyhow::Result<T>` zurückgeben:
+
+```rust
+#[handler]
+async fn home() -> anyhow::Result<impl Writer> {
+    let data = fetch_data().context("Daten konnten nicht abgerufen werden")?;
+    Ok(Text::Plain(data))
+}
+```
+
+Fehler enthalten oft sensible Informationen, die normalerweise nicht für Endbenutzer sichtbar sein sollten – das wäre unsicher und würde die Privatsphäre verletzen. Entwickler oder Administratoren möchten jedoch möglicherweise detaillierte Fehlermeldungen sehen.
+
+Da die `write`-Methode Referenzen auf `Request` und `Depot` erhält, lässt sich dies einfach umsetzen:
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        let user = depot.obtain::<User>();
+        if user.is_admin {
+            res.render(Text::Plain(e.to_string()));
+        } else {
+            res.render(Text::Plain("Ich bin ein Fehler, hahaha!"));
+        }
+    }
+}
+```
+
+## Anzeige von Fehlerseiten
+
+Die in Salvo integrierten Fehlerseiten sind in den meisten Fällen ausreichend. Sie können je nach Anfragetyp HTML, JSON oder XML anzeigen. In einigen Fällen möchten Sie jedoch möglicherweise die Darstellung anpassen.
+
+Dies kann durch die Implementierung eines benutzerdefinierten `Catcher` erreicht werden. Weitere Details finden Sie in der Dokumentation zu [`Catcher`](../concepts/catcher.html).
+{/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

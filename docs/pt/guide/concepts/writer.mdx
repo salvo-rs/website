@@ -1,0 +1,36 @@
+# Escritor
+
+`Writer` é usado para escrever conteúdo em `Response`:
+
+```rust
+#[async_trait]
+pub trait Writer {
+    async fn write(mut self, req: &mut Request, depot: &mut Depot, res: &mut Response);
+}
+```
+
+Em comparação com Handler:
+
+```rust
+#[async_trait]
+pub trait Handler: Send + Sync + 'static {
+    async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl);
+}
+```
+
+As principais diferenças entre eles são:
+- Propósitos diferentes: `Writer` representa a escrita de conteúdo específico em `Response`, implementado por conteúdos concretos como strings, mensagens de erro, etc. Já `Handler` é usado para processar toda a requisição.
+- `Writer` é criado dentro de `Handler` e se consome quando a função `write` é chamada, sendo uma chamada única. Enquanto `Handler` é compartilhado por todas as requisições;
+- `Writer` pode ser usado como conteúdo retornado no `Result` de um `Handler`;
+- `Writer` não possui o parâmetro `FlowCtrl`, não podendo controlar o fluxo de execução da requisição.
+
+`Scribe` implementa `Writer`, mas com funcionalidades ainda mais limitadas:
+
+```rust
+pub trait Scribe {
+    fn render(self, res: &mut Response);
+}
+```
+
+A função de renderização do `Scribe` apenas escreve dados no `Response`, sem capacidade de obter informações do `Request` ou `Depot`.
+{/* 本行由工具自动生成,原文哈希值:a88019b69f080567caf2af39cb1d17e5 */}

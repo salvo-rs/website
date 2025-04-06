@@ -1,0 +1,48 @@
+# Grundlegende Authentifizierung
+
+Middleware zur Unterstützung von Basic Auth.
+
+import { Tab, Tabs } from 'rspress/theme';
+import BasicAuthCode from '../../../../codes_md/basic-auth/src/main.mdx';
+import BasicAuthCargoCode from '../../../../codes_md/basic-auth/Cargo.mdx';
+
+## Einführung in Basic Auth
+
+Basic Auth ist ein einfacher HTTP-Authentifizierungsmechanismus, bei dem Benutzername und Passwort über das `Authorization`-Feld im HTTP-Header übertragen werden. Das Format lautet `Authorization: Basic <base64(username:password)>`. Obwohl einfach, sollten die Anmeldeinformationen aufgrund der nur Base64-kodierten (nicht verschlüsselten) Übertragung stets zusammen mit HTTPS verwendet werden, um die Sicherheit zu gewährleisten.
+
+## Vergleich der Basic Auth-Implementierungen in gängigen Frameworks
+
+| Framework | Sprache | Basic Auth-Implementierung |
+|-----------|---------|----------------------------|
+| Salvo | Rust | Durch `BasicAuth`-Middleware und benutzerdefinierten `BasicAuthValidator` |
+| Express | JavaScript | Verwendung des `express-basic-auth`-Middleware-Pakets |
+| Spring Security | Java | Konfiguration über `httpBasic()` und Implementierung von `UserDetailsService` |
+| ASP.NET Core | C# | Verwendung von `.UseAuthentication()` und `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | Benutzerdefinierte Middleware oder das `gin-contrib/auth`-Paket |
+
+## Anwendungsfälle
+
+Basic Auth eignet sich für folgende Szenarien:
+
+1. **Interne APIs und Tools**: Unternehmensinterne Verwaltungstools und APIs
+2. **Entwicklungs- und Testumgebungen**: Schnelle Authentifizierung ohne komplexe Anmeldesysteme
+3. **Einfacher API-Schutz**: Wenn kein komplexes Benutzerverwaltungssystem benötigt wird
+4. **Kombination mit anderen Sicherheitsmaßnahmen**: Als Teil einer mehrschichtigen Sicherheitsarchitektur
+
+In Salvo lässt sich die Basic Auth-Middleware einfach in Routen integrieren. Durch die Implementierung des `BasicAuthValidator`-Traits kann die Validierungslogik flexibel angepasst werden.
+
+## Wichtige Hinweise
+
+- Immer in Kombination mit HTTPS verwenden, um die Übertragung der Anmeldeinformationen zu schützen
+- Nicht für Produktionsumgebungen mit sensiblen Daten geeignet
+- Für Produktionsumgebungen sollten sicherere Authentifizierungsmethoden wie JWT oder OAuth in Betracht gezogen werden
+
+<Tabs>
+  <Tab label="main.rs">
+    <BasicAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <BasicAuthCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:602232eaaa9e3f904ce93326845595ee */}

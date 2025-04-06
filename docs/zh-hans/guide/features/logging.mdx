@@ -1,0 +1,26 @@
+# 日志中间件
+
+日志记录在Web应用程序中扮演着至关重要的角色，它能够：
+- 提供请求处理过程的详细信息，帮助开发者追踪应用行为
+- 辅助问题排查与调试，尤其在生产环境中
+- 监控应用性能和资源使用情况
+- 记录用户访问模式和系统异常
+- 满足安全审计和合规性要求
+
+Salvo提供基本的 Log 功能的中间件. 如果中间件直接添加到了 `Router` 上，它将无法捕获所有 `Router` 都不匹配时返回的 404 错误，建议添加到 `Service` 上. 
+
+
+_**示例代码**_ 
+
+import { Tab, Tabs } from 'rspress/theme';
+import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
+import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <LoggingCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <LoggingCargoCode/>
+  </Tab>
+</Tabs>

@@ -1,0 +1,29 @@
+# Using Template Engines
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
+import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
+import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+
+Salvo does not come with any built-in template engine, as preferences for template engine styles vary from person to person.
+
+At its core, a template engine is simply: data + template = string.
+
+Therefore, Salvo can support any template engine as long as it can render the final string.
+
+For example, here's how to use `askama`:
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+  <Tab label="template/hello.toml">
+    <TemplateCode/>
+  </Tab>
+</Tabs>
+
+**Note**: For projects that aren't particularly complex, we highly recommend adopting a frontend-backend separation approach. Use more flexible and ecosystem-rich UI frameworks (such as React, Vue, Svelte, etc.) for frontend development, with Salvo serving as the backend API service. This approach offers higher development efficiency, clearer division of responsibilities between frontend and backend, and better aligns with modern web application development trends.
+{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}

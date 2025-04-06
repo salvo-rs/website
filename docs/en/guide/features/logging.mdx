@@ -1,0 +1,26 @@
+# Logging Middleware
+
+Logging plays a crucial role in web applications, enabling:
+- Detailed information about request processing, helping developers track application behavior
+- Assistance with troubleshooting and debugging, especially in production environments
+- Monitoring of application performance and resource usage
+- Recording of user access patterns and system exceptions
+- Meeting security audit and compliance requirements
+
+Salvo provides middleware with basic logging functionality. If the middleware is added directly to a `Router`, it won't be able to capture 404 errors returned when no `Router` matches. It's recommended to add it to the `Service` instead.
+
+_**Example Code**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
+import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <LoggingCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <LoggingCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:b378fca9964cf2a34b48e7c0c9f74a2d */}

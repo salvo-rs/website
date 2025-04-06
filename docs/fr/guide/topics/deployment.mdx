@@ -1,0 +1,62 @@
+# Comment déployer une application
+
+Un projet Salvo, une fois compilé, devient un fichier exécutable. Pour le déployer, il suffit de télécharger cet exécutable ainsi que les ressources statiques dont il dépend sur le serveur.
+
+Pour les projets Rust, il existe également une plateforme de déploiement très simple : [shuttle.rs](https://www.shuttle.rs). Shuttle prend en charge les projets comme Salvo. Pour plus de détails, consultez la [documentation officielle](https://docs.shuttle.rs/guide/salvo-examples.html).
+
+## Déploiement avec Docker
+
+Vous pouvez également utiliser Docker pour déployer une application Salvo. Voici un exemple de base de `Dockerfile` que vous pouvez adapter selon les besoins de votre projet :
+
+```dockerfile
+# Phase de construction
+FROM rust:slim AS build
+WORKDIR /app
+
+# Copier d'abord les fichiers de dépendances pour construire les dépendances (en profitant du cache)
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src && \
+    echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
+    cargo build --release
+
+# Copier le code source réel et construire l'application
+COPY src ./src/
+RUN touch src/main.rs && \
+    cargo build --release
+
+# Phase d'exécution avec une image de base légère
+FROM debian:bookworm-slim
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Créer un utilisateur non-root pour exécuter l'application
+RUN useradd -ms /bin/bash appuser
+USER appuser
+WORKDIR /app
+
+# Copier le binaire depuis la phase de construction
+COPY --from=build /app/target/release/your_app_name ./app
+
+# Définir la commande de démarrage du conteneur
+CMD ["./app"]
+```
+
+### Mode d'emploi
+
+1. Enregistrez le `Dockerfile` ci-dessus à la racine de votre projet
+2. Ajustez `your_app_name` au nom réel de votre fichier binaire
+3. Si votre application nécessite des fichiers statiques (comme des templates, CSS, JS, etc.), ajoutez les commandes `COPY` appropriées
+4. Si votre application a besoin de variables d'environnement, utilisez l'instruction `ENV`
+5. Construisez l'image Docker :
+   ```bash
+   docker build -t your-app-name .
+   ```
+6. Exécutez le conteneur :
+   ```bash
+   docker run -p 5800:5800 your-app-name
+   ```
+
+Ajustez le numéro de port et les autres configurations selon les besoins réels de votre application.
+{/* 本行由工具自动生成,原文哈希值:cc4f6a8bac2d9ff67911bf45b473c2bd */}

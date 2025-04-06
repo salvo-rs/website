@@ -1,0 +1,60 @@
+# ファイルの送信
+
+Salvoでは以下の方法でファイルを送信できます:
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+### NamedFile
+
+Salvoは`salvo::fs::NamedFile`を提供しており、これを使用してクライアントに効率的にファイルを送信できます。これはファイル全体をキャッシュに読み込むのではなく、リクエストの`Range`に基づいて部分的な内容を読み込み、クライアントに送信します。
+
+実際、`Response::send_file`は`NamedFile`を簡略化して使用する方法です。ファイル送信をより細かく制御したい場合は、`NamedFileBuilder`を使用できます。
+
+`NamedFile::builder`で`NamedFileBuilder`を作成できます:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+いくつかの設定を行った後、ファイルを送信できます:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### 静的ファイルの提供
+
+静的ファイルや埋め込まれたファイルをサービスとして提供するミドルウェアです。
+
+- `StaticDir`はローカルの静的フォルダをサポートしています。複数のフォルダのリストを引数として渡せます。例:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  最初のフォルダに対応するファイルが見つからない場合、2番目のフォルダを探します。
+
+- `rust-embed`のサポートも提供しています。例:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  `with_fallback`を使用すると、ファイルが見つからない場合に代わりに使用するファイルを設定できます。これはシングルページアプリケーションなどで有用です。
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

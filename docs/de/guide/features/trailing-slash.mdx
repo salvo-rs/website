@@ -1,0 +1,33 @@
+# Nachgestellter Schrägstrich
+
+Ein Middleware, der automatisch einen nachgestellten Schrägstrich (`/`) hinzufügt oder entfernt.
+
+## Anwendungsfälle
+
+Die Trailing-Slash-Middleware ist besonders nützlich in folgenden Szenarien:
+
+- **URL-Normalisierung**: Stellt sicher, dass alle URLs einem einheitlichen Format folgen (entweder durchgängig mit oder ohne nachgestellten Schrägstrich), was die SEO verbessert und Probleme mit doppelten Inhalten vermeidet.
+
+- **Vereinfachung des Routings**: Es ist nicht notwendig, separate Logik für URLs mit und ohne Schrägstrich zu schreiben, da die Middleware diese Umwandlung automatisch vornimmt.
+
+- **Kompatibilität**: Einige Clients fügen möglicherweise automatisch einen Schrägstrich am Ende der URL hinzu oder entfernen ihn. Diese Middleware stellt sicher, dass die Anfrage korrekt weitergeleitet wird.
+
+- **Umleitungsverwaltung**: Kann so konfiguriert werden, dass URLs mit Schrägstrich automatisch zu URLs ohne Schrägstrich umgeleitet werden (oder umgekehrt), was die Benutzererfahrung verbessert.
+
+- **Vermeidung von Routing-Konflikten**: In vielen Web-Frameworks werden `/pfad` und `/pfad/` möglicherweise als unterschiedliche Routen behandelt. Diese Middleware kann sie einheitlich verarbeiten.
+
+import { Tab, Tabs } from 'rspress/theme';
+import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
+import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+
+_**Beispielcode**_
+
+<Tabs>
+<Tab label="main.rs">
+<TrailingMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TrailingCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}

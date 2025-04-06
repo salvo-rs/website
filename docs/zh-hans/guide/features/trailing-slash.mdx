@@ -1,0 +1,32 @@
+# Trailing Slash
+
+自动添加或者移除末尾 `/` 的中间件.
+
+## 使用场景
+
+Trailing Slash 中间件在以下场景中特别有用：
+
+- **URL 规范化**：确保所有 URL 遵循一致的格式（统一添加或移除末尾斜杠），有助于提升 SEO 并避免重复内容问题。
+  
+- **简化路由处理**：不必为有斜杠和无斜杠的情况分别编写路由处理逻辑，中间件会自动处理这种转换。
+
+- **兼容性**：某些客户端可能会自动添加或移除 URL 末尾的斜杠，此中间件可确保请求被正确路由。
+
+- **重定向管理**：可以配置为自动将带斜杠的 URL 重定向到不带斜杠的 URL（或反之），提升用户体验。
+
+- **避免路由冲突**：在许多 Web 框架中，`/path` 和 `/path/` 可能被视为不同的路由，此中间件可以统一处理。
+
+import { Tab, Tabs } from 'rspress/theme';
+import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
+import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+
+_**示例代码**_
+
+<Tabs>
+<Tab label="main.rs">
+<TrailingMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TrailingCargoCode/>
+</Tab>
+</Tabs>

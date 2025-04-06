@@ -1,0 +1,62 @@
+# Come Distribuire l'Applicazione
+
+Il progetto Salvo, dopo la compilazione, diventa un file eseguibile. Per la distribuzione, è sufficiente caricare questo file eseguibile insieme alle risorse statiche da cui dipende sul server.
+
+Per i progetti in Rust, esiste anche una piattaforma di distribuzione estremamente semplice: [shuttle.rs](https://www.shuttle.rs). Shuttle offre supporto per progetti come Salvo. Per maggiori dettagli, consultare la [documentazione ufficiale](https://docs.shuttle.rs/guide/salvo-examples.html).
+
+## Distribuzione con Docker
+
+Puoi anche utilizzare Docker per distribuire applicazioni Salvo. Di seguito è riportato un esempio base di `Dockerfile` che puoi adattare in base alle esigenze del tuo progetto:
+
+```dockerfile
+# Fase di build
+FROM rust:slim AS build
+WORKDIR /app
+
+# Copia i file delle dipendenze e costruisci prima le dipendenze (sfruttando la cache)
+COPY Cargo.toml Cargo.lock ./
+RUN mkdir src && \
+    echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
+    cargo build --release
+
+# Copia il codice sorgente effettivo e costruisci l'applicazione
+COPY src ./src/
+RUN touch src/main.rs && \
+    cargo build --release
+
+# Fase di esecuzione con immagine base minimale
+FROM debian:bookworm-slim
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Crea un utente non-root per eseguire l'applicazione
+RUN useradd -ms /bin/bash appuser
+USER appuser
+WORKDIR /app
+
+# Copia il file binario dalla fase di build
+COPY --from=build /app/target/release/nome_tua_app ./app
+
+# Imposta il comando di avvio del container
+CMD ["./app"]
+```
+
+### Istruzioni per l'uso
+
+1. Salva il `Dockerfile` sopra nella root del tuo progetto
+2. Modifica `nome_tua_app` con il nome effettivo del file binario del tuo progetto
+3. Se la tua applicazione necessita di file statici (come template, CSS, JS ecc.), puoi aggiungere i relativi comandi `COPY`
+4. Se la tua applicazione richiede configurazioni tramite variabili d'ambiente, puoi usare l'istruzione `ENV`
+5. Costruisci l'immagine Docker:
+   ```bash
+   docker build -t nome-tua-app .
+   ```
+6. Esegui il container:
+   ```bash
+   docker run -p 5800:5800 nome-tua-app
+   ```
+
+Modifica il numero di porta e altre configurazioni in base alle esigenze specifiche della tua applicazione.
+{/* 本行由工具自动生成,原文哈希值:cc4f6a8bac2d9ff67911bf45b473c2bd */}

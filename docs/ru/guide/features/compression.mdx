@@ -1,0 +1,29 @@
+# Сжатие ответов
+
+Промежуточное ПО для обработки сжатия содержимого `Response`.
+
+Поддерживает три формата сжатия: `br`, `gzip`, `deflate`. Возможна настройка приоритетов различных методов сжатия в соответствии с требованиями.
+
+## Сжатие данных в протоколе HTTP
+
+1. На уровне форматов файлов: специальные алгоритмы сжатия для определенных типов файлов
+2. На уровне протокола HTTP: сквозное сжатие ресурсов при передаче через кодирование содержимого
+3. На уровне соединения: сжатие данных между узлами HTTP-соединения
+
+Подробнее о сжатии в HTTP можно узнать в [документации Mozilla Developer Network](https://developer.mozilla.org/ru/docs/Web/HTTP/Compression).
+
+## Пример кода
+
+import { Tab, Tabs } from 'rspress/theme';
+import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
+import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CompressionCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CompressionCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:677ccdf714de83f86788e88c306cf8e4 */}

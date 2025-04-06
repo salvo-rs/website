@@ -1,0 +1,60 @@
+# Отправка файлов
+
+Salvo предоставляет несколько способов отправки файлов:
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+### NamedFile
+
+Salvo предлагает `salvo::fs::NamedFile` для эффективной отправки файлов клиенту. Вместо загрузки всего файла в память, он загружает только запрошенные части согласно заголовку `Range`.
+
+Фактически, `Response::send_file` — это упрощённый способ использования `NamedFile`. Если требуется больше контроля над отправляемым файлом, можно использовать `NamedFileBuilder`.
+
+Создать `NamedFileBuilder` можно через `NamedFile::builder`:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+После настройки можно отправить файл:
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### Обслуживание статики
+
+Промежуточное ПО для обслуживания статических или встроенных файлов.
+
+- `StaticDir` поддерживает статические локальные папки. Можно указать список из нескольких папок. Например:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Если файл не найден в первой папке, поиск продолжится во второй.
+
+- Поддержка `rust-embed`. Например:
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  `with_fallback` позволяет указать файл для отображения при отсутствии запрошенного, что полезно для одностраничных приложений.
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

@@ -1,0 +1,54 @@
+# Scrivere Test
+
+## L'Importanza dei Test
+
+Scrivere test è un segno di responsabilità per un ingegnere e il segreto per dormire sonni tranquilli. Una suite di test completa non solo migliora la qualità del codice e previene errori di regressione, ma ti permette anche di riposare serenamente dopo il deployment. Mentre i tuoi colleghi ricevono allarmi di crash di sistema nel cuore della notte, la tua applicazione rimane stabile come una roccia: questa è la pace e la fiducia che i test portano.
+
+## Strumenti di Test di Salvo
+
+Il modulo `test` fornito da Salvo può aiutarti a testare i progetti basati su Salvo.
+
+[Documentazione più recente](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)
+
+**Esempio Semplice:**
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hello_world() -> &'static str {
+    "Hello World"
+}
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+
+    tracing::info!("Listening on http://127.0.0.1:5800");
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(route()).await;
+}
+
+fn route() -> Router {
+    Router::new().get(hello_world)
+}
+
+#[cfg(test)]
+mod tests {
+    use salvo::prelude::*;
+    use salvo::test::{ResponseExt, TestClient};
+
+    #[tokio::test]
+    async fn test_hello_world() {
+        let service = Service::new(super::route());
+
+        let content = TestClient::get(format!("http://127.0.0.1:5800/"))
+            .send(&service)
+            .await
+            .take_string()
+            .await
+            .unwrap();
+        assert_eq!(content, "Hello World");
+    }
+}
+```
+{/* 本行由工具自动生成,原文哈希值:0a03588b2b7cfbb4bdfe3afb32a9763b */}

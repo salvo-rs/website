@@ -4,11 +4,11 @@
 // port from https://github.com/seanmonstar/warp/blob/master/examples/websocket_chat.rs
 
 use std::collections::HashMap;
+use std::sync::LazyLock;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 use futures_util::{FutureExt, StreamExt};
-use once_cell::sync::Lazy;
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::{RwLock, mpsc};
 use tokio_stream::wrappers::UnboundedReceiverStream;
 
 use salvo::prelude::*;
@@ -17,7 +17,7 @@ use salvo::websocket::{Message, WebSocket, WebSocketUpgrade};
 type Users = RwLock<HashMap<usize, mpsc::UnboundedSender<Result<Message, salvo::Error>>>>;
 
 static NEXT_USER_ID: AtomicUsize = AtomicUsize::new(1);
-static ONLINE_USERS: Lazy<Users> = Lazy::new(Users::default);
+static ONLINE_USERS: LazyLock<Users> = LazyLock::new(Users::default);
 
 #[tokio::main]
 async fn main() {
@@ -25,8 +25,7 @@ async fn main() {
     let router = Router::new()
         .goal(index)
         .push(Router::with_path("chat").goal(user_connected));
-
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -62,7 +61,7 @@ async fn handle_socket(ws: WebSocket) {
             let msg = match result {
                 Ok(msg) => msg,
                 Err(e) => {
-                    eprintln!("websocket error(uid={}): {}", my_id, e);
+                    eprintln!("websocket error(uid={my_id}): {e}");
                     break;
                 }
             };
@@ -80,7 +79,7 @@ async fn user_message(my_id: usize, msg: Message) {
         return;
     };
 
-    let new_msg = format!("<User#{}>: {}", my_id, msg);
+    let new_msg = format!("<User#{my_id}>: {msg}");
 
     // New message from this user, send it to everyone else (except same uid)...
     for (&uid, tx) in ONLINE_USERS.read().await.iter() {
@@ -95,7 +94,7 @@ async fn user_message(my_id: usize, msg: Message) {
 }
 
 async fn user_disconnected(my_id: usize) {
-    eprintln!("good bye user: {}", my_id);
+    eprintln!("good bye user: {my_id}");
     // Stream closed up, so remove from the user list
     ONLINE_USERS.write().await.remove(&my_id);
 }

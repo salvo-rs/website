@@ -1,0 +1,60 @@
+# 發送檔案
+
+Salvo 可以透過以下幾種方式發送檔案：
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+### NamedFile
+
+Salvo 提供了 `salvo::fs::NamedFile`，可用於高效地向客戶端發送檔案。它不會將整個檔案載入快取，而是根據請求中的 `Range` 標頭載入部分內容傳送至客戶端。
+
+實際上，透過 `Response::send_file` 只是使用 `NamedFile` 的簡便方式。若需要對發送的檔案進行更多控制，可以使用 `NamedFileBuilder`。
+
+透過 `NamedFile::builder` 可以建立 `NamedFileBuilder`：
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/file/to/path");
+}
+```
+
+可以進行一些設定後發送檔案：
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/file/to/path").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### 靜態檔案服務
+
+提供將靜態檔案或內嵌檔案作為服務的中介軟體。
+
+- `StaticDir` 提供對本地靜態資料夾的支援。可以傳入多個資料夾列表作為參數。例如：
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  如果在第一個資料夾中找不到對應檔案，會繼續在第二個資料夾中尋找。
+
+- 提供對 `rust-embed` 的支援，例如：
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  `with_fallback` 可設定當檔案找不到時，使用此處設定的檔案作為替代，這對於某些單頁網站應用相當有用。
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

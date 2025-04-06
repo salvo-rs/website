@@ -1,0 +1,72 @@
+# クロスオリジン制御
+
+CORS（Cross-Origin Resource Sharing、クロスオリジンリソース共有）は、ブラウザがクロスオリジンのサーバーにリクエストを送信することを許可するメカニズムで、ブラウザの同一オリジンポリシーの制限を克服します。
+
+## 同一オリジンポリシーとは？
+
+同一オリジンポリシーはブラウザのセキュリティ機能で、あるオリジンから読み込まれたドキュメントやスクリプトが別のオリジンのリソースとどのように相互作用できるかを制限します。「同一オリジン」とは、プロトコル、ドメイン名、ポート番号が同じであることを指します。
+
+## CORSが必要な理由
+
+フロントエンドアプリケーションが異なるオリジンのAPIにアクセスする必要がある場合、CORSのサポートが必要です。例：
+- フロントエンドアプリケーションが `https://frontend.com` にデプロイされている
+- APIサービスが `https://api.backend.com` にデプロイされている
+
+CORSがない場合、ブラウザはフロントエンドアプリケーションがAPIサービスにアクセスするのをブロックします。
+
+## CORSの動作原理
+
+CORSは一連のHTTPヘッダーを通じてクロスオリジンアクセス制御を実現します：
+- シンプルリクエスト：直接送信され、サーバーはレスポンスヘッダーで許可するかどうかを制御
+- プリフライトリクエスト：ブラウザがまずOPTIONSリクエストを送信してクロスオリジン許可を確認し、許可を得てから実際のリクエストを送信
+
+ブラウザが `Method::OPTIONS` のプリフライトリクエストを送信するため、この種のリクエストを処理する必要があり、CORSミドルウェアを `Service` に追加する必要があります。
+
+## SalvoでのCORSの使用
+
+Salvoには組み込みのCORSミドルウェアが提供されており、簡単に設定して使用できます。以下はサンプルコードです：
+
+:::warning
+注意.hoop(cors)ミドルウェアは `Service` に対して作用します。.hoop(cors)ミドルウェアは `Router` ではなく `Service` に対して作用します。
+これによりOPTIONSプリフライトが自動的に処理されます。
+```rust
+let cors = Cors::new()
+    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
+    .allow_headers("authorization")
+    .into_handler();
+
+// CORS保護付きでバックエンドルーターを設定
+let router = Router::with_path("hello").post(hello);
+let service = Service::new(router).hoop(cors);
+```
+:::
+
+_**サンプルコード**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import CorsCode from '../../../../codes_md/cors/src/main.mdx';
+import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CorsCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CorsCargoCode/>
+  </Tab>
+</Tabs>
+
+## 主な設定オプション
+
+CORSミドルウェアにはさまざまな設定オプションがあります：
+
+- **許可されるオリジン**：どのドメインがリソースにアクセスできるかを制御
+- **許可されるメソッド**：許可されるHTTPメソッド（GET、POSTなど）を指定
+- **許可されるヘッダー**：許可されるリクエストヘッダーを指定
+- **公開されるヘッダー**：クライアントがアクセスできるレスポンスヘッダーを指定
+- **資格情報の許可**：リクエストにクッキーなどの資格情報を含めることを許可するかどうか
+- **プリフライトリクエストのキャッシュ時間**：プリフライトリクエスト結果のキャッシュ時間
+
+CORSを適切に設定することで、セキュリティを確保しつつクロスオリジンアクセスの要件を満たすことができます。
+{/* 本行由工具自动生成,原文哈希值:0b191eacd5af64466fceaea928dec4d4 */}

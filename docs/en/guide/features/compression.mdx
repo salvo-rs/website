@@ -1,0 +1,29 @@
+# Response Compression
+
+A middleware for compressing the content of `Response`.
+
+Supports three compression formats: `br`, `gzip`, and `deflate`. Allows configuration of compression priorities and other parameters as needed.
+
+## Data Compression in HTTP Protocol
+
+1. File format level: Specific file types use dedicated compression algorithms  
+2. HTTP protocol level: End-to-end resource compression transmission through content encoding  
+3. Connection level: Data compression between nodes of an HTTP connection  
+
+For more information about HTTP compression, refer to [Mozilla Developer Network documentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Compression).
+
+## Example Code
+
+import { Tab, Tabs } from 'rspress/theme';
+import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
+import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CompressionCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CompressionCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:677ccdf714de83f86788e88c306cf8e4 */}

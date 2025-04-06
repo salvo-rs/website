@@ -1,0 +1,42 @@
+# SSE 服务器推送
+
+import { Tab, Tabs } from 'rspress/theme';
+import SseMainCode from '../../../../codes_md/sse/src/main.mdx';
+import SseCargoCode from '../../../../codes_md/sse/Cargo.mdx';
+import SseChatMainCode from '../../../../codes_md/sse-chat/src/main.mdx';
+import SseChatCargoCode from '../../../../codes_md/sse-chat/Cargo.mdx';
+
+## 什么是 SSE
+
+Server-Sent Events (SSE) 是一种允许服务器向客户端推送数据的 Web 技术。与 WebSocket 不同，SSE 是单向通信，只能从服务器发送数据到客户端，适合需要服务器实时推送数据而客户端无需频繁发送数据的场景。SSE 基于 HTTP 协议，实现简单，自带断线重连机制。
+
+提供对 `SSE` 支持的中间件.
+
+_**示例代码**_ 
+
+<Tabs>
+<Tab label="main.rs">
+<SseMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SseCargoCode/>
+</Tab>
+</Tabs>
+
+
+## 聊天程序示例
+
+<Tabs>
+<Tab label="main.rs">
+<SseChatMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SseChatCargoCode/>
+</Tab>
+</Tabs>
+
+## 与大语言模型集成
+
+在使用 OpenAI SDK 或其他大语言模型 SDK 接入 AI 时，流式返回结果（Stream）是常见的需求场景。SSE 提供了完美的解决方案，可以将 AI 生成的内容实时推送到前端，提供更好的用户体验。
+
+例如，当接入 OpenAI 的 Chat Completion API 并使用流式响应时，可以利用 Salvo 的 SSE 功能将 AI 生成的内容逐步发送到客户端，避免用户等待完整响应的延迟感.

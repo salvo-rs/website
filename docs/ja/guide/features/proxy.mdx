@@ -1,0 +1,37 @@
+# リバースプロキシ
+
+リバースプロキシは、クライアントからのリクエストを受け取り、それをバックエンドの1つ以上のサーバ゙ーに転送するサーバーアーキテクチャです。クライアント側を代表するフォワードプロキシとは異なり、リバースプロキシはサーバー側を代表して動作します。
+
+リバースプロキシの主な利点：
+- 負荷分散：リクエストを複数サーバ゙ーに分散
+- セキュリティ向上：実際のサーバー情報を隠蔽
+- コンテンツキャッシュ：パフォーマンス向上
+- パス書き換えと転送：柔軟なリクエストルーティング
+
+Salvoフレームワークはリバースプロキシ機能を提供するミドルウェアを備えています。
+
+_**サンプルコード**_
+
+```rust
+use salvo::prelude::*;
+use salvo::proxy::Proxy;
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+    
+    let router = Router::new()
+        .push(
+            Router::new()
+                .path("google/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.google.com"])),
+        )
+        .push(
+            Router::new()
+                .path("baidu/{**rest}")
+                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.baidu.com"])),
+        );
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
+}
+```
+{/* 本行由工具自动生成,原文哈希值:79e235201cbe5bf2b6045156f3bae7e7 */}

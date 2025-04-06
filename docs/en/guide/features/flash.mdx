@@ -1,0 +1,36 @@
+# Flash
+
+Middleware that provides Flash Message functionality.
+
+`FlashStore` provides operations for storing and retrieving data. `CookieStore` stores data in `Cookie`s. `SessionStore`, on the other hand, stores data in the `Session`. `SessionStore` must be used in conjunction with the `session` feature.
+
+_**Example Code**_
+
+### Cookie Store Example
+
+import { Tab, Tabs } from 'rspress/theme';
+import FlashCookieStoreCode from '../../../../codes_md/flash-cookie-store/src/main.mdx';
+import FlashCookieStoreCargoCode from '../../../../codes_md/flash-cookie-store/Cargo.mdx';
+import FlashSessionStoreCode from '../../../../codes_md/flash-session-store/src/main.mdx';
+import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <FlashCookieStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <FlashCookieStoreCargoCode/>
+  </Tab>
+</Tabs>
+
+### Session Store Example
+
+<Tabs>
+  <Tab label="main.rs">
+    <FlashSessionStoreCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <FlashSessionStoreCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:65b5daf888b80bc91076aaaee868b95c */}

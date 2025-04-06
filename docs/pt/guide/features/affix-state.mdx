@@ -1,0 +1,50 @@
+# Estado Afix - Compartilhamento de Dados em Requisições
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
+import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+
+O middleware Affix State é utilizado para adicionar dados compartilhados ao Depot.
+Para utilizar a funcionalidade Affix State, é necessário ativar o recurso `affix-state` no Cargo.toml.
+
+## Análise Funcional
+O Affix State oferece uma maneira simples de compartilhar dados durante o processamento de requisições. Ele permite que você:
+
+Injete configurações globais ou dados compartilhados durante a fase de configuração de rotas
+Acesse esses dados através do Depot em qualquer handler
+Suporte a qualquer tipo clonável como dado de estado
+
+## Comparação com Outros Frameworks - Entendimento Rápido
+| Framework | Linguagem | Gerenciamento de Estado |
+|-----------|-----------|-------------------------|
+| Salvo (Affix State) | Rust | Armazenamento e acesso via Depot, suporte a múltiplos tipos |
+| Axum | Rust | Estado armazenado via Extension, abordagem similar mas com uso diferente |
+| Actix-web | Rust | Uso de App Data e Web::Data para estado compartilhado |
+| Gin | Go | Utiliza context.Set e context.Get para manipular dados |
+| Echo | Go | Gerencia estado compartilhado com context.Set e context.Get |
+| Spring | Java | Gerencia dependências via ApplicationContext ou anotação @Bean |
+| Quarkus | Java | Utiliza mecanismos CDI e injeção de dependência |
+| Express.js | JavaScript | Armazena estado global em app.locals ou req.app.locals |
+| Nest.js | JavaScript | Sistema de injeção de dependência para serviços compartilhados |
+| Koa.js | JavaScript | Armazena estado no nível da requisição usando ctx.state |
+
+## Cenários Comuns de Uso
+
+- Compartilhamento de pool de conexões de banco de dados
+- Compartilhamento de configurações de aplicação
+- Compartilhamento de instâncias de cache
+- Compartilhamento de clientes API
+- Rastreamento global de contadores ou estados
+
+A vantagem do Affix State está na sua simplicidade e flexibilidade, permitindo compartilhar facilmente qualquer tipo de dado entre diferentes rotas e handlers sem a necessidade de código boilerplate excessivo.
+_**Código de Exemplo**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:983c6e0b4ca9ff5e194da5a41d8d46f7 */}

@@ -1,0 +1,208 @@
+import { Tab, Tabs } from 'rspress/theme';
+import OapiHelloCode from '../../../../codes_md/oapi-hello/src/main.mdx';
+import OapiHelloCargoCode from '../../../../codes_md/oapi-hello/Cargo.mdx';
+
+# Generación de Documentación OpenAPI
+
+OpenAPI es una especificación de código abierto para describir el diseño de interfaces de APIs RESTful. Define en formato JSON o YAML la estructura de solicitudes y respuestas, parámetros, tipos de retorno, códigos de error y otros detalles, haciendo la comunicación entre cliente y servidor más clara y estandarizada.
+
+Originalmente, OpenAPI era la versión abierta de la especificación Swagger, pero ahora es un proyecto independiente con apoyo de grandes empresas y desarrolladores. Usar OpenAPI mejora la colaboración en equipos de desarrollo, reduce costos de comunicación y aumenta la eficiencia. Además, ofrece herramientas para generar documentación automática, datos simulados (Mock) y casos de prueba, facilitando el desarrollo y las pruebas.
+
+Salvo integra OpenAPI (adaptado de [utoipa](https://github.com/juhaku/utoipa)). Aprovechando sus características, Salvo extrae elegantemente información de tipos OpenAPI directamente de los `Handler`. También incluye interfaces populares como SwaggerUI, scalar, rapidoc y redoc.
+
+Para los nombres largos de tipos en Rust, que pueden no ser ideales para OpenAPI, `salvo-oapi` proporciona el tipo `Namer`, permitiendo personalizar reglas y modificar nombres de tipos en OpenAPI.
+
+_**Código de Ejemplo**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <OapiHelloCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <OapiHelloCargoCode/>
+  </Tab>
+</Tabs>
+
+Ingresa `http://localhost:5800/swagger-ui` en tu navegador para ver la interfaz de Swagger UI.
+
+La integración de OpenAPI en Salvo es muy elegante. Para el ejemplo anterior, comparado con un proyecto Salvo común, solo hicimos estos pasos:
+
+- Habilitar la función `oapi` en `Cargo.toml`: `salvo = { workspace = true, features = ["oapi"] }`;
+
+- Reemplazar `#[handler]` con `#[endpoint]`;
+
+- Usar `name: QueryParam<String, false>` para obtener valores de cadena de consulta. Al visitar `http://localhost/hello?name=chris`, el parámetro `name` se analiza. `QueryParam<String, false>` indica que el parámetro es opcional; si se omite (ej. `http://localhost/hello`), no habrá error. Con `QueryParam<String, true>`, el parámetro es obligatorio.
+
+- Crear `OpenAPI` y su `Router` correspondiente. `OpenApi::new("test api", "0.0.1").merge_router(&router)` indica que `OpenAPI` obtiene la información necesaria analizando rutas y subrutas. Algunas rutas con `Handler` que no proporcionan datos para la documentación se ignoran (ej. las definidas con `#[handler]` en lugar de `#[endpoint]`). Esto permite implementar OpenAPI gradualmente, cambiando `#[handler]` a `#[endpoint]` y ajustando firmas de funciones.
+
+## Extractores de Datos
+
+Con `use salvo::oapi::extract::*;` se importan extractores predefinidos. Estos proporcionan información necesaria para que Salvo genere la documentación OpenAPI.
+
+- `QueryParam<T, const REQUIRED: bool>`: Extrae datos de la cadena de consulta. `QueryParam<T, false>` indica que el parámetro es opcional; `QueryParam<T, true>`, obligatorio.
+
+- `HeaderParam<T, const REQUIRED: bool>`: Extrae datos de cabeceras HTTP. Similar a `QueryParam` en opcionalidad.
+
+- `CookieParam<T, const REQUIRED: bool>`: Extrae datos de cookies. Similar en funcionamiento.
+
+- `PathParam<T>`: Extrae parámetros de la URL. Es obligatorio por definición.
+
+- `FormBody<T>`: Extrae datos de formularios enviados.
+
+- `JsonBody<T>`: Extrae datos de payloads JSON.
+
+## `#[endpoint]`
+
+Para generar documentación OpenAPI, usa `#[endpoint]` en lugar de `#[handler]`. Es una versión mejorada:
+
+- Obtiene información necesaria de la firma de la función.
+
+- Datos no disponibles en la firma se pueden añadir como atributos en `#[endpoint]`, fusionándose o sobrescribiendo la información existente.
+
+El atributo `#[deprecated]` de Rust marca Handlers obsoletos. OpenAPI solo soporta el estado de obsoleto, ignorando detalles como razones o versiones.
+
+Los comentarios de documentación se usan para OpenAPI: la primera línea como _`summary`_ y el resto como _`description`_.
+
+```rust
+/// Resumen de la operación
+///
+/// Todo el comentario se incluye en la descripción.
+#[endpoint]
+fn endpoint() {}
+```
+
+## ToSchema
+
+Define estructuras de datos con `#[derive(ToSchema)]`:
+
+```rust
+#[derive(ToSchema)]
+struct Mascota {
+    id: u64,
+    nombre: String,
+}
+```
+
+Configuraciones opcionales con `#[salvo(schema(...))]`:
+
+- `example = ...`: Puede ser `json!(...)`. Ejemplo:
+
+  ```rust
+  #[derive(ToSchema)]
+  #[salvo(schema(example = json!({"nombre": "gato bob", "id": 0})))]
+  struct Mascota {
+      id: u64,
+      nombre: String,
+  }
+  ```
+
+- `xml(...)`: Define atributos para objetos XML:
+
+  ```rust
+  #[derive(ToSchema)]
+  struct Mascota {
+      id: u64,
+      #[salvo(schema(xml(name = "nombre_mascota", prefix = "u")))]
+      nombre: String,
+  }
+  ```
+
+## ToParameters
+
+Genera [parámetros de ruta][path_parameters] desde campos de estructuras.
+
+Implementación `#[derive]` del trait [`ToParameters`][to_parameters].
+
+Normalmente, los parámetros de ruta se definen en `#[salvo_oapi::endpoint(...parameters(...))]`. Pero con estructuras, este paso puede omitirse. Para descripciones o configuraciones, aún se necesitan definiciones explícitas con tipos primitivos o tuplas.
+
+El atributo `#[deprecated]` marca campos obsoletos en OpenAPI. Los comentarios en campos sirven como descripciones.
+
+```rust
+#[derive(salvo_oapi::ToParameters, serde::Deserialize)]
+struct Consulta {
+    /// Filtra items por nombre.
+    nombre: String
+}
+```
+
+### Atributos de Contenedor para `#[salvo(parameters(...))]`
+
+Atributos aplicables a estructuras derivadas de `ToParameters`:
+
+- `names(...)`: Define nombres para campos sin nombre (solo en estructuras sin nombre).
+- `style = ...`: Estilo de serialización ([`ParameterStyle`][style]).
+- `default_parameter_in = ...`: Ubicación predeterminada ([`parameter::ParameterIn`][in_enum]).
+- `rename_all = ...`: Similar a `serde`.
+
+Ejemplo con `names`:
+
+```rust
+#[derive(ToParameters, serde::Deserialize)]
+#[salvo(parameters(names("id")))]
+struct Id(u64);
+```
+
+### Atributos de Campo para `#[salvo(parameter(...))]`
+
+- `style`, `parameter_in`, `explode`, `allow_reserved`: Controlan serialización.
+- `example`: Sobrescribe ejemplos del tipo subyacente.
+- `value_type = ...`: Anula el tipo predeterminado en OpenAPI.
+- Validaciones: `maximum`, `minimum`, `pattern`, etc.
+- `schema_with`: Permite esquemas personalizados.
+
+Ejemplo con validaciones:
+
+```rust
+#[derive(salvo_oapi::ToParameters, serde::Deserialize)]
+struct Item {
+    #[salvo(parameter(maximum = 10, minimum = 5))]
+    id: i32,
+    #[salvo(parameter(max_length = 10))]
+    valor: String,
+}
+```
+
+### Soporte Parcial para Atributos `#[serde(...)]`
+
+`ToParameters` soporta algunos atributos `serde` que afectan la documentación:
+
+- `rename_all`, `rename`, `default`, etc.
+
+### Ejemplos
+
+_**Uso de `#[salvo(parameters(...))]` con parámetros de ruta:**_
+
+```rust
+#[derive(ToParameters, serde::Deserialize)]
+#[salvo(parameters(default_parameter_in = Query))]
+struct Filtro {
+    #[salvo(parameter(value_type = i64))]
+    id: String,
+}
+```
+
+_**Manejo de Errores**_
+
+Para OpenAPI, implementa `EndpointOutRegister` en el tipo de error global:
+
+```rust
+impl EndpointOutRegister for Error {
+    fn register(components: &mut oapi::Components, operation: &mut oapi::Operation) {
+        operation.responses.insert(
+            StatusCode::INTERNAL_SERVER_ERROR.as_str(),
+            oapi::Response::new("Error interno").add_content("application/json", StatusError::to_schema(components)),
+        );
+        // Otros códigos de estado...
+    }
+}
+```
+
+Filtra códigos de estado relevantes en endpoints:
+
+```rust
+#[endpoint(status_codes(201, 409))]
+async fn crear_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> {
+    Ok(StatusCode::CREATED)
+}
+```
+{/* 本行由工具自动生成,原文哈希值:66e3964ffc9d02e6953bdf48a6d2ed87 */}

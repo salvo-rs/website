@@ -1,0 +1,43 @@
+# SSE-Server-Sent Events
+
+import { Tab, Tabs } from 'rspress/theme';
+import SseMainCode from '../../../../codes_md/sse/src/main.mdx';
+import SseCargoCode from '../../../../codes_md/sse/Cargo.mdx';
+import SseChatMainCode from '../../../../codes_md/sse-chat/src/main.mdx';
+import SseChatCargoCode from '../../../../codes_md/sse-chat/Cargo.mdx';
+
+## Was ist SSE?
+
+Server-Sent Events (SSE) ist eine Webtechnologie, die es Servern ermöglicht, Daten an Clients zu pushen. Im Gegensatz zu WebSocket ist SSE eine unidirektionale Kommunikation, bei der Daten nur vom Server an den Client gesendet werden können. Dies eignet sich ideal für Szenarien, in denen der Server Echtzeitdaten pushen muss, ohne dass der Client häufig Daten senden muss. SSE basiert auf dem HTTP-Protokoll, ist einfach zu implementieren und verfügt über einen integrierten Mechanismus zur Wiederherstellung unterbrochener Verbindungen.
+
+Middleware zur Unterstützung von `SSE`.
+
+_**Beispielcode**_
+
+<Tabs>
+<Tab label="main.rs">
+<SseMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SseCargoCode/>
+</Tab>
+</Tabs>
+
+
+## Chat-Anwendungsbeispiel
+
+<Tabs>
+<Tab label="main.rs">
+<SseChatMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SseChatCargoCode/>
+</Tab>
+</Tabs>
+
+## Integration mit großen Sprachmodellen
+
+Bei der Nutzung von OpenAI SDK oder anderen großen Sprachmodell-SDKs zur KI-Integration ist die streamende Rückgabe von Ergebnissen (Stream) ein häufiges Anwendungsszenario. SSE bietet hierfür eine perfekte Lösung, um KI-generierte Inhalte in Echtzeit an das Frontend zu pushen und so eine bessere Benutzererfahrung zu ermöglichen.
+
+Beispielsweise kann bei der Nutzung der Chat Completion API von OpenAI mit streamender Antwort die SSE-Funktionalität von Salvo genutzt werden, um die schrittweise generierten Inhalte der KI an den Client zu senden. Dadurch wird vermieden, dass Benutzer auf eine vollständige Antwort warten müssen und die Wahrnehmung von Verzögerungen reduziert.
+{/* 本行由工具自动生成,原文哈希值:c23a2cf16be4c8144514b22523991634 */}

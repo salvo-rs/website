@@ -1,0 +1,25 @@
+import { Tab, Tabs } from 'rspress/theme';
+import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
+import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
+
+# 超時中介軟體
+
+提供對超時支援的中介軟體。
+
+## 使用場景
+
+在 Web 服務中，某些請求可能因各種原因（如資料庫查詢緩慢、外部服務回應慢等）導致處理時間過長。為避免這些長時間運行的請求佔用伺服器資源，影響其他請求的處理，可以使用超時中介軟體為請求設定最大處理時間限制。超過這個時間限制，請求將被自動中斷，並回傳超時錯誤。
+
+_**範例程式碼**_
+
+<Tabs>
+<Tab label="main.rs">
+<TimeoutMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TimeoutCargoCode/>
+</Tab>
+</Tabs>
+
+在上面的範例中，我們建立了兩個處理函式：一個快速回應的 `fast` 和一個延遲 6 秒才回應的 `slow`。透過 `Timeout::new(Duration::from_secs(5))` 為所有請求設定了 5 秒的超時限制。當存取 `/slow` 路徑時，由於處理時間超過了 5 秒的限制，請求將會超時；而存取 `/fast` 路徑時，請求會正常處理並回傳結果。
+{/* 本行由工具自动生成,原文哈希值:91c35a9e679382fc5ad89433063fa043 */}

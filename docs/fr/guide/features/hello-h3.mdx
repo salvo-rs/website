@@ -1,0 +1,102 @@
+# Prise en charge de HTTP/3
+
+Salvo offre une prise en charge de HTTP/3, qui peut être activée via la fonctionnalité `quinn`. Basé sur le protocole QUIC, HTTP/3 fournit une latence plus faible et de meilleures performances par rapport aux protocoles HTTP/1.1 et HTTP/2 traditionnels, en particulier dans des environnements réseau instables.
+
+## Activer la prise en charge de HTTP/3
+
+Pour activer HTTP/3 dans Salvo, vous devez activer la fonctionnalité `quinn` dans votre fichier `Cargo.toml` :
+
+```toml
+salvo = { workspace = true, features = ["quinn"] }
+```
+
+## Cas d'utilisation de HTTP/3
+
+HTTP/3 est particulièrement adapté aux scénarios suivants :
+
+- Applications mobiles et environnements réseau instables
+- Applications en temps réel nécessitant une faible latence
+- Téléchargement parallèle de nombreux petits fichiers
+- Applications nécessitant une migration de connexion (par exemple, basculement sans interruption entre WiFi et réseau cellulaire)
+
+## Exemple de code
+
+Voici un exemple simple de serveur HTTP/3 prenant en charge à la fois HTTP/3 (QUIC) et HTTPS (TCP) :
+
+```rust
+use salvo::conn::rustls::{Keycert, RustlsConfig};
+use salvo::prelude::*;
+
+// Fonction de gestion répondant "Hello World"
+#[handler]
+async fn hello() -> &'static str {
+    "Hello World"
+}
+
+#[tokio::main]
+async fn main() {
+    // Initialisation du système de logs
+    tracing_subscriber::fmt().init();
+
+    // Chargement du certificat TLS et de la clé privée depuis des fichiers PEM embarqués
+    let cert = include_bytes!("../certs/cert.pem").to_vec();
+    let key = include_bytes!("../certs/key.pem").to_vec();
+
+    // Création du routeur avec un point de terminaison
+    let router = Router::new().get(hello);
+
+    // Configuration TLS avec Rustls
+    let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+
+    // Création d'un écouteur TCP avec chiffrement TLS sur le port 5800
+    let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+    // Création d'un écouteur QUIC combiné avec l'écouteur TCP
+    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+        .join(listener)
+        .bind()
+        .await;
+
+    // Démarrage du serveur prenant en charge HTTP/3 (QUIC) et HTTPS (TCP)
+    Server::new(acceptor).serve(router).await;
+}
+```
+
+## Analyse du code clé
+
+### Configuration TLS
+
+```rust
+// Configuration TLS avec Rustls
+let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
+```
+
+HTTP/3 étant basé sur QUIC qui requiert TLS 1.3, la configuration d'un certificat et d'une clé TLS est nécessaire. Salvo utilise `RustlsConfig` pour cette configuration.
+
+### Combinaison des écouteurs
+
+```rust
+// Création d'un écouteur TCP avec chiffrement TLS
+let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+
+// Création d'un écouteur QUIC combiné avec l'écouteur TCP
+let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+    .join(listener)
+    .bind()
+    .await;
+```
+
+Ce code constitue le cœur de la gestion HTTP/3 dans Salvo. Il crée d'abord un écouteur TCP avec TLS (pour HTTP/1.1 et HTTP/2), puis un écouteur QUIC (pour HTTP/3). La méthode `join` combine ces écouteurs, permettant au serveur de traiter des requêtes utilisant différents protocoles.
+
+## Exécution de l'exemple
+
+Pour exécuter cet exemple, vous aurez besoin d'un certificat TLS et d'une clé privée valides. En développement, vous pouvez utiliser un certificat auto-signé. Le code complet est disponible dans le [dépôt GitHub de Salvo](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
+
+Notez que de nombreux clients ne prennent pas encore pleinement en charge HTTP/3, d'où l'importance que le serveur supporte à la fois HTTP/3 et HTTPS.
+
+## Remarques importantes
+
+1. HTTP/3 nécessite TLS 1.3 - une configuration valide de certificat et de clé est obligatoire.
+2. Les clients doivent supporter HTTP/3 pour en bénéficier, sinon ils basculeront vers HTTP/1.1 ou HTTP/2.
+3. En production, utilisez toujours des certificats signés par une autorité de certification reconnue plutôt que des certificats auto-signés.
+{/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

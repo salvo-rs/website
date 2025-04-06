@@ -12,7 +12,7 @@ async fn connect(req: &mut Request, res: &mut Response) -> Result<(), StatusErro
     let user = req.parse_queries::<User>();
     WebSocketUpgrade::new()
         .upgrade(req, res, |mut ws| async move {
-            println!("{:#?} ", user);
+            println!("{user:#?} ");
             while let Some(msg) = ws.recv().await {
                 let msg = if let Ok(msg) = msg {
                     msg
@@ -42,7 +42,7 @@ async fn main() {
         .get(index)
         .push(Router::with_path("ws").goal(connect));
 
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -60,7 +60,7 @@ static INDEX_HTML: &str = r#"<!DOCTYPE html>
             const status = document.getElementById('status');
             const msg = document.getElementById('msg');
             const submit = document.getElementById('submit');
-            const ws = new WebSocket(`ws://${location.host}/ws?id=123&name=dddf`);
+            const ws = new WebSocket(`ws://${location.host}/ws?id=123&name=chris`);
 
             ws.onopen = function() {
                 status.innerHTML = '<p><em>Connected!</em></p>';

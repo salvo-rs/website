@@ -1,0 +1,209 @@
+---
+title: Biblioteca de Cliente HTTP em Rust
+---
+
+# Reqwest: Biblioteca de Cliente HTTP em Rust
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/reqwest/latest/reqwest/"
+  title="reqwest"
+  description="reqwest"
+/>
+
+Reqwest é uma biblioteca avançada de cliente HTTP que simplifica o processo de lidar com requisições HTTP, oferecendo diversos recursos úteis:
+
+- Suporte para APIs assíncronas e bloqueantes
+- Manipulação de diversos tipos de corpo de requisição: texto simples, JSON, formulários URL-encoded, formulários multipart
+- Política de redirecionamento personalizável
+- Suporte a proxy HTTP
+- Uso padrão de criptografia TLS
+- Gerenciamento de cookies
+
+## Uso Básico
+
+### Fazendo uma Requisição GET
+
+Para uma única requisição, pode-se usar o método conveniente `get`:
+
+```rust
+let body = reqwest::get("https://www.rust-lang.org")
+    .await?
+    .text()
+    .await?;
+
+println!("body = {body:?}");
+```
+
+> Observação: Se planeja fazer várias requisições, é melhor criar um `Client` e reutilizá-lo para aproveitar o pool de conexões.
+
+```rust
+let client = reqwest::Client::new();
+let res = client.get("https://www.rust-lang.org")
+    .send()
+    .await?;
+```
+
+### Fazendo uma Requisição POST
+
+Use o método `body()` para definir o corpo da requisição:
+
+```rust
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .body("conteúdo a ser enviado")
+    .send()
+    .await?;
+```
+
+### Dados de Formulário
+
+Enviar dados de formulário é uma necessidade comum, e pode-se usar qualquer tipo que possa ser serializado em dados de formulário:
+
+```rust
+// Isso enviará uma requisição POST com o corpo `foo=bar&baz=quux`
+let params = [("foo", "bar"), ("baz", "quux")];
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .form(&params)
+    .send()
+    .await?;
+```
+
+### Dados JSON
+
+O método `json` facilita o envio de dados JSON (requer o recurso `json`):
+
+```rust
+// Isso enviará uma requisição POST com o corpo `{"lang":"rust","body":"json"}`
+let mut map = HashMap::new();
+map.insert("lang", "rust");
+map.insert("body", "json");
+
+let client = reqwest::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .json(&map)
+    .send()
+    .await?;
+```
+
+### Tratamento de Resposta
+
+As respostas podem ser tratadas de várias formas:
+
+```rust
+let res = client.get("https://www.rust-lang.org").send().await?;
+
+// Obter o código de status
+let status = res.status();
+
+// Obter cabeçalhos da resposta
+let content_type = res.headers().get("content-type").unwrap();
+
+// Ler o corpo da resposta como texto
+let body = res.text().await?;
+
+// Ou parsear como JSON
+let json: serde_json::Value = res.json().await?;
+```
+
+## Funcionalidades Avançadas
+
+### Política de Redirecionamento
+
+Por padrão, o cliente lida automaticamente com redirecionamentos HTTP, seguindo até 10 redirecionamentos. Isso pode ser personalizado com `ClientBuilder`:
+
+```rust
+let custom_client = reqwest::Client::builder()
+    .redirect(reqwest::redirect::Policy::none()) // Desativa redirecionamentos
+    .build()?;
+```
+
+### Suporte a Cookies
+
+O armazenamento e envio automático de cookies de sessão pode ser ativado via `ClientBuilder`:
+
+```rust
+let client = reqwest::Client::builder()
+    .cookie_store(true)
+    .build()?;
+```
+
+### Configuração de Proxy
+
+O proxy do sistema é ativado por padrão, procurando variáveis de ambiente para configurações de proxy HTTP ou HTTPS:
+
+- `HTTP_PROXY` ou `http_proxy`: Proxy para conexões HTTP
+- `HTTPS_PROXY` ou `https_proxy`: Proxy para conexões HTTPS
+- `ALL_PROXY` ou `all_proxy`: Proxy para ambos os tipos de conexão
+
+Também é possível configurar o proxy explicitamente via código:
+
+```rust
+let proxy = reqwest::Proxy::http("https://secure.example")?;
+let client = reqwest::Client::builder()
+    .proxy(proxy)
+    .build()?;
+
+// Ou desativar proxies
+let client = reqwest::Client::builder()
+    .no_proxy()
+    .build()?;
+```
+
+### Configuração TLS
+
+O cliente usa TLS por padrão para conexões HTTPS:
+
+```rust
+// Adicionar um certificado de servidor adicional
+let cert = reqwest::Certificate::from_pem(&cert_bytes)?;
+let client = reqwest::Client::builder()
+    .add_root_certificate(cert)
+    .build()?;
+
+// Configurar certificado do cliente
+let identity = reqwest::Identity::from_pkcs12_der(&pkcs12_der, "password")?;
+let client = reqwest::Client::builder()
+    .identity(identity)
+    .build()?;
+```
+
+### Configuração de Timeout
+
+É possível configurar tempos limite para requisições:
+
+```rust
+let client = reqwest::Client::builder()
+    .timeout(std::time::Duration::from_secs(10))
+    .build()?;
+```
+
+## Recursos Opcionais
+
+Reqwest oferece diversos recursos opcionais que podem ser ativados ou desativados via features do Cargo:
+
+- `http2` (ativado por padrão): Suporte a HTTP/2
+- `default-tls` (ativado por padrão): Suporte TLS para HTTPS
+- `rustls-tls`: Fornece funcionalidades TLS usando rustls
+- `blocking`: Fornece API de cliente bloqueante
+- `json`: Fornece serialização e desserialização JSON
+- `multipart`: Fornece funcionalidade para formulários multipart
+- `cookies`: Suporte a sessões de cookies
+- `gzip`, `brotli`, `deflate`, `zstd`: Suporte a diversas formas de descompressão de corpo de resposta
+- `socks`: Suporte a proxy SOCKS5
+
+## API Bloqueante
+
+Quando operações assíncronas não são necessárias, pode-se usar a API bloqueante (requer o recurso `blocking`):
+
+```rust
+let body = reqwest::blocking::get("https://www.rust-lang.org")?.text()?;
+
+let client = reqwest::blocking::Client::new();
+let res = client.post("http://httpbin.org/post")
+    .json(&map)
+    .send()?;
+```
+{/* 本行由工具自动生成,原文哈希值:32a7dacba91cf386fa534ceb5b25de71 */}

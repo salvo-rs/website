@@ -1,0 +1,115 @@
+# Кэширование  
+
+Промежуточное ПО, предоставляющее функциональность кэширования.  
+
+Промежуточное ПО `Cache` может кэшировать `StatusCode`, `Headers` и `Body` в `Response`. Для уже закэшированного содержимого при последующей обработке запроса `Cache` напрямую отправит клиенту данные, сохранённые в памяти.  
+
+**Примечание:** Этот плагин не кэширует `Response`, у которого `Body` является `ResBody::Stream`. Если такой тип `Response` встречается, `Cache` просто пропустит запрос без ошибок.  
+
+## Основные функции  
+
+- **`CacheIssuer`** предоставляет абстракцию для генерации ключей кэша. `RequestIssuer` — одна из его реализаций, позволяющая определять ключ на основе частей URL и метода запроса (`Method`). Вы также можете создать собственную логику генерации ключей. Ключ не обязательно должен быть строкой — подойдёт любой тип, удовлетворяющий ограничениям `Hash + Eq + Send + Sync + 'static`.  
+
+- **`CacheStore`** отвечает за хранение и извлечение данных. `MokaStore` — встроенная реализация кэша в памяти на основе `moka`. Вы можете создать собственный механизм хранения.  
+
+- **`Cache`** — структура, реализующая `Handler`. Внутри также есть поле `skipper`, позволяющее пропускать запросы, которые не нужно кэшировать. По умолчанию используется `MethodSkipper`, который пропускает все запросы, кроме `Method::GET`.  
+
+  Пример внутренней реализации:  
+
+  ```rust
+  impl<S, I> Cache<S, I> {
+    pub fn new(store: S, issuer: I) -> Self {
+        let skipper = MethodSkipper::new().skip_all().skip_get(false);
+        Cache {
+            store,
+            issuer,
+            skipper: Box::new(skipper),
+        }
+    }
+  }
+  ```  
+
+## Быстрая миграция с других фреймворков  
+
+Если вы ранее использовали кэширование в других фреймворках, следующие сопоставления помогут быстрее адаптироваться к реализации Salvo:  
+
+### Руководство по миграции с Rust-фреймворков  
+
+- **С Actix-web:** В Actix-web плагины вроде `actix-web-cache` требуют отдельного подключения, тогда как в Salvo кэширование — часть основной библиотеки.  
+
+  ```rust
+  // Пример кэширования в Actix-web
+  use actix_web_cache::Cache;
+  App::new().wrap(Cache::new().ttl(30))
+
+  // Соответствующий код в Salvo
+  use salvo::prelude::*;
+  Router::new().hoop(Cache::new(MokaStore::new(100), RequestIssuer::new()))
+  ```  
+
+### Руководство по миграции с фреймворков других языков  
+
+- **С Go/Gin:** В Gin используется подход с промежуточным ПО, аналогичный Salvo:  
+
+  ```go
+  // Пример кэширования в Gin
+  store := persist.NewMemoryStore(time.Second * 60)
+  router.Use(cache.CachePage(store, time.Second * 30))
+  ```  
+
+  ```rust
+  // Соответствующий код в Salvo
+  let store = MokaStore::new(100).with_ttl(Duration::from_secs(30));
+  router.hoop(Cache::new(store, RequestIssuer::new()))
+  ```  
+
+- **С Spring Boot:** Декларативное кэширование Spring Boot преобразуется в явную настройку промежуточного ПО Salvo:  
+
+  ```java
+  // Spring Boot
+  @Cacheable(value = "books", key = "#isbn")
+  public Book findBook(ISBN isbn) { ... }
+  ```  
+  ```rust
+  // Соответствующий код в Salvo (применение кэша на уровне маршрута)
+  let custom_issuer = YourCustomIssuer::new(); // реализация CacheIssuer
+  Router::with_path("books").hoop(Cache::new(MokaStore::new(100), custom_issuer))
+  ```  
+
+- **С Express.js:** Промежуточное ПО кэширования в Express концептуально похоже на Salvo, но отличается синтаксисом:  
+
+  ```javascript
+  // Express.js
+  const apicache = require('apicache');
+  app.use(apicache.middleware('5 minutes'));
+
+  // Соответствующий код в Salvo
+  let store = MokaStore::new(100).with_ttl(Duration::from_secs(300));
+  router.hoop(Cache::new(store, RequestIssuer::new()))
+  ```  
+
+При переходе с других фреймворков обратите внимание на ключевые концепции кэширования в Salvo:  
+
+1. **Генерация ключа** — управляется через интерфейс `CacheIssuer`.  
+2. **Хранение кэша** — реализуется через интерфейс `CacheStore`.  
+3. **Логика пропуска** — настраивается механизмом `skipper`.  
+
+По умолчанию Salvo кэширует только GET-запросы, что согласуется с поведением большинства фреймворков.  
+
+_**Пример кода**_  
+
+```rust
+import { Tab, Tabs } from 'rspress/theme';
+import CacheSimpleCode from '../../../../codes_md/cache-simple/src/main.mdx';
+import CacheSimpleCargoCode from '../../../../codes_md/cache-simple/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <CacheSimpleCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CacheSimpleCargoCode />
+  </Tab>
+</Tabs>
+```
+{/* 本行由工具自动生成,原文哈希值:6d2da1026941698375433a39b8d4924c */}

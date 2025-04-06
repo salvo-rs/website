@@ -1,0 +1,46 @@
+[
+  "index",
+  "quick-start",
+  {
+    "type": "divider",
+    "dashed": false
+  },
+  {
+    "type": "dir",
+    "name": "concepts",
+    "label": "concepts",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "name": "topics",
+    "label": "topics",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "dir",
+    "name": "features",
+    "label": "features",
+    "collapsible": true,
+    "collapsed": false
+  }, {
+    "type": "dir",
+    "name": "ecology",
+    "label": "ecology",
+    "collapsible": true,
+    "collapsed": false
+  },
+  {
+    "type": "divider",
+    "dashed": false
+  },
+  {
+    "type": "dir",
+    "name": "LLMs",
+    "label": "LLMs",
+    "collapsible": true,
+    "collapsed": false
+  }
+]

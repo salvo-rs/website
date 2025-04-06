@@ -1,0 +1,59 @@
+# Statischer Server
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+Middleware, das statische Dateien oder eingebettete Dateien als Dienst bereitstellt. Detaillierte API finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+
+## Anwendungsszenarien
+Statische Dateiserver haben vielfältige Anwendungsmöglichkeiten in Webanwendungen:
+- Bereitstellung statischer Ressourcen wie CSS, JavaScript, Bilder etc.
+- Hosting von Single-Page-Anwendungen (SPA)
+- Verteilung von Dokumenten, Mediendateien, Download-Inhalten
+- Komplette Hosting-Lösung für einfache Websites
+
+## Hauptfunktionen
+
+- `StaticDir` bietet Unterstützung für statische lokale Verzeichnisse. Es können mehrere Verzeichnisse als Parameter übergeben werden. Beispiel:
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticDirListMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Wenn die entsprechende Datei im ersten Verzeichnis nicht gefunden wird, wird im zweiten Verzeichnis gesucht.
+
+`StaticDir` unterstützt die bevorzugte Auslieferung komprimierter Dateien, falls vorhanden. Bei Vorhandensein von `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br` werden letztere als vorab komprimierte Versionen betrachtet und entsprechend der Anfrageinformationen ausgeliefert.
+
+- Unterstützung für `rust-embed`, zum Beispiel:
+
+## Vor- und Nachteile von rust-embed
+
+**Vorteile:**
+- Statische Dateien werden in die Binärdatei kompiliert, was die Bereitstellung vereinfacht
+- Keine separate Verwaltung statischer Dateien in der Produktionsumgebung nötig
+- Potenziell bessere Leistung (Speicherzugriff vs. Festplatten-I/O)
+- Höhere Sicherheit, da Dateien nicht versehentlich geändert werden können
+
+**Nachteile:**
+- Vergrößert die Binärdatei der Anwendung
+- Aktualisierungen statischer Inhalte erfordern Neukompilierung und erneute Bereitstellung
+- Nicht geeignet für häufig ändernde, umfangreiche statische Inhalte
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticEmbedFilesMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+
+Mit `default` kann eine Standardseite festgelegt werden. `with_fallback` und `fallback` ermöglichen die Angabe einer Ersatzdatei bei nicht gefundenen Dateien, was insbesondere für bestimmte Single-Page-Anwendungen nützlich sein kann.
+{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}

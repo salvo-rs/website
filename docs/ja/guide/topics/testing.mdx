@@ -1,0 +1,54 @@
+# テストの記述
+
+## テストの重要性
+
+テストを書くことは、エンジニアとしての責任感の表れであり、安心して眠れる秘訣でもあります。充実したテストスイートは、コード品質を向上させるだけでなく、回帰エラーを防ぎ、デプロイ後も安眠を約束してくれます。同僚が深夜にシステムクラッシュのアラートを受け取っている時、あなたのアプリケーションが泰山のように安定している――これがテストがもたらす静穏と自信です。
+
+## Salvoのテストツール
+
+Salvoが提供するtestモジュールは、Salvoプロジェクトのテストを支援します。
+
+[最新ドキュメント](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)
+
+**簡単な例:**
+
+```rust
+use salvo::prelude::*;
+
+#[handler]
+async fn hello_world() -> &'static str {
+    "Hello World"
+}
+
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
+
+    tracing::info!("Listening on http://127.0.0.1:5800");
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(route()).await;
+}
+
+fn route() -> Router {
+    Router::new().get(hello_world)
+}
+
+#[cfg(test)]
+mod tests {
+    use salvo::prelude::*;
+    use salvo::test::{ResponseExt, TestClient};
+
+    #[tokio::test]
+    async fn test_hello_world() {
+        let service = Service::new(super::route());
+
+        let content = TestClient::get(format!("http://127.0.0.1:5800/"))
+            .send(&service)
+            .await
+            .take_string()
+            .await
+            .unwrap();
+        assert_eq!(content, "Hello World");
+    }
+}
+```
+{/* 本行由工具自动生成,原文哈希值:0a03588b2b7cfbb4bdfe3afb32a9763b */}

@@ -1,0 +1,59 @@
+# 静的ファイルサーバ
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+静的ファイルまたは埋め込みファイルをサービスとして提供するミドルウェアです。詳細なAPIは[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
+
+## ユースケース
+静的ファイルサーバーはWebアプリケーションで幅広く使用されます：
+- ウェブサイトの静的リソース（CSS、JavaScript、画像など）の提供
+- シングルページアプリケーション（SPA）のホスティング
+- ドキュメント、メディアファイル、ダウンロードコンテンツの配布
+- シンプルなウェブサイトの完全なホスティングソリューション
+
+## 主な機能
+
+- `StaticDir`はローカルフォルダ内の静的ファイルをサポートします。複数のフォルダをリストとして指定できます。例：
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticDirListMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  最初のフォルダでファイルが見つからない場合、2番目のフォルダを検索します。
+
+`StaticDir`は圧縮ファイルが存在する場合、優先的に送信します。例えば`index.html`、`index.html.gz`、`index.html.zst`、`index.html.br`がある場合、`index.html.gz`、`index.html.zst`、`index.html.br`は`index.html`の事前圧縮バージョンとみなされ、リクエスト情報に基づいて対応する圧縮ファイルが送信されます。
+
+- `rust-embed`のサポートを提供します。例：
+
+## rust-embedの利点と欠点
+
+**利点：**
+- 静的ファイルをバイナリにコンパイルし、デプロイプロセスを簡素化
+- 本番環境で静的ファイルを個別に管理する必要がない
+- より良いパフォーマンスが得られる可能性（メモリアクセスvsディスクI/O）
+- より安全で、ファイルが誤って変更されることがない
+
+**欠点：**
+- アプリケーションバイナリのサイズが増加
+- 静的コンテンツの更新にはアプリ全体の再コンパイルと再デプロイが必要
+- 頻繁に変更される大規模な静的コンテンツには不向き
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticEmbedFilesMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+
+defaultを使用してデフォルト表示ページを設定できます。`with_fallback`と`fallback`はファイルが見つからない場合に代わりに使用するファイルを設定し、これは一部のシングルページアプリケーションで有用です。
+{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}

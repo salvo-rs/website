@@ -1,0 +1,54 @@
+# Envoi de fichiers
+
+Salvo propose plusieurs méthodes pour envoyer des fichiers :
+
+### NamedFile
+
+Salvo fournit `salvo::fs::NamedFile`, qui permet d'envoyer efficacement des fichiers aux clients. Au lieu de charger l'intégralité du fichier en mémoire, il ne charge que les parties demandées via l'en-tête `Range` avant de les transmettre.
+
+En réalité, `Response::send_file` est simplement une version simplifiée de `NamedFile`. Si vous avez besoin d'un contrôle plus précis sur l'envoi des fichiers, utilisez `NamedFileBuilder`.
+
+Créez un `NamedFileBuilder` via `NamedFile::builder` :
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    let builder = NamedFile::builder("/chemin/vers/le/fichier");
+}
+```
+
+Après configuration, envoyez le fichier :
+
+```rust
+#[handler]
+async fn send_file(req: &mut Request, res: &mut Response) {
+    NamedFile::builder("/chemin/vers/le/fichier").attached_name("image.png").send(req.headers(), res).await;
+}
+```
+
+### Service de fichiers statiques
+
+Middleware pour servir des fichiers statiques ou intégrés.
+
+- `StaticDir` prend en charge les dossiers locaux statiques. Vous pouvez spécifier plusieurs dossiers en paramètre. Exemple :
+<Tabs>
+  <Tab label="main.rs">
+        <StaticDirListCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Si le fichier n'est pas trouvé dans le premier dossier, le système recherche dans le suivant.
+
+- Prise en charge de `rust-embed` :
+<Tabs>
+  <Tab label="main.rs">
+        <StaticEmbedFilesCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+        <StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+  `with_fallback` permet de spécifier un fichier de remplacement si le fichier demandé est introuvable, particulièrement utile pour les applications web monopages.
+{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}

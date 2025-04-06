@@ -1,0 +1,50 @@
+# Authentification Basique
+
+Un middleware fournissant le support de l'authentification Basic Auth.
+
+```rust
+import { Tab, Tabs } from 'rspress/theme';
+import BasicAuthCode from '../../../../codes_md/basic-auth/src/main.mdx';
+import BasicAuthCargoCode from '../../../../codes_md/basic-auth/Cargo.mdx';
+```
+
+## Introduction à Basic Auth
+
+Basic Auth est un mécanisme simple d'authentification HTTP qui transmet les identifiants via le champ `Authorization` dans l'en-tête des requêtes HTTP. Le format est `Authorization: Basic <base64(username:password)>`. Bien que simple, comme les informations d'identification sont seulement encodées en Base64 et non chiffrées, il est généralement nécessaire de l'utiliser avec HTTPS pour garantir la sécurité.
+
+## Comparaison des implémentations de Basic Auth dans différents frameworks
+
+| Framework | Langage | Implémentation Basic Auth |
+|-----------|---------|---------------------------|
+| Salvo | Rust | Via le middleware `BasicAuth` et une implémentation personnalisée de `BasicAuthValidator` |
+| Express | JavaScript | Utilisation du package middleware `express-basic-auth` |
+| Spring Security | Java | Configuration via `httpBasic()` et implémentation de `UserDetailsService` |
+| ASP.NET Core | C# | Utilisation de `.UseAuthentication()` et `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | Via un middleware personnalisé ou en utilisant le package `gin-contrib/auth` |
+
+## Cas d'utilisation
+
+Basic Auth est adapté aux scénarios suivants :
+
+1. **API et outils internes** : Outils de gestion et API utilisés en interne dans une entreprise
+2. **Environnements de développement et de test** : Mise en place rapide de l'authentification sans système de connexion complexe
+3. **Protection simple d'API** : Lorsqu'un système complexe de gestion des utilisateurs n'est pas nécessaire
+4. **En combinaison avec d'autres mesures de sécurité** : Comme partie d'une architecture de sécurité multicouche
+
+Dans Salvo, le middleware Basic Auth peut être facilement intégré aux routes. Il est très flexible grâce à la possibilité de personnaliser la logique de validation en implémentant le trait `BasicAuthValidator`.
+
+## Considérations importantes
+
+- Toujours utiliser avec HTTPS pour protéger la transmission des informations d'identification
+- Non adapté aux environnements de production traitant des informations sensibles
+- Envisager des méthodes d'authentification plus sécurisées comme JWT, OAuth, etc. pour les environnements de production
+
+<Tabs>
+  <Tab label="main.rs">
+    <BasicAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <BasicAuthCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:602232eaaa9e3f904ce93326845595ee */}

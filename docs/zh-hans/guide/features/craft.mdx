@@ -1,0 +1,189 @@
+---
+title: Craft 特性
+---
+
+# Craft 特性
+
+Craft 允许开发者通过简单的注解方式自动生成处理函数和端点，同时与 OpenAPI 文档生成无缝集成。
+
+## 使用场景
+
+Craft 特性在以下场景特别有用：
+
+- 当你需要从结构体方法快速创建路由处理函数时
+- 当你想要减少手动编写参数提取和错误处理的样板代码时
+- 当你需要为你的 API 自动生成 OpenAPI 文档时
+- 当你希望将业务逻辑与 Web 框架解耦时
+
+## 基本用法
+
+使用 Craft 特性需要引入以下模块：
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+```
+
+### 创建服务结构体
+
+使用 `#[craft]` 宏标注你的 impl 块，可以将结构体方法转换为处理函数或端点。
+
+```rust
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    // 构造函数
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+    
+    // 更多方法...
+}
+```
+
+### 创建处理函数
+
+使用 `#[craft(handler)]` 将方法转换为处理函数：
+
+```rust
+#[craft(handler)]
+fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+这个方法将成为一个处理函数，它：
+- 自动从查询参数提取 `left` 和 `right` 值
+- 访问结构体中的 `state` 状态
+- 返回计算结果作为字符串响应
+
+### 创建端点
+
+使用 `#[craft(endpoint)]` 将方法转换为端点：
+
+```rust
+#[craft(endpoint)]
+pub(crate) fn add2(
+    self: ::std::sync::Arc<Self>,
+    left: QueryParam<i64>,
+    right: QueryParam<i64>,
+) -> String {
+    (self.state + *left + *right).to_string()
+}
+```
+
+端点可以利用 `Arc` 来共享状态，这在处理并发请求时特别有用。
+
+### 静态端点
+
+你也可以创建不依赖于实例状态的静态端点：
+
+```rust
+#[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+    (*left + *right).to_string()
+}
+```
+
+在这个例子中，还添加了自定义错误响应的描述，这将反映在生成的 OpenAPI 文档中。
+
+## 参数提取器
+
+Salvo 的 `oapi::extract` 模块提供了多种参数提取器，最常见的包括：
+
+- `QueryParam<T>`: 从查询字符串提取参数
+- `PathParam<T>`: 从URL路径提取参数
+- `FormData<T>`: 从表单数据提取参数
+- `JsonBody<T>`: 从JSON请求体提取参数
+
+这些提取器会自动完成参数解析和类型转换，大大简化了处理函数的编写。
+
+## 与 OpenAPI 集成
+
+Craft 特性能自动生成符合 OpenAPI 规范的 API 文档。在示例中：
+
+```rust
+let router = Router::new()
+    .push(Router::with_path("add1").get(opts.add1()))
+    .push(Router::with_path("add2").get(opts.add2()))
+    .push(Router::with_path("add3").get(Opts::add3()));
+
+// 生成 OpenAPI 文档
+let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+
+// 添加 OpenAPI 文档和 Swagger UI 路由
+let router = router
+    .push(doc.into_router("/api-doc/openapi.json"))
+    .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+```
+
+这样配置后，API 文档将在 `/api-doc/openapi.json` 端点提供，Swagger UI 将在 `/swagger-ui` 路径可用。
+
+## 完整示例
+
+下面是一个完整的示例，展示了如何使用 Craft 特性创建三个不同类型的端点：
+
+```rust
+use salvo::oapi::extract::*;
+use salvo::prelude::*;
+use std::sync::Arc;
+
+#[derive(Clone)]
+pub struct Opts {
+    state: i64,
+}
+
+#[craft]
+impl Opts {
+    fn new(state: i64) -> Self {
+        Self { state }
+    }
+
+    #[craft(handler)]
+    fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint)]
+    pub(crate) fn add2(
+        self: ::std::sync::Arc<Self>,
+        left: QueryParam<i64>,
+        right: QueryParam<i64>,
+    ) -> String {
+        (self.state + *left + *right).to_string()
+    }
+
+    #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+    pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
+        (*left + *right).to_string()
+    }
+}
+
+#[tokio::main]
+async fn main() {
+    // 创建共享状态，初始值为1
+    let opts = Arc::new(Opts::new(1));
+
+    // 配置三个端点的路由
+    let router = Router::new()
+        .push(Router::with_path("add1").get(opts.add1()))
+        .push(Router::with_path("add2").get(opts.add2()))
+        .push(Router::with_path("add3").get(Opts::add3()));
+
+    // 生成OpenAPI文档
+    let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+    
+    // 添加OpenAPI文档和Swagger UI路由
+    let router = router
+        .push(doc.into_router("/api-doc/openapi.json"))
+        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
+
+    // 在localhost:5800启动服务器
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
+}
+```

@@ -1,0 +1,115 @@
+# Tratamento de Erros
+
+## Métodos Convencionais de Tratamento de Erros em Aplicações Rust
+
+O tratamento de erros em Rust difere de linguagens como Java, não possuindo estruturas como `try...catch`. A abordagem comum é definir um tipo de erro global no nível da aplicação:
+
+```rust
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum AppError {
+    #[error("io: `{0}`")]
+    Io(#[from] io::Error),
+    #[error("utf8: `{0}`")]
+    FromUtf8(#[from] FromUtf8Error),
+    #[error("diesel: `{0}`")]
+    Diesel(#[from] diesel::result::Error),
+    ...
+}
+
+pub type AppResult<T> = Result<T, AppError>;
+```
+
+Aqui utilizamos a biblioteca `thiserror`, que facilita a definição de tipos de erro personalizados, simplificando o código. Para facilitar a escrita, também definimos um `AppResult`.
+
+### thiserror vs anyhow
+
+No ecossistema de tratamento de erros em Rust, duas bibliotecas são comumente utilizadas: `thiserror` e `anyhow`:
+
+- **thiserror**: Ideal para desenvolvedores de bibliotecas, permite definir tipos de erro claros. Através de macros derivadas, ajuda a implementar o trait `std::error::Error` para tipos de erro personalizados, permitindo também definir como os erros são representados. Quando você está construindo uma biblioteca ou precisa fornecer tipos de erro claros aos usuários, `thiserror` é a escolha mais adequada.
+
+- **anyhow**: Voltado para desenvolvedores de aplicações, oferece um tipo de erro genérico `anyhow::Error`, capaz de encapsular qualquer erro que implemente o trait `std::error::Error`. Foca mais na propagação de erros do que na sua definição, sendo especialmente útil para código em nível de aplicação. Permite converter rapidamente diversos erros em `anyhow::Error`, reduzindo a necessidade de escrever código repetitivo.
+
+Em alguns cenários, você pode utilizar ambas as bibliotecas: `thiserror` para definir tipos de erro na biblioteca e `anyhow` para tratar e propagar esses erros na aplicação.
+
+## Tratamento de Erros em Handlers
+
+No Salvo, `Handlers` frequentemente encontram diversos tipos de erros, como erros de conexão com banco de dados, acesso a arquivos, conexão de rede, etc. Para esses casos, podemos utilizar a abordagem mencionada acima:
+
+```rust
+#[handler]
+async fn home()-> AppResult<()> {
+
+}
+```
+
+Aqui, `home` retorna diretamente um `AppResult<()>`. Mas como esse erro deve ser exibido? Precisamos implementar o trait `Writer` para o tipo de erro personalizado `AppResult`, onde podemos decidir como o erro será apresentado:
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        res.render(Text::Plain("Sou um erro, hahaha!"));
+    }
+}
+```
+
+Em Salvo, um `Handler` pode retornar um `Result`, desde que tanto o `Ok` quanto o `Err` implementem o trait `Writer`.
+
+### Utilizando anyhow para Tratamento de Erros
+
+Considerando que o anyhow é amplamente utilizado, o Salvo oferece suporte nativo para `anyhow::Error`. Quando o recurso `anyhow` está ativado, `anyhow::Error` implementa o trait `Writer`, sendo mapeado como `InternalServerError`:
+
+```rust
+#[cfg(feature = "anyhow")]
+#[async_trait]
+impl Writer for ::anyhow::Error {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.render(StatusError::internal_server_error());
+    }
+}
+```
+
+Para utilizar o recurso anyhow, é necessário ativar o feature `anyhow` no Cargo.toml:
+
+```toml
+[dependencies]
+salvo = { version = "*", features = ["anyhow"] }
+anyhow = "1.0"
+```
+
+Assim, sua função de handler pode retornar diretamente um `anyhow::Result<T>`:
+
+```rust
+#[handler]
+async fn home() -> anyhow::Result<impl Writer> {
+    let data = fetch_data().context("Falha ao buscar dados")?;
+    Ok(Text::Plain(data))
+}
+```
+
+Erros geralmente contêm informações sensíveis que não devem ser visíveis para usuários comuns, por questões de segurança e privacidade. No entanto, se você for um desenvolvedor ou administrador do site, pode ser útil visualizar mensagens de erro detalhadas.
+
+No método `write`, temos acesso a referências de `Request` e `Depot`, o que permite implementar essa diferenciação:
+
+```rust
+#[async_trait]
+impl Writer for AppError {
+    async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
+        let user = depot.obtain::<User>();
+        if user.is_admin {
+            res.render(Text::Plain(e.to_string()));
+        } else {
+            res.render(Text::Plain("Sou um erro, hahaha!"));
+        }
+    }
+}
+```
+
+## Exibição de Páginas de Erro
+
+As páginas de erro padrão do Salvo atendem à maioria das necessidades, exibindo conteúdo em Html, Json ou Xml conforme o tipo de requisição. Porém, em alguns casos, pode ser necessário personalizar a exibição das páginas de erro.
+
+Isso pode ser feito implementando um `Catcher` personalizado. Para mais detalhes, consulte a seção [`Catcher`](../concepts/catcher.html).
+{/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

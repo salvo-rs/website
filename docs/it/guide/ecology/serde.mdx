@@ -1,0 +1,159 @@
+---
+title: Framework di Serializzazione Rust
+---
+
+# Serde: Framework di Serializzazione e Deserializzazione in Rust
+
+import { LinkCard } from '@theme';
+
+<LinkCard
+  href="https://docs.rs/serde/latest/serde/"
+  title="serde"
+  description="serde"
+/>
+
+Serde è una libreria fondamentale nell'ecosistema Rust, che fornisce un framework efficiente e versatile per la serializzazione e deserializzazione. Il nome deriva dalla combinazione di "**Ser**ialization" e "**De**serialization".
+
+## Caratteristiche Principali
+
+- **Versatilità**: Supporta numerosi formati di dati come JSON, YAML, TOML, MessagePack e altri
+- **Astrazione a costo zero**: Il codice generato in fase di compilazione è efficiente quanto quello scritto manualmente
+- **Flessibilità**: Permette la personalizzazione del comportamento di serializzazione e deserializzazione
+- **Tipizzazione Forte**: Sfrutta il sistema di tipi di Rust per garantire l'integrità dei dati
+- **Diffusione**: È diventato la libreria standard per lo scambio di dati nell'ecosistema Rust
+
+## Funzionamento
+
+Il cuore di Serde è il suo design a rappresentazione intermedia (Intermediate Representation), che divide il processo in due fasi:
+
+1. **Serializzazione**: Converte le strutture dati Rust in una rappresentazione intermedia universale, poi nel formato target
+2. **Deserializzazione**: Trasforma il formato di input in rappresentazione intermedia, poi in strutture dati Rust
+
+Questo approccio consente di aggiungere nuovi formati senza modificare le applicazioni che utilizzano Serde.
+
+## Utilizzo Base
+
+### Configurazione delle Dipendenze
+
+```toml
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0" # o altre librerie come serde_yaml, toml, ecc.
+```
+
+### Macro Derive
+
+L'uso più comune prevede l'impiego di macro derive per implementare automaticamente i tratti di serializzazione e deserializzazione:
+
+```rust
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Punto {
+    x: i32,
+    y: i32,
+}
+
+fn main() {
+    let punto = Punto { x: 1, y: 2 };
+
+    // Conversione di Punto in stringa JSON
+    let serializzato = serde_json::to_string(&punto).unwrap();
+    println!("Risultato serializzazione: {}", serializzato); // Output: {"x":1,"y":2}
+
+    // Conversione della stringa JSON in Punto
+    let deserializzato: Punto = serde_json::from_str(&serializzato).unwrap();
+    println!("Risultato deserializzazione: {:?}", deserializzato); // Output: Punto { x: 1, y: 2 }
+}
+```
+
+### Personalizzazione con Attributi
+
+Serde offre numerosi attributi per personalizzare il comportamento:
+
+```rust
+#[derive(Serialize, Deserialize, Debug)]
+struct Utente {
+    #[serde(rename = "user_id")]
+    id: u64,
+    
+    #[serde(default)]
+    nome: String,
+    
+    #[serde(skip_serializing_if = "Option::is_none")]
+    email: Option<String>,
+    
+    #[serde(skip)]
+    dati_temporanei: usize,
+}
+```
+
+### Formati Supportati
+
+Serde si integra con vari formati, ciascuno con un crate dedicato:
+
+- **serde_json**: Formato JSON
+- **serde_yaml**: Formato YAML
+- **toml**: Formato TOML
+- **bincode**: Formato binario
+- **postcard**: Formato binario ottimizzato per spazio
+- **rmp/rmp-serde**: Formato MessagePack
+- **ciborium**: Formato CBOR
+- ...e altri formati
+
+## Utilizzo Avanzato
+
+### Implementazione Manuale dei Tratti
+
+Per esigenze particolari, è possibile implementare manualmente i tratti `Serialize` e `Deserialize`:
+
+```rust
+use serde::{Serialize, Serializer, Deserialize, Deserializer};
+
+struct MioTipo {
+    // campi...
+}
+
+impl Serialize for MioTipo {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // logica personalizzata di serializzazione
+    }
+}
+
+impl<'de> Deserialize<'de> for MioTipo {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        // logica personalizzata di deserializzazione
+    }
+}
+```
+
+### Mappatura tra Tipi
+
+È possibile creare mappature tra diverse rappresentazioni di dati:
+
+```rust
+#[derive(Serialize, Deserialize)]
+#[serde(remote = "chrono::DateTime<chrono::Utc>")]
+struct RiferimentoDateTime {
+    #[serde(with = "chrono::serde::ts_seconds")]
+    pub interno: chrono::DateTime<chrono::Utc>,
+}
+```
+
+## Risorse per Apprendere
+
+Serde è una libreria ricca di funzionalità. Questo documento copre solo le basi. Per sfruttarlo al meglio:
+
+1. Consulta la [documentazione ufficiale di Serde](https://serde.rs/) per API dettagliate ed esempi
+2. Visita il [repository GitHub](https://github.com/serde-rs/serde) per il codice sorgente e gli ultimi aggiornamenti
+
+## Conclusione
+
+Serde, come libreria fondamentale dell'ecosistema Rust, offre strumenti potenti e flessibili per lo scambio di dati. Padroneggiando Serde, potrai gestire con facilità esigenze di interscambio dati in vari formati, rendendo le tue applicazioni più robuste e interoperabili.
+{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}

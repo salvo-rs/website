@@ -1,0 +1,33 @@
+# 尾斜線
+
+自動添加或移除末尾 `/` 的中間件。
+
+## 使用場景
+
+尾斜線中間件在以下情境中特別實用：
+
+- **URL 標準化**：確保所有 URL 遵循統一格式（統一添加或移除末尾斜線），有助提升 SEO 並避免重複內容問題。
+  
+- **簡化路由處理**：無需為有斜線和無斜線的情況分別編寫路由處理邏輯，中間件會自動完成這類轉換。
+
+- **相容性**：某些客戶端可能會自動添加或移除 URL 末尾斜線，此中間件可確保請求被正確路由。
+
+- **重定向管理**：可配置為自動將帶斜線的 URL 重定向至不帶斜線的 URL（或反之），提升使用者體驗。
+
+- **避免路由衝突**：在許多 Web 框架中，`/path` 和 `/path/` 可能被視為不同路由，此中間件可統一處理。
+
+import { Tab, Tabs } from 'rspress/theme';
+import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
+import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+
+_**範例程式碼**_
+
+<Tabs>
+<Tab label="main.rs">
+<TrailingMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<TrailingCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}

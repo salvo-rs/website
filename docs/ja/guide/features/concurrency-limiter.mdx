@@ -1,0 +1,40 @@
+```javascript
+import { Tab, Tabs } from 'rspress/theme';
+import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
+import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+```
+
+# 同時実行数の制限
+
+Concurrency Limiter ミドルウェアは同時並行処理されるリクエスト数を制御できます。詳細なAPIは[ドキュメントを参照](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html)してください。
+
+## 適用シナリオ
+
+以下のケースで並行制限機能が特に有効です：
+
+- **高トラフィックサイトの保護**：急増するトラフィック時に同時処理リクエスト数を制限し、サーバーの過負荷を防止
+- **リソース集約型操作の制御**：ファイルアップロードやデータベース書き込みなどリソースを多く消費する操作の並行数を制限
+- **サードパーティAPI呼び出し制限**：レート制限のある外部サービスを呼び出す際の同時リクエスト数を管理
+
+## 主な機能
+
+- **サーバー過負荷防止**：同時リクエスト数を制限することで、トラフィックピーク時のサーバー安定性を維持
+- **システム信頼性向上**：リソース枯渇によるシステムクラッシュを回避
+- **リソース配分の最適化**：重要なサービスが十分なリソースでリクエストを処理できるよう保証
+
+## 使用方法
+
+ルートに`max_concurrency(n)`ミドルウェアを追加するだけです。`n`は許可する最大同時リクエスト数で、この制限を超えたリクエストには`503 Service Unavailable`レスポンスが返されます。
+
+_**サンプルコード**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <ConcurrencyLimiterCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ConcurrencyLimiterCargoCode/>
+  </Tab>
+</Tabs>
+```
+{/* 本行由工具自动生成,原文哈希值:764c09662183beca5fb5634badcad7bb */}

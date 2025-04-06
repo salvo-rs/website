@@ -4,11 +4,11 @@
 // port from https://github.com/seanmonstar/warp/blob/master/examples/sse_chat.rs
 
 use std::collections::HashMap;
+use std::sync::LazyLock;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Mutex;
 
 use futures_util::StreamExt;
-use once_cell::sync::Lazy;
+use parking_lot::Mutex;
 use tokio::sync::mpsc;
 use tokio_stream::wrappers::UnboundedReceiverStream;
 
@@ -18,7 +18,7 @@ use salvo::sse::{SseEvent, SseKeepAlive};
 type Users = Mutex<HashMap<usize, mpsc::UnboundedSender<Message>>>;
 
 static NEXT_USER_ID: AtomicUsize = AtomicUsize::new(1);
-static ONLINE_USERS: Lazy<Users> = Lazy::new(Users::default);
+static ONLINE_USERS: LazyLock<Users> = LazyLock::new(Users::default);
 
 #[tokio::main]
 async fn main() {
@@ -30,7 +30,7 @@ async fn main() {
             .push(Router::with_path("{id}").post(chat_send)),
     );
 
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -65,7 +65,7 @@ async fn user_connected(res: &mut Response) {
         .unwrap();
 
     // Save the sender in our list of connected users.
-    ONLINE_USERS.lock().unwrap().insert(my_id, tx);
+    ONLINE_USERS.lock().insert(my_id, tx);
 
     // Convert messages into Server-Sent Events and returns resulting stream.
     let stream = rx.map(|msg| match msg {
@@ -78,13 +78,13 @@ async fn user_connected(res: &mut Response) {
 }
 
 fn user_message(my_id: usize, msg: &str) {
-    let new_msg = format!("<User#{}>: {}", my_id, msg);
+    let new_msg = format!("<User#{my_id}>: {msg}");
 
     // New message from this user, send it to everyone else (except same uid)...
     //
     // We use `retain` instead of a for loop so that we can reap any user that
     // appears to have disconnected.
-    ONLINE_USERS.lock().unwrap().retain(|uid, tx| {
+    ONLINE_USERS.lock().retain(|uid, tx| {
         if my_id == *uid {
             // don't send to same user, but do retain
             true

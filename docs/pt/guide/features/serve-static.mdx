@@ -1,0 +1,59 @@
+# Servidor Estático
+
+import { Tab, Tabs } from 'rspress/theme';
+import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
+import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
+import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
+import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+
+Middleware que fornece arquivos estáticos ou incorporados como serviço. Para a API específica, consulte a [documentação](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+
+## Cenários de Aplicação
+O serviço de arquivos estáticos tem ampla aplicação em aplicações web:
+- Fornecer recursos estáticos como CSS, JavaScript, imagens, etc.
+- Hospedar aplicativos de página única (SPA)
+- Distribuir documentos, arquivos de mídia, conteúdos para download
+- Servir como solução completa de hospedagem para sites simples
+
+## Principais Funcionalidades
+
+- `StaticDir` oferece suporte a pastas locais estáticas. Pode receber uma lista de múltiplas pastas como parâmetro. Exemplo:
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticDirListMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticDirListCargoCode />
+  </Tab>
+</Tabs>
+  Se o arquivo não for encontrado na primeira pasta, a busca continua na segunda.
+
+`StaticDir` prioriza o envio de arquivos compactados quando disponíveis. Por exemplo, se existirem `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br`, os últimos três são considerados versões pré-comprimidas de `index.html` e serão enviados conforme o cabeçalho Accept-Encoding da requisição.
+
+- Suporte a `rust-embed`, por exemplo:
+
+## Vantagens e Desvantagens do rust-embed
+
+**Vantagens:**
+- Compila arquivos estáticos no binário, simplificando a implantação
+- Elimina a necessidade de gerenciar arquivos estáticos separadamente em produção
+- Potencialmente melhor desempenho (acesso à memória vs I/O de disco)
+- Maior segurança, arquivos não podem ser modificados acidentalmente
+
+**Desvantagens:**
+- Aumenta o tamanho do binário da aplicação
+- Atualizações de conteúdo estático exigem recompilação e nova implantação
+- Não adequado para conteúdos estáticos grandes com alterações frequentes
+
+<Tabs>
+  <Tab label="main.rs">
+<StaticEmbedFilesMainCode />
+  </Tab>
+  <Tab label="Cargo.toml">
+<StaticEmbedFilesCargoCode />
+  </Tab>
+</Tabs>
+
+É possível definir uma página padrão com `default`. `with_fallback` e `fallback` permitem configurar um arquivo substituto quando o original não for encontrado, útil para aplicativos de página única (SPA).
+{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}

@@ -1,0 +1,32 @@
+# JWT認証
+
+JWT（JSON Web Token）は、RFC 7519で定義されたオープンスタンダードで、関係者間で安全に情報を伝達するための仕様です。JSONオブジェクト形式でクレームを表現するコンパクトでURLセーフな方法であり、主に認証や情報交換に使用されます。
+
+JWTは以下の3つの部分で構成されます：
+- **ヘッダー(Header)** - トークンのタイプと使用する署名アルゴリズムを指定
+- **ペイロード(Payload)** - ユーザーID、ロール、有効期限などのクレームを含む
+- **署名(Signature)** - メッセージが改ざんされていないことを検証するための部分
+
+認証フローにおけるJWTの典型的な使用方法：
+1. ユーザーがログインすると、サーバーがJWTトークンを生成
+2. トークンがクライアントに返され（通常はlocalStorageやcookieに）保存
+3. 以降のリクエストでは、クライアントがAuthorizationヘッダーにこのトークンを付与
+4. サーバーがトークンの有効性を検証し、アクセスを許可
+
+JWT認証のためのミドルウェアを提供します。
+
+_**サンプルコード**_
+
+import { Tab, Tabs } from 'rspress/theme';
+import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
+import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+
+<Tabs>
+  <Tab label="main.rs">
+    <JwtAuthCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <JwtAuthCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:4d9196c8fb1dedaa4b7291d33747b794 */}

@@ -1,0 +1,186 @@
+```markdown
+import { Tab, Tabs } from 'rspress/theme';
+import OapiHelloCode from '../../../../codes_md/oapi-hello/src/main.mdx';
+import OapiHelloCargoCode from '../../../../codes_md/oapi-hello/Cargo.mdx';
+
+# Генерация документации OpenAPI
+
+OpenAPI — это открытая спецификация для описания дизайна интерфейсов RESTful API. Она определяет структуру запросов и ответов API, параметры, типы возвращаемых значений, коды ошибок и другие детали в форматах JSON или YAML, что делает взаимодействие между клиентом и сервером более прозрачным и стандартизированным.
+
+Изначально OpenAPI была открытой версией спецификации Swagger, но теперь стала самостоятельным проектом, получив поддержку многих крупных компаний и разработчиков. Использование OpenAPI помогает командам лучше сотрудничать, сокращает затраты на коммуникацию и повышает эффективность разработки. Кроме того, OpenAPI предоставляет инструменты для автоматической генерации документации API, мок-данных и тестовых сценариев, упрощая процессы разработки и тестирования.
+
+Salvo предлагает интеграцию с OpenAPI (адаптировано из [utoipa](https://github.com/juhaku/utoipa)). Фреймворк элегантно автоматически извлекает информацию о типах данных OpenAPI из `Handler`, учитывая свои особенности. Salvo также поддерживает популярные интерфейсы OpenAPI, такие как SwaggerUI, scalar, rapidoc и redoc.
+
+Учитывая, что имена типов в Rust могут быть длинными и не всегда подходят для OpenAPI, `salvo-oapi` предоставляет тип `Namer`, позволяющий настраивать правила переименования типов в OpenAPI.
+
+_**Пример кода**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <OapiHelloCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <OapiHelloCargoCode/>
+  </Tab>
+</Tabs>
+
+Введите `http://localhost:5800/swagger-ui` в браузере, чтобы увидеть страницу Swagger UI.
+
+Интеграция OpenAPI в Salvo выполнена очень изящно. Для приведённого примера, по сравнению с обычным проектом Salvo, мы выполнили всего несколько шагов:
+
+- Активировали функцию `oapi` в `Cargo.toml`: `salvo = { workspace = true, features = ["oapi"] }`;
+- Заменили `#[handler]` на `#[endpoint]`;
+- Использовали `name: QueryParam<String, false>` для получения значения строки запроса. При переходе по URL `http://localhost/hello?name=chris` параметр `name` будет автоматически распознан. `false` означает, что параметр необязателен — запрос `http://localhost/hello` не вызовет ошибку. Если указать `QueryParam<String, true>`, параметр станет обязательным, и его отсутствие приведёт к ошибке.
+- Создали `OpenAPI` и соответствующий `Router`. Метод `OpenApi::new("test api", "0.0.1").merge_router(&router)` позволяет `OpenAPI` анализировать маршрут и его дочерние элементы для получения необходимой информации. Некоторые обработчики (`Handler`) могут не предоставлять данные для генерации документации — такие маршруты игнорируются (например, если используется макрос `#[handler]` вместо `#[endpoint]`). Таким образом, в реальных проектах можно частично или полностью отложить генерацию OpenAPI, а затем постепенно добавлять поддержку, просто заменяя `#[handler]` на `#[endpoint]` и корректируя сигнатуры функций.
+
+## Экстракторы данных
+
+Через `use salvo::oapi::extract::*;` можно импортировать стандартные экстракторы данных. Они предоставляют Salvo информацию, необходимую для генерации документации OpenAPI.
+
+- `QueryParam<T, const REQUIRED: bool>`: извлекает данные из строки запроса. `QueryParam<T, false>` означает необязательный параметр, `QueryParam<T, true>` — обязательный (если отсутствует, возвращается ошибка).
+- `HeaderParam<T, const REQUIRED: bool>`: извлекает данные из заголовков запроса. Аналогично поддерживает обязательность.
+- `CookieParam<T, const REQUIRED: bool>`: извлекает данные из куки. Поведение аналогично `QueryParam`.
+- `PathParam<T>`: извлекает параметры из URL. Поскольку отсутствие параметра делает маршрут несовместимым, этот экстрактор всегда обязателен.
+- `FormBody<T>`: извлекает данные из формы.
+- `JsonBody<T>`: извлекает данные из JSON-нагрузки.
+
+## `#[endpoint]`
+
+Для генерации OpenAPI используется макрос `#[endpoint]` вместо обычного `#[handler]`. Это расширенная версия, которая:
+- Автоматически извлекает необходимую информацию из сигнатуры функции.
+- Позволяет дополнять или переопределять данные через атрибуты внутри макроса.
+
+Можно использовать стандартный атрибут Rust `#[deprecated]` для пометки устаревших обработчиков, хотя OpenAPI поддерживает только факт устаревания, без деталей.
+
+Документационные комментарии автоматически становятся частью OpenAPI: первая строка — это `summary`, весь текст — `description`.
+
+```rust
+/// Краткое описание операции
+///
+/// Весь комментарий будет включён в описание операции.
+#[endpoint]
+fn endpoint() {}
+```
+
+## ToSchema
+
+С помощью `#[derive(ToSchema)]` можно определять структуры данных:
+
+```rust
+#[derive(ToSchema)]
+struct Pet {
+    id: u64,
+    name: String,
+}
+```
+
+Атрибут `#[salvo(schema(...))]` позволяет задать дополнительные настройки:
+- `example = ...`: пример в формате `json!(...)`.
+- `xml(...)`: настройки для XML.
+
+```rust
+#[derive(ToSchema)]
+#[salvo(schema(example = json!({"name": "bob the cat", "id": 0})))]
+struct Pet {
+    id: u64,
+    name: String,
+}
+```
+
+## ToParameters
+
+Генерирует [параметры пути][path_parameters] из полей структуры. Это реализация трейта [`ToParameters`][to_parameters] через `#[derive]`.
+
+Обычно параметры пути определяются в `#[salvo_oapi::endpoint(...parameters(...))]`, но при использовании структур этот шаг можно опустить. Однако для описания или изменения настроек по умолчанию параметры примитивных типов или кортежей всё равно нужно определять в `parameters(...)`.
+
+Атрибут `#[deprecated]` помечает поле как устаревшее. Документационные комментарии к полям становятся описаниями параметров в OpenAPI.
+
+```rust
+#[derive(salvo_oapi::ToParameters, serde::Deserialize)]
+struct Query {
+    /// Поиск задач по имени.
+    name: String
+}
+```
+
+### Атрибуты контейнера `#[salvo(parameters(...))]`
+
+- `names(...)`: задаёт имена для безымянных полей.
+- `style = ...`: определяет стиль сериализации параметров.
+- `default_parameter_in = ...`: задаёт расположение параметра (query, header и т.д.).
+- `rename_all = ...`: аналогично `serde`.
+
+### Атрибуты полей `#[salvo(parameter(...))]`
+
+Поддерживаются настройки:
+- `style`, `parameter_in`, `explode`, `allow_reserved`.
+- `example`, `value_type`, `inline`, `default`, `format`.
+- `write_only`, `read_only`, `nullable`, `required`.
+- Валидация: `maximum`, `minimum`, `pattern`, `max_length` и др.
+- `schema_with`: ручное определение схемы.
+
+### Поддержка атрибутов `#[serde(...)]`
+
+`ToParameters` поддерживает часть атрибутов serde, таких как `rename_all`, `rename`, `default`, которые влияют на генерацию OpenAPI.
+
+### Примеры
+
+_**Использование `#[salvo(parameters(...))]` для параметров пути с встроенным полем запроса:**_
+
+```rust
+#[derive(ToParameters, serde::Deserialize)]
+struct PetQuery {
+    #[salvo(parameter(inline))]
+    kind: PetKind
+}
+```
+
+_**Переопределение типа через `value_type`:**_
+
+```rust
+#[derive(ToParameters)]
+struct Filter {
+    #[salvo(parameter(value_type = i64))]
+    id: String,
+}
+```
+
+_**Валидация полей:**_
+
+```rust
+#[derive(ToParameters)]
+struct Item {
+    #[salvo(parameter(maximum = 10, minimum = 5))]
+    id: i32,
+}
+```
+
+### Обработка ошибок
+
+Для интеграции с OpenAPI ошибки должны реализовывать `EndpointOutRegister`, чтобы определять возможные коды состояния и их описание.
+
+```rust
+impl EndpointOutRegister for Error {
+    fn register(components: &mut oapi::Components, operation: &mut oapi::Operation) {
+        operation.responses.insert(
+            StatusCode::NOT_FOUND.as_str(),
+            oapi::Response::new("Не найдено"),
+        );
+    }
+}
+```
+
+В обработчиках можно фильтровать нужные коды состояний:
+
+```rust
+#[endpoint(status_codes(201, 409))]
+async fn create_todo() -> Result<StatusCode, Error> {
+    Ok(StatusCode::CREATED)
+}
+```
+
+[to_schema]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToSchema.html
+[to_parameters]: https://docs.rs/salvo-oapi/latest/salvo_oapi/trait.ToParameters.html
+[path_parameters]: openapi.html#parameters-attributes
+```
+{/* 本行由工具自动生成,原文哈希值:66e3964ffc9d02e6953bdf48a6d2ed87 */}

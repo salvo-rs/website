@@ -1,0 +1,27 @@
+# アップロードファイルサイズ制限ミドルウェア
+
+import { Tab, Tabs } from 'rspress/theme';
+import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
+import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+
+リクエストのアップロードファイルサイズを制限するミドルウェアを提供します。
+
+## 適用シナリオ
+
+Size Limiterは主に以下のような場面で使用されます：
+- ユーザーが過大なファイルをアップロードしてサーバーリソースを占有するのを防止
+- 悪意のある攻撃者が大量データをアップロードしてサーバーのメモリオーバーフローを引き起こすのを回避
+- 異なるAPIエンドポイントごとに異なるリクエストサイズ制限ポリシーを設定
+- サーバーのリクエスト処理効率と安定性の向上
+
+_**サンプルコード**_
+
+<Tabs>
+<Tab label="main.rs">
+<SizeLimiterMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<SizeLimiterCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:7bf2c000bd32696677fc70ca8e62af44 */}

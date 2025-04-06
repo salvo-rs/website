@@ -1,0 +1,63 @@
+# Kompatibilität mit Tower-Middleware
+
+import { Tab, Tabs } from 'rspress/theme';
+import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
+import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
+
+Salvo bietet Kompatibilitätsunterstützung für das Tower-Ökosystem über die `tower-compat`-Funktion. Detaillierte APIs finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
+
+## Kernkonzepte von Tower
+
+Tower ist eine Dienstabstraktionsbibliothek, die hauptsächlich auf zwei zentralen Traits basiert:
+
+### Service-Trait
+
+```rust
+pub trait Service<Request> {
+    type Response;
+    type Error;
+    type Future: Future<Output = Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(&mut self, cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>>;
+    fn call(&mut self, req: Request) -> Self::Future;
+}
+```
+
+Der `Service` ist für die Verarbeitung von Anfragen und die Rückgabe von Antworten verantwortlich, ähnlich wie Salvos Handler.
+
+### Layer-Trait
+
+```rust
+pub trait Layer<S> {
+    type Service;
+    fn layer(&self, inner: S) -> Self::Service;
+}
+```
+
+Der `Layer` wird verwendet, um Dienste zu verpacken und zusätzliche Funktionalität hinzuzufügen, ähnlich wie Salvos Middleware.
+
+## Kompatibilitätsunterstützung von Salvo
+
+Salvo bietet zwei zentrale Traits zur Kompatibilität mit dem Tower-Ökosystem:
+
+- **TowerLayerCompat**: Konvertiert Towers `Layer` in Salvos `Handler`, sodass es als Hoop (Middleware) verwendet werden kann
+- **TowerServiceCompat**: Konvertiert Towers `Service` in Salvos `Handler`
+
+Anwendungsbeispiel:
+```rust
+// Verwendung von Towers RateLimitLayer und Konvertierung in ein Salvo-kompatibles Format über die compat()-Methode
+let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
+let router = Router::new().hoop(limit).get(hello);
+```
+
+_**Beispielcode**_
+
+<Tabs>
+<Tab label="main.rs">
+<WithTowerMainCode/>
+</Tab>
+<Tab label="Cargo.toml">
+<WithTowerCargoCode/>
+</Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}

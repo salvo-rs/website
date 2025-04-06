@@ -1,0 +1,37 @@
+import { Tab, Tabs } from 'rspress/theme';
+import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
+import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+
+# Begrenzung der Nebenläufigkeit
+
+Der Concurrency Limiter-Middleware ermöglicht die Kontrolle der Anzahl gleichzeitig verarbeiteter Anfragen. Detaillierte API-Informationen finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
+
+## Anwendungsszenarien
+
+Die Nebenläufigkeitsbegrenzung ist besonders nützlich in folgenden Situationen:
+
+- **Schutz von Hochlast-Websites**: Begrenzung der gleichzeitig bearbeiteten Anfragen bei plötzlichem Traffic-Anstieg, um Serverüberlastung zu vermeiden
+- **Steuerung ressourcenintensiver Operationen**: Begrenzung der Nebenläufigkeit bei ressourcenintensiven Vorgängen wie Datei-Uploads oder Datenbank-Schreibzugriffen
+- **Beschränkung von API-Aufrufen Dritter**: Kontrolle der parallelen Anfragen bei der Nutzung externer Dienste mit Rate-Limiting
+
+## Hauptfunktionen
+
+- **Verhindert Serverüberlastung**: Durch Begrenzung der parallelen Anfragen bleibt der Server auch bei Traffic-Spitzen stabil
+- **Erhöht die Systemzuverlässigkeit**: Vermeidet Systemabstürze durch Ressourcenerschöpfung
+- **Optimiert die Ressourcenverteilung**: Stellt sicher, dass kritische Dienste ausreichend Ressourcen zur Anfragebearbeitung haben
+
+## Verwendung
+
+Fügen Sie einfach die `max_concurrency(n)`-Middleware zu Ihrer Route hinzu, wobei `n` die maximal erlaubte Anzahl paralleler Anfragen ist. Anfragen über diesem Limit erhalten eine `503 Service Unavailable`-Antwort.
+
+_**Beispielcode**_
+
+<Tabs>
+  <Tab label="main.rs">
+    <ConcurrencyLimiterCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ConcurrencyLimiterCargoCode/>
+  </Tab>
+</Tabs>
+{/* 本行由工具自动生成,原文哈希值:764c09662183beca5fb5634badcad7bb */}

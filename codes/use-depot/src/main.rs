@@ -2,13 +2,14 @@ use salvo::prelude::*;
 
 #[handler]
 async fn set_user(depot: &mut Depot) {
-    depot.insert("current_user", "Elon Musk");
+    depot.insert("user", "client");
 }
 #[handler]
 async fn hello(depot: &mut Depot) -> String {
-    // Notice: Don't use String here, because you inserted a &str.
-    let user = depot.get::<&str>("current_user").copied().unwrap();
-    format!("Hey {}, I love your money and girls!", user)
+    format!(
+        "Hello {}",
+        depot.get::<&str>("user").copied().unwrap_or_default()
+    )
 }
 
 #[tokio::main]
@@ -17,6 +18,6 @@ async fn main() {
 
     let router = Router::new().hoop(set_user).goal(hello);
 
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }

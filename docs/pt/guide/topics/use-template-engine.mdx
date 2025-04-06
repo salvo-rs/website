@@ -1,0 +1,29 @@
+# Usando um Motor de Modelos
+
+import { Tab, Tabs } from 'rspress/theme';
+import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
+import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
+import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+
+O Salvo não possui nenhum motor de modelos embutido, afinal, a preferência por um determinado estilo de motor de modelos varia de pessoa para pessoa.
+
+Em essência, um motor de modelos é: dados + modelo = string.
+
+Portanto, desde que seja capaz de renderizar a string final, qualquer motor de modelos pode ser suportado.
+
+Por exemplo, o suporte para `askama`:
+
+<Tabs>
+  <Tab label="main.rs">
+    <MainCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <CargoCode/>
+  </Tab>
+  <Tab label="template/hello.toml">
+    <TemplateCode/>
+  </Tab>
+</Tabs>
+
+**Observação**: Para projetos não particularmente complexos, recomendamos fortemente a abordagem de desenvolvimento com separação entre front-end e back-end, utilizando frameworks de UI mais flexíveis e com ecossistema mais robusto (como React, Vue, Svelte, etc.) para construir o front-end, enquanto o Salvo atua como serviço de API back-end. Essa abordagem oferece maior eficiência no desenvolvimento, divisão clara de responsabilidades entre front-end e back-end, e está mais alinhada com as tendências modernas de desenvolvimento de aplicações web.
+{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}

@@ -1,0 +1,36 @@
+import { Tab, Tabs } from 'rspress/theme';
+import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
+import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+
+# 限制并发数
+
+Concurrency Limiter 中间件可以控制同时并发的请求数量。具体 API 请[查看文档](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html)。
+
+## 应用场景
+
+在以下场景中，并发限制器特别有用：
+
+- **高流量网站防护**：在流量突增时限制同时处理的请求数量，防止服务器过载
+- **资源密集型操作控制**：限制如文件上传、数据库写入等资源密集型操作的并发数
+- **第三方API调用限制**：当需要调用有速率限制的外部服务时，控制并发请求数
+
+## 主要作用
+
+- **防止服务器过载**：通过限制并发请求数，在流量高峰期保持服务器稳定
+- **提高系统可靠性**：避免资源耗尽导致的系统崩溃
+- **优化资源分配**：确保关键服务有足够资源处理请求
+
+## 使用方法
+
+只需在路由上添加 `max_concurrency(n)` 中间件，其中 `n` 是允许的最大并发请求数。超过此限制的请求将收到 `503 Service Unavailable` 响应。
+
+_**示例代码**_ 
+
+<Tabs>
+  <Tab label="main.rs">
+    <ConcurrencyLimiterCode/>
+  </Tab>
+  <Tab label="Cargo.toml">
+    <ConcurrencyLimiterCargoCode/>
+  </Tab>
+</Tabs>
