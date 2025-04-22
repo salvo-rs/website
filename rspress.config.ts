@@ -261,11 +261,6 @@ export default defineConfig({
         content: 'https://qm.qq.com/q/IfBy8ezZEk',
       },
       {
-        icon: 'bilibili',
-        mode: 'link',
-        content: 'https://www.bilibili.com/video/BV1RupjenEtj',
-      },
-      {
         icon: 'discord',
         mode: 'link',
         content: 'https://discord.gg/xNpR8XjC',
