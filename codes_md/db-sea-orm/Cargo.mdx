@@ -1,3 +1,4 @@
+
 ```toml  title="db-sea-orm/Cargo.toml"
 [package]
 name = "example-db-sea-orm"
@@ -6,7 +7,7 @@ edition = "2024"
 
 [dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-salvo = { version = "0.77.1", features = ["affix-state", "serve-static"] }
+salvo = { version = "0.78.0", features = ["affix-state", "serve-static"] }
 tracing .workspace = true
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 serde = { version = "1", features = ["derive"] }

@@ -1,3 +1,4 @@
+
 ```toml  title="with-tower/Cargo.toml"
 [package]
 name = "example-with-tower"
@@ -6,7 +7,7 @@ edition = "2024"
 
 
 [dependencies]
-salvo = { version = "0.77.1", features = ["tower-compat"] }
+salvo = { version = "0.78.0", features = ["tower-compat"] }
 tokio = { version = "1", features = ["macros"] }
 tower = { version = "0.4", features = ["limit"] }
 tracing = "0.1"

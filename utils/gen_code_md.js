@@ -298,7 +298,8 @@ function convertToMdx(filePath, content) {
   // 从映射中获取语言，如果没有则使用扩展名
   const language = languageMap[extension] || extension;
 
-  return `\`\`\`${language}  title="${relativePath}"
+  return `
+\`\`\`${language}  title="${relativePath}"
 ${content}
 \`\`\``;
 }
