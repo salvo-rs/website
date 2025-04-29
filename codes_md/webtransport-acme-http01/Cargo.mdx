@@ -1,3 +1,4 @@
+
 ```toml  title="webtransport-acme-http01/Cargo.toml"
 [package]
 name = "example-webtransport-acme-http01"
@@ -8,7 +9,7 @@ edition = "2024"
 [dependencies]
 anyhow = "1"
 futures-util = "0.3"
-salvo = { version = "0.77.1", features = ["acme", "quinn", "anyhow", "serve-static"] }
+salvo = { version = "0.78.0", features = ["acme", "quinn", "anyhow", "serve-static"] }
 tokio = { version = "1", features = ["macros"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
