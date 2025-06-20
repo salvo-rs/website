@@ -10,6 +10,10 @@ async fn hello() -> &'static str {
 async fn main() {
     tracing_subscriber::fmt().init();
 
+    tracing::warn!("Warn level log");
+    tracing::info!("Info level log");
+    tracing::error!("Error level log");
+
     let router = Router::new().get(hello);
     let service = Service::new(router).hoop(Logger::new());
 
