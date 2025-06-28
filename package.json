@@ -9,20 +9,20 @@
     "preview": "rspress preview"
   },
   "dependencies": {
-    "@google/genai": "^0.7.0",
-    "openai": "^4.91.0",
+    "@google/genai": "^1.7.0",
+    "openai": "^5.8.2",
     "rsbuild-plugin-open-graph": "^1.0.2",
-    "rspress": "^1.40.2",
+    "rspress": "^1.44.0",
     "rspress-plugin-google-analytics": "^0.3.0",
     "rspress-plugin-mermaid": "^0.3.0",
     "rspress-plugin-reading-time": "^0.3.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@rspress/plugin-last-updated": "^1.43.9",
-    "@rspress/plugin-preview": "^1.43.9",
-    "@types/node": "^18.11.17",
-    "prettier": "^3.4.2",
+    "@rspress/plugin-last-updated": "^1.44.0",
+    "@rspress/plugin-preview": "^1.44.0",
+    "@types/node": "^24.0.7",
+    "prettier": "^3.6.2",
     "rspress-plugin-font-open-sans": "^1.0.0"
   }
 }
