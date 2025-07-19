@@ -9,7 +9,7 @@ const siteUrl = 'https://salvo.rs/';
 
 export default defineConfig({
   plugins: [pluginFontOpenSans(),ga({
-    id: 'G-CXCYMFTMBG',
+    id: 'G-X828N63WC8',
   },),mermaid(),
   pluginOpenGraph({
     title: 'Rspress',
