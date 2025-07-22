@@ -44,12 +44,12 @@ flowchart TD
 ### 完整中间件示例结构
 
 ```rust
-async fn example_middleware(req: &mut Request, resp: &mut Response, ctrl: &mut FlowCtrl) {
+async fn example_middleware(req: &mut Request, depot: &mut Depot,resp: &mut Response, ctrl: &mut FlowCtrl) {
     // 前处理（请求阶段）
     // 在这里放置请求进入时需要执行的逻辑
 
     // 调用链中的下一个处理器
-    ctrl.call_next(req, resp).await;
+    ctrl.call_next(req, depot,resp).await;
 
     // 后处理（响应阶段）
     // 在这里放置请求处理完成后需要执行的逻辑
