@@ -57,6 +57,26 @@ import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
   </Tab>
 </Tabs>
 
+## Allowing All Origins
+
+In some development scenarios, you may want to temporarily allow requests from any origin. Salvo supports this through the `AllowOrigin::any()` option.
+
+Before using it, import the AllowOrigin enum:
+
+```rust
+use salvo::cors::AllowOrigin;
+```
+
+Then configure the CORS middleware like this:
+
+```rust
+ let cors = Cors::new()
+        .allow_origin(AllowOrigin::any())
+        .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
+        .allow_headers("authorization")
+        .into_handler();
+```
+
 ## Main Configuration Options
 
 The CORS middleware provides various configuration options:
