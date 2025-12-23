@@ -31,8 +31,8 @@ export default defineConfig({
     {
       lang: 'en',
       label: 'English',
-      title: 'salvo web framework',
-      description: 'salvo web framework',
+      title: 'Salvo - A perfect web framework written in Rust',
+      description: 'Salvo - A perfect web framework written in Rust',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -51,8 +51,8 @@ export default defineConfig({
     {
       lang: 'zh-hans',
       label: '简体中文',
-      title: 'Salvo 文档',
-      description: 'Salvo Web 框架文档',
+      title: 'Salvo - ',
+      description: 'Salvo - 完美的 Rust Web 框架',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -71,8 +71,8 @@ export default defineConfig({
     {
       lang: 'zh-hant',
       label: '繁體中文',
-      title: 'Salvo 文檔',
-      description: 'Salvo Web 框架文檔',
+      title: 'Salvo - 完美的 Rust Web 框架',
+      description: 'Salvo - 完美的 Rust Web 框架',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
