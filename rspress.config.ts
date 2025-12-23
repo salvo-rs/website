@@ -25,16 +25,14 @@ export default defineConfig({
 
 ],
   root: path.join(__dirname, 'docs'),
-  title: 'Salvo(赛风)',
+  title: 'Salvo - A perfect web framework written in Rust',
   lang: 'en',
-  // locales 为一个对象数组
   locales: [
     {
       lang: 'en',
-      // 导航栏切换语言的标签
       label: 'English',
-      title: 'salvo docs',
-      description: 'salvo docs',
+      title: 'salvo web framework',
+      description: 'salvo web framework',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -93,8 +91,8 @@ export default defineConfig({
     {
       lang: 'fr',
       label: 'Français',
-      title: 'Documentation Salvo',
-      description: 'Documentation du Framework Web Salvo',
+      title: 'Salvo - Un framework web parfait écrit en Rust',
+      description: 'Salvo - Un framework web parfait écrit en Rust',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -109,12 +107,12 @@ export default defineConfig({
       searchPlaceholderText: 'Rechercher dans la documentation',
       searchNoResultsText: 'Aucun résultat trouvé',
       searchSuggestedQueryText: 'Essayez de rechercher',
-    },   
+    },
     {
       lang: 'es',
       label: 'Español',
-      title: 'Documentación de Salvo',
-      description: 'Documentación del Framework Web Salvo',
+      title: 'Salvo - Un framework web perfecto escrito en Rust',
+      description: 'Salvo - Un framework web perfecto escrito en Rust',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -133,8 +131,8 @@ export default defineConfig({
     {
       lang: 'ja',
       label: '日本語',
-      title: 'Salvo ドキュメント',
-      description: 'Salvo Web フレームワークのドキュメント',
+      title: 'Salvo - ',
+      description: 'Salvo - Rustで書かれた完璧なウェブフレームワーク',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -153,8 +151,8 @@ export default defineConfig({
     {
       lang: 'de',
       label: 'Deutsch',
-      title: 'Salvo Dokumentation',
-      description: 'Dokumentation für das Salvo Web-Framework',
+      title: 'Salvo - Ein perfektes Web-Framework, geschrieben in Rust',
+      description: 'Salvo - Ein perfektes Web-Framework, geschrieben in Rust',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -173,8 +171,8 @@ export default defineConfig({
     {
       lang: 'ru',
       label: 'Русский',
-      title: 'Документация Salvo',
-      description: 'Документация веб-фреймворка Salvo',
+      title: 'Salvo - Идеальный веб-фреймворк, написанный на Rust',
+      description: 'Salvo - Идеальный веб-фреймворк, написанный на Rust',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -193,8 +191,8 @@ export default defineConfig({
     {
       lang: 'pt',
       label: 'Português',
-      title: 'Documentação Salvo',
-      description: 'Documentação do Framework Web Salvo',
+      title: 'Salvo - Um framework web perfeito escrito em Rust',
+      description: 'Salvo - Um framework web perfeito escrito em Rust',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
@@ -213,8 +211,8 @@ export default defineConfig({
     {
       lang: 'it',
       label: 'Italiano',
-      title: 'Documentazione Salvo',
-      description: 'Documentazione del Framework Web Salvo',
+      title: 'Salvo - Un framework web perfetto scritto in Rust',
+      description: 'Salvo - Un framework web perfetto scritto in Rust',
       editLink: {
         docRepoBaseUrl:
           'https://github.com/salvo-rs/website/tree/main/docs',
