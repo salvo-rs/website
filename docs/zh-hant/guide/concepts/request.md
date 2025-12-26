@@ -1,4 +1,4 @@
-# 請求
+# Request
 
 在 Salvo 中，可以透過 [`Request`](https://docs.rs/salvo_core/latest/salvo_core/http/request/struct.Request.html) 來取得使用者請求的資料：
 

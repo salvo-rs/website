@@ -2,7 +2,7 @@
 
 In Salvo, i dati della richiesta dell'utente possono essere ottenuti tramite [`Request`](https://docs.rs/salvo_core/latest/salvo_core/http/request/struct.Request.html):
 
-### Panoramica Rapida
+## Panoramica Rapida
 Request è una struttura che rappresenta una richiesta HTTP, fornendo capacità complete di gestione delle richieste:
 
 * Opera sugli attributi di base (URI, metodo, versione)

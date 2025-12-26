@@ -2,7 +2,7 @@
 
 In Salvo, user request data can be obtained through [`Request`](https://docs.rs/salvo_core/latest/salvo_core/http/request/struct.Request.html):
 
-### Quick Overview
+## Quick Overview
 Request is a struct representing an HTTP request, providing comprehensive request handling capabilities:
 
 * Operates on basic attributes (URI, method, version)

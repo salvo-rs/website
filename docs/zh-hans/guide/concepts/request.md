@@ -2,7 +2,7 @@
 
 在 Salvo 中可以通过 [`Request`](https://docs.rs/salvo_core/latest/salvo_core/http/request/struct.Request.html) 获取用户请求的数据:
 
-### 快速理解
+## 快速理解
 Request 是一个表示 HTTP 请求的结构体，提供了全面的请求处理功能：
 
 * 可操作基本属性（URI、方法、版本）
