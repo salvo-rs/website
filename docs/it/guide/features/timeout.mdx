@@ -22,4 +22,4 @@ _**Codice di esempio**_
 </Tabs>
 
 Nell'esempio sopra, abbiamo creato due funzioni di gestione: una `fast` che risponde rapidamente e una `slow` che risponde con un ritardo di 6 secondi. Utilizzando `Timeout::new(Duration::from_secs(5))`, abbiamo impostato un limite di timeout di 5 secondi per tutte le richieste. Quando si accede al percorso `/slow`, poiché il tempo di elaborazione supera il limite di 5 secondi, la richiesta andrà in timeout; mentre quando si accede al percorso `/fast`, la richiesta verrà elaborata normalmente e restituirà il risultato.
-{/* 本行由工具自动生成,原文哈希值:f830ce34e2005274bbd246ff55e7c47e */}
+{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}

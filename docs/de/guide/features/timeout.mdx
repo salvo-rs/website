@@ -22,4 +22,4 @@ _**Beispielcode**_
 </Tabs>
 
 Im obigen Beispiel haben wir zwei Handler-Funktionen erstellt: einen schnell antwortenden `fast`-Handler und einen `slow`-Handler, der erst nach 6 Sekunden antwortet. Durch `Timeout::new(Duration::from_secs(5))` wurde für alle Anfragen ein Timeout-Limit von 5 Sekunden festgelegt. Beim Aufruf des Pfads `/slow` wird die Anfrage aufgrund der Überschreitung der 5-Sekunden-Grenze ein Timeout erzeugen, während Anfragen an den Pfad `/fast` normal verarbeitet und ein Ergebnis zurückgegeben wird.
-{/* 本行由工具自动生成,原文哈希值:f830ce34e2005274bbd246ff55e7c47e */}
+{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}

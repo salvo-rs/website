@@ -308,4 +308,4 @@ async fn test_de_request_with_form_json_str() {
 | **特殊功能** | `cookies()/cookie()` | Cookie 操作（需 cookie feature） |
 | | `extensions()/extensions_mut()` | 擴充資料儲存 |
 | | `set_secure_max_size()` | 設定安全大小限制 |
-{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}

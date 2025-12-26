@@ -70,7 +70,7 @@ function extractMd5FromFile(filePath) {
     }
 
     const content = readFileSync(filePath, 'utf8');
-    const hashMatch = content.match(/\{\/\* 本行由工具自动生成,原文哈希值:(.*?)\*\/\}$/s);
+    const hashMatch = content.match(/\{\/\* Auto generated, origin file hash:(.*?)\*\/\}$/s);
     return hashMatch ? hashMatch[1].trim() : null;
   } catch (error) {
     console.error(`提取MD5时出错 (${filePath}):`, error);
@@ -100,7 +100,7 @@ function writeTranslationWithMd5(sourceFilePath, targetFilePath, translatedConte
   }
 
   // 添加哈希值注释
-  const contentWithHash = `${translatedContent}{/* 本行由工具自动生成,原文哈希值:${md5} */}`;
+  const contentWithHash = `${translatedContent}{/* Auto generated, origin file hash:${md5} */}`;
 
   // 写入目标文件
   writeFileSync(targetFilePath, contentWithHash, 'utf8');

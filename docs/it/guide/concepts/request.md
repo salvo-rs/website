@@ -303,4 +303,4 @@ Ad esempio, qui la richiesta effettiva inviata è un Form, ma il valore di un ce
 | **Funzionalità Speciali** | `cookies()/cookie()` | Operazioni Cookie (richiede feature cookie) |
 | | `extensions()/extensions_mut()` | Archiviazione dati estensioni |
 | | `set_secure_max_size()` | Imposta limite dimensione sicura |
-{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}

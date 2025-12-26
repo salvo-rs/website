@@ -22,4 +22,4 @@ _**Example Code**_
 </Tabs>
 
 In the example above, we created two handler functions: a fast-responding `fast` and a `slow` that delays for 6 seconds before responding. A timeout limit of 5 seconds is set for all requests using `Timeout::new(Duration::from_secs(5))`. When accessing the `/slow` path, the request will time out because the processing time exceeds the 5-second limit. In contrast, when accessing the `/fast` path, the request will be processed normally and return a result.
-{/* 本行由工具自动生成,原文哈希值:f830ce34e2005274bbd246ff55e7c47e */}
+{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}

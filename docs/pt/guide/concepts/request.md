@@ -308,4 +308,4 @@ Por exemplo, aqui a solicitação real é um Form, mas o valor de um determinado
 | **Funcionalidades Especiais** | `cookies()/cookie()` | Operações com cookies (requer recurso cookie) |
 | | `extensions()/extensions_mut()` | Armazenamento de dados de extensão |
 | | `set_secure_max_size()` | Define limite de tamanho seguro |
-{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}

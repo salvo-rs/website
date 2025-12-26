@@ -22,4 +22,4 @@ _**Exemple de code**_
 </Tabs>
 
 Dans l'exemple ci-dessus, nous avons créé deux fonctions de traitement : une fonction `fast` qui répond rapidement et une fonction `slow` qui répond avec un délai de 6 secondes. En utilisant `Timeout::new(Duration::from_secs(5))`, nous avons défini une limite de timeout de 5 secondes pour toutes les requêtes. Lors de l'accès au chemin `/slow`, la requête expirera car le temps de traitement dépasse la limite de 5 secondes ; tandis que pour le chemin `/fast`, la requête sera traitée normalement et un résultat sera renvoyé.
-{/* 本行由工具自动生成,原文哈希值:f830ce34e2005274bbd246ff55e7c47e */}
+{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}

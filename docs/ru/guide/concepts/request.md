@@ -308,4 +308,4 @@ async fn test_de_request_with_form_json_str() {
 | **Специальные возможности** | `cookies()/cookie()` | Операции с Cookie (требуется фича cookie) |
 | | `extensions()/extensions_mut()` | Хранение расширенных данных |
 | | `set_secure_max_size()` | Установить ограничение безопасного размера |
-{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}

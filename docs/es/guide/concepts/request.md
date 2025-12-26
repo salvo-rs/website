@@ -309,4 +309,4 @@ Por ejemplo, aquí la solicitud real envía un Form, pero el valor de un campo e
 | **Funcionalidades Especiales** | `cookies()/cookie()` | Operaciones con Cookies (requiere feature cookie) |
 | | `extensions()/extensions_mut()` | Almacenamiento de datos de extensión |
 | | `set_secure_max_size()` | Establecer límite de tamaño seguro |
-{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}

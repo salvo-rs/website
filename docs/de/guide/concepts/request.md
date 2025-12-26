@@ -308,4 +308,4 @@ Hier kommt beispielsweise tatsächlich ein Formular als Anfrage, aber der Wert e
 | **Spezielle Funktionen** | `cookies()/cookie()` | Cookie-Operationen (erfordert cookie-Feature) |
 | | `extensions()/extensions_mut()` | Erweiterungsdatenspeicherung |
 | | `set_secure_max_size()` | Sicherheitsgrößenbeschränkung setzen |
-{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}

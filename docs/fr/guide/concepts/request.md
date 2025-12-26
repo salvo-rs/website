@@ -309,4 +309,4 @@ Par exemple, ici la requête réelle envoie un formulaire, mais la valeur d'un c
 | **Fonctionnalités spéciales** | `cookies()/cookie()` | Opérations sur les cookies (nécessite la fonctionnalité cookie) |
 | | `extensions()/extensions_mut()` | Stockage de données d'extension |
 | | `set_secure_max_size()` | Définit la limite de taille de sécurité |
-{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}
