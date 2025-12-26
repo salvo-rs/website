@@ -8,21 +8,21 @@
   {
     "type": "dir",
     "name": "concepts",
-    "label": "Kernkonzepte",
+    "label": "Konzepte",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "topics",
-    "label": "Themenvertiefungen",
+    "label": "Themen",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "features",
-    "label": "Funktionsübersicht",
+    "label": "Funktionen",
     "collapsible": true,
     "collapsed": false
   },

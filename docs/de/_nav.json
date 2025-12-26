@@ -1,21 +1,21 @@
 [
   {
-    "text": "Einstiegsanleitung",
+    "text": "Handbuch",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
   {
-    "text": "Kernkonzepte",
-    "link": "/guide/Concepts/",
+    "text": "Konzepte",
+    "link": "/guide/concepts/",
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Themenvertiefungen",
-    "link": "/guide/Topics/",
+    "text": "Themen",
+    "link": "/guide/topics/",
     "activeMatch": "/guide/topics/"
   },
   {
-    "text": "Funktionsübersicht",
+    "text": "Funktionen",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
@@ -25,11 +25,11 @@
     "activeMatch": "/guide/ecology/"
   },
   {
-    "text": "Dokumentationsreferenz",
+    "text": "API-Dokumentation",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "Projekt unterstützen",
+    "text": "Spenden",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

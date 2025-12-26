@@ -1,35 +1,35 @@
 [
   {
-    "text": "入门指南",
+    "text": "ガイド",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
   {
-    "text": "核心概念",
-    "link": "/guide/Concepts/",
+    "text": "コアコンセプト",
+    "link": "/guide/concepts/",
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "专题探讨",
-    "link": "/guide/Topics/",
+    "text": "トピックス深掘り",
+    "link": "/guide/topics/",
     "activeMatch": "/guide/topics/"
   },
   {
-    "text": "功能大全",
+    "text": "機能一覧",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
   {
-    "text": "生态系统",
+    "text": "エコシステム",
     "link": "/guide/ecology/",
     "activeMatch": "/guide/ecology/"
   },
   {
-    "text": "文档参考",
+    "text": "API-Docs",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "资助项目",
+    "text": "寄付",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

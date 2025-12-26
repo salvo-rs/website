@@ -8,28 +8,28 @@
   {
     "type": "dir",
     "name": "concepts",
-    "label": "核心概念",
+    "label": "Концепции",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "topics",
-    "label": "专题探讨",
+    "label": "Темы",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "features",
-    "label": "功能大全",
+    "label": "Функции",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "ecology",
-    "label": "生态系统",
+    "label": "Экосистема",
     "collapsible": true,
     "collapsed": false
   },

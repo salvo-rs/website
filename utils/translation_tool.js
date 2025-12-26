@@ -262,42 +262,44 @@ async function translateFolder(sourceDir, targetDir, targetLang) {
   console.log(`- 失败: ${stats.failed}`);
 }
 
-await translateFolder(
-  'docs/zh-hans',
-  'docs/it',
-  'Italiano')
-await translateFolder(
-  'docs/zh-hans',
-  'docs/en',
-  'English')
-await translateFolder(
-  'docs/zh-hans',
-  'docs/de',
-  'Deutsch')
-await translateFolder(
-  'docs/zh-hans',
-  'docs/fr',
-  'Français')
-await translateFolder(
-  'docs/zh-hans',
-  'docs/es',
-  'Español')
+
 await translateFolder(
   'docs/zh-hans',
   'docs/ja',
   '日本語')
 await translateFolder(
   'docs/zh-hans',
+  'docs/zh-hant',
+  '繁體中文')
+
+await translateFolder(
+  'docs/en',
+  'docs/it',
+  'Italiano')
+// await translateFolder(
+//   'docs/zh-hans',
+//   'docs/en',
+//   'English')
+await translateFolder(
+  'docs/en',
+  'docs/de',
+  'Deutsch')
+await translateFolder(
+  'docs/en',
+  'docs/fr',
+  'Français')
+await translateFolder(
+  'docs/en',
+  'docs/es',
+  'Español')
+await translateFolder(
+  'docs/en',
   'docs/pt',
   'Português')
 await translateFolder(
-  'docs/zh-hans',
+  'docs/en',
   'docs/ru',
   'Русский')
-await translateFolder(
-  'docs/zh-hans',
-  'docs/zh-hant',
-  '繁體中文')
 
 // 法语: docs/fr
 // 德语: docs/de
