@@ -2,14 +2,14 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 # Guida Rapida
 
-## Installare Rust
-Se non hai ancora installato Rust, puoi utilizzare lo strumento ufficiale (`rustup`)[https://doc.rust-lang.org/book/ch01-01-installation.html] per procedere con l'installazione.
+## Installa Rust
+Se non hai ancora installato Rust, puoi utilizzare lo strumento ufficiale (`rustup`)[https://doc.rust-lang.org/book/ch01-01-installation.html] per installare Rust.
 
 :::tip
-La versione minima di Rust attualmente supportata da Salvo è la 1.85. Esegui `rustup update` per assicurarti di avere una versione di Rust compatibile.
+La versione minima di Rust supportata da Salvo è la 1.85. Esegui `rustup update` per assicurarti di avere una versione compatibile di Rust installata.
 :::
 
-## Scrivere il Primo Programma in Salvo
+## Scrivi il Tuo Primo Programma con Salvo
 
 Crea un nuovo progetto:
 
@@ -17,21 +17,21 @@ Crea un nuovo progetto:
 cargo new hello --bin
 ```
 
-Aggiungi le dipendenze al file `Cargo.toml`
+Aggiungi le dipendenze al file `Cargo.toml`:
 
 ```toml file="<root>/codes/hello/Cargo.toml"
 ```
 
-Nel file `main.rs`, crea un semplice gestore di funzione chiamato `hello`, che si limita a stampare il testo `"Hello world"`.
+In `main.rs`, crea un semplice gestore di funzione chiamato `hello`, che stampa semplicemente il testo `"Hello world"`.
 
 ```rust file="<root>/codes/hello/src/main.rs"
 ```
 
-Congratulazioni, il tuo primo programma Salvo è completo. Basta eseguire `cargo run` dalla riga di comando e poi aprire `http://127.0.0.1:5800` nel browser.
+Congratulazioni! Il tuo primo programma con Salvo è completo. Basta eseguire `cargo run` nella riga di comando, quindi aprire `http://127.0.0.1:5800` nel tuo browser.
 
-## Analisi Dettagliata
+## Spiegazione Dettagliata
 
-Qui `hello_world` è un `Handler`, utilizzato per gestire le richieste degli utenti. `#[handler]` permette a una funzione di implementare facilmente il tratto `Handler`. Inoltre, consente di abbreviare i parametri della funzione in modi diversi.
+Qui, `hello_world` è un `Handler` utilizzato per elaborare le richieste degli utenti. L'attributo `#[handler]` consente a una funzione di implementare facilmente il tratto `Handler`. Inoltre, ci permette di scrivere i parametri della funzione in vari modi semplificati.
 
 - Forma originale:
 
@@ -42,7 +42,7 @@ Qui `hello_world` è un `Handler`, utilizzato per gestire le richieste degli ute
     }
     ```
 
-- Puoi omettere i parametri inutilizzati nella funzione. Ad esempio, `_req`, `_depot` e `_ctrl` qui non sono utilizzati e possono essere omessi:
+- Puoi omettere i parametri non utilizzati nella funzione. Ad esempio, `_req`, `_depot` e `_ctrl` non sono utilizzati qui e possono essere completamente omessi:
 
     ```rust
     #[handler]
@@ -51,7 +51,7 @@ Qui `hello_world` è un `Handler`, utilizzato per gestire le richieste degli ute
     }
     ```
 
-- Qualsiasi tipo può essere utilizzato come tipo di ritorno della funzione, purché implementi il tratto `Writer`. Ad esempio, `&str` implementa `Writer` e, quando restituito come valore, stampa testo semplice:
+- Qualsiasi tipo può essere utilizzato come tipo di ritorno della funzione, purché implementi il tratto `Writer`. Ad esempio, `&str` implementa `Writer` e, quando restituito, stampa testo semplice:
 
     ```rust
     #[handler]
@@ -60,8 +60,8 @@ Qui `hello_world` è un `Handler`, utilizzato per gestire le richieste degli ute
     }
     ```
 
-- Più comunemente, è necessario utilizzare `Result<T, E>` come tipo di ritorno per gestire gli errori durante l'esecuzione della funzione. Se sia `T` che `E` implementano `Writer`, allora `Result<T, E>` può essere utilizzato come valore di ritorno:
-  
+- Più comunemente, abbiamo bisogno di utilizzare `Result<T, E>` come tipo di ritorno per gestire gli errori durante l'esecuzione della funzione. Se sia `T` che `E` implementano `Writer`, allora `Result<T, E>` può essere utilizzato come valore di ritorno:
+
     ```rust
     #[handler]
     async fn hello(res: &mut Response) -> Result<&'static str, ()> {
@@ -69,11 +69,12 @@ Qui `hello_world` è un `Handler`, utilizzato per gestire le richieste degli ute
     }
     ```
 
-## L'Elegante HTTP3
+## HTTP3 Agilissimo
 
-Si dice che HTTP3 sia leggero e agile, un sogno per molti sviluppatori. Questa volta, Salvo realizza questo desiderio, permettendoti di godere facilmente dei meravigliosi servizi offerti da HTTP3!
+Si dice che HTTP3 sia agile come una rondine, un sogno che molti programmatori hanno desiderato ma non hanno potuto realizzare. Questa volta, Salvo lo rende possibile, permettendo a tutti di godere senza sforzo dei meravigliosi servizi offerti da HTTP3!
 
-Prima abilita la funzionalità HTTP3 in `Cargo.toml`, poi modifica `main.rs` come segue:
+Prima, abilita la funzionalità HTTP3 in `Cargo.toml`, quindi modifica `main.rs` come segue:
+
 <Tabs>
   <Tab label="main.rs">
   ```rust file="<root>/codes/hello-h3/src/main.rs"
@@ -87,9 +88,9 @@ Prima abilita la funzionalità HTTP3 in `Cargo.toml`, poi modifica `main.rs` com
 
 ## Strumento CLI di Salvo 🛠️
 
-[Salvo CLI](https://github.com/salvo-rs/salvo-cli) è uno strumento progettato per il framework web Salvo. È in grado di creare codice pulito e leggibile, risparmiandoti tempo da dedicare alle cose più interessanti della vita.
+[Salvo CLI](https://github.com/salvo-rs/salvo-cli) è uno strumento progettato per il framework web Salvo. Aiuta a creare codice pulito e leggibile, risparmiando il tuo tempo per cose più interessanti nella vita.
 
-Se hai idee per migliorare la CLI o hai riscontrato problemi da risolvere, non esitare! Apri una issue, le tue opinioni sono benvenute.
+Se hai idee per migliorare la CLI o noti problemi che devono essere risolti, non esitare! Invia un issue: le tue intuizioni sono benvenute.
 
 ### Passo 1
 
@@ -107,11 +108,11 @@ cargo install salvo-cli
 > salvo new nome_progetto
 > ```
 
-Con questo semplice strumento CLI, puoi avviare rapidamente un progetto Salvo, concentrandoti sull'implementazione della tua logica di business anziché sulla configurazione della struttura del progetto. ✨
+Con questo semplice strumento CLI, puoi configurare rapidamente un progetto Salvo, permettendoti di concentrarti sull'implementazione della tua logica di business piuttosto che sulla configurazione della struttura del progetto. ✨
 
 ## Altri Esempi
 
-Si consiglia di clonare direttamente il repository di Salvo e poi eseguire gli esempi nella directory `examples`. Ad esempio, il seguente comando esegue l'esempio `hello`:
+Si consiglia di clonare direttamente il repository di Salvo ed eseguire gli esempi nella directory `examples`. Ad esempio, il seguente comando esegue l'esempio `hello`:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo
@@ -119,5 +120,5 @@ cd salvo/examples
 cargo run --bin example-hello
 ```
 
-Nella directory `examples` ci sono molti esempi. Tutti possono essere eseguiti con comandi simili a `cargo run --bin example-<nome>`.
-{/* Auto generated, origin file hash:0c4a88ceb8e2d80be891a10caa082999 */}
+Ci sono molti esempi nella directory `examples`. Puoi eseguirli utilizzando comandi come `cargo run --bin example-<nome>`.
+{/* Auto generated, origin file hash:d6d8293cda56cad3e45ea1ac2eb6ba02 */}

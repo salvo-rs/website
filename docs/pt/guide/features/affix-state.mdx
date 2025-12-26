@@ -1,40 +1,40 @@
-# Estado Afixo Compartilhamento de Dados em Requisições
+# Estado de Afixo - Dados Compartilhados em Requisições
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-O middleware Affix State é usado para adicionar dados compartilhados ao Depot.
-Para usar a funcionalidade Affix State, é necessário habilitar o recurso `affix-state` no Cargo.toml.
+O middleware Estado de Afixo é utilizado para adicionar dados compartilhados ao Depot.
+Para utilizar o recurso Estado de Afixo, é necessário habilitar o recurso `affix-state` no Cargo.toml.
 
-## Análise da Funcionalidade
-O Affix State fornece uma maneira simples de compartilhar dados durante o processamento de requisições. Ele permite que você:
+## Análise do Recurso
+O Estado de Afixo oferece uma maneira simples de compartilhar dados durante o processamento de requisições. Ele permite que você:
 
-- Injete configurações globais ou dados compartilhados na fase de configuração de rotas
-- Acesse esses dados através do Depot em qualquer manipulador
+- Injete configurações globais ou dados compartilhados durante a configuração de rotas
+- Acesse esses dados via Depot em qualquer manipulador
 - Suporte qualquer tipo clonável como dados de estado
 
-## Comparação com Outros Frameworks Compreensão Rápida de Conceitos
-| Framework | Linguagem | Método de Gerenciamento de Estado |
-|-----------|-----------|-----------------------------------|
-| Salvo (Affix State) | Rust | Armazenamento e acesso via Depot, suporta múltiplos tipos |
+## Comparação com Outros Frameworks para Compreensão Rápida do Conceito
+| Framework | Linguagem | Abordagem de Gerenciamento de Estado |
+|-----------|----------|--------------------------------------|
+| Salvo (Estado de Afixo) | Rust | Armazena e acessa via Depot, suporta múltiplos tipos |
 | Axum | Rust | Armazena estado via Extension, similar mas com uso diferente |
-| Actix-web | Rust | Usa App Data e Web::Data para compartilhar estado |
-| Gin | Go | Usa context.Set e context.Get para armazenar/recuperar dados |
+| Actix-web | Rust | Utiliza App Data e Web::Data para compartilhar estado |
+| Gin | Go | Usa context.Set e context.Get para armazenar e recuperar dados |
 | Echo | Go | Usa context.Set e context.Get para gerenciar estado compartilhado |
-| Spring | Java | Usa ApplicationContext ou anotação @Bean para gerenciar dependências |
+| Spring | Java | Utiliza ApplicationContext ou anotações @Bean para gerenciamento de dependências |
 | Quarkus | Java | Usa mecanismos CDI e injeção de dependência |
 | Express.js | JavaScript | Usa app.locals ou req.app.locals para armazenar estado global |
-| Nest.js | JavaScript | Usa sistema de injeção de dependência para gerenciar serviços compartilhados |
+| Nest.js | JavaScript | Utiliza um sistema de injeção de dependência para gerenciar serviços compartilhados |
 | Koa.js | JavaScript | Usa ctx.state para armazenar estado no nível da requisição |
 
-## Cenários de Uso Comuns
+## Casos de Uso Comuns
 
 - Compartilhamento de pool de conexões de banco de dados
-- Compartilhamento de configurações de aplicação
+- Compartilhamento de configurações da aplicação
 - Compartilhamento de instâncias de cache
 - Compartilhamento de clientes de API
-- Rastreamento de contadores ou estado global
+- Contadores globais ou rastreamento de estado
 
-A vantagem do Affix State está em sua simplicidade e flexibilidade, permitindo compartilhar facilmente qualquer tipo de dados entre diferentes rotas e manipuladores, sem a necessidade de muito código boilerplate.
+A vantagem do Estado de Afixo está na sua simplicidade e flexibilidade, permitindo o compartilhamento fácil de qualquer tipo de dados entre diferentes rotas e manipuladores sem a necessidade de código repetitivo extensivo.
 _**Código de Exemplo**_
 
 <Tabs>
@@ -47,4 +47,4 @@ _**Código de Exemplo**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:5dfff8f8a8238344561f9f829341312c */}
+{/* Auto generated, origin file hash:ab33e7002b7895dc8f4c574665f3af4f */}

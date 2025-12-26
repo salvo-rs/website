@@ -2,11 +2,11 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-## Qu'est-ce que le SSE ?
+## Qu'est-ce que le SSE
 
-Les événements envoyés par le serveur (Server-Sent Events, SSE) sont une technologie web qui permet à un serveur d'envoyer des données en continu à un client. Contrairement à WebSocket, la communication SSE est unidirectionnelle : les données ne circulent que du serveur vers le client. Cette approche convient parfaitement aux scénarios où le serveur doit transmettre des données en temps réel sans nécessiter d'envois fréquents de la part du client. Basé sur le protocole HTTP, le SSE est simple à mettre en œuvre et intègre nativement un mécanisme de reconnexion en cas de rupture de liaison.
+Les événements envoyés par le serveur (SSE) sont une technologie web qui permet aux serveurs d'envoyer des données aux clients. Contrairement à WebSocket, le SSE est une méthode de communication unidirectionnelle, où les données ne peuvent être envoyées que du serveur vers le client. Il convient aux scénarios où le serveur doit envoyer des données en temps réel, mais où le client n'a pas besoin d'envoyer fréquemment des données. Le SSE est basé sur le protocole HTTP, facile à mettre en œuvre et dispose de mécanismes de reconnexion intégrés.
 
-Un middleware offrant la prise en charge de `SSE`.
+Fournit une prise en charge middleware pour le `SSE`.
 
 _**Exemple de code**_ 
 
@@ -36,7 +36,7 @@ _**Exemple de code**_
 
 ## Intégration avec les grands modèles de langage
 
-Lors de l'intégration de l'IA via des SDK comme OpenAI ou d'autres SDK de grands modèles de langage, le retour des résultats en flux continu (Stream) est un besoin courant. Le SSE offre une solution idéale, permettant de transmettre en temps réel le contenu généré par l'IA vers l'interface utilisateur, améliorant ainsi l'expérience utilisateur.
+Lors de l'intégration de l'IA à l'aide du SDK OpenAI ou d'autres SDK de grands modèles de langage, les réponses en flux continu (Stream) sont une exigence courante. Le SSE offre une solution parfaite, permettant la diffusion en temps réel du contenu généré par l'IA vers l'interface frontale, offrant ainsi une meilleure expérience utilisateur.
 
-Par exemple, lors de l'utilisation de l'API Chat Completion d'OpenAI avec des réponses en flux, la fonctionnalité SSE de Salvo peut être exploitée pour envoyer progressivement le contenu généré par l'IA au client, évitant ainsi à l'utilisateur de subir des délais d'attente pour une réponse complète.
-{/* Auto generated, origin file hash:a6de063d6b9d92c4c8245bfb4028820b */}
+Par exemple, lors de l'utilisation de l'API de complétion de chat d'OpenAI avec des réponses en flux continu, la fonctionnalité SSE de Salvo peut être exploitée pour envoyer progressivement le contenu généré par l'IA au client, éliminant ainsi le délai d'attente d'une réponse complète.
+{/* Auto generated, origin file hash:0f340060f8ee924f0397d3ff12980727 */}

@@ -2,11 +2,11 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 # Middleware de Tiempo de Espera
 
-Proporciona middleware con soporte para tiempos de espera.
+Proporciona soporte de middleware para el manejo de tiempos de espera.
 
 ## Casos de Uso
 
-En servicios web, ciertas solicitudes pueden prolongarse debido a diversas razones (como consultas lentas a bases de datos, respuestas lentas de servicios externos, etc.). Para evitar que estas solicitudes de larga duración consuman recursos del servidor y afecten el procesamiento de otras solicitudes, se puede utilizar el middleware de tiempo de espera para establecer un límite máximo de tiempo de procesamiento. Si se excede este límite, la solicitud se interrumpirá automáticamente y se devolverá un error de tiempo de espera.
+En servicios web, ciertas solicitudes pueden tardar demasiado en procesarse por diversas razones (como consultas de base de datos lentas, respuestas tardías de servicios externos, etc.). Para evitar que estas solicitudes de larga duración consuman recursos del servidor y afecten el procesamiento de otras solicitudes, se puede utilizar un middleware de tiempo de espera para establecer un límite máximo de tiempo de procesamiento para las solicitudes. Si se excede este límite de tiempo, la solicitud se terminará automáticamente y se devolverá un error de tiempo de espera.
 
 _**Código de Ejemplo**_ 
 
@@ -21,5 +21,5 @@ _**Código de Ejemplo**_
   </Tab>
 </Tabs>
 
-En el ejemplo anterior, creamos dos funciones de manejo: una `fast` que responde rápidamente y otra `slow` que tarda 6 segundos en responder. Mediante `Timeout::new(Duration::from_secs(5))`, establecemos un límite de tiempo de espera de 5 segundos para todas las solicitudes. Al acceder a la ruta `/slow`, la solicitud superará el tiempo de espera debido a que el tiempo de procesamiento excede el límite de 5 segundos; mientras que al acceder a la ruta `/fast`, la solicitud se procesará normalmente y devolverá un resultado.
-{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}
+En el ejemplo anterior, creamos dos funciones de manejo: una `fast` que responde rápidamente y una `slow` que retrasa 6 segundos antes de responder. Se establece un límite de tiempo de espera de 5 segundos para todas las solicitudes utilizando `Timeout::new(Duration::from_secs(5))`. Al acceder a la ruta `/slow`, la solicitud agotará el tiempo de espera porque el tiempo de procesamiento excede el límite de 5 segundos. Por el contrario, al acceder a la ruta `/fast`, la solicitud se procesará normalmente y devolverá un resultado.
+{/* Auto generated, origin file hash:6b1b3f8e371841e4b0fca9bc07d59eec */}

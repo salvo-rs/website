@@ -1,34 +1,33 @@
-# Contrôle interdomaine
+# Contrôle d'Accès Inter-Origine
 
-CORS (Cross-Origin Resource Sharing, partage des ressources entre origines multiples) est un mécanisme qui permet aux navigateurs d'envoyer des requêtes à des serveurs d'origines différentes, surmontant ainsi les restrictions de la politique de même origine du navigateur.
+CORS (Cross-Origin Resource Sharing) est un mécanisme permettant aux navigateurs d'effectuer des requêtes vers des serveurs d'origine différente, surmontant ainsi les restrictions imposées par la politique de même origine des navigateurs.
 
-## Qu'est-ce que la politique de même origine ?
+## Qu'est-ce que la Politique de Même Origine ?
 
-La politique de même origine est une fonctionnalité de sécurité des navigateurs qui limite la manière dont un document ou un script chargé depuis une origine peut interagir avec des ressources provenant d'une autre origine. Par "même origine", on entend le même protocole, le même nom de domaine et le même numéro de port.
+La politique de même origine est une fonctionnalité de sécurité des navigateurs qui limite la manière dont les documents ou scripts chargés depuis une origine peuvent interagir avec des ressources provenant d'une autre origine. "Même origine" signifie avoir le même protocole, domaine et numéro de port.
 
-## Pourquoi CORS est-il nécessaire ?
+## Pourquoi CORS est-il Nécessaire ?
 
-Lorsqu'une application front-end doit accéder à des API d'origines différentes, le support CORS est requis. Par exemple :
-- L'application front-end est déployée sur `https://frontend.com`
+La prise en charge de CORS est requise lorsqu'une application frontend doit accéder à des API depuis une origine différente. Par exemple :
+- L'application frontend est déployée sur `https://frontend.com`
 - Le service API est déployé sur `https://api.backend.com`
 
-Sans CORS, le navigateur empêcherait l'application front-end d'accéder au service API.
+Sans CORS, le navigateur empêchera l'application frontend d'accéder au service API.
 
 ## Fonctionnement de CORS
 
-CORS implémente le contrôle d'accès interdomaine via une série d'en-têtes HTTP :
-- **Requête simple** : envoyée directement, le serveur contrôle l'autorisation via les en-têtes de réponse
-- **Requête préalable (preflight)** : le navigateur envoie d'abord une requête OPTIONS pour demander l'autorisation d'accès interdomaine, puis envoie la requête réelle après obtention de l'autorisation
+CORS implémente le contrôle d'accès inter-origine via une série d'en-têtes HTTP :
+- **Requêtes Simples** : Envoyées directement, le serveur contrôlant l'autorisation d'accès via les en-têtes de réponse.
+- **Requêtes Préliminaires** : Le navigateur envoie d'abord une requête OPTIONS pour demander au serveur si l'accès inter-origine est autorisé, et n'envoie la requête réelle qu'après avoir reçu la permission.
 
-Étant donné que le navigateur envoie une requête préalable `Method::OPTIONS`, il est nécessaire d'ajouter un traitement pour ce type de requête. Le middleware CORS doit être ajouté au `Service`.
+Puisque le navigateur envoie des requêtes préliminaires avec `Method::OPTIONS`, il est nécessaire de traiter ces requêtes. Le middleware CORS doit être ajouté au `Service`.
 
 ## Utilisation de CORS dans Salvo
 
-Salvo fournit un middleware CORS intégré, facile à configurer et à utiliser. Voici un exemple de code :
+Salvo fournit un middleware CORS intégré qui peut être facilement configuré et utilisé. Voici un exemple de code :
 
 :::warning
-Remarque. Le middleware `.hoop(cors)` s'applique au `Service`. Le middleware `.hoop(cors)` s'applique au `Service`. Le middleware `.hoop(cors)` s'applique au `Service`, et non au `Router`.
-Cela permet de traiter automatiquement les requêtes préalables OPTIONS.
+Remarque : Le middleware `.hoop(cors)` est appliqué au `Service`, et non au `Router`. Cela garantit le traitement automatique des requêtes préliminaires OPTIONS.
 ```rust
 let cors = Cors::new()
     .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
@@ -42,7 +41,7 @@ let service = Service::new(router).hoop(cors);
 ```
 :::
 
-_**Exemple de code**_
+_**Exemple de Code**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -57,16 +56,16 @@ import { Tab, Tabs } from '@rspress/core/theme';
   </Tab>
 </Tabs>
 
-## Principales options de configuration
+## Principales Options de Configuration
 
-Le middleware CORS offre plusieurs options de configuration :
+Le middleware CORS offre diverses options de configuration :
 
-- **Origines autorisées** : contrôle quels domaines peuvent accéder aux ressources
-- **Méthodes autorisées** : spécifie les méthodes HTTP autorisées (GET, POST, etc.)
-- **En-têtes autorisés** : spécifie les en-têtes de requête autorisés
-- **En-têtes exposés** : spécifie quels en-têtes de réponse peuvent être accessibles au client
-- **Informations d'identification autorisées** : indique si les requêtes peuvent inclure des informations d'identification telles que des cookies
-- **Durée de cache des requêtes préalables** : durée de mise en cache des résultats des requêtes préalables
+- **Origines Autorisées** : Contrôle quels domaines peuvent accéder aux ressources.
+- **Méthodes Autorisées** : Spécifie les méthodes HTTP autorisées (GET, POST, etc.).
+- **En-têtes Autorisés** : Spécifie les en-têtes de requête autorisés.
+- **En-têtes Exposés** : Spécifie quels en-têtes de réponse peuvent être consultés par le client.
+- **Autorisation des Identifiants** : Détermine si les requêtes peuvent inclure des identifiants tels que des cookies.
+- **Durée de Cache des Requêtes Préliminaires** : Durée de mise en cache des résultats des requêtes préliminaires.
 
-En configurant correctement CORS, il est possible de garantir à la fois la sécurité et de répondre aux besoins d'accès interdomaine.
-{/* Auto generated, origin file hash:cf229c3c39be32658130e3590ea819e7 */}
+En configurant CORS de manière appropriée, vous pouvez garantir à la fois la sécurité et la capacité à répondre aux exigences d'accès inter-origine.
+{/* Auto generated, origin file hash:06a4a7b1ce4049ea7d3c15924bdd7397 */}

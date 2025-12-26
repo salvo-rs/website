@@ -1,12 +1,12 @@
-# Arrêt gracieux
+# Arrêt en douceur
 
-L'arrêt gracieux consiste à ne pas interrompre immédiatement toutes les connexions lors de la fermeture d'un serveur, mais plutôt à cesser d'accepter de nouvelles requêtes tout en laissant suffisamment de temps aux requêtes déjà acceptées pour terminer leur traitement avant d'arrêter le service. Cette approche évite l'interruption brutale des requêtes, améliorant ainsi l'expérience utilisateur et la fiabilité du système.
+L'arrêt en douceur désigne le processus par lequel, lors de l'arrêt d'un serveur, celui-ci ne met pas immédiatement fin à toutes les connexions. Il cesse d'abord d'accepter de nouvelles requêtes tout en accordant aux requêtes existantes suffisamment de temps pour terminer leur traitement avant de fermer le service. Cette approche évite l'interruption brutale des requêtes, améliorant ainsi l'expérience utilisateur et la fiabilité du système.
 
-Salvo prend en charge l'arrêt gracieux via la méthode `handle` du `Server`, qui permet d'obtenir un gestionnaire de serveur, puis en appelant la méthode `stop_graceful`. Après l'appel de cette méthode, le serveur :
+Salvo prend en charge l'arrêt en douceur via la méthode `handle` du `Server`, qui récupère le gestionnaire du serveur, suivi de l'appel à la méthode `stop_graceful` pour mettre en œuvre l'arrêt. Après l'appel de cette méthode, le serveur :
 
-- Cesse d'accepter de nouvelles connexions
-- Attend que les requêtes en cours soient traitées
-- Force la fermeture des connexions restantes après un délai d'attente spécifié (si fourni)
+- Cesse d'accepter de nouvelles demandes de connexion
+- Attend que les requêtes existantes terminent leur traitement
+- Ferme de force toute connexion restante après un délai spécifié (si fourni)
 
 Voici un exemple simple :
 
@@ -19,7 +19,7 @@ async fn main() {
     let server = Server::new(acceptor);
     let handle = server.handle();
 
-    // Arrêt gracieux du serveur
+    // Arrêt en douceur du serveur
     tokio::spawn(async move {
         tokio::time::sleep(std::time::Duration::from_secs(60)).await;
         handle.stop_graceful(None);
@@ -30,9 +30,9 @@ async fn main() {
 
 Dans l'exemple ci-dessus :
 
-- `server.handle()` obtient un gestionnaire du serveur, qui peut être utilisé pour contrôler son cycle de vie
-- `handle.stop_graceful(None)` initie le processus d'arrêt gracieux, où `None` signifie qu'aucun délai d'attente n'est défini, attendant ainsi que toutes les requêtes soient traitées
-- Pour définir un délai d'attente, vous pouvez passer `Some(Duration)`, après quoi les connexions restantes seront fermées de force
+- `server.handle()` récupère le gestionnaire du serveur, qui peut être utilisé pour contrôler le cycle de vie du serveur
+- `handle.stop_graceful(None)` initie le processus d'arrêt en douceur, où `None` indique qu'aucun délai n'est défini, ce qui signifie que le serveur attendra indéfiniment que toutes les requêtes se terminent
+- Pour définir un délai, vous pouvez passer `Some(Duration)`, après quoi toute connexion restante sera fermée de force
 
-Cette approche est particulièrement adaptée aux applications déployées dans des environnements conteneurisés ou sur des plateformes cloud, ainsi qu'aux mises à jour à chaud pour garantir que les requêtes ne soient pas interrompues de manière inattendue.
-{/* Auto generated, origin file hash:37a3d8a11c033b0d07dca20cf5f3b96b */}
+Cette approche est particulièrement adaptée aux applications déployées dans des environnements conteneurisés ou sur des plateformes cloud, ainsi qu'aux scénarios nécessitant des mises à jour à chaud pour garantir que les requêtes ne soient pas interrompues de manière inattendue.
+{/* Auto generated, origin file hash:046b3113209f454ef7a16224e721cfcb */}

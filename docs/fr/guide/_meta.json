@@ -15,21 +15,21 @@
   {
     "type": "dir",
     "name": "topics",
-    "label": "Thématiques",
+    "label": "Topics",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "features",
-    "label": "Fonctionnalités",
+    "label": "Features",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "ecology",
-    "label": "Écosystème",
+    "label": "Ecology",
     "collapsible": true,
     "collapsed": false
   },

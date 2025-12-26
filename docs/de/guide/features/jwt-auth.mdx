@@ -1,19 +1,19 @@
 # JWT-Authentifizierung
 
-JWT (JSON Web Token) ist ein offener Standard (RFC 7519) zur sicheren Übertragung von Informationen zwischen Parteien. Es handelt sich um eine kompakte, URL-sichere Methode zur Darstellung von Ansprüchen in JSON-Objektform, die typischerweise für Authentifizierung und Informationsaustausch verwendet werden.
+JWT (JSON Web Token) ist ein offener Standard (RFC 7519) zur sicheren Übertragung von Informationen zwischen Parteien. Es handelt sich um eine kompakte, URL-sichere Methode zur Darstellung von Ansprüchen im JSON-Objektformat, die häufig für Authentifizierung und Informationsaustausch verwendet wird.
 
 Ein JWT besteht aus drei Teilen:
 - **Header** – Gibt den Tokentyp und den verwendeten Signaturalgorithmus an
-- **Payload** – Enthält Ansprüche (Claims) wie Benutzer-ID, Rollen, Ablaufzeit etc.
-- **Signatur** – Dient zur Überprüfung, dass die Nachricht während der Übertragung nicht verändert wurde
+- **Payload** – Enthält Ansprüche wie Benutzer-ID, Rollen, Ablaufzeit usw.
+- **Signatur** – Dient zur Überprüfung, ob die Nachricht während der Übertragung verändert wurde
 
-Typischer Anwendungsablauf von JWT im Authentifizierungsprozess:
+Typische Verwendung von JWT im Authentifizierungsablauf:
 1. Nach der Benutzeranmeldung generiert der Server ein JWT-Token
 2. Das Token wird an den Client zurückgegeben und gespeichert (üblicherweise in localStorage oder Cookies)
-3. Bei nachfolgenden Anfragen überträgt der Client das Token im Authorization-Header
-4. Der Server überprüft die Gültigkeit des Tokens und erteilt Zugriffsberechtigungen
+3. Bei nachfolgenden Anfragen fügt der Client dieses Token in den Authorization-Header ein
+4. Der Server validiert die Authentizität des Tokens und gewährt Zugriff
 
-Bietet Middleware für JWT-Authentifizierungsvalidierung.
+Bietet Middleware für JWT-Authentifizierung.
 
 _**Beispielcode**_
 
@@ -29,4 +29,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:44ba61e41e4c4e0937054ac0328a42ab */}
+{/* Auto generated, origin file hash:6ac72db73439017bc946bcdb54b74e13 */}

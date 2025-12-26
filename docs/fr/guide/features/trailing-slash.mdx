@@ -1,20 +1,20 @@
 # Barre oblique finale
 
-Un middleware pour ajouter ou supprimer automatiquement la barre oblique `/` à la fin des URL.
+Un middleware pour ajouter ou supprimer automatiquement la barre oblique finale `/`.
 
 ## Cas d'utilisation
 
-Le middleware Barre oblique finale est particulièrement utile dans les situations suivantes :
+Le middleware Barre oblique finale est particulièrement utile dans les scénarios suivants :
 
-- **Normalisation des URL** : Garantit que toutes les URL suivent un format cohérent (en ajoutant ou supprimant systématiquement la barre oblique finale), ce qui améliore le référencement (SEO) et évite les problèmes de contenu dupliqué.
+- **Normalisation d'URL** : Garantit que toutes les URL suivent un format cohérent (en ajoutant ou supprimant uniformément les barres obliques finales), ce qui aide à améliorer le référencement naturel et à éviter les problèmes de contenu dupliqué.
 
-- **Simplification du traitement des routes** : Élimine la nécessité d'écrire une logique de routage distincte pour les URL avec ou sans barre oblique finale, car le middleware gère automatiquement cette conversion.
+- **Gestion simplifiée des routes** : Élimine la nécessité d'écrire une logique de routage distincte pour les URL avec et sans barres obliques finales, car le middleware gère automatiquement cette conversion.
 
-- **Compatibilité** : Certains clients peuvent ajouter ou supprimer automatiquement la barre oblique finale des URL. Ce middleware garantit que les requêtes sont correctement acheminées.
+- **Compatibilité** : Certains clients peuvent automatiquement ajouter ou supprimer les barres obliques finales des URL. Ce middleware garantit que les requêtes sont correctement acheminées.
 
-- **Gestion des redirections** : Peut être configuré pour rediriger automatiquement les URL avec une barre oblique finale vers celles sans barre oblique (ou inversement), améliorant ainsi l'expérience utilisateur.
+- **Gestion des redirections** : Peut être configuré pour rediriger automatiquement les URL avec barres obliques finales vers celles sans (ou vice versa), améliorant ainsi l'expérience utilisateur.
 
-- **Éviter les conflits de routage** : Dans de nombreux frameworks web, `/chemin` et `/chemin/` peuvent être traités comme des routes différentes. Ce middleware permet de les unifier.
+- **Éviter les conflits de routes** : Dans de nombreux frameworks web, `/chemin` et `/chemin/` peuvent être traités comme des routes différentes. Ce middleware peut les gérer de manière uniforme.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -30,4 +30,4 @@ _**Exemple de code**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:7bb4e1e210c23aa687c6aa13c130a763 */}
+{/* Auto generated, origin file hash:23d0fc6bb76dc1e9e171298973f37983 */}

@@ -2,18 +2,18 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware que fornece arquivos estáticos ou incorporados como serviço. Para a API específica, consulte [a documentação](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Middleware que serve arquivos estáticos ou arquivos embutidos. Para a API detalhada, por favor [consulte a documentação](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
-## Cenários de Aplicação
-O serviço de arquivos estáticos possui amplos cenários de aplicação em aplicações web:
-- Fornecer recursos estáticos do site, como arquivos CSS, JavaScript, imagens, etc.
-- Hospedar aplicações de página única (SPA)
+## Casos de Uso
+Servidores de arquivos estáticos têm uma ampla gama de aplicações no desenvolvimento web:
+- Servir recursos estáticos para sites, como CSS, JavaScript, imagens, etc.
+- Hospedar Aplicações de Página Única (SPAs)
 - Distribuir documentos, arquivos de mídia, conteúdo para download, etc.
-- Servir como solução completa de hospedagem para sites simples
+- Servir como uma solução completa de hospedagem para sites simples
 
-## Funcionalidades Principais
+## Principais Funcionalidades
 
-- `StaticDir` oferece suporte a pastas locais estáticas. Pode receber uma lista de várias pastas como parâmetro. Por exemplo:
+- `StaticDir` fornece suporte para servir arquivos estáticos a partir de diretórios locais. Pode aceitar uma lista de múltiplos diretórios como parâmetros. Por exemplo:
 
 <Tabs>
   <Tab label="main.rs">
@@ -25,24 +25,24 @@ O serviço de arquivos estáticos possui amplos cenários de aplicação em apli
   ```
   </Tab>
 </Tabs>
-  Se o arquivo correspondente não for encontrado na primeira pasta, a busca continuará na segunda pasta.
+  Se um arquivo não for encontrado no primeiro diretório, será procurado no segundo diretório.
 
-`StaticDir` suporta o envio prioritário de arquivos compactados quando disponíveis. Por exemplo, se existirem os arquivos `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br`, então `index.html.gz`, `index.html.zst`, `index.html.br` serão considerados versões pré-comprimidas de `index.html`. O arquivo compactado correspondente será enviado com base nas informações da solicitação.
+`StaticDir` suporta servir arquivos pré-comprimidos quando disponíveis. Por exemplo, se existirem arquivos como `index.html`, `index.html.gz`, `index.html.zst` e `index.html.br`, então `index.html.gz`, `index.html.zst` e `index.html.br` são considerados versões pré-comprimidas de `index.html`. O arquivo comprimido apropriado será servido com base nas informações da requisição.
 
-- Oferece suporte a `rust-embed`, por exemplo:
+- Fornece suporte para `rust-embed`. Por exemplo:
 
-## Vantagens e Desvantagens do rust-embed
+## Prós e Contras do rust-embed
 
-**Vantagens:**
-- Compila arquivos estáticos no binário, simplificando o processo de implantação
-- Elimina a necessidade de gerenciar arquivos estáticos separadamente em produção
-- Pode oferecer melhor desempenho (acesso à memória vs I/O de disco)
-- Mais seguro, os arquivos não podem ser modificados acidentalmente
+**Prós:**
+- Compila arquivos estáticos no binário, simplificando a implantação.
+- Não é necessário gerenciar arquivos estáticos separadamente em ambientes de produção.
+- Potencialmente melhor desempenho (acesso à memória vs. I/O de disco).
+- Segurança aprimorada, pois os arquivos não podem ser modificados acidentalmente.
 
-**Desvantagens:**
-- Aumenta o tamanho do binário da aplicação
-- Atualizar conteúdo estático requer recompilar e reimplantar toda a aplicação
-- Não é adequado para conteúdo estático grande que muda frequentemente
+**Contras:**
+- Aumenta o tamanho do binário da aplicação.
+- Atualizar conteúdo estático requer recompilar e reimplantar toda a aplicação.
+- Não é adequado para conteúdo estático grande que muda frequentemente.
 
 <Tabs>
   <Tab label="main.rs">
@@ -55,5 +55,5 @@ O serviço de arquivos estáticos possui amplos cenários de aplicação em apli
   </Tab>
 </Tabs>
 
-É possível definir uma página padrão para exibição através de `default`. `with_fallback` e `fallback` podem ser configurados para usar um arquivo específico quando o arquivo solicitado não for encontrado, o que é útil para certas aplicações web de página única.
-{/* Auto generated, origin file hash:42f7ce7c0dec48cc37b3300fbc400bb8 */}
+Você pode definir uma página padrão para exibir usando a opção `default`. Os métodos `with_fallback` e `fallback` permitem especificar um arquivo de fallback para servir quando um arquivo solicitado não for encontrado, o que é útil para certas aplicações de sites de página única.
+{/* Auto generated, origin file hash:073ef52649e7c613a5829d94d56d9114 */}

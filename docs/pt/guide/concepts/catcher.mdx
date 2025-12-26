@@ -2,9 +2,9 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Se o código de status da `Response` for um erro e o `Body` na página estiver vazio, o Salvo tentará usar o `Catcher` para capturar esse erro e exibir uma página de erro amigável.
+Quando uma `Response` retorna um código de status de erro e o `Body` dentro da página está vazio, o Salvo tentará capturar esse erro usando um `Catcher` e exibir uma página de erro amigável ao usuário.
 
-Você pode usar `Catcher::default()` para retornar um `Catcher` padrão do sistema e, em seguida, adicioná-lo ao `Service`.
+Você pode obter um `Catcher` padrão do sistema chamando `Catcher::default()`, e então adicioná-lo ao `Service`.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -14,9 +14,9 @@ Service::new(router).catcher(Catcher::default());
 
 O `Catcher` padrão suporta o envio de páginas de erro nos formatos `XML`, `JSON`, `HTML` e `Text`.
 
-Você pode adicionar manipuladores de erro personalizados ao `Catcher` adicionando um `hoop` a esse `Catcher` padrão. Esse manipulador de erro ainda é um `Handler`.
+Você pode adicionar manipuladores personalizados de captura de erro ao `Catcher` anexando `hoop`s a este `Catcher` padrão. Esses manipuladores de captura de erro ainda são do tipo `Handler`.
 
-Você pode adicionar vários manipuladores de erro personalizados ao `Catcher` usando `hoop`. Um manipulador de erro personalizado pode chamar o método `FlowCtrl::skip_next` após processar o erro para pular os manipuladores subsequentes e retornar antecipadamente.
+Você pode adicionar vários manipuladores personalizados de captura de erro ao `Catcher` através de `hoop`s. Os manipuladores de erro personalizados podem chamar o método `FlowCtrl::skip_next` após processar um erro para pular os manipuladores de erro subsequentes e retornar antecipadamente.
 
 <Tabs>
   <Tab label="main.rs">
@@ -28,4 +28,4 @@ Você pode adicionar vários manipuladores de erro personalizados ao `Catcher` u
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:6d187ebda60dfda18718df8cd81080ad */}
+{/* Auto generated, origin file hash:97cdd2200a1b89f29e73587bb7a0e9bd */}

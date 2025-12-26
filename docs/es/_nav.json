@@ -1,21 +1,21 @@
 [
   {
-    "text": "Manual",
+    "text": "Guide",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
   {
-    "text": "Conceptos",
+    "text": "Concepts",
     "link": "/guide/concepts/",
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Tópicos",
+    "text": "Topics",
     "link": "/guide/topics/",
     "activeMatch": "/guide/topics/"
   },
   {
-    "text": "Características",
+    "text": "Features",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
@@ -24,7 +24,7 @@
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "Donar",
+    "text": "Donate",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

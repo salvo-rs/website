@@ -2,9 +2,9 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Si el código de estado de la `Response` es un error y el `Body` de la página está vacío, Salvo intentará capturar este error utilizando un `Catcher` para mostrar una página de error amigable.
+Cuando un `Response` devuelve un código de estado de error y el `Body` dentro de la página está vacío, Salvo intentará capturar este error usando un `Catcher` y mostrará una página de error amigable para el usuario.
 
-Puedes obtener un `Catcher` predeterminado del sistema mediante `Catcher::default()` y luego agregarlo al `Service`.
+Puedes obtener un `Catcher` predeterminado del sistema llamando a `Catcher::default()`, y luego agregarlo al `Service`.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -14,9 +14,9 @@ Service::new(router).catcher(Catcher::default());
 
 El `Catcher` predeterminado admite el envío de páginas de error en formatos `XML`, `JSON`, `HTML` y `Text`.
 
-Puedes agregar un programa de captura de errores personalizado al `Catcher` añadiendo un `hoop` a este `Catcher` predeterminado. Este programa de captura de errores sigue siendo un `Handler`.
+Puedes agregar manejadores de captura de errores personalizados al `Catcher` adjuntando `hoop`s a este `Catcher` predeterminado. Estos manejadores de captura de errores siguen siendo del tipo `Handler`.
 
-Puedes agregar múltiples programas de captura de errores personalizados al `Catcher` mediante `hoop`. Los manejadores de errores personalizados pueden llamar al método `FlowCtrl::skip_next` después de procesar el error para omitir los programas de error posteriores y retornar anticipadamente.
+Puedes agregar múltiples manejadores de captura de errores personalizados al `Catcher` a través de `hoop`s. Los manejadores de errores personalizados pueden llamar al método `FlowCtrl::skip_next` después de procesar un error para omitir los manejadores de errores posteriores y retornar anticipadamente.
 
 <Tabs>
   <Tab label="main.rs">
@@ -28,4 +28,4 @@ Puedes agregar múltiples programas de captura de errores personalizados al `Cat
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:6d187ebda60dfda18718df8cd81080ad */}
+{/* Auto generated, origin file hash:97cdd2200a1b89f29e73587bb7a0e9bd */}

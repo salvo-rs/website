@@ -1,21 +1,21 @@
 [
   {
-    "text": "Руководство",
+    "text": "Guide",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
   {
-    "text": "Концепции",
+    "text": "Concepts",
     "link": "/guide/concepts/",
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Темы",
+    "text": "Topics",
     "link": "/guide/topics/",
     "activeMatch": "/guide/topics/"
   },
   {
-    "text": "Функции",
+    "text": "Features",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
@@ -24,7 +24,7 @@
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "Пожертвовать",
+    "text": "Donate",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

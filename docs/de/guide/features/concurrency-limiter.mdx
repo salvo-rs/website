@@ -1,26 +1,26 @@
 import { Tab, Tabs } from '@rspress/core/theme';
 
-# Begrenzung der Parallelität
+# Parallelitätsbegrenzung
 
-Das Concurrency Limiter-Middleware kann die Anzahl gleichzeitig verarbeiteter Anfragen steuern. Detaillierte API-Informationen finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
+Die Middleware für Parallelitätsbegrenzung kann die Anzahl gleichzeitiger Anfragen steuern. Detaillierte API-Informationen finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
 
 ## Anwendungsszenarien
 
-Der Parallelitätsbegrenzer ist besonders nützlich in folgenden Situationen:
+Die Parallelitätsbegrenzung ist besonders nützlich in folgenden Situationen:
 
-- **Schutz von Hochverkehrs-Websites**: Begrenzung gleichzeitig bearbeiteter Anfragen bei plötzlichem Traffic-Anstieg, um Serverüberlastung zu verhindern
-- **Steuerung ressourcenintensiver Operationen**: Begrenzung der Parallelität bei ressourcenintensiven Vorgängen wie Datei-Uploads oder Datenbank-Schreibvorgängen
-- **Beschränkung von Drittanbieter-API-Aufrufen**: Kontrolle der parallelen Anfragen bei der Nutzung externer Dienste mit Ratenbegrenzungen
+- **Schutz von Hochverkehrs-Websites**: Begrenzt die Anzahl gleichzeitig verarbeiteter Anfragen bei Verkehrsspitzen, um Serverüberlastung zu vermeiden.
+- **Steuerung ressourcenintensiver Operationen**: Beschränkt die Parallelität bei ressourcenintensiven Vorgängen wie Datei-Uploads und Datenbank-Schreibvorgängen.
+- **Begrenzung von Drittanbieter-API-Aufrufen**: Kontrolliert die Anzahl gleichzeitiger Anfragen beim Aufruf externer Dienste mit Ratenbegrenzungen.
 
 ## Hauptfunktionen
 
-- **Verhinderung von Serverüberlastung**: Durch Begrenzung paralleler Anfragen bleibt der Server auch bei Traffic-Spitzen stabil
-- **Erhöhung der Systemzuverlässigkeit**: Vermeidung von Systemabstürzen durch Ressourcenerschöpfung
-- **Optimierung der Ressourcenzuteilung**: Sicherstellung, dass kritische Dienste ausreichend Ressourcen für Anfrageverarbeitung erhalten
+- **Verhindert Serverüberlastung**: Gewährleistet Serverstabilität während Verkehrsspitzen durch Begrenzung gleichzeitiger Anfragen.
+- **Erhöht Systemzuverlässigkeit**: Vermeidet Systemabstürze durch Ressourcenerschöpfung.
+- **Optimiert Ressourcenzuweisung**: Stellt sicher, dass kritische Dienste über ausreichende Ressourcen zur Anfragebearbeitung verfügen.
 
 ## Verwendung
 
-Fügen Sie einfach das `max_concurrency(n)`-Middleware zu Ihrer Route hinzu, wobei `n` die maximal erlaubte Anzahl paralleler Anfragen darstellt. Anfragen, die diese Grenze überschreiten, erhalten eine `503 Service Unavailable`-Antwort.
+Fügen Sie einfach die `max_concurrency(n)`-Middleware zu Ihrer Route hinzu, wobei `n` die maximal zulässige Anzahl gleichzeitiger Anfragen darstellt. Anfragen, die dieses Limit überschreiten, erhalten eine `503 Service Unavailable`-Antwort.
 
 _**Beispielcode**_
 
@@ -34,4 +34,4 @@ _**Beispielcode**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:e608fa24b412ca88671cf77efea06bad */}
+{/* Auto generated, origin file hash:eb0d1d053dfdeefd6150fb9fd7bb825f */}

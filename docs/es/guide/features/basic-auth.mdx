@@ -1,39 +1,39 @@
 # Autenticación Básica
 
-Middleware que proporciona soporte para Basic Auth.
+Un middleware que proporciona soporte para Autenticación Básica.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-## Introducción a Basic Auth
+## Introducción a la Autenticación Básica
 
-Basic Auth es un mecanismo simple de autenticación HTTP que transmite el nombre de usuario y contraseña a través del encabezado de la solicitud HTTP en el campo `Authorization`. El formato es `Authorization: Basic <base64(usuario:contraseña)>`. Aunque es simple, como las credenciales solo están codificadas en Base64 y no encriptadas, generalmente debe usarse junto con HTTPS para garantizar la seguridad.
+La Autenticación Básica es un mecanismo simple de autenticación HTTP que transmite un nombre de usuario y contraseña a través del encabezado `Authorization` en las solicitudes HTTP. El formato es `Authorization: Basic <base64(usuario:contraseña)>`. Aunque es simple, dado que las credenciales solo están codificadas en Base64 en lugar de estar encriptadas, normalmente se utiliza con HTTPS para garantizar la seguridad.
 
-## Comparación de implementaciones de Basic Auth en frameworks comunes
+## Comparación de Implementaciones de Autenticación Básica en Frameworks Comunes
 
-| Framework | Lenguaje | Implementación de Basic Auth |
-|-----------|----------|------------------------------|
-| Salvo | Rust | Implementado mediante el middleware `BasicAuth` y un `BasicAuthValidator` personalizado |
-| Express | JavaScript | Usa el paquete de middleware `express-basic-auth` |
+| Framework | Lenguaje | Implementación de Autenticación Básica |
+|-----------|----------|----------------------------------------|
+| Salvo | Rust | Implementado a través del middleware `BasicAuth` y el `BasicAuthValidator` personalizado |
+| Express | JavaScript | Utiliza el paquete de middleware `express-basic-auth` |
 | Spring Security | Java | Configurado mediante `httpBasic()` e implementado con `UserDetailsService` |
-| ASP.NET Core | C# | Usa `.UseAuthentication()` y `AddAuthentication(AuthenticationSchemes.Basic)` |
-| Gin | Go | Mediante middleware personalizado o usando el paquete `gin-contrib/auth` |
+| ASP.NET Core | C# | Utiliza `.UseAuthentication()` y `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | Implementado mediante middleware personalizado o usando el paquete `gin-contrib/auth` |
 
-## Casos de uso
+## Casos de Uso
 
-Basic Auth es adecuado para los siguientes escenarios:
+La Autenticación Básica es adecuada para los siguientes escenarios:
 
-1. **APIs y herramientas internas**: Herramientas de administración y APIs utilizadas internamente en la empresa.
-2. **Entornos de desarrollo y pruebas**: Para implementar autenticación rápidamente sin necesidad de un sistema de inicio de sesión complejo.
-3. **Protección simple de APIs**: Cuando no se requiere un sistema complejo de gestión de usuarios.
-4. **En combinación con otras medidas de seguridad**: Como parte de una arquitectura de seguridad multicapa.
+1. **APIs y Herramientas Internas**: Herramientas de gestión y APIs utilizadas dentro de una empresa
+2. **Entornos de Desarrollo y Pruebas**: Implementar autenticación rápidamente sin un sistema de inicio de sesión complejo
+3. **Protección Simple de API**: Cuando no se requiere un sistema complejo de gestión de usuarios
+4. **Combinado con Otras Medidas de Seguridad**: Como parte de una arquitectura de seguridad multicapa
 
-En Salvo, el middleware de Basic Auth se puede integrar fácilmente en las rutas. Es muy flexible, ya que permite personalizar la lógica de validación implementando el trait `BasicAuthValidator`.
+En Salvo, el middleware de Autenticación Básica puede integrarse fácilmente en las rutas. Al implementar el trait `BasicAuthValidator`, se puede definir lógica de validación personalizada, ofreciendo gran flexibilidad.
 
 ## Consideraciones
 
-- Siempre debe usarse junto con HTTPS para proteger la transmisión de credenciales.
-- No es adecuado para entornos de producción que almacenen información sensible.
-- Considere usar métodos de autenticación más seguros como JWT, OAuth, etc., para entornos de producción.
+- Utilizar siempre con HTTPS para proteger la transmisión de credenciales
+- No es adecuado para entornos de producción que almacenan información sensible
+- Considerar el uso de métodos de autenticación más seguros como JWT u OAuth para entornos de producción
 
 <Tabs>
   <Tab label="main.rs">
@@ -45,4 +45,4 @@ En Salvo, el middleware de Basic Auth se puede integrar fácilmente en las rutas
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:d01ddb1691782cd7ed28227dcc89e19f */}
+{/* Auto generated, origin file hash:221f2dd3a7cc0491c1e80844627d2e2e */}

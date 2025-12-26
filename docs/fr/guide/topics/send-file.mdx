@@ -1,4 +1,4 @@
-# Envoi de fichiers
+# Envoi de Fichiers
 
 Salvo permet d'envoyer des fichiers de plusieurs manières :
 
@@ -6,9 +6,9 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ### NamedFile
 
-Salvo fournit `salvo::fs::NamedFile`, qui peut être utilisé pour envoyer efficacement des fichiers au client. Il ne charge pas l'intégralité du fichier en mémoire, mais envoie uniquement les parties demandées via l'en-tête `Range` de la requête.
+Salvo fournit `salvo::fs::NamedFile`, qui peut être utilisé pour envoyer efficacement des fichiers aux clients. Il ne charge pas l'intégralité du fichier en mémoire ; à la place, il lit et envoie uniquement les parties demandées par le client en fonction de l'en-tête `Range`.
 
-En réalité, utiliser `Response::send_file` est simplement une manière simplifiée d'utiliser `NamedFile`. Si vous avez besoin d'un contrôle plus précis sur l'envoi des fichiers, vous pouvez utiliser `NamedFileBuilder`.
+En pratique, utiliser `Response::send_file` est une manière simplifiée d'utiliser `NamedFile`. Si vous avez besoin d'un contrôle plus fin sur la livraison des fichiers, vous pouvez utiliser `NamedFileBuilder`.
 
 Vous pouvez créer un `NamedFileBuilder` via `NamedFile::builder` :
 
@@ -19,7 +19,7 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-Vous pouvez ensuite configurer certaines options avant d'envoyer le fichier :
+Après avoir configuré le builder, vous pouvez envoyer le fichier :
 
 ```rust
 #[handler]
@@ -28,11 +28,11 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-### Service de fichiers statiques
+### Service de Fichiers Statiques
 
-Un middleware permettant de servir des fichiers statiques ou des fichiers intégrés.
+Middleware pour servir des fichiers statiques ou des fichiers intégrés.
 
-- `StaticDir` prend en charge les dossiers statiques locaux. Vous pouvez fournir une liste de plusieurs dossiers en paramètre. Par exemple :
+- `StaticDir` fournit un support pour servir des fichiers statiques à partir de répertoires locaux. Vous pouvez passer une liste de plusieurs répertoires en arguments. Par exemple :
 <Tabs>
   <Tab label="main.rs">
   ```rust file="<root>/codes/static-dir-list/src/main.rs"
@@ -43,9 +43,9 @@ Un middleware permettant de servir des fichiers statiques ou des fichiers intég
   ```
   </Tab>
 </Tabs>
-  Si le fichier n'est pas trouvé dans le premier dossier, la recherche se poursuit dans le deuxième.
+  Si un fichier n'est pas trouvé dans le premier répertoire, il sera recherché dans le second.
 
-- Prise en charge de `rust-embed`, par exemple :
+- Fournit un support pour `rust-embed`. Par exemple :
 <Tabs>
   <Tab label="main.rs">
   ```rust file="<root>/codes/static-embed-files/src/main.rs"
@@ -56,5 +56,5 @@ Un middleware permettant de servir des fichiers statiques ou des fichiers intég
   ```
   </Tab>
 </Tabs>
-  `with_fallback` permet de définir un fichier de remplacement si le fichier demandé n'est pas trouvé. Cela peut être utile pour certaines applications web monopages.
-{/* Auto generated, origin file hash:19063883c45fafc63ab4ff3751ac9892 */}
+  La méthode `with_fallback` vous permet de spécifier un fichier de secours à servir lorsque le fichier demandé n'est pas trouvé. Cela est particulièrement utile pour les applications monopages (SPA).
+{/* Auto generated, origin file hash:b0d7ec4cd7a0db7f38dc82b19bff22c8 */}

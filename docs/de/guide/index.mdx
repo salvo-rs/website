@@ -1,30 +1,30 @@
-# Um diese Kunst zu meistern
+# Diese Kunst meistern
 
-## Warum dieses Framework geschrieben wurde
+## Warum dieses Framework entwickelt wurde
 
-Als Anfänger stellte ich damals fest, dass ich zu begriffsstutzig war, um Frameworks wie actix-web oder Rocket zu erlernen. Als ich einen früheren Go-Webdienst in Rust neu implementieren wollte, schien jedes Framework auf den ersten Blick komplexer zu sein als die bestehenden Go-Frameworks. Die Lernkurve von Rust ist schon steil genug – warum also sollten Webframeworks noch zusätzlich verkompliziert werden?
+Als Anfänger hatte ich Schwierigkeiten, bestehende Frameworks wie actix-web und Rocket zu verstehen. Als ich versuchte, einen früheren Go-Webdienst in Rust neu zu schreiben, wirkte jedes Framework komplexer als die verfügbaren Go-Lösungen. Angesichts der ohnehin steilen Lernkurve von Rust – warum sollten Webframeworks noch komplizierter sein?
 
-Als Tokio das Axum-Framework veröffentlichte, war ich frohen Mutes, dass ich mein eigenes Webframework nicht mehr weiterpflegen müsste. Doch in der Praxis erwies sich Axum als trügerisch einfach: Zu viel Type-Gymnastik und generische Definitionen erforderten tiefgehende Rust-Kenntnisse und das mühsame Schreiben unverständlicher Boilerplate, nur um eine einfache Middleware zu implementieren.
+Als Tokio das Axum-Framework vorstellte, war ich begeistert und dachte, ich könnte endlich die Wartung meines eigenen Webframeworks einstellen. Doch bald merkte ich: Obwohl Axum einfach aussah, erforderte es ausgefeilte Typakrobatik und generische Definitionen. Selbst eine einfache Middleware zu entwickeln, verlangte tiefgehende Rust-Kenntnisse und das Schreiben von viel undurchsichtigem Boilerplate-Code.
 
-Daher entschied ich mich, mein eigenes, besonderes Webframework weiterzuentwickeln – eines, das intuitiv bedienbar, funktionsreich und für Anfänger geeignet ist.
+Daher entschied ich mich, mein einzigartiges Webframework weiterzuentwickeln – eines, das intuitiv, funktionsreich und anfängerfreundlich ist.
 
 ## Ist Salvo das Richtige für Sie?
 
-Salvo ist einfach, aber dennoch umfassend und leistungsstark – praktisch das mächtigste Framework in der Rust-Welt. Trotz seiner Stärke ist es einfach zu erlernen und zu nutzen, ganz ohne frustrierende Hürden.
+Salvo ist einfach, doch umfassend und leistungsstark – wohl das stärkste im Rust-Ökosystem. Trotz seiner Fähigkeiten bleibt es einfach zu erlernen und zu nutzen, sodass Sie sich keine „Selbstkastrations“-Schmerzen auferlegen müssen.
 
-- **Geeignet für Rust-Einsteiger:** CRUD-Operationen sind alltäglich. Mit Salvo sind solche Aufgaben so einfach wie in anderen Webframeworks (z. B. Express, Koa, Gin, Flask) – in mancher Hinsicht sogar abstrakter und eleganter.
-  
-- **Geeignet für den Produktiveinsatz:** Salvo bietet stabile und schnelle Server, auch wenn Version 1.0 noch nicht veröffentlicht ist. Die Kernfunktionen sind über Jahre erprobt, stabil und werden zeitnah gepatcht.
-  
-- **Geeignet für Sie, deren Haarpracht schwindet, während die täglichen Herausforderungen wachsen.**
+- **Ideal für Rust-Anfänger**: CRUD-Operationen sind alltäglich, und mit Salvo fühlen sich solche Aufgaben so unkompliziert an wie mit Frameworks in anderen Sprachen (z. B. Express, Koa, Gin, Flask). In mancher Hinsicht ist Salvo sogar abstrakter und prägnanter.
 
-## Wie wird Einfachheit erreicht?
+- **Geeignet für den Produktiveinsatz**: Wenn Sie Rust in der Produktion für robuste, hochperformante Server einsetzen möchten, ist Salvo die richtige Wahl. Obwohl noch nicht in Version 1.0, haben seine Kernfunktionen jahrelange Iterationen durchlaufen, was Stabilität und zeitnahe Problemlösung gewährleistet.
 
-Viele Low-Level-Implementierungen bietet Hyper bereits. Daher ist es sinnvoll, allgemeine Anforderungen auf Hyper aufzubauen – so auch Salvo. Seine Kernfunktionen umfassen ein leistungsfähiges, flexibles Routingsystem sowie gängige Module wie Acme, OpenAPI und JWT-Auth.
+- **Perfekt für Sie**, besonders wenn Ihre Haare dünner werden und täglich ausfallen.
 
-In Salvo sind Handler und Middleware vereinheitlicht: Middleware **ist** ein Handler. Beide werden über `hoop` an Router angehängt. Im Wesentlichen verarbeiten sie Request-Anfragen und können Daten in die Response schreiben. Ein Handler empfängt drei Parameter: `Request`, `Depot` (für temporäre Daten während der Verarbeitung) und `Response`.
+## Einfachheit erreichen
 
-Zur Vereinfachung können nicht benötigte Parameter weggelassen oder in beliebiger Reihenfolge angegeben werden.
+Hyper übernimmt viele Low-Level-Implementierungen und bildet damit eine zuverlässige Grundlage für allgemeine Anforderungen. Salvo folgt diesem Ansatz und bietet ein leistungsfähiges und flexibles Routing-System sowie wesentliche Funktionen wie Acme, OpenAPI und JWT-Authentifizierung.
+
+Salvo vereint Handler und Middleware: Middleware *ist* ein Handler. Beide werden über `hoop` am Router angehängt. Im Wesentlichen verarbeiten sie `Request` und können Daten in `Response` schreiben. Ein Handler empfängt drei Parameter: `Request`, `Depot` (für temporäre Daten während der Request-Verarbeitung) und `Response`.
+
+Der Einfachheit halber können Sie unnötige Parameter weglassen oder deren Reihenfolge ignorieren.
 
 ```rust
 use salvo::prelude::*;
@@ -39,11 +39,12 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-Die API des Routingsystems ist ebenfalls äußerst einfach, aber dennoch mächtig. Für den Normalfall genügt die Beschäftigung mit dem Typ `Router`.  
-Zudem generiert Salvo automatisch OpenAPI-Dokumentation und extrahiert Parameter, sofern Strukturen die entsprechenden Traits implementieren. Es verarbeitet verschiedene Fehler automatisch und gibt benutzerfreundliche Hinweise zurück. Dadurch wird das Schreiben von Handlern so intuitiv wie das Schreiben gewöhnlicher Funktionen. In späteren Tutorials werden diese Funktionen detailliert erklärt. Hier ein Beispiel:
+Die Routing-API ist außergewöhnlich einfach und dennoch leistungsstark. Für typische Anwendungsfälle müssen Sie sich nur auf den Typ `Router` konzentrieren.
+
+Darüber hinaus kann Salvo automatisch OpenAPI-Dokumentation generieren, Parameter extrahieren, Fehler elegant behandeln und benutzerfreundliche Meldungen zurückgeben, sofern eine Struktur die relevanten Traits implementiert. Dadurch wird das Schreiben von Handlern so intuitiv wie das Schreiben gewöhnlicher Funktionen. Diese Funktionen werden wir später detailliert erkunden. Hier ein Beispiel:
 
 ```rust
-#[endpoint(tags("Nachrichtenprotokoll"))]
+#[endpoint(tags("message_logs"))]
 pub async fn create_message_log_handler(
     input: JsonBody<CreateOrUpdateMessageLog>,
     depot: &mut Depot,
@@ -54,13 +55,13 @@ pub async fn create_message_log_handler(
 }
 ```
 
-In diesem Beispiel parst `JsonBody<CreateOrUpdateMessageLog>` automatisch JSON-Daten aus dem Request-Body und konvertiert sie in den Typ `CreateOrUpdateMessageLog` (unterstützt auch mehrere Datenquellen und verschachtelte Typen). Gleichzeitig generiert das `#[endpoint]`-Attribut automatisch OpenAPI-Dokumentation für diese Schnittstelle und vereinfacht die Parameter-Extraktion sowie Fehlerbehandlung.
+In diesem Beispiel parst `JsonBody<CreateOrUpdateMessageLog>` automatisch JSON aus dem Request-Body in den Typ `CreateOrUpdateMessageLog` (unterstützt mehrere Datenquellen und verschachtelte Typen). Das `#[endpoint]`-Attribut generiert OpenAPI-Dokumentation für diesen Endpunkt und vereinfacht Parameterextraktion und Fehlerbehandlung.
 
-## Das Routingsystem
+## Routing-System
 
-Das Routingsystem unterscheidet sich meiner Meinung nach von anderen Frameworks. Router können flach oder baumartig strukturiert werden. Dabei wird zwischen **Geschäftslogikbaum** und **Zugriffspfadbaum** unterschieden. Der Geschäftslogikbaum organisiert Router nach fachlichen Anforderungen und bildet einen Router-Baum, der nicht zwangsläufig mit der Zugriffspfad-Struktur übereinstimmt.
+Ich glaube, Salvos Routing-System sticht hervor. Router können flach oder baumartig sein und unterscheiden zwischen *Geschäftslogikbäumen* und *Zugriffsverzeichnisbäumen*. Der Geschäftslogikbaum organisiert Router nach geschäftlichen Anforderungen, die nicht unbedingt mit dem Zugriffsverzeichnisbaum übereinstimmen.
 
-Normalerweise schreiben wir Routen so:
+Typischerweise werden Routen so geschrieben:
 
 ```rust
 Router::new().path("articles").get(list_articles).post(create_article);
@@ -71,7 +72,7 @@ Router::new()
     .delete(delete_article);
 ```
 
-Oft erfordern das Auflisten und Anzeigen von Artikeln keine Benutzeranmeldung, während das Erstellen, Bearbeiten und Löschen Authentifizierung benötigt. Salvos verschachteltes Routingsystem erfüllt diese Anforderung ideal. Routen ohne Authentifizierung können zusammengefasst werden:
+Oft erfordern das Anzeigen und Auflisten von Artikeln keine Benutzeranmeldung, während das Erstellen, Bearbeiten oder Löschen von Artikeln sehr wohl eine Anmeldung voraussetzt. Salvos verschachteltes Routing-System bewältigt dies elegant. Wir können öffentliche Routen zusammenfassen:
 
 ```rust
 Router::new()
@@ -80,17 +81,17 @@ Router::new()
     .push(Router::new().path("{id}").get(show_article));
 ```
 
-Routen mit Authentifizierung werden gruppiert und durch entsprechende Middleware abgesichert:
+Anschließend gruppieren wir geschützte Routen mit Middleware zur Authentifizierung:
 
 ```rust
 Router::new()
     .path("articles")
     .hoop(auth_check)
-    .post(list_articles)
+    .post(create_article)
     .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
 ```
 
-Obwohl beide Router den gleichen `path("articles")` haben, können sie demselben Eltern-Router hinzugefügt werden. Die finale Route sieht dann so aus:
+Obwohl beide Router denselben `path("articles")` haben, können sie demselben übergeordneten Router hinzugefügt werden, was zu folgendem Ergebnis führt:
 
 ```rust
 Router::new()
@@ -104,10 +105,10 @@ Router::new()
         Router::new()
             .path("articles")
             .hoop(auth_check)
-            .post(list_articles)
+            .post(create_article)
             .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
 ```
 
-`{id}` matcht ein Pfadsegment. Da Artikel-IDs normalerweise nur Zahlen sind, kann die Matching-Regel mit einem regulären Ausdruck eingeschränkt werden: `r"{id:/\d+/}"`.
-{/* Auto generated, origin file hash:bd1fc4c816e814fa9f1d5c39301ad59a */}
+`{id}` matcht ein Pfadsegment. Typischerweise ist eine Artikel-`id` numerisch, daher können wir den Match mit einem Regex einschränken: `r"{id:/\d+/}"`.
+{/* Auto generated, origin file hash:53ec9b9aab674c6d0bf9c162d2a13fc4 */}

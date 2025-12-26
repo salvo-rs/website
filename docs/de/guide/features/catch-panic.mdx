@@ -1,17 +1,17 @@
-# Panics in Anfragen abfangen
+# Abfangen von Panics in Anfragen
 
-Catch Panic dient dazu, Abstürze abzufangen, die während der Verarbeitung von Anfragen im laufenden Betrieb auftreten. Detaillierte APIs finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
+Catch Panic dient dazu, Abstürze abzufangen, die während der Anfrageverarbeitung im Programm auftreten. Für spezifische APIs konsultieren Sie bitte [die Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
 
-> **Hinweis**: Um `CatchPanic` zu verwenden, muss das Feature `catch-panic` in `Cargo.toml` aktiviert werden:
+> **Hinweis**: Um `CatchPanic` zu verwenden, müssen Sie das Feature `catch-panic` in `Cargo.toml` aktivieren:
 > ```toml
 > salvo = { version = "xxx", features = ["catch-panic"] }
 > ```
 
 ## Middleware-Einführung
 
-`CatchPanic` ist eine Middleware zum Abfangen von Panics in Handlern. Wenn während der Anfrageverarbeitung ein Panic auftritt, fängt sie diesen ab und schreibt stattdessen einen 500 Internal Server Error in die Antwort, anstatt den gesamten Server abstürzen zu lassen.
+`CatchPanic` ist eine Middleware, die entwickelt wurde, um Panics in Handlern abzufangen. Wenn während der Anfrageverarbeitung ein Panic auftritt, fängt es diesen ab und schreibt einen 500 Internal Server Error in die Antwort, wodurch verhindert wird, dass der gesamte Server abstürzt.
 
-**Wichtig**: Diese Middleware sollte als erste Middleware verwendet werden, um sicherzustellen, dass Panics in anderen Middlewares oder Handlern abgefangen werden.
+**Wichtiger Hinweis**: Diese Middleware sollte als erste Middleware verwendet werden, um sicherzustellen, dass sie Panics von anderen Middlewares oder Handlern abfangen kann.
 
 ## Grundlegende Verwendung
 
@@ -32,11 +32,11 @@ async fn main() {
 }
 ```
 
-## Vergleich mit anderen Frameworks – Konzepte schnell verstehen
+## Vergleich mit anderen Frameworks zum schnellen Konzeptverständnis
 
 ### Axum
 
-Ähnlich dem `catch_panic`-Middleware von `Tower` in Axum:
+Ähnlich der `catch_panic`-Middleware in Axums `Tower`:
 
 ```rust
 use axum::{
@@ -69,7 +69,7 @@ async fn main() {
 
 ### Gin (Go)
 
-Im Go-Framework Gin ähnelt die Recovery-Middleware:
+Im Go-Framework Gin ähnlich der Recovery-Middleware:
 
 ```go
 package main
@@ -103,4 +103,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:ad03110400c39a35184d54e9554276b5 */}
+{/* Auto generated, origin file hash:5242c3a9da24068edd412c0516cdb270 */}

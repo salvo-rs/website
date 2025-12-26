@@ -1,34 +1,33 @@
-# CORS-Kontrolle
+# Cross-Origin-Kontrolle
 
-CORS (Cross-Origin Resource Sharing, Cross-Origin Resource Sharing) ist ein Mechanismus, der es Browsern ermöglicht, Anfragen an serverübergreifende Server zu senden und so die Einschränkungen der Same-Origin-Policy des Browsers zu überwinden.
+CORS (Cross-Origin Resource Sharing) ist ein Mechanismus, der es Browsern ermöglicht, Anfragen an serverübergreifende Server zu stellen und so die Beschränkungen der Browser-Same-Origin-Policy zu umgehen.
 
 ## Was ist die Same-Origin-Policy?
 
-Die Same-Origin-Policy ist eine Sicherheitsfunktion des Browsers, die einschränkt, wie ein von einer Quelle geladenes Dokument oder Skript mit Ressourcen einer anderen Quelle interagieren kann. "Same-Origin" bezieht sich auf dasselbe Protokoll, denselben Domainnamen und denselben Port.
+Die Same-Origin-Policy ist eine Sicherheitsfunktion von Browsern, die einschränkt, wie Dokumente oder Skripte von einem Ursprung mit Ressourcen eines anderen Ursprungs interagieren können. "Same Origin" bedeutet, dass Protokoll, Domain und Portnummer identisch sind.
 
 ## Warum wird CORS benötigt?
 
-Wenn eine Frontend-Anwendung auf APIs einer anderen Quelle zugreifen muss, ist CORS-Unterstützung erforderlich. Zum Beispiel:
-- Frontend-Anwendung bereitgestellt unter `https://frontend.com`
-- API-Dienst bereitgestellt unter `https://api.backend.com`
+CORS-Unterstützung ist erforderlich, wenn eine Frontend-Anwendung auf APIs eines anderen Ursprungs zugreifen muss. Beispiel:
+- Die Frontend-Anwendung ist unter `https://frontend.com` bereitgestellt
+- Der API-Dienst ist unter `https://api.backend.com` bereitgestellt
 
-Ohne CORS würde der Browser den Zugriff der Frontend-Anwendung auf den API-Dienst blockieren.
+Ohne CORS verhindert der Browser, dass die Frontend-Anwendung auf den API-Dienst zugreift.
 
-## Funktionsweise von CORS
+## Wie CORS funktioniert
 
-CORS implementiert die serverübergreifende Zugriffskontrolle über eine Reihe von HTTP-Headern:
-- Einfache Anfragen: Werden direkt gesendet, der Server steuert über Antwortheader, ob sie erlaubt sind.
-- Preflight-Anfragen: Der Browser sendet zuerst eine OPTIONS-Anfrage, um den Server nach der Erlaubnis für serverübergreifenden Zugriff zu fragen, und sendet erst nach Erhalt der Erlaubnis die eigentliche Anfrage.
+CORS implementiert die serverübergreifende Zugriffskontrolle durch eine Reihe von HTTP-Headern:
+- **Einfache Anfragen**: Werden direkt gesendet, wobei der Server über Antwort-Header steuert, ob der Zugriff erlaubt ist.
+- **Preflight-Anfragen**: Der Browser sendet zuerst eine OPTIONS-Anfrage, um den Server zu fragen, ob serverübergreifender Zugriff erlaubt ist, und sendet die eigentliche Anfrage erst nach Erhalt der Erlaubnis.
 
-Da der Browser eine Preflight-Anfrage mit `Method::OPTIONS` sendet, muss die Verarbeitung solcher Anfragen hinzugefügt werden. Das CORS-Middleware muss zum `Service` hinzugefügt werden.
+Da der Browser Preflight-Anfragen mit `Method::OPTIONS` sendet, ist es notwendig, solche Anfragen zu behandeln. Das CORS-Middleware muss zum `Service` hinzugefügt werden.
 
 ## Verwendung von CORS in Salvo
 
-Salvo bietet ein integriertes CORS-Middleware, das einfach konfiguriert und verwendet werden kann. Hier ist ein Beispielcode:
+Salvo bietet ein integriertes CORS-Middleware, das einfach konfiguriert und verwendet werden kann. Hier ist ein Beispielcodeausschnitt:
 
 :::warning
-Hinweis. Die .hoop(cors)-Middleware wirkt auf den `Service`, nicht auf den `Router`.
-Dadurch werden OPTIONS-Preflight-Anfragen automatisch verarbeitet.
+Hinweis: Das `.hoop(cors)`-Middleware wird auf den `Service` angewendet, nicht auf den `Router`. Dies stellt sicher, dass OPTIONS-Preflight-Anfragen automatisch behandelt werden.
 ```rust
 let cors = Cors::new()
     .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
@@ -62,11 +61,11 @@ import { Tab, Tabs } from '@rspress/core/theme';
 Das CORS-Middleware bietet verschiedene Konfigurationsoptionen:
 
 - **Erlaubte Ursprünge**: Steuert, welche Domänen auf Ressourcen zugreifen können.
-- **Erlaubte Methoden**: Gibt die erlaubten HTTP-Methoden an (GET, POST usw.).
-- **Erlaubte Header**: Gibt die erlaubten Anfrageheader an.
-- **Verfügbar gemachte Header**: Gibt an, welche Antwortheader für den Client zugänglich sind.
-- **Erlaubte Anmeldeinformationen**: Legt fest, ob Anfragen Anmeldeinformationen wie Cookies enthalten dürfen.
-- **Preflight-Anfrage-Cache-Zeit**: Cache-Zeit für die Ergebnisse von Preflight-Anfragen.
+- **Erlaubte Methoden**: Gibt erlaubte HTTP-Methoden an (GET, POST, etc.).
+- **Erlaubte Header**: Gibt erlaubte Anfrage-Header an.
+- **Verfügbar gemachte Header**: Gibt an, welche Antwort-Header vom Client abgerufen werden können.
+- **Anmeldedaten erlauben**: Bestimmt, ob Anfragen Anmeldedaten wie Cookies enthalten dürfen.
+- **Preflight-Anfrage-Cache-Zeit**: Die Cache-Dauer für Preflight-Anfrageergebnisse.
 
-Durch angemessene Konfiguration von CORS kann sowohl Sicherheit gewährleistet als auch der Bedarf an serverübergreifendem Zugriff erfüllt werden.
-{/* Auto generated, origin file hash:cf229c3c39be32658130e3590ea819e7 */}
+Durch angemessene Konfiguration von CORS können Sie sowohl Sicherheit als auch die Fähigkeit gewährleisten, serverübergreifende Zugriffsanforderungen zu erfüllen.
+{/* Auto generated, origin file hash:06a4a7b1ce4049ea7d3c15924bdd7397 */}

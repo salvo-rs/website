@@ -2,9 +2,9 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Si le code d'état de la `Response` est une erreur et que le `Body` de la page est vide, Salvo tentera d'utiliser un `Catcher` pour intercepter cette erreur et afficher une page d'erreur conviviale.
+Lorsqu'une `Response` renvoie un code d'état d'erreur et que le `Body` dans la page est vide, Salvo tentera d'intercepter cette erreur à l'aide d'un `Catcher` et affichera une page d'erreur conviviale.
 
-Vous pouvez utiliser `Catcher::default()` pour obtenir un `Catcher` par défaut du système, puis l'ajouter au `Service`.
+Vous pouvez obtenir un `Catcher` par défaut du système en appelant `Catcher::default()`, puis l'ajouter au `Service`.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -14,9 +14,9 @@ Service::new(router).catcher(Catcher::default());
 
 Le `Catcher` par défaut prend en charge l'envoi de pages d'erreur aux formats `XML`, `JSON`, `HTML` et `Text`.
 
-Vous pouvez ajouter des programmes de capture d'erreurs personnalisés au `Catcher` en lui ajoutant des `hoop`. Ces programmes de capture d'erreurs restent des `Handler`.
+Vous pouvez ajouter des gestionnaires d'erreurs personnalisés au `Catcher` en attachant des `hoop`s à ce `Catcher` par défaut. Ces gestionnaires d'erreurs sont toujours de type `Handler`.
 
-Vous pouvez ajouter plusieurs programmes de capture d'erreurs personnalisés au `Catcher` via `hoop`. Les gestionnaires d'erreurs personnalisés peuvent appeler la méthode `FlowCtrl::skip_next` après avoir traité l'erreur pour ignorer les programmes d'erreur suivants et retourner plus tôt.
+Vous pouvez ajouter plusieurs gestionnaires d'erreurs personnalisés au `Catcher` via des `hoop`s. Les gestionnaires d'erreurs personnalisés peuvent appeler la méthode `FlowCtrl::skip_next` après avoir traité une erreur pour ignorer les gestionnaires d'erreurs suivants et retourner plus tôt.
 
 <Tabs>
   <Tab label="main.rs">
@@ -28,4 +28,4 @@ Vous pouvez ajouter plusieurs programmes de capture d'erreurs personnalisés au 
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:6d187ebda60dfda18718df8cd81080ad */}
+{/* Auto generated, origin file hash:97cdd2200a1b89f29e73587bb7a0e9bd */}

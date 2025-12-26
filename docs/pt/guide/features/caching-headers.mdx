@@ -1,14 +1,14 @@
 # Cabeçalhos de Cache
 
-Middleware que fornece suporte à configuração de cabeçalhos de cache.
+Um middleware que fornece suporte para configurar cabeçalhos de cache.
 
-O controle de cache é uma parte crucial da otimização de desempenho web. Ao configurar corretamente os cabeçalhos de cache, é possível reduzir solicitações de rede desnecessárias e melhorar o desempenho do aplicativo. [Cache-Control](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Headers/Cache-Control) é um cabeçalho de resposta HTTP usado para especificar diretivas de política de cache do navegador, controlando quem pode armazenar em cache a resposta, sob quais condições e por quanto tempo.
+O controle de cache é uma parte crucial da otimização de desempenho web. Ao configurar corretamente os cabeçalhos de cache, é possível reduzir solicitações de rede desnecessárias, melhorando assim o desempenho da aplicação. [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) é um cabeçalho de resposta HTTP usado para especificar políticas de cache do navegador. Ele controla quem pode armazenar respostas em cache, em quais condições e por quanto tempo.
 
-A implementação interna inclui três `Handlers`: `CachingHeaders`, `Modified` e `ETag`. `CachingHeaders` é uma combinação dos dois últimos. Normalmente, utiliza-se `CachingHeaders`.
+Internamente, inclui implementações de três `Handler`s: `CachingHeaders`, `Modified` e `ETag`. `CachingHeaders` é uma combinação dos dois últimos. Em circunstâncias normais, utiliza-se `CachingHeaders`.
 
-- `Modified`: Fornece validação de cache com base na última data de modificação do recurso.
-- `ETag`: Utiliza uma tag de entidade (Entity Tag) para fornecer um mecanismo de validação de recursos mais preciso.
-- `CachingHeaders`: Combina os dois mecanismos acima, oferecendo suporte completo ao controle de cache.
+- `Modified`: Fornece validação de cache baseada no último horário de modificação do recurso.
+- `ETag`: Usa Entity Tags para oferecer um mecanismo de validação de recursos mais preciso.
+- `CachingHeaders`: Combina os dois mecanismos acima para fornecer suporte abrangente ao controle de cache.
 
 _**Código de Exemplo**_
 
@@ -24,4 +24,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:08699e65af0ef5c9fac56f0fb8d73153 */}
+{/* Auto generated, origin file hash:cb14e5ae25e20d47dc9f3545411e408d */}

@@ -1,16 +1,16 @@
-# Compression des réponses
+# Compression de Réponse
 
-Middleware de traitement de compression pour le contenu des `Response`.
+Un middleware pour compresser le contenu de la `Réponse`.
 
-Prend en charge trois formats de compression : `br`, `gzip`, `deflate`. Permet de configurer la priorité de chaque méthode de compression selon les besoins.
+Prend en charge trois formats de compression : `br`, `gzip` et `deflate`. La priorité et la configuration de chaque méthode de compression peuvent être personnalisées selon les besoins.
 
-## Compression de données dans le protocole HTTP
+## Compression des données dans le protocole HTTP
 
-1. Au niveau du format de fichier : des algorithmes de compression spécifiques sont utilisés pour certains types de fichiers.
-2. Au niveau du protocole HTTP : compression des ressources de bout en bout via l'encodage du contenu.
-3. Au niveau de la connexion : compression des données entre les nœuds de connexion HTTP.
+1. Niveau format de fichier : Les types de fichiers spécifiques utilisent des algorithmes de compression dédiés.
+2. Niveau protocole HTTP : La transmission de ressources compressées de bout en bout est réalisée via l'encodage du contenu.
+3. Niveau connexion : La compression des données est effectuée entre les nœuds d'une connexion HTTP.
 
-Pour plus d'informations sur la compression HTTP, consultez la [documentation du Mozilla Developer Network](https://developer.mozilla.org/fr/docs/Web/HTTP/Guides/Compression).
+Pour plus d'informations sur la compression HTTP, consultez la [documentation du Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Compression).
 
 ## Exemple de code
 
@@ -26,4 +26,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:adfd8752c21601fac83a31d329cf6dae */}
+{/* Auto generated, origin file hash:0fd5e60897421152fcc9f44bf5f4fb39 */}

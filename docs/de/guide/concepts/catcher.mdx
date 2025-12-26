@@ -2,9 +2,9 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Wenn der Statuscode der `Response` einen Fehler anzeigt und der `Body` auf der Seite leer ist, versucht Salvo, diesen Fehler mit einem `Catcher` abzufangen, um eine benutzerfreundliche Fehlerseite anzuzeigen.
+Wenn eine `Response` einen Fehlercode zurückgibt und der `Body` innerhalb der Seite leer ist, versucht Salvo diesen Fehler mithilfe eines `Catcher` abzufangen und eine benutzerfreundliche Fehlerseite anzuzeigen.
 
-Sie können mit `Catcher::default()` einen standardmäßigen `Catcher` des Systems zurückgeben und ihn dann zum `Service` hinzufügen.
+Sie können einen systemstandardmäßigen `Catcher` durch Aufruf von `Catcher::default()` erhalten und ihn dann zum `Service` hinzufügen.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -12,11 +12,11 @@ use salvo::catcher::Catcher;
 Service::new(router).catcher(Catcher::default());
 ```
 
-Der Standard-`Catcher` unterstützt das Senden von Fehlerseiten in den Formaten `XML`, `JSON`, `HTML` und `Text`.
+Der standardmäßige `Catcher` unterstützt das Senden von Fehlerseiten in den Formaten `XML`, `JSON`, `HTML` und `Text`.
 
-Sie können dem Standard-`Catcher` benutzerdefinierte Fehlerbehandlungsroutinen hinzufügen, indem Sie ihm einen `hoop` hinzufügen. Diese Fehlerbehandlungsroutinen sind weiterhin `Handler`.
+Sie können benutzerdefinierte Fehlerbehandlungsroutinen zum `Catcher` hinzufügen, indem Sie `hoop`s an diesen Standard-`Catcher` anhängen. Diese Fehlerbehandlungsroutinen sind weiterhin vom Typ `Handler`.
 
-Sie können dem `Catcher` über `hoop` mehrere benutzerdefinierte Fehlerbehandlungsroutinen hinzufügen. Benutzerdefinierte Fehlerbehandlungsroutinen können nach der Fehlerbehandlung die Methode `FlowCtrl::skip_next` aufrufen, um nachfolgende Fehlerbehandlungen zu überspringen und frühzeitig zurückzukehren.
+Sie können mehrere benutzerdefinierte Fehlerbehandlungsroutinen über `hoop`s zum `Catcher` hinzufügen. Benutzerdefinierte Fehlerbehandlungsroutinen können nach der Verarbeitung eines Fehlers die Methode `FlowCtrl::skip_next` aufrufen, um nachfolgende Fehlerbehandlungsroutinen zu überspringen und frühzeitig zurückzukehren.
 
 <Tabs>
   <Tab label="main.rs">
@@ -28,4 +28,4 @@ Sie können dem `Catcher` über `hoop` mehrere benutzerdefinierte Fehlerbehandlu
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:6d187ebda60dfda18718df8cd81080ad */}
+{/* Auto generated, origin file hash:97cdd2200a1b89f29e73587bb7a0e9bd */}

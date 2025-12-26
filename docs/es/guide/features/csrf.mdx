@@ -1,35 +1,35 @@
-# Defensa contra CSRF
+# Protección CSRF
 
 ## ¿Qué es CSRF?
 
-CSRF (Cross-Site Request Forgery, falsificación de solicitud en sitios cruzados) es una vulnerabilidad de seguridad en la que un atacante induce a un usuario autenticado a realizar acciones no deseadas sin su conocimiento. En términos simples, el atacante aprovecha la sesión activa del usuario para enviar solicitudes maliciosas en su nombre.
+CSRF (Cross-Site Request Forgery) es una vulnerabilidad de seguridad web donde los atacantes engañan a usuarios autenticados para realizar acciones no deseadas sin su conocimiento. En términos simples, los atacantes aprovechan el estado de inicio de sesión de un usuario para enviar solicitudes maliciosas en su nombre.
 
-## Principio de ataque CSRF
+## Cómo funcionan los ataques CSRF
 
-Los pasos típicos del ataque son:
-1. El usuario inicia sesión en el sitio web objetivo A y obtiene una cookie de autenticación
-2. El usuario visita un sitio malicioso B
-3. El código del sitio malicioso B envía automáticamente una solicitud al sitio A, incluyendo la cookie del usuario
-4. El sitio A no puede distinguir si es una solicitud maliciosa o una acción legítima del usuario
+El proceso típico de ataque implica:
+1. El usuario inicia sesión en el sitio web objetivo A y obtiene una cookie de autenticación.
+2. El usuario visita un sitio web malicioso B.
+3. El código en el sitio web malicioso B envía automáticamente una solicitud al sitio web A, llevando la cookie del usuario.
+4. El sitio web A no puede distinguir si esta es una solicitud maliciosa o una acción legítima del usuario.
 
 ## Estrategias de protección
 
-Salvo proporciona middleware CSRF para proteger su aplicación contra este tipo de ataques:
+Salvo proporciona middleware CSRF para proteger sus aplicaciones de tales ataques:
 
-- Agrega un token CSRF oculto en los formularios
-- Verifica que las solicitudes enviadas por el usuario contengan un token CSRF válido
-- Por defecto, valida solicitudes POST, PATCH, DELETE y PUT
+- Agregar un token CSRF oculto a los formularios.
+- Verificar que las solicitudes enviadas por el usuario contengan un token CSRF válido.
+- Por defecto, validar solicitudes POST, PATCH, DELETE y PUT.
 
 ## Implementación de CSRF en Salvo
 
-`Csrf` es una estructura que implementa `Handler`, con un campo interno `skipper` que permite omitir la verificación de ciertas solicitudes. Por defecto, valida solicitudes `Method::POST`, `Method::PATCH`, `Method::DELETE` y `Method::PUT`.
+`Csrf` es una estructura que implementa el trait `Handler` e incluye un campo interno `skipper` para especificar solicitudes que deben omitir la validación. Por defecto, valida solicitudes `Method::POST`, `Method::PATCH`, `Method::DELETE` y `Method::PUT`.
 
 Salvo admite dos métodos de almacenamiento de tokens CSRF:
 
-1. **CookieStore**: Almacena el token en una cookie, verificando que el `csrf-token` en el encabezado o formulario coincida con el valor de la cookie
-2. **SessionStore**: Almacena el token en la sesión, requiriendo el uso conjunto con middleware de sesión
+1. **CookieStore**: Almacena el token en una cookie y verifica si el `csrf-token` en los encabezados de solicitud o formulario coincide con el valor de la cookie.
+2. **SessionStore**: Almacena el token en la sesión y requiere el uso de middleware de sesión.
 
-_**Código de ejemplo**_ (cookie store)
+_**Código de ejemplo**_ (almacenamiento en cookie)
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -44,7 +44,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
   </Tab>
 </Tabs>
 
-_**Código de ejemplo**_ (session store)
+_**Código de ejemplo**_ (almacenamiento en sesión)
 
 <Tabs>
   <Tab label="main.rs">
@@ -56,4 +56,4 @@ _**Código de ejemplo**_ (session store)
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:2eb072bb663695f226b56a34f14cdbb0 */}
+{/* Auto generated, origin file hash:281af9db9061b1bf9710319568d31c6d */}

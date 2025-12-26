@@ -1,15 +1,15 @@
-# Middleware de Log
+# Middleware de Registro
 
-O registro de logs desempenha um papel crucial em aplicações web, permitindo:
-- Fornecer informações detalhadas sobre o processamento de requisições, auxiliando desenvolvedores no rastreamento do comportamento da aplicação
-- Facilitar a identificação e depuração de problemas, especialmente em ambientes de produção
-- Monitorar o desempenho da aplicação e o uso de recursos
-- Registrar padrões de acesso de usuários e exceções do sistema
-- Atender a requisitos de auditoria de segurança e conformidade
+O registro desempenha um papel crucial em aplicações web, pois permite:
+- Fornecer informações detalhadas sobre o processo de manipulação de solicitações para ajudar os desenvolvedores a rastrear o comportamento do aplicativo
+- Auxiliar na solução de problemas e depuração, especialmente em ambientes de produção
+- Monitorar o desempenho do aplicativo e o uso de recursos
+- Registrar padrões de acesso do usuário e exceções do sistema
+- Atender aos requisitos de auditoria de segurança e conformidade
 
-O Salvo oferece um middleware com funcionalidade básica de Log. Se o middleware for adicionado diretamente a um `Router`, ele não conseguirá capturar erros 404 retornados quando nenhum `Router` corresponder. Recomenda-se adicioná-lo ao `Service`.
+O Salvo fornece um middleware com funcionalidade básica de registro. Se o middleware for adicionado diretamente a um `Router`, ele não capturará erros 404 retornados quando nenhum `Router` corresponder à solicitação. Recomenda-se adicioná-lo ao `Service` em vez disso.
 
-_**Código de Exemplo**_ 
+_**Código de Exemplo**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -23,4 +23,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:4c7986fbfefd00cadca247ef815900e4 */}
+{/* Auto generated, origin file hash:2141a86be11e607af3cc2a894012ef08 */}

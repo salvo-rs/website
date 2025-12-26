@@ -5,10 +5,10 @@ title: Alternative agli Allocatori di Memoria in Rust
 # Jemallocator: Alternativa all'Allocatore di Memoria jemalloc per Rust
 
 :::tip
-L'allocatore predefinito potrebbe occasionalmente non rilasciare tempestivamente la memoria. Si consiglia di utilizzare (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] come allocatore globale per sostituire quello predefinito.
+L'allocatore predefinito potrebbe occasionalmente non rilasciare tempestivamente la memoria. Si consiglia di utilizzare [jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) come allocatore globale per sostituire quello predefinito.
 :::
 
-(jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] è una libreria collegata all'allocatore di memoria jemalloc, che fornisce il tipo unitario `Jemalloc` implementante l'API allocatore e configurabile come `#[global_allocator]`.
+[jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) è una libreria collegata all'allocatore di memoria jemalloc, che fornisce il tipo unitario `Jemalloc` implementante l'API allocatore e configurabile come `#[global_allocator]`.
 
 `tikv-jemallocator` è il progetto successore di `jemallocator`. Queste due crate sono identiche eccetto per il nome. Per nuovi progetti, si raccomanda di utilizzare la versione `tikv-xxx`.
 
@@ -24,7 +24,7 @@ L'ecosistema di supporto jemalloc comprende le seguenti crate:
 
 ### Aggiunta Dipendenze
 
-Per utilizzare tikv-jemallocator, aggiungerla come dipendenza:
+Per utilizzare tikv-jemallocator, aggiungerlo come dipendenza:
 
 ```toml
 [dependencies]
@@ -33,7 +33,7 @@ Per utilizzare tikv-jemallocator, aggiungerla come dipendenza:
 tikv-jemallocator = "0.5"
 ```
 
-### Configurazione come Allocatore Globale
+### Impostazione come Allocatore Globale
 
 Per impostare `tikv_jemallocator::Jemalloc` come allocatore globale, aggiungere il seguente codice al progetto:
 
@@ -46,13 +46,13 @@ use tikv_jemallocator::Jemalloc;
 static GLOBAL: Jemalloc = Jemalloc;
 ```
 
-Operazione completata! Una volta definita questa variabile statica, jemalloc verrà utilizzato per tutte le allocazioni di memoria richieste dal codice Rust all'interno dello stesso programma.
+Fatto! Una volta definita questa variabile statica, jemalloc verrà utilizzato per tutte le allocazioni di memoria richieste dal codice Rust all'interno dello stesso programma.
 
 ## Vantaggi
 
 jemalloc è un'implementazione malloc generica che si concentra su:
 
-- Riduzione della frammentazione di memoria
+- Riduzione della frammentazione della memoria
 - Scalabilità in scenari ad alta concorrenza
 - Fornitura di ricche capacità di introspezione e controllo
 
@@ -63,5 +63,5 @@ Risulta particolarmente utile nei seguenti scenari:
 
 ## Note di Compatibilità
 
-jemalloc non supporta l'ambiente target MSVC e pertanto non è disponibile quando si utilizza la toolchain MSVC su Windows. Questo spiega la presenza della condizione `cfg(not(target_env = "msvc"))` nel codice di esempio.
-{/* Auto generated, origin file hash:6009a1f195906dbd347bda41d4c447b9 */}
+jemalloc non supporta l'ambiente target MSVC e pertanto non è disponibile quando si utilizza la toolchain MSVC su Windows. Questo spiega la condizione `cfg(not(target_env = "msvc"))` inclusa nel codice di esempio.
+{/* Auto generated, origin file hash:02aa32143bfd3592039f518984bc0bb5 */}

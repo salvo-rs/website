@@ -1,16 +1,16 @@
 # Reverse-Proxy
 
-Ein Reverse-Proxy ist eine Serverarchitektur, die Anfragen von Clients entgegennimmt und an einen oder mehrere Backend-Server weiterleitet. Im Gegensatz zu einem Forward-Proxy (der für Clients agiert) arbeitet der Reverse-Proxy auf Serverseite.
+Ein Reverse-Proxy ist eine Serverarchitektur, die Anfragen von Clients entgegennimmt und an einen oder mehrere Backend-Server weiterleitet. Im Gegensatz zu einem Forward-Proxy (der im Namen von Clients agiert) arbeitet ein Reverse-Proxy stellvertretend für die Serverseite.
 
-Die Hauptvorteile eines Reverse-Proxy:
-- Lastverteilung: Verteilung von Anfragen auf mehrere Server
-- Erhöhte Sicherheit: Verbergen echter Serverinformationen
-- Inhaltscaching: Leistungssteigerung
-- Pfadumleitung und Weiterleitung: Flexible Anfragenrouting
+Wesentliche Vorteile von Reverse-Proxys:
+- Lastverteilung: Verteilt Anfragen auf mehrere Server
+- Erhöhte Sicherheit: Verbirgt echte Serverinformationen
+- Inhaltszwischenspeicherung: Verbessert die Leistung
+- Pfadumbeschreibung und Weiterleitung: Leitet Anfragen flexibel weiter
 
-Das Salvo-Framework bietet ein Middleware-Modul für Reverse-Proxy-Funktionalität.
+Das Salvo-Framework bietet Middleware für Reverse-Proxy-Funktionalität.
 
-_**Beispielcode**_ 
+_**Beispielcode**_
 
 ```rust
 use salvo::prelude::*;
@@ -34,4 +34,4 @@ async fn main() {
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
 }
 ```
-{/* Auto generated, origin file hash:79e235201cbe5bf2b6045156f3bae7e7 */}
+{/* Auto generated, origin file hash:594583a2fd3f2a79edbb906b0b80aa56 */}

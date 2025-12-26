@@ -1,6 +1,6 @@
-# Writer
+# Escritor
 
-O `Writer` é utilizado para escrever conteúdo na `Response`:
+`Writer` é utilizado para escrever conteúdo na `Response`:
 
 ```rust
 #[async_trait]
@@ -18,13 +18,13 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-As diferenças diretas entre eles são:
-- A finalidade é diferente. O `Writer` representa a escrita de conteúdo específico na `Response`, implementado por conteúdos concretos, como strings, mensagens de erro, etc. Já o `Handler` é utilizado para processar toda a requisição.
-- O `Writer` é criado dentro do `Handler` e é consumido quando a função `write` é chamada, sendo uma chamada única. Enquanto isso, o `Handler` é compartilhado por todas as requisições.
-- O `Writer` pode ser retornado como conteúdo no `Result` do `Handler`.
-- O `Writer` não possui o parâmetro `FlowCtrl`, portanto não pode controlar o fluxo de execução da requisição.
+As principais diferenças entre eles são:
+- Propósitos distintos: `Writer` representa a escrita de conteúdo específico na `Response`, implementado por conteúdos concretos como strings, mensagens de erro, etc. Em contraste, `Handler` é utilizado para processar toda a requisição.
+- `Writer` é criado dentro de um `Handler` e consome a si mesmo quando a função `write` é chamada, tornando-a uma chamada única. Por outro lado, `Handler` é compartilhado entre todas as requisições.
+- `Writer` pode ser retornado como conteúdo no `Result` de um `Handler`.
+- `Writer` não inclui um parâmetro `FlowCtrl`, portanto não pode controlar o fluxo de execução da requisição completa.
 
-O `Scribe` implementa o `Writer`, mas com funcionalidades mais limitadas:
+`Scribe` implementa `Writer`, mas oferece menos capacidades em comparação com `Writer`:
 
 ```rust
 pub trait Scribe {
@@ -32,5 +32,5 @@ pub trait Scribe {
 }
 ```
 
-A função de renderização do `Scribe` apenas escreve dados na `Response`, e esse processo não pode obter informações do `Request` ou do `Depot`.
-{/* Auto generated, origin file hash:a88019b69f080567caf2af39cb1d17e5 */}
+A função de renderização de `Scribe` apenas escreve dados na `Response` e não pode recuperar informações do `Request` ou `Depot` durante este processo.
+{/* Auto generated, origin file hash:df53cc52cfa8897aec795a4283df281b */}

@@ -1,15 +1,15 @@
-# Middleware zur Begrenzung der Upload-Dateigröße
+# Middleware zur Begrenzung der Datei-Upload-Größe
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware zur Begrenzung der Größe hochgeladener Dateien in Anfragen.
+Eine Middleware zur Begrenzung der Größe hochgeladener Dateien in Anfragen.
 
-## Anwendungsszenarien
+## Anwendungsfälle
 
-Der Size Limiter wird hauptsächlich in folgenden Szenarien eingesetzt:
-- Verhindern, dass Benutzer zu große Dateien hochladen und Serverressourcen belegen
-- Vermeiden von Server-Speicherüberläufen durch böswillige Angreifer, die große Datenmengen hochladen
-- Festlegen unterschiedlicher Anfragegrößenbeschränkungen für verschiedene API-Endpunkte
+Die Größenbegrenzung wird hauptsächlich in folgenden Szenarien eingesetzt:
+- Verhindern, dass Benutzer übermäßig große Dateien hochladen, die Serverressourcen verbrauchen
+- Vermeiden von Server-Speicherüberlauf durch böswillige Angreifer, die große Datenmengen hochladen
+- Festlegen unterschiedlicher Richtlinien zur Anfragegrößenbegrenzung für verschiedene API-Endpunkte
 - Verbesserung der Effizienz und Stabilität der Serveranfrageverarbeitung
 
 _**Beispielcode**_ 
@@ -24,4 +24,4 @@ _**Beispielcode**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:e8fe97542f86e069c6a192945b8303da */}
+{/* Auto generated, origin file hash:dcaab72e263599802483c91ae5fc9b85 */}

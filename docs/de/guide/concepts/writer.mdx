@@ -1,6 +1,6 @@
-# Writer
+# Schreiber
 
-`Writer` dient dazu, Inhalte in die `Response` zu schreiben:
+`Writer` wird verwendet, um Inhalte in `Response` zu schreiben:
 
 ```rust
 #[async_trait]
@@ -9,7 +9,7 @@ pub trait Writer {
 }
 ```
 
-Im Vergleich zum Handler:
+Im Vergleich zu Handler:
 
 ```rust
 #[async_trait]
@@ -18,13 +18,13 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-Die wesentlichen Unterschiede sind:
-- Unterschiedlicher Verwendungszweck: `Writer` repräsentiert das Schreiben konkreter Inhalte in die `Response`, implementiert durch spezifische Inhalte wie Zeichenketten, Fehlermeldungen usw. Der `Handler` hingegen dient der Verarbeitung der gesamten Anfrage.
-- `Writer` wird innerhalb des `Handler` erstellt und verbraucht sich selbst beim Aufruf der `write`-Funktion, es handelt sich um einen einmaligen Aufruf. Der `Handler` wird dagegen von allen Anfragen gemeinsam genutzt.
-- `Writer` kann als Inhalt im zurückgegebenen `Result` des `Handler` dienen.
-- `Writer` enthält keinen `FlowCtrl`-Parameter und kann daher den Ausführungsablauf der gesamten Anfrage nicht steuern.
+Die Hauptunterschiede zwischen ihnen sind:
+- Unterschiedliche Zwecke: `Writer` repräsentiert das Schreiben spezifischer Inhalte in `Response`, implementiert durch konkrete Inhalte wie Zeichenketten, Fehlermeldungen usw. Im Gegensatz dazu wird `Handler` verwendet, um die gesamte Anfrage zu verarbeiten.
+- `Writer` wird innerhalb eines `Handler` erstellt und verbraucht sich selbst, wenn die `write`-Funktion aufgerufen wird, was ihn zu einem einmaligen Aufruf macht. Andererseits wird `Handler` über alle Anfragen hinweg gemeinsam genutzt.
+- `Writer` kann als Inhalt im `Result` eines `Handler` zurückgegeben werden.
+- `Writer` enthält keinen `FlowCtrl`-Parameter und kann daher den Ausführungsfluss der gesamten Anfrage nicht steuern.
 
-`Scribe` implementiert `Writer`, bietet jedoch weniger Funktionalität als `Writer`:
+`Scribe` implementiert `Writer`, bietet jedoch im Vergleich zu `Writer` weniger Fähigkeiten:
 
 ```rust
 pub trait Scribe {
@@ -32,5 +32,5 @@ pub trait Scribe {
 }
 ```
 
-Die Render-Funktion von `Scribe` schreibt lediglich Daten in die `Response`, ohne dabei Informationen aus `Request` oder `Depot` abrufen zu können.
-{/* Auto generated, origin file hash:a88019b69f080567caf2af39cb1d17e5 */}
+Die Render-Funktion von `Scribe` schreibt nur Daten in `Response` und kann während dieses Vorgangs keine Informationen aus `Request` oder `Depot` abrufen.
+{/* Auto generated, origin file hash:df53cc52cfa8897aec795a4283df281b */}

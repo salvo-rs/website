@@ -1,20 +1,20 @@
-# Traffic Control
+# Ratenbegrenzung
 
-Middleware, das Traffic-Control-Funktionalität bereitstellt.
+Middleware zur Bereitstellung von Ratenbegrenzungsfunktionalität.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-## Hauptfunktionen
+## Hauptmerkmale
 
-* `RateIssuer` bietet eine Abstraktion für die Zuweisung von Schlüsseln zur Identifizierung von Besuchern. `RemoteIpIssuer` ist eine Implementierung davon, die Besucher anhand der IP-Adresse der Anfrage bestimmen kann. Der Schlüssel muss nicht unbedingt ein String sein; jeder Typ, der die Einschränkungen `Hash + Eq + Send + Sync + 'static` erfüllt, kann als Schlüssel verwendet werden.
+* `RateIssuer` bietet eine Abstraktion zur Identifizierung von Besucherschlüsseln. `RemoteIpIssuer` ist eine Implementierung davon, die Besucher anhand ihrer IP-Adressen bestimmt. Schlüssel sind nicht zwingend Zeichenketten; jeder Typ, der die `Hash + Eq + Send + Sync + 'static`-Einschränkungen erfüllt, kann als Schlüssel dienen.
 
-* `RateGuard` bietet eine Abstraktion für Traffic-Control-Algorithmen. Standardmäßig sind zwei Implementierungen vorhanden: Festes Fenster (`FixedGuard`) und Gleitendes Fenster (`SlidingGuard`).
+* `RateGuard` bietet eine Abstraktion für Ratenbegrenzungsalgorithmen. Standardimplementierungen umfassen festes Fenster (`FixedGuard`) und gleitendes Fenster (`SlidingGuard`).
 
-* `RateStore` bietet Lese- und Schreiboperationen für Daten. `MokaStore` ist eine integrierte, speicherbasierte Cache-Implementierung auf Basis von `moka`. Sie können auch Ihre eigene Implementierung definieren.
+* `RateStore` stellt Datenbankoperationen bereit. `MokaStore` ist eine eingebaute In-Memory-Cache-Implementierung basierend auf `moka`. Sie können auch eigene Implementierungen definieren.
 
-* `RateLimiter` ist eine Struktur, die `Handler` implementiert. Sie enthält intern auch ein `skipper`-Feld, mit dem Anfragen angegeben werden können, die nicht zwischengespeichert werden müssen. Standardmäßig wird `none_skipper` verwendet, der keine Anfragen überspringt.
+* `RateLimiter` ist eine Struktur, die `Handler` implementiert und ein `skipper`-Feld enthält, um Anfragen zu spezifizieren, die die Ratenbegrenzung umgehen sollen. Standardmäßig wird `none_skipper` verwendet, was bedeutet, dass keine Anfragen übersprungen werden.
 
-* `QuotaGetter` bietet eine Abstraktion für die Kontingentbeschaffung. Basierend auf dem `Key` des Besuchers kann ein Kontingentobjekt abgerufen werden. Das bedeutet, dass wir Benutzerkontingente und ähnliche Informationen in einer Datenbank konfigurieren und dynamisch ändern sowie abrufen können.
+* `QuotaGetter` bietet eine Abstraktion zum Abrufen von Kontingenten. Es holt ein Kontingentobjekt basierend auf dem `Key` des Besuchers, wodurch Benutzerkontingente und andere Konfigurationen in Datenbanken gespeichert und dynamisch geändert oder abgerufen werden können.
 
 _**Beispielcode**_
 
@@ -43,4 +43,4 @@ _**Beispielcode**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:3d248fa793d9b3aab28760c03d743c7a */}
+{/* Auto generated, origin file hash:408bc2d46428cb1116038d58bdda7a66 */}

@@ -1,31 +1,31 @@
 # WebTransport
 
-WebTransport è un protocollo di trasmissione basato su HTTP/3 che fornisce capacità di comunicazione bidirezionale tra client e server, garantendo al contempo bassa latenza, alta velocità di trasferimento e sicurezza.
+WebTransport è un protocollo di trasporto di rete basato su HTTP/3, che fornisce capacità di comunicazione bidirezionale tra client e server garantendo bassa latenza, alta velocità di trasferimento e sicurezza.
 
-## Casi d'uso
+## Casi d'Uso
 
 WebTransport è particolarmente adatto per i seguenti scenari:
 
-- **Applicazioni in tempo reale**: giochi online, strumenti di collaborazione in tempo reale, videoconferenze e altre applicazioni che richiedono comunicazioni a bassa latenza
-- **Trasferimento di file di grandi dimensioni**: supporta trasmissioni dati ad alta velocità, ideale per streaming multimediale e upload/download di file di grandi dimensioni
-- **Comunicazione multiplex**: consente di stabilire simultaneamente più flussi di dati bidirezionali e unidirezionali
-- **Comunicazione tramite datagrammi**: supporta la comunicazione tramite datagrammi senza garanzia di ordine e affidabilità, adatta a scenari con requisiti estremamente stringenti di tempo reale
+- **Applicazioni in Tempo Reale**: Giochi online, strumenti di collaborazione in tempo reale, videoconferenze e altre applicazioni che richiedono comunicazione a bassa latenza.
+- **Trasferimento di File di Grandi Dimensioni**: Supporta la trasmissione dati ad alta velocità, ideale per lo streaming multimediale e il caricamento/scaricamento di file di grandi dimensioni.
+- **Comunicazione Multiplexata**: Consente l'instaurazione simultanea di più flussi di dati bidirezionali e unidirezionali.
+- **Comunicazione tramite Datagrammi**: Supporta la comunicazione tramite datagrammi senza garanzia di ordine o affidabilità, adatta a scenari con requisiti di tempo reale estremamente elevati.
 
-Rispetto a WebSocket, WebTransport offre latenza inferiore e modalità di comunicazione più flessibili, dimostrandosi particolarmente efficace in ambienti di rete instabili.
+Rispetto a WebSocket, WebTransport offre una latenza inferiore e modalità di comunicazione più flessibili, performando particolarmente meglio in ambienti di rete instabili.
 
 ## Implementazione in Salvo
 
 Il framework Salvo fornisce supporto integrato per WebTransport, consentendo agli sviluppatori di costruire facilmente applicazioni basate su WebTransport. Le caratteristiche principali includono:
 
 - Supporto per l'instaurazione di sessioni WebTransport
-- Supporto per comunicazioni tramite flussi bidirezionali (Bidirectional Streams)
-- Supporto per comunicazioni tramite flussi unidirezionali (Unidirectional Streams)
+- Supporto per la comunicazione tramite flussi bidirezionali
+- Supporto per la comunicazione tramite flussi unidirezionali
 - Supporto per la trasmissione di datagrammi
-- Il server può avviare attivamente flussi di comunicazione
+- Flussi di comunicazione avviati dal server
 
-### Esempio semplice
+### Esempio Semplice
 
-Di seguito è riportato un esempio semplificato di implementazione di un server WebTransport utilizzando Salvo:
+Di seguito un esempio semplificato di implementazione di un server WebTransport utilizzando Salvo:
 
 ```rust
 #[handler]
@@ -35,7 +35,7 @@ async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
     // Gestione dei datagrammi
     if let Ok(Some((_, datagram))) = session.accept_datagram().await {
         // Elaborazione del datagramma ricevuto
-        let mut resp = BytesMut::from(&b"Response: "[..]);
+        let mut resp = BytesMut::from(&b"Risposta: "[..]);
         resp.put(datagram);
         session.send_datagram(resp.freeze())?;
     }
@@ -50,9 +50,9 @@ async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
 }
 ```
 
-### Configurazione e avvio
+### Configurazione e Avvio
 
-Per avviare un'applicazione Salvo con supporto WebTransport è necessario configurare il certificato TLS e il listener QUIC:
+L'avvio di un'applicazione Salvo con supporto WebTransport richiede la configurazione di certificati TLS e di un listener QUIC:
 
 ```rust
 let cert = include_bytes!("../certs/cert.pem").to_vec();
@@ -64,7 +64,7 @@ let router = Router::new().push(Router::with_path("counter").goal(connect));
 // Configurazione TLS
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-// Configurazione del listener
+// Configurazione dei listener
 let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 let acceptor = QuinnListener::new(config, ("0.0.0.0", 5800))
     .join(listener)
@@ -75,10 +75,10 @@ let acceptor = QuinnListener::new(config, ("0.0.0.0", 5800))
 Server::new(acceptor).serve(router).await;
 ```
 
-## Esempio completo
+## Esempio Completo
 
-Per ulteriori informazioni sull'utilizzo di WebTransport in Salvo, consulta l'esempio completo su GitHub:
+Per saperne di più sull'utilizzo di WebTransport in Salvo, consulta l'esempio completo su GitHub:
 [https://github.com/salvo-rs/salvo/blob/main/examples/webtransport](https://github.com/salvo-rs/salvo/blob/main/examples/webtransport)
 
-Questo esempio include l'implementazione completa sia lato server che lato client, mostrando come gestire vari tipi di comunicazione WebTransport.
-{/* Auto generated, origin file hash:56518c15094059054cd812ca62f2a97c */}
+Questo esempio include implementazioni complete sia per il server che per il client, dimostrando come gestire vari tipi di comunicazione WebTransport.
+{/* Auto generated, origin file hash:d98d4da0351033ac716bd9facbe3fa45 */}

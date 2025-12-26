@@ -1,12 +1,12 @@
-# Kompatibilität mit Tower-Middleware
+# Tower-Middleware-Kompatibilität
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Salvo bietet Kompatibilitätsunterstützung für das Tower-Ökosystem über das `tower-compat`-Feature. Detaillierte APIs finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
+Salvo bietet Kompatibilitätsunterstützung für das Tower-Ökosystem über das Feature `tower-compat`. Für spezifische APIs [siehe bitte die Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
 
 ## Kernkonzepte von Tower
 
-Tower ist eine Dienstabstraktionsbibliothek, die hauptsächlich auf zwei zentralen Traits basiert:
+Tower ist eine Dienst-Abstraktionsbibliothek, die hauptsächlich auf zwei Kerneigenschaften basiert:
 
 ### Service-Trait
 
@@ -21,7 +21,7 @@ pub trait Service<Request> {
 }
 ```
 
-Der `Service` ist für die Verarbeitung von Anfragen und die Rückgabe von Antworten zuständig, ähnlich wie Salvos Handler.
+Der `Service`-Trait ist für die Verarbeitung von Anfragen und die Rückgabe von Antworten verantwortlich, ähnlich wie Salvos Handler.
 
 ### Layer-Trait
 
@@ -32,18 +32,18 @@ pub trait Layer<S> {
 }
 ```
 
-Der `Layer` wird verwendet, um Dienste zu umhüllen und zusätzliche Funktionalität hinzuzufügen, ähnlich wie Salvos Middleware.
+Der `Layer`-Trait wird verwendet, um Dienste zu umhüllen und zusätzliche Funktionalität hinzuzufügen, ähnlich wie Salvos Middleware.
 
-## Kompatibilitätsunterstützung von Salvo
+## Salvo-Kompatibilitätsunterstützung
 
-Salvo bietet zwei zentrale Trait-Implementierungen für die Kompatibilität mit dem Tower-Ökosystem:
+Salvo bietet zwei Schlüsseleigenschaften, um Kompatibilität mit dem Tower-Ökosystem zu erreichen:
 
-- **TowerLayerCompat**: Konvertiert Towers `Layer` in Salvos `Handler`, sodass es als Hoop (Middleware) verwendet werden kann
-- **TowerServiceCompat**: Konvertiert Towers `Service` in Salvos `Handler`
+- **TowerLayerCompat**: Konvertiert Towers `Layer` in Salvos `Handler`, sodass es als Hoop (Middleware) verwendet werden kann.
+- **TowerServiceCompat**: Konvertiert Towers `Service` in Salvos `Handler`.
 
 Anwendungsbeispiel:
 ```rust
-// Verwendung von Towers RateLimitLayer und Konvertierung in ein Salvo-kompatibles Format über die compat()-Methode
+// Verwende Towers RateLimitLayer und konvertiere es über die compat()-Methode in ein Salvo-kompatibles Format
 let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
 let router = Router::new().hoop(limit).get(hello);
 ```
@@ -60,4 +60,4 @@ _**Beispielcode**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:e4430fa65292b4543e3cd6f2010c4932 */}
+{/* Auto generated, origin file hash:6b353b93693e7c5ce97b584f3e8c62cf */}

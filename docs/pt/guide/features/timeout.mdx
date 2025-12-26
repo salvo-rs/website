@@ -2,13 +2,13 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 # Middleware de Timeout
 
-Fornece middleware com suporte a timeout.
+Oferece suporte de middleware para tratamento de timeout.
 
-## Cenários de Uso
+## Casos de Uso
 
-Em serviços web, algumas requisições podem demorar muito para serem processadas devido a vários motivos (como consultas lentas ao banco de dados, respostas lentas de serviços externos, etc.). Para evitar que essas requisições de longa duração ocupem recursos do servidor e afetem o processamento de outras requisições, pode-se usar o middleware de timeout para definir um tempo máximo de processamento. Se esse limite for excedido, a requisição será automaticamente interrompida e retornará um erro de timeout.
+Em serviços web, certas requisições podem demorar muito para serem processadas devido a várias razões (como consultas lentas ao banco de dados, respostas atrasadas de serviços externos, etc.). Para evitar que essas requisições de longa duração consumam recursos do servidor e afetem o processamento de outras requisições, um middleware de timeout pode ser usado para definir um limite máximo de tempo de processamento para as requisições. Se esse limite de tempo for excedido, a requisição será automaticamente encerrada e um erro de timeout será retornado.
 
-_**Código de Exemplo**_
+_**Código de Exemplo**_ 
 
 <Tabs>
   <Tab label="main.rs">
@@ -21,5 +21,5 @@ _**Código de Exemplo**_
   </Tab>
 </Tabs>
 
-No exemplo acima, criamos duas funções de processamento: uma `fast` que responde rapidamente e uma `slow` que demora 6 segundos para responder. Através de `Timeout::new(Duration::from_secs(5))`, definimos um limite de timeout de 5 segundos para todas as requisições. Ao acessar o caminho `/slow`, como o tempo de processamento excede o limite de 5 segundos, a requisição atingirá o timeout; já ao acessar o caminho `/fast`, a requisição será processada normalmente e retornará o resultado.
-{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}
+No exemplo acima, criamos duas funções de manipulação: uma `fast` de resposta rápida e uma `slow` que atrasa 6 segundos antes de responder. Um limite de timeout de 5 segundos é definido para todas as requisições usando `Timeout::new(Duration::from_secs(5))`. Ao acessar o caminho `/slow`, a requisição atingirá o timeout porque o tempo de processamento excede o limite de 5 segundos. Em contraste, ao acessar o caminho `/fast`, a requisição será processada normalmente e retornará um resultado.
+{/* Auto generated, origin file hash:6b1b3f8e371841e4b0fca9bc07d59eec */}

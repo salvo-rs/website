@@ -1,62 +1,62 @@
-# Come Distribuire l'Applicazione
+# Come Distribuire Applicazioni
 
-Un progetto Salvo, dopo la compilazione, diventa un file eseguibile. Per la distribuzione, è sufficiente caricare su un server questo file eseguibile insieme alle risorse statiche da cui dipende.
+Un progetto Salvo, dopo la compilazione, diventa un file eseguibile. Per la distribuzione, è sufficiente caricare questo eseguibile insieme alle risorse statiche da cui dipende sul server.
 
-Per i progetti in Rust, esiste anche una piattaforma di distribuzione molto semplice: [shuttle.rs](https://www.shuttle.rs). Shuttle offre supporto per progetti come Salvo. Per i dettagli, puoi consultare la [documentazione ufficiale](https://docs.shuttle.rs/guide/salvo-examples.html).
+Per i progetti basati su Rust, esiste anche una piattaforma di distribuzione molto semplice: [shuttle.rs](https://www.shuttle.rs). Shuttle fornisce supporto per progetti simili a Salvo. Per i dettagli, consultare la [documentazione ufficiale](https://docs.shuttle.rs/guide/salvo-examples.html).
 
 ## Distribuzione con Docker
 
-Puoi anche utilizzare Docker per distribuire un'applicazione Salvo. Di seguito è riportato un esempio base di `Dockerfile`, che puoi adattare in base alle esigenze del tuo progetto:
+È possibile utilizzare Docker per distribuire applicazioni Salvo. Di seguito è riportato un esempio di `Dockerfile` di base, che può essere adattato in base alle esigenze del progetto:
 
 ```dockerfile
 # Fase di build
 FROM rust:slim AS build
 WORKDIR /app
 
-# Copia prima i file delle dipendenze per costruirle (sfruttando la cache a livelli)
+# Copiare prima i file delle dipendenze per costruire le dipendenze (sfruttando i livelli di cache)
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
     cargo build --release
 
-# Copia il codice sorgente effettivo e costruisci l'applicazione
+# Copiare il codice sorgente effettivo e costruire l'applicazione
 COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# Fase di runtime con un'immagine base minimale
+# Utilizzare un'immagine base leggera per la fase di runtime
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Crea un utente non-root per eseguire l'app
+# Creare un utente non root per eseguire l'applicazione
 RUN useradd -ms /bin/bash appuser
 USER appuser
 WORKDIR /app
 
-# Copia il file binario dalla fase di build
+# Copiare il file binario dalla fase di build
 COPY --from=build /app/target/release/nome_tua_app ./app
 
-# Imposta il comando di avvio del container
+# Impostare il comando di avvio del container
 CMD ["./app"]
 ```
 
 ### Istruzioni per l'uso
 
-1.  Salva il `Dockerfile` sopra nella directory principale del tuo progetto.
-2.  Modifica `nome_tua_app` con il nome effettivo del tuo file binario.
-3.  Se la tua applicazione necessita di file statici (ad es. template, CSS, JS), puoi aggiungere i comandi `COPY` appropriati.
-4.  Se la tua applicazione richiede configurazioni tramite variabili d'ambiente, puoi utilizzare l'istruzione `ENV`.
-5.  Costruisci l'immagine Docker:
-    ```bash
-    docker build -t nome-tua-app .
-    ```
-6.  Esegui il container:
-    ```bash
-    docker run -p 5800:5800 nome-tua-app
-    ```
+1. Salvare il `Dockerfile` sopra nella directory principale del progetto.
+2. Modificare `nome_tua_app` con il nome effettivo del file binario in base al progetto.
+3. Se l'applicazione richiede file statici (come modelli, CSS, JS, ecc.), è possibile aggiungere i comandi `COPY` corrispondenti.
+4. Se l'applicazione richiede la configurazione di variabili d'ambiente, è possibile utilizzare l'istruzione `ENV`.
+5. Costruire l'immagine Docker:
+   ```bash
+   docker build -t nome-tua-app .
+   ```
+6. Eseguire il container:
+   ```bash
+   docker run -p 5800:5800 nome-tua-app
+   ```
 
-Adatta il numero di porta e altre configurazioni in base alle esigenze effettive della tua applicazione.
-{/* Auto generated, origin file hash:cc4f6a8bac2d9ff67911bf45b473c2bd */}
+Si prega di adattare il numero di porta e altre configurazioni in base alle esigenze effettive dell'applicazione.
+{/* Auto generated, origin file hash:20851c6331f7ab1d3f03251a44776b3e */}

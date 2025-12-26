@@ -1,20 +1,20 @@
-# Trailing Slash
+# Nachgestellter Schrägstrich
 
-Ein Middleware, die automatisch den abschließenden Schrägstrich `/` hinzufügt oder entfernt.
+Ein Middleware zur automatischen Hinzufügung oder Entfernung nachgestellter `/`.
 
 ## Anwendungsfälle
 
 Die Trailing-Slash-Middleware ist besonders nützlich in folgenden Szenarien:
 
-- **URL-Normalisierung**: Stellt sicher, dass alle URLs einem einheitlichen Format folgen (einheitliches Hinzufügen oder Entfernen des abschließenden Schrägstrichs), was die SEO verbessert und Probleme mit doppelten Inhalten vermeidet.
+- **URL-Normalisierung**: Stellt sicher, dass alle URLs einem einheitlichen Format folgen (durch konsistentes Hinzufügen oder Entfernen nachgestellter Schrägstriche), was die SEO verbessert und Duplicate-Content-Probleme vermeidet.
 
-- **Vereinfachung der Routenverarbeitung**: Es ist nicht nötig, separate Routenverarbeitungslogik für Versionen mit und ohne Schrägstrich zu schreiben, da die Middleware diese Umwandlung automatisch übernimmt.
+- **Vereinfachte Routenverwaltung**: Eliminiert die Notwendigkeit, separate Routing-Logik für URLs mit und ohne nachgestellten Schrägstrich zu schreiben, da die Middleware diese Konvertierung automatisch handhabt.
 
-- **Kompatibilität**: Einige Clients können automatisch einen abschließenden Schrägstrich zu URLs hinzufügen oder entfernen. Diese Middleware stellt sicher, dass Anfragen korrekt weitergeleitet werden.
+- **Kompatibilität**: Einige Clients fügen URLs möglicherweise automatisch nachgestellte Schrägstriche hinzu oder entfernen sie. Diese Middleware stellt sicher, dass Anfragen korrekt weitergeleitet werden.
 
-- **Umleitungsverwaltung**: Kann so konfiguriert werden, dass URLs mit Schrägstrich automatisch auf URLs ohne Schrägstrich umgeleitet werden (oder umgekehrt), was die Benutzererfahrung verbessert.
+- **Redirect-Management**: Kann so konfiguriert werden, dass URLs mit nachgestelltem Schrägstrich automatisch zu solchen ohne umgeleitet werden (oder umgekehrt), was die Benutzererfahrung verbessert.
 
-- **Vermeidung von Routenkonflikten**: In vielen Web-Frameworks werden `/pfad` und `/pfad/` oft als unterschiedliche Routen behandelt. Diese Middleware kann sie einheitlich verarbeiten.
+- **Vermeidung von Routenkonflikten**: In vielen Web-Frameworks werden `/pfad` und `/pfad/` als unterschiedliche Routen behandelt. Diese Middleware kann sie einheitlich handhaben.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -30,4 +30,4 @@ _**Beispielcode**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:7bb4e1e210c23aa687c6aa13c130a763 */}
+{/* Auto generated, origin file hash:23d0fc6bb76dc1e9e171298973f37983 */}

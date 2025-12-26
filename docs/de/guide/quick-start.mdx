@@ -3,10 +3,10 @@ import { Tab, Tabs } from '@rspress/core/theme';
 # Schnellstart
 
 ## Rust installieren
-Falls Sie Rust noch nicht installiert haben, können Sie es mit dem offiziellen Tool (`rustup`)[https://doc.rust-lang.org/book/ch01-01-installation.html] installieren.
+Falls Sie Rust noch nicht installiert haben, können Sie das offizielle Tool (`rustup`)[https://doc.rust-lang.org/book/ch01-01-installation.html] verwenden, um Rust zu installieren.
 
 :::tip
-Die derzeit von Salvo unterstützte Mindestversion von Rust ist 1.85. Führen Sie `rustup update` aus, um sicherzustellen, dass Sie eine kompatible Rust-Version installiert haben.
+Die minimal unterstützte Rust-Version für Salvo ist 1.85. Führen Sie `rustup update` aus, um sicherzustellen, dass Sie eine kompatible Rust-Version installiert haben.
 :::
 
 ## Ihr erstes Salvo-Programm schreiben
@@ -17,21 +17,21 @@ Erstellen Sie ein neues Projekt:
 cargo new hello --bin
 ```
 
-Fügen Sie die Abhängigkeit zur `Cargo.toml` hinzu.
+Fügen Sie Abhängigkeiten zur `Cargo.toml` hinzu:
 
 ```toml file="<root>/codes/hello/Cargo.toml"
 ```
 
-Erstellen Sie in `main.rs` einen einfachen Funktions-Handler namens `hello`, der lediglich den Text `"Hello world"` ausgibt.
+Erstellen Sie in `main.rs` einen einfachen Funktions-Handler namens `hello`, der einfach den Text `"Hello world"` ausgibt.
 
 ```rust file="<root>/codes/hello/src/main.rs"
 ```
 
-Glückwunsch! Ihr erstes Salvo-Programm ist fertig. Führen Sie einfach `cargo run` in der Kommandozeile aus und rufen Sie dann `http://127.0.0.1:5800` in Ihrem Browser auf.
+Herzlichen Glückwunsch! Ihr erstes Salvo-Programm ist fertig. Führen Sie einfach `cargo run` in der Kommandozeile aus und öffnen Sie dann `http://127.0.0.1:5800` in Ihrem Browser.
 
 ## Detaillierte Erklärung
 
-Hier ist `hello_world` ein `Handler`, der Benutzeranfragen verarbeitet. Das Attribut `#[handler]` ermöglicht es einer Funktion, einfach das `Handler`-Trait zu implementieren. Außerdem erlaubt es uns, Funktionsparameter auf verschiedene Arten abzukürzen.
+Hier ist `hello_world` ein `Handler`, der zur Verarbeitung von Benutzeranfragen dient. Das `#[handler]`-Attribut ermöglicht es einer Funktion, auf bequeme Weise das `Handler`-Trait zu implementieren. Darüber hinaus erlaubt es uns, Funktionsparameter auf verschiedene vereinfachte Arten zu schreiben.
 
 - Ursprüngliche Form:
 
@@ -42,7 +42,7 @@ Hier ist `hello_world` ein `Handler`, der Benutzeranfragen verarbeitet. Das Attr
     }
     ```
 
-- Sie können unbenutzte Parameter weglassen. Da `_req`, `_depot` und `_ctrl` hier nicht verwendet werden, können sie einfach entfallen:
+- Sie können ungenutzte Parameter in der Funktion weglassen. Zum Beispiel werden `_req`, `_depot` und `_ctrl` hier nicht verwendet und können vollständig entfallen:
 
     ```rust
     #[handler]
@@ -51,7 +51,7 @@ Hier ist `hello_world` ein `Handler`, der Benutzeranfragen verarbeitet. Das Attr
     }
     ```
 
-- Jeder Typ kann als Rückgabetyp der Funktion dienen, solange er das `Writer`-Trait implementiert. Zum Beispiel implementiert `&str` `Writer`. Wenn es als Rückgabewert dient, gibt es einfachen Text aus:
+- Jeder Typ kann als Rückgabetyp der Funktion verwendet werden, solange er das `Writer`-Trait implementiert. Beispielsweise implementiert `&str` das `Writer`-Trait, und bei Rückgabe wird Klartext ausgegeben:
 
     ```rust
     #[handler]
@@ -60,7 +60,7 @@ Hier ist `hello_world` ein `Handler`, der Benutzeranfragen verarbeitet. Das Attr
     }
     ```
 
-- Häufiger ist der Fall, dass wir `Result<T, E>` als Rückgabetyp verwenden möchten, um Fehler während der Funktionsausführung behandeln zu können. Wenn sowohl `T` als auch `E` `Writer` implementieren, dann kann `Result<T, E>` als Rückgabewert dienen:
+- Häufiger müssen wir `Result<T, E>` als Rückgabetyp verwenden, um Fehler während der Funktionsausführung zu behandeln. Wenn sowohl `T` als auch `E` das `Writer`-Trait implementieren, kann `Result<T, E>` als Rückgabewert verwendet werden:
 
     ```rust
     #[handler]
@@ -69,11 +69,12 @@ Hier ist `hello_world` ein `Handler`, der Benutzeranfragen verarbeitet. Das Attr
     }
     ```
 
-## Verspieltes HTTP3
+## Elegantes HTTP3
 
-Es heißt, HTTP3 sei federleicht, von vielen Entwicklern ersehnt, aber unerreicht. Diesmal macht Salvo diesen Wunsch wahr und ermöglicht es allen, mühelos in den Genuss der wunderbaren Dienste von HTTP3 zu kommen!
+Man sagt, HTTP3 sei so flink wie eine Schwalbe, ein Traum, den viele Programmierer ersehnt, aber nie erreicht haben. Diesmal macht Salvo es möglich und erlaubt jedem, mühelos die wunderbaren Dienste von HTTP3 zu genießen!
 
-Aktivieren Sie zunächst die HTTP3-Funktion in `Cargo.toml` und ändern Sie dann `main.rs` wie folgt:
+Aktivieren Sie zunächst das HTTP3-Feature in `Cargo.toml` und ändern Sie dann `main.rs` wie folgt:
+
 <Tabs>
   <Tab label="main.rs">
   ```rust file="<root>/codes/hello-h3/src/main.rs"
@@ -85,15 +86,15 @@ Aktivieren Sie zunächst die HTTP3-Funktion in `Cargo.toml` und ändern Sie dann
   </Tab>
 </Tabs>
 
-## Salvo CLI Tool 🛠️
+## Salvo CLI-Werkzeug 🛠️
 
-Das [Salvo CLI](https://github.com/salvo-rs/salvo-cli) ist ein Werkzeug, das für das Salvo Web-Framework entwickelt wurde. Es erstellt sauberen, gut lesbaren Code und spart Ihnen Zeit für die interessanteren Dinge im Leben.
+[Salvo CLI](https://github.com/salvo-rs/salvo-cli) ist ein Werkzeug, das für das Salvo-Webframework entwickelt wurde. Es hilft dabei, sauberen, lesbaren Code zu erstellen und spart Ihnen Zeit für interessantere Dinge im Leben.
 
-Wenn Sie Ideen zur Verbesserung des CLI haben oder Probleme entdecken, die gelöst werden müssen, zögern Sie nicht! Erstellen Sie ein Issue – wir freuen uns über Ihre Beiträge.
+Wenn Sie Ideen zur Verbesserung der CLI haben oder Probleme bemerken, die behoben werden müssen, zögern Sie nicht! Reichen Sie ein Issue ein – wir freuen uns über Ihre Beiträge.
 
 ### Schritt 1
 
-Installieren Sie das CLI-Tool:
+Installieren Sie das CLI-Werkzeug:
 
 ```bash
 cargo install salvo-cli
@@ -107,11 +108,11 @@ cargo install salvo-cli
 > salvo new projektname
 > ```
 
-Mit diesem einfachen CLI-Tool können Sie schnell Salvo-Projekte starten und sich auf Ihre Geschäftslogik konzentrieren, anstatt auf den Aufbau der Projektstruktur. ✨
+Mit diesem einfachen CLI-Werkzeug können Sie schnell ein Salvo-Projekt einrichten, sodass Sie sich auf die Implementierung Ihrer Geschäftslogik konzentrieren können, anstatt auf den Projektstrukturaufbau. ✨
 
 ## Weitere Beispiele
 
-Es wird empfohlen, das Salvo-Repository direkt zu klonen und dann die Beispiele im `examples`-Verzeichnis auszuführen. Der folgende Befehl führt beispielsweise das `hello`-Beispiel aus:
+Es wird empfohlen, das Salvo-Repository direkt zu klonen und die Beispiele im Verzeichnis `examples` auszuführen. Zum Beispiel führt der folgende Befehl das `hello`-Beispiel aus:
 
 ```sh
 git clone https://github.com/salvo-rs/salvo
@@ -119,5 +120,5 @@ cd salvo/examples
 cargo run --bin example-hello
 ```
 
-Im `examples`-Verzeichnis finden sich viele Beispiele. Alle können mit einem ähnlichen Befehl wie `cargo run --bin example-<name>` ausgeführt werden.
-{/* Auto generated, origin file hash:0c4a88ceb8e2d80be891a10caa082999 */}
+Es gibt viele Beispiele im Verzeichnis `examples`. Sie können sie mit Befehlen wie `cargo run --bin example-<name>` ausführen.
+{/* Auto generated, origin file hash:d6d8293cda56cad3e45ea1ac2eb6ba02 */}

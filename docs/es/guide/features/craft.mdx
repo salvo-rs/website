@@ -1,32 +1,32 @@
 ---
-title: Características de Craft
+title: Característica Craft
 ---
 
-# Características de Craft
+# Característica Craft
 
-Craft permite a los desarrolladores generar automáticamente funciones manejadoras y endpoints mediante anotaciones simples, integrando de forma transparente con la generación de documentación OpenAPI.
+Craft permite a los desarrolladores generar automáticamente funciones manejadoras y endpoints mediante anotaciones simples, integrando además de forma transparente con la generación de documentación OpenAPI.
 
 ## Casos de Uso
 
-Las características de Craft son especialmente útiles en los siguientes escenarios:
+La característica Craft es especialmente útil en los siguientes escenarios:
 
 - Cuando necesitas crear rápidamente funciones manejadoras de rutas a partir de métodos de estructuras
-- Cuando deseas reducir el código repetitivo de extracción de parámetros y manejo de errores
+- Cuando deseas reducir el código repetitivo para la extracción manual de parámetros y manejo de errores
 - Cuando necesitas generar automáticamente documentación OpenAPI para tu API
 - Cuando quieres desacoplar la lógica de negocio del framework web
 
 ## Uso Básico
 
-Para usar las características de Craft, es necesario importar los siguientes módulos:
+Para utilizar la característica Craft, necesitas importar los siguientes módulos:
 
 ```rust
 use salvo::oapi::extract::*;
 use salvo::prelude::*;
 ```
 
-### Crear una Estructura de Servicio
+### Creación de una Estructura de Servicio
 
-Usa el macro `#[craft]` para anotar tu bloque `impl`, lo que convierte los métodos de la estructura en funciones manejadoras o endpoints.
+Anota tu bloque `impl` con la macro `#[craft]` para convertir los métodos de la estructura en funciones manejadoras o endpoints.
 
 ```rust
 #[derive(Clone)]
@@ -45,7 +45,7 @@ impl Opts {
 }
 ```
 
-### Crear una Función Manejadora
+### Creación de Funciones Manejadoras
 
 Usa `#[craft(handler)]` para convertir un método en una función manejadora:
 
@@ -58,10 +58,10 @@ fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
 
 Este método se convertirá en una función manejadora que:
 - Extrae automáticamente los valores `left` y `right` de los parámetros de consulta
-- Accede al estado `state` dentro de la estructura
+- Accede al `state` de la estructura
 - Devuelve el resultado del cálculo como una respuesta de cadena
 
-### Crear un Endpoint
+### Creación de Endpoints
 
 Usa `#[craft(endpoint)]` para convertir un método en un endpoint:
 
@@ -76,35 +76,35 @@ pub(crate) fn add2(
 }
 ```
 
-Los endpoints pueden aprovechar `Arc` para compartir estado, lo cual es especialmente útil al manejar solicitudes concurrentes.
+Los endpoints pueden utilizar `Arc` para compartir estado, lo cual es especialmente útil al manejar solicitudes concurrentes.
 
 ### Endpoints Estáticos
 
-También puedes crear endpoints estáticos que no dependen del estado de una instancia:
+También puedes crear endpoints estáticos que no dependen del estado de la instancia:
 
 ```rust
-#[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+#[craft(endpoint(responses((status_code = 400, description = "Parámetros de solicitud incorrectos."))))]
 pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
     (*left + *right).to_string()
 }
 ```
 
-En este ejemplo, también se añade una descripción personalizada para la respuesta de error, que se reflejará en la documentación OpenAPI generada.
+En este ejemplo, se añade una descripción personalizada de respuesta de error, que se reflejará en la documentación OpenAPI generada.
 
 ## Extractores de Parámetros
 
-El módulo `oapi::extract` de Salvo proporciona varios extractores de parámetros, los más comunes incluyen:
+El módulo `oapi::extract` de Salvo proporciona varios extractores de parámetros, siendo los más comunes:
 
-- `QueryParam<T>`: Extrae parámetros de la cadena de consulta
-- `PathParam<T>`: Extrae parámetros de la ruta URL
-- `FormData<T>`: Extrae parámetros de los datos del formulario
-- `JsonBody<T>`: Extrae parámetros del cuerpo de la solicitud JSON
+- `QueryParam<T>`: Extrae parámetros de cadenas de consulta
+- `PathParam<T>`: Extrae parámetros de rutas URL
+- `FormData<T>`: Extrae parámetros de datos de formulario
+- `JsonBody<T>`: Extrae parámetros de cuerpos de solicitud JSON
 
-Estos extractores realizan automáticamente el análisis y la conversión de tipos, simplificando enormemente la escritura de funciones manejadoras.
+Estos extractores manejan automáticamente el análisis de parámetros y la conversión de tipos, simplificando enormemente la escritura de funciones manejadoras.
 
 ## Integración con OpenAPI
 
-Las características de Craft pueden generar automáticamente documentación API conforme a la especificación OpenAPI. En el ejemplo:
+La característica Craft puede generar automáticamente documentación de API conforme a la especificación OpenAPI. En el ejemplo:
 
 ```rust
 let router = Router::new()
@@ -113,19 +113,19 @@ let router = Router::new()
     .push(Router::with_path("add3").get(Opts::add3()));
 
 // Generar documentación OpenAPI
-let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+let doc = OpenApi::new("API de Ejemplo", "0.0.1").merge_router(&router);
 
-// Añadir rutas para la documentación OpenAPI y Swagger UI
+// Añadir rutas de documentación OpenAPI y Swagger UI
 let router = router
     .push(doc.into_router("/api-doc/openapi.json"))
     .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 ```
 
-Con esta configuración, la documentación de la API estará disponible en el endpoint `/api-doc/openapi.json`, y Swagger UI estará accesible en la ruta `/swagger-ui`.
+Con esta configuración, la documentación de la API estará disponible en el endpoint `/api-doc/openapi.json`, y Swagger UI será accesible en la ruta `/swagger-ui`.
 
 ## Ejemplo Completo
 
-A continuación se muestra un ejemplo completo que demuestra cómo usar las características de Craft para crear tres tipos diferentes de endpoints:
+A continuación se muestra un ejemplo completo que demuestra cómo usar la característica Craft para crear tres tipos diferentes de endpoints:
 
 ```rust
 use salvo::oapi::extract::*;
@@ -157,7 +157,7 @@ impl Opts {
         (self.state + *left + *right).to_string()
     }
 
-    #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
+    #[craft(endpoint(responses((status_code = 400, description = "Parámetros de solicitud incorrectos."))))]
     pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
         (*left + *right).to_string()
     }
@@ -165,26 +165,26 @@ impl Opts {
 
 #[tokio::main]
 async fn main() {
-    // Crear estado compartido, valor inicial 1
+    // Crear estado compartido con un valor inicial de 1
     let opts = Arc::new(Opts::new(1));
 
-    // Configurar rutas para los tres endpoints
+    // Configurar rutas para tres endpoints
     let router = Router::new()
         .push(Router::with_path("add1").get(opts.add1()))
         .push(Router::with_path("add2").get(opts.add2()))
         .push(Router::with_path("add3").get(Opts::add3()));
 
     // Generar documentación OpenAPI
-    let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
+    let doc = OpenApi::new("API de Ejemplo", "0.0.1").merge_router(&router);
     
-    // Añadir rutas para la documentación OpenAPI y Swagger UI
+    // Añadir rutas de documentación OpenAPI y Swagger UI
     let router = router
         .push(doc.into_router("/api-doc/openapi.json"))
         .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 
-    // Iniciar servidor en localhost:5800
+    // Iniciar el servidor en localhost:5800
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 ```
-{/* Auto generated, origin file hash:2eb3d6ef348beb8a71682d2ad3a8bfd6 */}
+{/* Auto generated, origin file hash:f2d903755c5dbbd89c656ef1599cc869 */}

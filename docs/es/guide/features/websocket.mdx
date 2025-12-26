@@ -2,17 +2,17 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware que proporciona soporte para `WebSocket`.
+Un middleware que proporciona soporte para `WebSocket`.
 
 ## Introducción a WebSocket
 
-WebSocket es un protocolo de comunicación full-duplex sobre una única conexión TCP. Facilita el intercambio de datos entre cliente y servidor, permitiendo que el servidor envíe datos activamente al cliente. En el protocolo WebSocket, el navegador y el servidor solo necesitan realizar un apretón de manos para establecer una conexión persistente y realizar transmisión bidireccional de datos.
+WebSocket es un protocolo que permite la comunicación full-duplex a través de una única conexión TCP. Simplifica el intercambio de datos entre clientes y servidores al permitir que el servidor envíe datos activamente al cliente. En el protocolo WebSocket, el navegador y el servidor solo necesitan realizar un handshake una vez para establecer una conexión persistente y habilitar la transmisión bidireccional de datos.
 
-A diferencia de las solicitudes HTTP tradicionales, la conexión WebSocket permanece abierta después de establecerse, evitando conexiones y desconexiones frecuentes, lo que reduce significativamente la sobrecarga de comunicación. Esto hace que WebSocket sea especialmente adecuado para aplicaciones en tiempo real, como juegos en línea, aplicaciones de chat, cotizaciones de acciones y otras aplicaciones que requieren actualizaciones en tiempo real.
+A diferencia de las solicitudes HTTP tradicionales, una conexión WebSocket permanece abierta después de establecerse, evitando la configuración y cierre frecuente de conexiones, lo que reduce significativamente la sobrecarga de comunicación. Esto hace que WebSocket sea especialmente adecuado para aplicaciones en tiempo real, como juegos en línea, aplicaciones de chat, cotizaciones de bolsa y otras aplicaciones que requieren actualizaciones en tiempo real.
 
-Salvo proporciona una API simple pero poderosa a través de su middleware WebSocket, permitiendo a los desarrolladores integrar fácilmente la funcionalidad WebSocket en sus aplicaciones.
+Salvo proporciona una API concisa y poderosa a través de su middleware WebSocket, permitiendo a los desarrolladores integrar fácilmente la funcionalidad WebSocket en sus aplicaciones.
 
-_**Código de ejemplo**_ 
+_**Código de Ejemplo**_ 
 
 <Tabs>
   <Tab label="main.rs">
@@ -25,7 +25,7 @@ _**Código de ejemplo**_
   </Tab>
 </Tabs>
 
-### Ejemplo de aplicación de chat
+### Ejemplo de Aplicación de Chat
 
 <Tabs>
   <Tab label="main.rs">
@@ -37,4 +37,4 @@ _**Código de ejemplo**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:48f49024e0e641fc20ac341c7e824a5a */}
+{/* Auto generated, origin file hash:3fe27cca931b7ff39f38b5c2ff5c7746 */}

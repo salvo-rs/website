@@ -2,20 +2,20 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-O [Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) é utilizado para armazenar dados temporários envolvidos em uma única requisição. Middlewares podem colocar os dados temporários que processam no Depot, para uso por programas subsequentes.
+O [Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) é utilizado para armazenar dados temporários envolvidos em uma única requisição. O middleware pode colocar os dados temporários que processa no Depot para uso por programas subsequentes.
 
-Quando um servidor recebe uma requisição de um navegador cliente, ele cria uma instância do `Depot`. Esta instância é destruída após todos os middlewares e `Handler` processarem a requisição.
+Quando um servidor recebe uma requisição de um navegador cliente, ele cria uma instância do `Depot`. Esta instância é destruída após todos os middlewares e `Handler` terminarem de processar a requisição.
 
-Por exemplo, podemos definir `current_user` em um middleware de login e, em seguida, ler as informações do usuário atual em middlewares subsequentes ou no `Handler`.
+Por exemplo, podemos definir `current_user` em um middleware de login e, em seguida, ler as informações do usuário atual em middleware ou `Handler` subsequentes.
 
 ## Compreensão Rápida
 
-O `Depot` é usado para armazenar e compartilhar dados durante o processamento de uma requisição. Ele implementa um contêiner de dados com segurança de tipos, suportando dois modos principais de uso:
+O `Depot` é usado para armazenar e compartilhar dados durante o processamento da requisição. Ele implementa um contêiner de dados com segurança de tipos que suporta dois padrões principais de uso:
 
-1. **Armazenamento Chave-Valor**: Acessar valores associados a chaves de string através dos métodos `insert`/`get`.
-2. **Injeção de Tipo**: Armazenar e recuperar valores com base no tipo através dos métodos `inject`/`obtain`.
+1. **Armazenamento Chave-Valor**: Acessa valores associados a chaves de string através dos métodos `insert`/`get`.
+2. **Injeção de Tipo**: Armazena e recupera valores com base no tipo através dos métodos `inject`/`obtain`.
 
-Como mostrado no exemplo, o `Depot` é particularmente útil para passar dados entre middlewares e manipuladores. Middlewares podem definir valores no `Depot` (como informações do usuário, estado de autenticação), e manipuladores subsequentes podem obter esses valores sem necessidade de recálculo ou consulta repetida. O design do `Depot` garante consistência e acessibilidade dos dados em toda a cadeia de processamento da requisição, sendo uma ferramenta central para construir aplicações Web complexas.
+Como mostrado nos exemplos, o `Depot` é particularmente útil para passar dados entre middleware e handlers. O middleware pode definir valores no `Depot` (como informações do usuário, status de autenticação), e handlers subsequentes podem recuperar esses valores sem cálculos ou consultas redundantes. O design do `Depot` garante a consistência e acessibilidade dos dados em toda a cadeia de processamento da requisição, tornando-o uma ferramenta central para construir aplicações web complexas.
 
 <Tabs>
   <Tab label="main.rs">
@@ -28,43 +28,43 @@ Como mostrado no exemplo, o `Depot` é particularmente útil para passar dados e
   </Tab>
 </Tabs>
 
-## Configurar e Recuperar Dados via `insert` e `get`
+## Configurando e Recuperando Dados via `insert` e `get`
 
-Como mostrado acima, você pode inserir `key` e `value` no `Depot` usando `insert`. Para valores deste tipo, use `get` para recuperá-los diretamente.
+Como mostrado acima, você pode inserir `chave` e `valor` no `Depot` usando `insert`. Para valores desse tipo, você pode recuperá-los diretamente usando `get`.
 
 ```rust
 depot.insert("a", "b");
 assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 ```
 
-Se a `key` não existir, ou se a `key` existir mas o tipo não corresponder, retorna `None`.
+Se a `chave` não existir, ou se a `chave` existir mas o tipo não corresponder, ele retorna `None`.
 
-## Configurar e Recuperar Dados via `inject` e `obtain`
+## Configurando e Recuperando Dados via `inject` e `obtain`
 
-Às vezes, existem dados que não precisam estar relacionados a uma `key` específica, onde há uma instância única para esse tipo. Você pode usar `inject` para inserir dados e `obtain` para recuperá-los. Eles não exigem que você forneça uma `key`.
+Às vezes, há cenários em que existe uma instância única para um tipo sem necessidade de relacioná-la a uma `chave` específica. Você pode usar `inject` para inserir dados e, em seguida, usar `obtain` para recuperá-los. Esses métodos não exigem que você forneça uma `chave`.
 
 ```rust
 depot.inject(Config::new());
 depot.obtain::<Config>();
 ```
 
-# Visão Geral dos Métodos da Estrutura Depot
+# Visão Geral dos Métodos da Struct Depot
 
 | Categoria | Método | Descrição |
-|------|------|------|
+|----------|--------|-------------|
 | **Criação/Capacidade** | `new()` | Cria um Depot vazio |
-| | `with_capacity(capacity)` | Cria um Depot com capacidade especificada |
+| | `with_capacity(capacity)` | Cria um Depot com a capacidade especificada |
 | | `capacity()` | Obtém a capacidade |
-| | `inner()` | Obtém referência ao HashMap interno |
-| **Injeção/Obtensão por Tipo** | `inject<V>(value)` | Injeta um valor por tipo |
-| | `obtain<T>()` | Obtém referência ao valor injetado |
-| | `obtain_mut<T>()` | Obtém referência mutável ao valor injetado |
-| | `contains<T>()` | Verifica se contém um tipo específico |
+| | `inner()` | Obtém uma referência ao HashMap interno |
+| **Injeção/Recuperação por Tipo** | `inject<V>(value)` | Injeta um valor por tipo |
+| | `obtain<T>()` | Recupera uma referência ao valor injetado |
+| | `obtain_mut<T>()` | Recupera uma referência mutável ao valor injetado |
+| | `contains<T>()` | Verifica se um tipo específico está contido |
 | | `scrape<T>()` | Remove e retorna o valor injetado |
 | **Operações Chave-Valor** | `insert(key, value)` | Insere um par chave-valor |
-| | `get<V>(key)` | Obtém referência ao valor correspondente à chave |
-| | `get_mut<V>(key)` | Obtém referência mutável ao valor correspondente à chave |
-| | `contains_key(key)` | Verifica se contém uma chave específica |
+| | `get<V>(key)` | Recupera uma referência ao valor associado à chave |
+| | `get_mut<V>(key)` | Recupera uma referência mutável ao valor associado à chave |
+| | `contains_key(key)` | Verifica se uma chave específica está contida |
 | | `remove<V>(key)` | Remove a chave e retorna o valor |
 | | `delete(key)` | Exclui o par chave-valor |
-{/* Auto generated, origin file hash:11bf72b48a504b8ce6ae390caf56080c */}
+{/* Auto generated, origin file hash:b95d84ad7fe6f9c1aae94fbe8ca18072 */}

@@ -1,86 +1,86 @@
 # Routeur
 
-## Qu'est-ce qu'un routeur ?
+## Qu'est-ce que le Routage
 
-Le [`Routeur`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) définit quels intergiciels (middleware) et `Handler` traiteront une requête HTTP. C'est la fonctionnalité la plus fondamentale et centrale de Salvo.
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) définit quel middleware et quel `Handler` traiteront une requête HTTP. C'est la fonctionnalité la plus fondamentale et centrale de Salvo.
 
-En interne, un `Routeur` est en réalité composé d'une série de filtres. Lorsqu'une requête arrive, le routeur teste, dans l'ordre d'ajout et de haut en bas, si lui-même et ses descendants peuvent correspondre à la requête. Si une correspondance est trouvée, les intergiciels de toute la chaîne formée par le routeur et ses descendants sont exécutés séquentiellement. Si pendant le traitement, l'état de la `Réponse` est défini sur erreur (4XX, 5XX) ou redirection (3XX), les intergiciels et `Handler` suivants sont ignorés. Vous pouvez également appeler manuellement `ctrl.skip_rest()` pour ignorer les intergiciels et `Handler` suivants.
+En interne, un `Router` est essentiellement composé d'une série de filtres. Lorsqu'une requête arrive, le routeur se teste lui-même et ses descendants dans l'ordre, de haut en bas, pour voir s'ils peuvent correspondre à la requête. Si une correspondance réussit, les middlewares de toute la chaîne formée par le routeur et ses routeurs descendants sont exécutés séquentiellement. Si pendant le traitement, le statut de la `Response` est défini sur une erreur (4XX, 5XX) ou une redirection (3XX), les middlewares et `Handler` suivants seront ignorés. Vous pouvez également appeler manuellement `ctrl.skip_rest()` pour ignorer les middlewares et `Handler` restants.
 
-Pendant le processus de correspondance, il existe une information de chemin d'URL, que l'on peut considérer comme un objet qui doit être entièrement "consommé" par les filtres. Si tous les filtres d'un `Routeur` réussissent et que cette information de chemin d'URL est entièrement consommée, on considère que la "correspondance est réussie".
+Pendant le processus de correspondance, il existe un objet d'information de chemin d'URL, qui peut être considéré comme un objet qui doit être entièrement consommé par les filtres lors de la correspondance. Si tous les filtres d'un certain Router correspondent avec succès, et que cet objet d'information de chemin d'URL a été entièrement consommé, cela est considéré comme une "correspondance réussie".
 
 Par exemple :
 
 ```rust
-Routeur::with_path("articles").get(list_articles).post(create_article);
+Router::with_path("articles").get(list_articles).post(create_article);
 ```
 
-est en réalité équivalent à :
+Est en fait équivalent à :
 
 ```rust
-Routeur::new()
-    // PathFilter peut filtrer le chemin de la requête. Il ne correspondra que si le chemin contient le segment "articles".
-    // Sinon, la correspondance échoue. Par exemple : /articles/123 réussit, tandis que /articles_list/123
-    // échoue car il contient "_list" après "articles".
+Router::new()
+    // PathFilter peut filtrer les chemins de requête. Il ne correspond avec succès que si le chemin de la requête contient le segment "articles".
+    // Sinon, la correspondance échoue. Par exemple : /articles/123 correspond avec succès, tandis que /articles_list/123
+    // contient "articles" mais échoue à correspondre à cause du suffixe "_list".
     .filter(PathFilter::new("articles"))
 
-    // Si le routeur racine correspond, et que la méthode de la requête est GET, le sous-routeur interne peut correspondre,
-    // et la requête sera traitée par list_articles.
-    .push(Routeur::new().filter(filters::get()).handle(list_articles))
+    // Si la racine correspond avec succès et que la méthode de requête est GET, le routeur enfant interne peut correspondre avec succès,
+    // et la requête est traitée par list_articles.
+    .push(Router::new().filter(filters::get()).handle(list_articles))
 
-    // Si le routeur racine correspond, et que la méthode de la requête est POST, le sous-routeur interne peut correspondre,
-    // et la requête sera traitée par create_article.
-    .push(Routeur::new().filter(filters::post()).handle(create_article));
+    // Si la racine correspond avec succès et que la méthode de requête est POST, le routeur enfant interne peut correspondre avec succès,
+    // et la requête est traitée par create_article.
+    .push(Router::new().filter(filters::post()).handle(create_article));
 ```
 
-Si on accède à `GET /articles/`, la correspondance est réussie et `list_articles` est exécuté. Cependant, si on accède à `GET /articles/123`, la correspondance échoue et une erreur 404 est retournée, car `Routeur::with_path("articles")` ne consomme que la partie `/articles` du chemin d'URL, laissant `/123` non consommée, donc la correspondance échoue. Pour réussir la correspondance, le routeur peut être modifié ainsi :
+Si on accède à `GET /articles/`, c'est considéré comme une correspondance réussie, et `list_articles` est exécuté. Cependant, si on accède à `GET /articles/123`, la correspondance de route échoue et renvoie une erreur 404 car `Router::with_path("articles")` ne consomme que la partie `/articles` de l'information de chemin d'URL, laissant la partie `/123` non consommée, donc la correspondance est considérée comme échouée. Pour réussir la correspondance, la route peut être modifiée en :
 
 ```rust
-Routeur::with_path("articles/{**}").get(list_articles).post(create_article);
+Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
-Ici, `{**}` correspondra à n'importe quel chemin supplémentaire, donc il pourra correspondre à `GET /articles/123` et exécuter `list_articles`.
+Ici, `{**}` correspond à n'importe quel chemin restant, donc il peut correspondre à `GET /articles/123` et exécuter `list_articles`.
 
-## Définition plate
+## Définition Plate
 
 Nous pouvons définir les routes dans un style plat :
 
 ```rust
-Routeur::with_path("writers").get(list_writers).post(create_writer);
-Routeur::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
-Routeur::with_path("writers/{id}/articles").get(list_writer_articles);
+Router::with_path("writers").get(list_writers).post(create_writer);
+Router::with_path("writers/{id}").get(show_writer).patch(edit_writer).delete(delete_writer);
+Router::with_path("writers/{id}/articles").get(list_writer_articles);
 ```
 
-## Définition arborescente
+## Définition Arborescente
 
-Nous pouvons également définir les routes sous forme d'arbre, ce qui est la méthode recommandée :
+Nous pouvons également définir les routes dans une structure arborescente, ce qui est l'approche recommandée :
 
 ```rust
-Routeur::with_path("writers")
+Router::with_path("writers")
     .get(list_writers)
     .post(create_writer)
     .push(
-        Routeur::with_path("{id}")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
-            .push(Routeur::with_path("articles").get(list_writer_articles)),
+            .push(Router::with_path("articles").get(list_writer_articles)),
     );
 ```
 
-Cette forme de définition permet, pour les projets complexes, de rendre la définition des `Routeur` hiérarchique, claire et simple.
+Cette forme de définition rend les définitions de Router hiérarchiques, claires et simples pour les projets complexes.
 
-De nombreuses méthodes dans `Routeur` retournent l'instance elle-même (`Self`) après leur appel, permettant un style d'écriture chaîné. Parfois, vous devez décider du routage en fonction de certaines conditions. Le système de routage fournit également la fonction `then`, facile à utiliser :
+De nombreuses méthodes dans `Router` renvoient `Self` après avoir été appelées, facilitant l'écriture de code enchaîné. Parfois, vous devez décider comment router en fonction de certaines conditions. Le système de routage fournit également la fonction `then`, qui est facile à utiliser :
 
 ```rust
-Routeur::new()
+Router::new()
     .push(
-        Routeur::with_path("articles")
+        Router::with_path("articles")
             .get(list_articles)
-            .push(Routeur::with_path("{id}").get(show_article))
+            .push(Router::with_path("{id}").get(show_article))
             .then(|router|{
                 if admin_mode() {
                     router.post(create_article).push(
-                        Routeur::with_path("{id}").patch(update_article).delete(delete_writer)
+                        Router::with_path("{id}").patch(update_article).delete(delete_writer)
                     )
                 } else {
                     router
@@ -89,11 +89,11 @@ Routeur::new()
     );
 ```
 
-Cet exemple signifie que les routes pour créer, éditer ou supprimer des articles ne seront ajoutées que si le serveur est en mode `admin_mode`.
+Cet exemple signifie que les routes pour créer, éditer et supprimer des articles ne sont ajoutées que lorsque le serveur est en `admin_mode`.
 
-## Récupérer les paramètres de la route
+## Récupération des Paramètres depuis les Routes
 
-Dans le code ci-dessus, `{id}` définit un paramètre. Nous pouvons obtenir sa valeur via l'instance `Request` :
+Dans le code ci-dessus, `{id}` définit un paramètre. Nous pouvons récupérer sa valeur via l'instance `Request` :
 
 ```rust
 #[handler]
@@ -102,109 +102,109 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-`{id}` correspond à un segment du chemin. Normalement, l'`id` d'un article n'est qu'un nombre. Dans ce cas, nous pouvons utiliser une expression régulière pour restreindre la règle de correspondance de `id`, comme `r"{id|\d+}"`.
+`{id}` correspond à un segment dans le chemin. Normalement, l'`id` d'un article n'est qu'un nombre. Dans ce cas, nous pouvons utiliser une expression régulière pour restreindre la règle de correspondance pour `id`, comme `r"{id|\d+}"`.
 
-Pour ce type numérique, il existe une méthode plus simple en utilisant `<id:num>`. Les écritures spécifiques sont :
-- `{id:num}` : correspond à n'importe quel nombre de caractères numériques.
-- `{id:num[10]}` : correspond uniquement à un nombre spécifique de caractères numériques. Ici, 10 signifie qu'il correspond exactement à 10 chiffres.
-- `{id:num(..10)}` : correspond à 1 à 9 chiffres.
-- `{id:num(3..10)}` : correspond à 3 à 9 chiffres.
-- `{id:num(..=10)}` : correspond à 1 à 10 chiffres.
-- `{id:num(3..=10)}` : correspond à 3 à 10 chiffres.
-- `{id:num(10..)}` : correspond à au moins 10 chiffres.
+Pour les types numériques, il existe une méthode encore plus simple en utilisant `<id:num>`. Les notations spécifiques sont :
+- `{id:num}` correspond à n'importe quel nombre de caractères chiffres.
+- `{id:num[10]}` correspond exactement à un nombre spécifique de caractères chiffres ; ici, 10 signifie qu'il correspond exactement à 10 chiffres.
+- `{id:num(..10)}` correspond à 1 à 9 caractères chiffres.
+- `{id:num(3..10)}` correspond à 3 à 9 caractères chiffres.
+- `{id:num(..=10)}` correspond à 1 à 10 caractères chiffres.
+- `{id:num(3..=10)}` correspond à 3 à 10 caractères chiffres.
+- `{id:num(10..)}` correspond à au moins 10 caractères chiffres.
 
-On peut également utiliser `{**}`, `{*+}` ou `{*?}` pour correspondre à tous les segments de chemin restants. Pour une meilleure lisibilité du code, on peut ajouter un nom approprié pour clarifier la sémantique du chemin, par exemple : `{**file_path}`.
+Vous pouvez également correspondre à tous les segments de chemin restants en utilisant `{**}`, `{*+}`, ou `{*?}`. Pour une meilleure lisibilité du code, vous pouvez ajouter des noms appropriés pour rendre la sémantique du chemin plus claire, par exemple `{**file_path}`.
 
-- `{**}` : signifie que la partie correspondant au caractère générique peut être une chaîne vide. Par exemple, le chemin `/files/{**rest_path}` correspondra à `/files`, `/files/abc.txt`, `/files/dir/abc.txt`.
-- `{*+}` : signifie que la partie correspondant au caractère générique doit exister et ne peut pas correspondre à une chaîne vide. Par exemple, le chemin `/files/{*+rest_path}` ne correspondra pas à `/files` mais correspondra à `/files/abc.txt`, `/files/dir/abc.txt`.
-- `{*?}` : signifie que la partie correspondant au caractère générique peut être une chaîne vide, mais ne peut contenir qu'un seul segment de chemin. Par exemple, le chemin `/files/{*?rest_path}` ne correspondra pas à `/files/dir/abc.txt` mais correspondra à `/files`, `/files/abc.txt`.
+- `{**}` : Représente une correspondance générique où la partie correspondante peut être une chaîne vide. Par exemple, le chemin `/files/{**rest_path}` correspond à `/files`, `/files/abc.txt`, `/files/dir/abc.txt`.
+- `{*+}` : Représente une correspondance générique où la partie correspondante doit exister et ne peut pas être une chaîne vide. Par exemple, le chemin `/files/{*+rest_path}` ne correspond PAS à `/files` mais correspond à `/files/abc.txt`, `/files/dir/abc.txt`.
+- `{*?}` : Représente une correspondance générique où la partie correspondante peut être une chaîne vide mais ne peut contenir qu'un seul segment de chemin. Par exemple, le chemin `/files/{*？rest_path}` ne correspond PAS à `/files/dir/abc.txt` mais correspond à `/files`, `/files/abc.txt`.
 
-Il est permis de combiner plusieurs expressions pour correspondre au même segment de chemin, par exemple `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+Plusieurs expressions peuvent être combinées pour correspondre au même segment de chemin, par exemple `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
 
-## Ajouter des intergiciels (middleware)
+## Ajout de Middleware
 
-On peut ajouter des intergiciels via la fonction `hoop` sur le routeur :
+Le middleware peut être ajouté via la fonction `hoop` sur un routeur :
 
 ```rust
-Routeur::new()
+Router::new()
     .hoop(check_authed)
     .path("writers")
     .get(list_writers)
     .post(create_writer)
     .push(
-        Routeur::with_path("{id}")
+        Router::with_path("{id}")
             .get(show_writer)
             .patch(edit_writer)
             .delete(delete_writer)
-            .push(Routeur::with_path("articles").get(list_writer_articles)),
+            .push(Router::with_path("articles").get(list_writer_articles)),
     );
 ```
 
-Dans cet exemple, le routeur racine utilise `check_authed` pour vérifier si l'utilisateur actuel est connecté. Tous les routeurs descendants seront affectés par cet intergiciel.
+Dans cet exemple, le routeur racine utilise `check_authed` pour vérifier si l'utilisateur actuel est connecté. Tous les routeurs descendants sont affectés par ce middleware.
 
-Si les utilisateurs souhaitent simplement parcourir les informations et articles des `writers`, nous préférons qu'ils puissent le faire sans se connecter. Nous pouvons définir les routes comme suit :
+Si les utilisateurs ne font que parcourir les informations des `writer` et les articles, nous pourrions préférer qu'ils puissent parcourir sans se connecter. Nous pouvons définir les routes comme ceci :
 
 ```rust
-Routeur::new()
+Router::new()
     .push(
-        Routeur::new()
+        Router::new()
             .hoop(check_authed)
             .path("writers")
             .post(create_writer)
-            .push(Routeur::with_path("{id}").patch(edit_writer).delete(delete_writer)),
+            .push(Router::with_path("{id}").patch(edit_writer).delete(delete_writer)),
     )
     .push(
-        Routeur::with_path("writers").get(list_writers).push(
-            Routeur::with_path("{id}")
+        Router::with_path("writers").get(list_writers).push(
+            Router::with_path("{id}")
                 .get(show_writer)
-                .push(Routeur::with_path("articles").get(list_writer_articles)),
+                .push(Router::with_path("articles").get(list_writer_articles)),
         ),
     );
 ```
 
-Bien que deux routes aient la même définition de chemin `path("articles")`, elles peuvent toujours être ajoutées au même routeur parent.
+Même si deux routeurs ont la même définition de chemin `path("articles")`, ils peuvent toujours être ajoutés au même routeur parent.
 
 ## Filtres
 
-Le `Routeur` détermine s'il correspond via des filtres internes. Les filtres prennent en charge les opérations logiques de base `or` et `and`. Un routeur peut contenir plusieurs filtres. Lorsque tous les filtres correspondent, la correspondance du routeur est réussie.
+`Router` utilise en interne des filtres pour déterminer si une route correspond. Les filtres prennent en charge les opérations logiques de base en utilisant `or` ou `and`. Un routeur peut contenir plusieurs filtres ; lorsque tous les filtres correspondent avec succès, la route correspond avec succès.
 
-La structure des chemins d'un site web est arborescente, mais cette structure n'est pas équivalente à la structure arborescente d'organisation des routes. Un chemin de site web peut correspondre à plusieurs nœuds de route. Par exemple, certains contenus sous le chemin `articles/` nécessitent une connexion pour être consultés, tandis que d'autres non. Nous pouvons organiser les sous-chemins nécessitant une authentification sous un routeur contenant l'intergiciel de vérification de connexion, et ceux n'en nécessitant pas sous un autre routeur sans cette vérification :
+L'information de chemin d'un site web est une structure arborescente, mais cette structure arborescente n'est pas équivalente à la structure arborescente organisant les routeurs. Un chemin de site web peut correspondre à plusieurs nœuds de routeur. Par exemple, certains contenus sous le chemin `articles/` peuvent nécessiter une connexion pour être visualisés, tandis que d'autres non. Nous pouvons organiser les sous-chemins nécessitant une vérification de connexion sous un routeur contenant un middleware de vérification de connexion, et ceux ne nécessitant pas de vérification sous un autre routeur sans celui-ci :
 
 ```rust
-Routeur::new()
+Router::new()
     .push(
-        Routeur::with_path("articles")
+        Router::with_path("articles")
             .get(list_articles)
-            .push(Routeur::new().path("{id}").get(show_article)),
+            .push(Router::new().path("{id}").get(show_article)),
     )
     .push(
-        Routeur::with_path("articles")
+        Router::with_path("articles")
             .hoop(auth_check)
             .post(list_articles)
-            .push(Routeur::new().path("{id}").patch(edit_article).delete(delete_article)),
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
 ```
 
-Le routeur utilise des filtres pour filtrer les requêtes et les envoyer aux intergiciels et `Handler` correspondants pour traitement.
+Les routeurs utilisent des filtres pour filtrer les requêtes et les envoyer au middleware et au `Handler` correspondants pour traitement.
 
-`path` et `method` sont deux filtres les plus couramment utilisés. `path` est utilisé pour correspondre aux informations de chemin ; `method` est utilisé pour correspondre à la méthode de la requête, par exemple : GET, POST, PATCH, etc.
+`path` et `method` sont deux des filtres les plus couramment utilisés. `path` est utilisé pour correspondre aux informations de chemin ; `method` est utilisé pour correspondre à la Méthode de la requête, par exemple GET, POST, PATCH, etc.
 
-Nous pouvons utiliser `and`, `or` pour connecter les filtres du routeur :
-
-```rust
-Routeur::with_filter(filters::path("hello").and(filters::get()));
-```
-
-### Filtre de chemin
-
-Le filtre basé sur le chemin de la requête est le plus fréquemment utilisé. Le filtre de chemin peut définir des paramètres, par exemple :
+Nous pouvons connecter les filtres de routeur en utilisant `and`, `or` :
 
 ```rust
-Routeur::with_path("articles/{id}").get(show_article);
-Routeur::with_path("files/{**rest_path}").get(serve_file)
+Router::with_filter(filters::path("hello").and(filters::get()));
 ```
 
-Dans le `Handler`, on peut les obtenir via la fonction `get_param` de l'objet `Request` :
+### Filtre de Chemin
+
+Les filtres basés sur les chemins de requête sont les plus fréquemment utilisés. Les filtres de chemin peuvent définir des paramètres, par exemple :
+
+```rust
+Router::with_path("articles/{id}").get(show_article);
+Router::with_path("files/{**rest_path}").get(serve_file)
+```
+
+Dans un `Handler`, ils peuvent être récupérés via la fonction `get_param` de l'objet `Request` :
 
 ```rust
 #[handler]
@@ -218,36 +218,36 @@ pub async fn serve_file(req: &mut Request) {
 }
 ```
 
-### Filtre de méthode
+### Filtre de Méthode
 
-Filtre les requêtes en fonction de la `Méthode` de la requête `HTTP`, par exemple :
+Filtre les requêtes en fonction de la `Méthode` de la requête HTTP, par exemple :
 
 ```rust
-Routeur::new().get(show_article).patch(update_article).delete(delete_article);
+Router::new().get(show_article).patch(update_article).delete(delete_article);
 ```
 
-Ici, `get`, `patch`, `delete` sont tous des filtres de méthode. C'est en réalité équivalent à :
+Ici, `get`, `patch`, `delete` sont tous des filtres de Méthode. C'est en fait équivalent à :
 
 ```rust
 use salvo::routing::filter;
 
-let mut root_router = Routeur::new();
-let show_router = Routeur::with_filter(filters::get()).handle(show_article);
-let update_router = Routeur::with_filter(filters::patch()).handle(update_article);
-let delete_router = Routeur::with_filter(filters::get()).handle(delete_article);
-Routeur::new().push(show_router).push(update_router).push(delete_router);
+let mut root_router = Router::new();
+let show_router = Router::with_filter(filters::get()).handle(show_article);
+let update_router = Router::with_filter(filters::patch()).handle(update_article);
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);
+Router::new().push(show_router).push(update_router).push(delete_router);
 ```
 
-## Wisp personnalisé
+## Wisp Personnalisé
 
-Pour certaines expressions de correspondance qui apparaissent fréquemment, nous pouvons leur donner un nom court via `PathFilter::register_wisp_regex` ou `PathFilter::register_wisp_builder`. Par exemple, le format GUID apparaît souvent dans les chemins. L'écriture normale serait à chaque fois :
+Pour certaines expressions de correspondance fréquemment rencontrées, nous pouvons attribuer un nom court via `PathFilter::register_wisp_regex` ou `PathFilter::register_wisp_builder`. Par exemple, le format GUID apparaît souvent dans les chemins. La manière normale est de l'écrire ainsi à chaque fois qu'une correspondance est nécessaire :
 
 ```rust
-Routeur::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
-Routeur::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 ```
 
-Écrire cette expression régulière complexe à chaque fois est sujet aux erreurs et rend le code peu esthétique. On peut plutôt faire :
+Écrire cette expression régulière complexe à chaque fois est source d'erreurs et rend le code moins lisible. Vous pouvez plutôt faire ceci :
 
 ```rust
 use salvo::routing::filter::PathFilter;
@@ -256,23 +256,23 @@ use salvo::routing::filter::PathFilter;
 async fn main() {
     let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
     PathFilter::register_wisp_regex("guid", guid);
-    Routeur::new()
-        .push(Routeur::with_path("/articles/{id:guid}").get(show_article))
-        .push(Routeur::with_path("/users/{id:guid}").get(show_user));
+    Router::new()
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))
+        .push(Router::with_path("/users/{id:guid}").get(show_user));
 }
 ```
 
-Il suffit de l'enregistrer une fois, et ensuite on peut directement utiliser `{id:guid}` pour correspondre à un GUID, simplifiant ainsi l'écriture du code.
+Vous n'avez besoin de l'enregistrer qu'une seule fois. Ensuite, vous pouvez directement utiliser une notation simple comme `{id:guid}` pour correspondre aux GUID, simplifiant l'écriture du code.
 
-## Comment comprendre le Routeur quand on a appris des frameworks web de type Controller ?
+## Venant d'un Framework Web basé sur Contrôleur, Comment Comprendre le Routeur ?
 
-Les principales différences entre un framework web conçu autour du routage (comme Salvo) et un framework traditionnel MVC ou conçu autour des Contrôleurs sont :
+Les principales différences entre les frameworks web conçus avec routage (comme Salvo) et les frameworks traditionnels MVC ou conçus avec Contrôleur sont :
 
-- **Flexibilité** : La conception par routage permet une définition plus flexible du flux de traitement des requêtes, permettant un contrôle précis de la logique de traitement pour chaque chemin. Par exemple, dans Salvo, vous pouvez définir directement la fonction de traitement pour un chemin spécifique :
+- **Flexibilité** : La conception par routage permet une définition plus flexible des flux de traitement des requêtes, permettant un contrôle précis de la logique pour chaque chemin. Par exemple, dans Salvo, vous pouvez directement définir des fonctions de gestionnaire pour des chemins spécifiques :
   ```rust
-  Routeur::with_path("articles").get(list_articles).post(create_article);
+  Router::with_path("articles").get(list_articles).post(create_article);
   ```
-  Alors que dans une conception par Contrôleur, il faut généralement définir d'abord une classe contrôleur, puis définir plusieurs méthodes dans cette classe pour traiter différentes requêtes :
+  Dans la conception par Contrôleur, vous devez généralement définir d'abord une classe contrôleur, puis définir plusieurs méthodes dans la classe pour gérer différentes requêtes :
   ```java
   @Controller
   public class ArticleController {
@@ -284,38 +284,33 @@ Les principales différences entre un framework web conçu autour du routage (co
   }
   ```
 
-- **Intégration des intergiciels** : Les frameworks de routage offrent généralement des moyens plus concis d'intégrer des intergiciels, permettant de les appliquer à des routes spécifiques. Les intergiciels de Salvo peuvent être appliqués précisément à des routes spécifiques :
+- **Intégration du Middleware** : Les frameworks de routage fournissent généralement une manière plus concise d'intégrer le middleware, permettant au middleware d'être appliqué à des routes spécifiques. Le middleware de Salvo peut être appliqué précisément à des routes particulières :
   ```rust
-  Routeur::new()
+  Router::new()
       .push(
-          Routeur::with_path("admin/articles")
-              .hoop(admin_auth_middleware)  // Applique l'intergiciel d'authentification uniquement aux routes admin
+          Router::with_path("admin/articles")
+              .hoop(admin_auth_middleware)  // Applique le middleware d'authentification uniquement aux routes admin
               .get(list_all_articles)
               .post(create_article),
       )
       .push(
-          Routeur::with_path("articles")  // Route publique sans authentification
+          Router::with_path("articles")  // Les routes publiques n'ont pas besoin d'authentification
               .get(list_public_articles),
       );
   ```
 
-- **Organisation du code** : La conception par routage tend à organiser le code par fonctionnalité ou point de terminaison d'API, plutôt que par les couches Modèle-Vue-Contrôleur du MVC.
-  La conception par routage encourage l'organisation du code par fonctionnalité des points de terminaison d'API :
+- **Organisation du Code** : La conception par routage tend à organiser le code en fonction de la fonctionnalité ou des points de terminaison d'API, plutôt que la stratification Modèle-Vue-Contrôleur du MVC.
+  La conception par routage encourage l'organisation du code selon la fonctionnalité des points de terminaison d'API :
   ```rust
   // user_routes.rs - Routes et logique de traitement liées aux utilisateurs
-  pub fn user_routes() -> Routeur {
-      Routeur::with_path("users")
+  pub fn user_routes() -> Router {
+      Router::with_path("users")
           .get(list_users)
           .post(create_user)
-          .push(Routeur::with_path("{id}").get(get_user).delete(delete_user))
+          .push(Router::with_path("{id}").get(get_user).delete(delete_user))
   }
   
   // article_routes.rs - Routes et logique de traitement liées aux articles
-  pub fn article_routes() -> Routeur {
-      Routeur::with_path("articles")
-          .get(list_articles)
-          .post(create_article)
-  }
-  
-  // Combiner
-{/* Auto generated, origin file hash:ba0a1eadc077c274134c7a533d887f99 */}
+  pub fn article_routes() -> Router {
+      Router::with_path
+{/* Auto generated, origin file hash:cff6ff452b87f5758f518db1f13a198e */}

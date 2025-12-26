@@ -1,16 +1,16 @@
-# Komprimierung von Antworten
+# Antwortkomprimierung
 
-Middleware zur Komprimierung von `Response`-Inhalten.
+Ein Middleware zur Komprimierung des Inhalts von `Response`.
 
-Bietet Unterstützung für drei Komprimierungsformate: `br`, `gzip`, `deflate`. Prioritäten und andere Einstellungen der Komprimierungsmethoden können nach Bedarf konfiguriert werden.
+Unterstützt drei Komprimierungsformate: `br`, `gzip` und `deflate`. Die Priorität und Konfiguration jeder Komprimierungsmethode kann nach Bedarf angepasst werden.
 
 ## Datenkomprimierung im HTTP-Protokoll
 
-1. Auf Dateiformatebene: Spezifische Dateitypen verwenden dedizierte Komprimierungsalgorithmen
-2. Auf HTTP-Protokollebene: End-to-End-Ressourcenkomprimierung durch Content-Encoding
-3. Auf Verbindungsebene: Datenkomprimierung zwischen den Knotenpunkten einer HTTP-Verbindung
+1. Dateiformatebene: Bestimmte Dateitypen verwenden spezielle Komprimierungsalgorithmen.
+2. HTTP-Protokollebene: Ende-zu-Ende-Ressourcenkomprimierung wird durch Content-Encoding erreicht.
+3. Verbindungsebene: Datenkomprimierung erfolgt zwischen den Knoten einer HTTP-Verbindung.
 
-Weitere Informationen zur HTTP-Komprimierung finden Sie in der [Dokumentation des Mozilla Developer Network](https://developer.mozilla.org/de/docs/Web/HTTP/Guides/Compression).
+Weitere Informationen zur HTTP-Komprimierung finden Sie in der [Mozilla Developer Network-Dokumentation](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Compression).
 
 ## Beispielcode
 
@@ -26,4 +26,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:adfd8752c21601fac83a31d329cf6dae */}
+{/* Auto generated, origin file hash:0fd5e60897421152fcc9f44bf5f4fb39 */}

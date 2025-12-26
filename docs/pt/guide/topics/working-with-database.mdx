@@ -119,27 +119,27 @@ pub async fn get_user(req: &mut Request, res: &mut Response) {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    // mysql connect info
+    // informações de conexão mysql
     let mysql_uri = "mysql://root:123456@localhost/test";
     RB.link(MysqlDriver {}, mysql_uri).await.unwrap();
 
-    // router
+    // roteador
     let router = Router::with_path("users").get(get_user);
 
-    tracing::info!("Listening on http://127.0.0.1:5800");
+    tracing::info!("Escutando em http://127.0.0.1:5800");
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
 }
 ```
 
 ## [SeaORM](https://www.sea-ql.org/SeaORM/)
 
-SeaORM é um ORM assíncrono e dinâmico que oferece suporte robusto a bancos de dados relacionais, incluindo relacionamentos de entidades, sistema de migrações e um construtor de consultas com segurança de tipos. Ideal para projetos de médio a grande porte que necessitam de um ORM completo.
+SeaORM é um ORM assíncrono e dinâmico que oferece suporte robusto a bancos de dados relacionais, incluindo relacionamentos entre entidades, um sistema de migração e um construtor de consultas abrangente e type-safe. É adequado para projetos de médio a grande porte que necessitam de um ORM completo.
 
 ## [Tokio ORM (Toasty)](https://github.com/tokio-rs/toasty)
 
-Toasty é um ORM desenvolvido pela equipe do Tokio, atualmente em desenvolvimento ativo, com foco em fornecer uma solução ORM integrada ao ecossistema Tokio. Pode ser adequado para projetos que dependem do Tokio e estão dispostos a adotar tecnologias emergentes.
+Toasty é um ORM desenvolvido pela equipe do Tokio, atualmente em desenvolvimento ativo. Foca em fornecer uma solução ORM fortemente integrada ao ecossistema Tokio. Pode ser adequado para projetos que dependem do Tokio e estão abertos a adotar tecnologias emergentes.
 
 ## [SurrealDB Rust SDK](https://surrealdb.com/docs/sdk/rust)
 
-O SDK Rust do SurrealDB fornece capacidade de conexão com este banco de dados multimodelo, sendo adequado para aplicações que precisam lidar com dados de grafos, documentos e relacionais. É uma boa escolha para projetos que exigem modelos de dados flexíveis.
-{/* Auto generated, origin file hash:bc23a03c686915fc88ee2cb8c32dfe63 */}
+O SDK Rust do SurrealDB fornece conectividade a este banco de dados multi-modelo, tornando-o adequado para aplicações que precisam lidar com dados de grafos, documentos e relacionais. É uma excelente escolha para projetos que exigem modelos de dados flexíveis.
+{/* Auto generated, origin file hash:b866ce69ac7cb1788214d2e481e99fd0 */}

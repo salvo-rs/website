@@ -5,10 +5,10 @@ title: Rust Memory Allocator Alternatives
 # Jemallocator: Rust jemalloc Memory Allocator Alternative
 
 :::tip
-The default allocator may sometimes fail to release memory promptly. It is recommended to use (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] as a global allocator to replace the default one.
+The default allocator may sometimes fail to release memory promptly. It is recommended to use [jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) as a global allocator to replace the default one.
 :::
 
-(jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] is a library linked with the jemalloc memory allocator, providing the `Jemalloc` unit type that implements the allocator API and can be set as `#[global_allocator]`.
+[jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) is a library linked with the jemalloc memory allocator, providing the `Jemalloc` unit type that implements the allocator API and can be set as `#[global_allocator]`.
 
 `tikv-jemallocator` is the successor project to `jemallocator`. These two crates are identical except for their names. For new projects, it is recommended to use the `tikv-xxx` version.
 

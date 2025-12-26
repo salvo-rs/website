@@ -1,10 +1,10 @@
 # Forcer HTTPS
 
-Le middleware `force-https` permet de rediriger toutes les requêtes vers le protocole HTTPS.
+Le middleware `force-https` peut rediriger toutes les requêtes pour utiliser le protocole HTTPS.
 
-Si ce middleware est appliqué à un `Router`, la redirection de protocole ne se déclenche que lorsque la route correspond. Si la page n'existe pas, aucune redirection n'est effectuée.
+Si ce middleware est appliqué à un `Router`, il n'appliquera la redirection de protocole que lorsqu'une route correspond. Si une page n'existe pas, aucune redirection ne se produira.
 
-Cependant, il est plus courant de vouloir rediriger automatiquement toutes les requêtes, même en cas d'erreur `404` lorsque la route ne correspond pas. Dans ce cas, le middleware peut être ajouté au niveau du `Service`. Les middlewares ajoutés au `Service` s'exécutent toujours, que la requête corresponde ou non à une route.
+Cependant, une exigence plus courante est de rediriger automatiquement toute requête, même lorsque la route ne correspond pas et renvoie une erreur `404`. Dans de tels cas, le middleware peut être ajouté au `Service`. Les middlewares ajoutés au `Service` s'exécuteront toujours, que la requête soit correctement prise en charge par une route ou non.
 
 _**Exemple de code**_
 
@@ -20,4 +20,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:173e195e2060c6dc031e06200cd7106c */}
+{/* Auto generated, origin file hash:b53a7da9c3e5aa9c04fb32a1b8982f0f */}

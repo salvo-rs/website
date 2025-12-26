@@ -1,15 +1,15 @@
-# Middleware de journalisation
+# Middleware de Journalisation
 
-La journalisation joue un rôle essentiel dans les applications web, permettant de :
-- Fournir des informations détaillées sur le traitement des requêtes, aidant les développeurs à suivre le comportement de l'application
-- Faciliter le dépannage et le débogage, particulièrement en environnement de production
-- Surveiller les performances de l'application et l'utilisation des ressources
-- Enregistrer les modèles d'accès des utilisateurs et les anomalies système
-- Satisfaire aux exigences d'audit de sécurité et de conformité
+La journalisation joue un rôle essentiel dans les applications web, car elle permet :
+- De fournir des informations détaillées sur le processus de traitement des requêtes pour aider les développeurs à suivre le comportement de l'application
+- D'assister dans le dépannage et le débogage, particulièrement dans les environnements de production
+- De surveiller les performances de l'application et l'utilisation des ressources
+- D'enregistrer les modèles d'accès des utilisateurs et les exceptions système
+- De répondre aux exigences d'audit de sécurité et de conformité
 
-Salvo fournit un middleware avec des fonctionnalités de journalisation de base. Si le middleware est ajouté directement au `Router`, il ne pourra pas capturer les erreurs 404 renvoyées lorsque aucune correspondance n'est trouvée dans le `Router`. Il est recommandé de l'ajouter au `Service`.
+Salvo fournit un middleware avec des fonctionnalités de journalisation de base. Si le middleware est ajouté directement à un `Router`, il ne capturera pas les erreurs 404 renvoyées lorsqu'aucun `Router` ne correspond à la requête. Il est recommandé de l'ajouter plutôt au `Service`.
 
-_**Exemple de code**_
+_**Exemple de Code**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -23,4 +23,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:4c7986fbfefd00cadca247ef815900e4 */}
+{/* Auto generated, origin file hash:2141a86be11e607af3cc2a894012ef08 */}

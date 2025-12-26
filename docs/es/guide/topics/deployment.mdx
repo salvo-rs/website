@@ -1,19 +1,19 @@
-# Cómo desplegar aplicaciones
+# Cómo Desplegar Aplicaciones
 
-Un proyecto Salvo, después de compilarse, se convierte en un archivo ejecutable. Para desplegarlo, solo necesitas subir este archivo ejecutable junto con los recursos estáticos de los que depende al servidor.
+Un proyecto Salvo, después de la compilación, se convierte en un archivo ejecutable. Para el despliegue, solo necesitas subir este ejecutable junto con sus recursos estáticos dependientes al servidor.
 
-Para proyectos de Rust, también existe una plataforma de despliegue muy sencilla: [shuttle.rs](https://www.shuttle.rs). Shuttle ofrece soporte para proyectos como Salvo. Para más detalles, puedes consultar la [documentación oficial](https://docs.shuttle.rs/guide/salvo-examples.html).
+Para proyectos basados en Rust, también existe una plataforma de despliegue muy sencilla: [shuttle.rs](https://www.shuttle.rs). Shuttle ofrece soporte para proyectos como Salvo. Para más detalles, consulta la [documentación oficial](https://docs.shuttle.rs/guide/salvo-examples.html).
 
 ## Despliegue con Docker
 
-También puedes utilizar Docker para desplegar aplicaciones Salvo. A continuación, se muestra un ejemplo básico de `Dockerfile` que puedes ajustar según las necesidades de tu proyecto:
+También puedes usar Docker para desplegar aplicaciones Salvo. A continuación, se muestra un ejemplo básico de `Dockerfile`, que puedes ajustar según los requisitos de tu proyecto:
 
 ```dockerfile
-# Fase de construcción
+# Etapa de construcción
 FROM rust:slim AS build
 WORKDIR /app
 
-# Copiar archivos de dependencias y construir dependencias primero (aprovechando la caché de capas)
+# Copiar primero los archivos de dependencias para construirlas (aprovechando capas de caché)
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
@@ -24,7 +24,7 @@ COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# Fase de ejecución con una imagen base ligera
+# Usar una imagen base ligera para la etapa de ejecución
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
@@ -36,17 +36,17 @@ RUN useradd -ms /bin/bash appuser
 USER appuser
 WORKDIR /app
 
-# Copiar el archivo binario desde la fase de construcción
+# Copiar el archivo binario desde la etapa de construcción
 COPY --from=build /app/target/release/your_app_name ./app
 
-# Configurar el comando de inicio del contenedor
+# Establecer el comando de inicio del contenedor
 CMD ["./app"]
 ```
 
-### Instrucciones de uso
+### Instrucciones de Uso
 
 1. Guarda el `Dockerfile` anterior en el directorio raíz de tu proyecto.
-2. Ajusta `your_app_name` al nombre real del archivo binario de tu proyecto.
+2. Ajusta `your_app_name` al nombre real del archivo binario según tu proyecto.
 3. Si tu aplicación requiere archivos estáticos (como plantillas, CSS, JS, etc.), puedes agregar comandos `COPY` correspondientes.
 4. Si tu aplicación necesita configuración de variables de entorno, puedes usar la instrucción `ENV`.
 5. Construye la imagen de Docker:
@@ -58,5 +58,5 @@ CMD ["./app"]
    docker run -p 5800:5800 your-app-name
    ```
 
-Ajusta el número de puerto y otras configuraciones según las necesidades reales de tu aplicación.
-{/* Auto generated, origin file hash:cc4f6a8bac2d9ff67911bf45b473c2bd */}
+Por favor, ajusta el número de puerto y otras configuraciones según las necesidades reales de tu aplicación.
+{/* Auto generated, origin file hash:20851c6331f7ab1d3f03251a44776b3e */}

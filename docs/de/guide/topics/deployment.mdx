@@ -1,62 +1,62 @@
-# Anwendungsbereitstellung
+# Anwendungen bereitstellen
 
-Ein kompiliertes Salvo-Projekt ist eine ausführbare Datei. Zur Bereitstellung muss lediglich diese ausführbare Datei zusammen mit den benötigten statischen Ressourcen auf den Server hochgeladen werden.
+Ein Salvo-Projekt wird nach der Kompilierung zu einer ausführbaren Datei. Für die Bereitstellung müssen Sie lediglich diese ausführbare Datei zusammen mit den abhängigen statischen Ressourcen auf den Server hochladen.
 
-Für Rust-Projekte gibt es auch eine sehr einfache Bereitstellungsplattform: [shuttle.rs](https://www.shuttle.rs). Shuttle bietet Unterstützung für Salvo-Projekte. Details finden Sie in der [offiziellen Dokumentation](https://docs.shuttle.rs/guide/salvo-examples.html).
+Für Rust-basierte Projekte gibt es auch eine sehr einfache Bereitstellungsplattform: [shuttle.rs](https://www.shuttle.rs). Shuttle bietet Unterstützung für Salvo-ähnliche Projekte. Einzelheiten finden Sie in der [offiziellen Dokumentation](https://docs.shuttle.rs/guide/salvo-examples.html).
 
 ## Docker-Bereitstellung
 
-Sie können Salvo-Anwendungen auch mit Docker bereitstellen. Im Folgenden finden Sie ein grundlegendes Beispiel für eine `Dockerfile`, die Sie an die Anforderungen Ihres Projekts anpassen können:
+Sie können auch Docker verwenden, um Salvo-Anwendungen bereitzustellen. Nachfolgend finden Sie ein grundlegendes Beispiel für eine `Dockerfile`, die Sie entsprechend den Anforderungen Ihres Projekts anpassen können:
 
 ```dockerfile
-# Build-Phase
+# Build-Stufe
 FROM rust:slim AS build
 WORKDIR /app
 
-# Abhängigkeitsdateien kopieren und zuerst Abhängigkeiten bauen (Cache-Layer nutzen)
+# Zuerst Abhängigkeitsdateien kopieren, um Abhängigkeiten zu bauen (Cache-Layer nutzen)
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Platzhalter"); }' > src/main.rs && \
     cargo build --release
 
-# Eigentlichen Quellcode kopieren und Anwendung bauen
+# Tatsächlichen Quellcode kopieren und Anwendung bauen
 COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# Laufzeitphase mit schlanker Basis-Image
+# Leichtgewichtiges Basis-Image für die Laufzeit-Stufe verwenden
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Nicht-Root-Benutzer für Anwendungsausführung erstellen
+# Nicht-Root-Benutzer zum Ausführen der Anwendung erstellen
 RUN useradd -ms /bin/bash appuser
 USER appuser
 WORKDIR /app
 
-# Binärdatei aus Build-Phase kopieren
-COPY --from=build /app/target/release/your_app_name ./app
+# Binärdatei aus der Build-Stufe kopieren
+COPY --from=build /app/target/release/ihr_app_name ./app
 
-# Container-Startbefehl setzen
+# Container-Startbefehl festlegen
 CMD ["./app"]
 ```
 
-### Anleitung
+### Nutzungshinweise
 
-1.  Speichern Sie die obige `Dockerfile` im Stammverzeichnis Ihres Projekts.
-2.  Passen Sie `your_app_name` an den tatsächlichen Namen Ihrer Binärdatei an.
-3.  Falls Ihre Anwendung statische Dateien benötigt (z.B. Templates, CSS, JS), können Sie entsprechende `COPY`-Befehle hinzufügen.
-4.  Falls Ihre Anwendung Umgebungsvariablen benötigt, können Sie die `ENV`-Direktive verwenden.
-5.  Docker-Image bauen:
-    ```bash
-    docker build -t your-app-name .
-    ```
-6.  Container ausführen:
-    ```bash
-    docker run -p 5800:5800 your-app-name
-    ```
+1. Speichern Sie die obige `Dockerfile` im Stammverzeichnis Ihres Projekts.
+2. Passen Sie `ihr_app_name` entsprechend dem tatsächlichen Namen Ihrer Binärdatei an.
+3. Wenn Ihre Anwendung statische Dateien benötigt (z.B. Templates, CSS, JS usw.), können Sie entsprechende `COPY`-Befehle hinzufügen.
+4. Wenn Ihre Anwendung Umgebungsvariablen benötigt, können Sie die `ENV`-Anweisung verwenden.
+5. Docker-Image bauen:
+   ```bash
+   docker build -t ihr-app-name .
+   ```
+6. Container ausführen:
+   ```bash
+   docker run -p 5800:5800 ihr-app-name
+   ```
 
-Passen Sie Portnummer und andere Konfigurationen bitte an die tatsächlichen Anforderungen Ihrer Anwendung an.
-{/* Auto generated, origin file hash:cc4f6a8bac2d9ff67911bf45b473c2bd */}
+Bitte passen Sie die Portnummer und andere Konfigurationen entsprechend den tatsächlichen Anforderungen Ihrer Anwendung an.
+{/* Auto generated, origin file hash:20851c6331f7ab1d3f03251a44776b3e */}

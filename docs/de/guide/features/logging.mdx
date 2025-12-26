@@ -1,14 +1,13 @@
 # Logging-Middleware
 
-Die Protokollierung spielt eine entscheidende Rolle in Webanwendungen, da sie:
+Logging spielt eine entscheidende Rolle in Webanwendungen, da es Folgendes ermöglicht:
+- Bereitstellung detaillierter Informationen zum Anfrageverarbeitungsprozess, um Entwicklern bei der Nachverfolgung des Anwendungsverhaltens zu helfen
+- Unterstützung bei der Fehlerbehebung und Fehlersuche, insbesondere in Produktionsumgebungen
+- Überwachung der Anwendungsleistung und Ressourcennutzung
+- Aufzeichnung von Benutzerzugriffsmustern und Systemausnahmen
+- Erfüllung von Sicherheitsaudit- und Compliance-Anforderungen
 
-- Detaillierte Informationen zum Anfrageverarbeitungsprozess bereitstellt und Entwicklern hilft, das Anwendungsverhalten nachzuvollziehen
-- Bei der Fehlerbehebung und Fehlersuche unterstützt, insbesondere in Produktionsumgebungen
-- Die Anwendungsleistung und Ressourcennutzung überwacht
-- Benutzerzugriffsmuster und Systemausnahmen erfasst
-- Sicherheitsaudits und Compliance-Anforderungen erfüllt
-
-Salvo bietet eine grundlegende Logging-Middleware. Wenn die Middleware direkt zum `Router` hinzugefügt wird, kann sie 404-Fehler nicht erfassen, die zurückgegeben werden, wenn keine Route übereinstimmt. Es wird empfohlen, sie stattdessen zum `Service` hinzuzufügen.
+Salvo bietet eine Middleware mit grundlegender Logging-Funktionalität. Wenn die Middleware direkt zu einem `Router` hinzugefügt wird, werden 404-Fehler, die zurückgegeben werden, wenn keine Übereinstimmung mit einem `Router` gefunden wird, nicht erfasst. Es wird empfohlen, sie stattdessen zum `Service` hinzuzufügen.
 
 _**Beispielcode**_
 
@@ -24,4 +23,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:4c7986fbfefd00cadca247ef815900e4 */}
+{/* Auto generated, origin file hash:2141a86be11e607af3cc2a894012ef08 */}

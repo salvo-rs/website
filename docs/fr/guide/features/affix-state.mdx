@@ -1,40 +1,40 @@
-# Affix State - Données partagées dans la requête
+# Données d'état partagées dans les requêtes
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 Le middleware Affix State permet d'ajouter des données partagées au Depot.
-Pour utiliser la fonctionnalité Affix State, vous devez activer la feature `affix-state` dans Cargo.toml.
+Pour utiliser la fonctionnalité Affix State, vous devez activer la fonction `affix-state` dans Cargo.toml.
 
-## Analyse des fonctionnalités
+## Analyse de la fonctionnalité
 Affix State offre un moyen simple de partager des données pendant le traitement des requêtes. Il vous permet de :
 
 - Injecter des configurations globales ou des données partagées lors de la configuration des routes
 - Accéder à ces données via le Depot dans n'importe quel gestionnaire
 - Prendre en charge tout type clonable comme données d'état
 
-## Comparaison avec d'autres frameworks - Comprendre rapidement le concept
-| Framework | Langage | Méthode de gestion d'état |
-|-----------|---------|---------------------------|
-| Salvo (Affix State) | Rust | Stockage et accès via Depot, supporte plusieurs types |
-| Axum | Rust | Stockage d'état via Extension, similaire mais utilisation différente |
+## Comparaison avec d'autres frameworks pour une compréhension rapide du concept
+| Framework | Langage | Approche de gestion d'état |
+|-----------|----------|---------------------------|
+| Salvo (Affix State) | Rust | Stocke et accède via Depot, prend en charge plusieurs types |
+| Axum | Rust | Stocke l'état via Extension, similaire mais avec une utilisation différente |
 | Actix-web | Rust | Utilise App Data et Web::Data pour partager l'état |
-| Gin | Go | Utilise context.Set et context.Get pour accéder aux données |
+| Gin | Go | Utilise context.Set et context.Get pour stocker et récupérer des données |
 | Echo | Go | Utilise context.Set et context.Get pour gérer l'état partagé |
-| Spring | Java | Utilise ApplicationContext ou annotations @Bean pour gérer les dépendances |
-| Quarkus | Java | Utilise CDI et le mécanisme d'injection de dépendances |
+| Spring | Java | Utilise ApplicationContext ou les annotations @Bean pour la gestion des dépendances |
+| Quarkus | Java | Utilise les mécanismes CDI et d'injection de dépendances |
 | Express.js | JavaScript | Utilise app.locals ou req.app.locals pour stocker l'état global |
 | Nest.js | JavaScript | Utilise un système d'injection de dépendances pour gérer les services partagés |
 | Koa.js | JavaScript | Utilise ctx.state pour stocker l'état au niveau de la requête |
 
-## Scénarios d'utilisation courants
+## Cas d'utilisation courants
 
 - Partage de pool de connexions à la base de données
 - Partage de configuration d'application
-- Partage d'instances de cache
-- Partage de clients API
-- Suivi de compteurs globaux ou d'états
+- Partage d'instance de cache
+- Partage de client API
+- Compteurs globaux ou suivi d'état
 
-L'avantage d'Affix State réside dans sa simplicité et sa flexibilité, permettant de partager facilement tout type de données entre différentes routes et gestionnaires, sans nécessiter beaucoup de code standardisé.
+L'avantage d'Affix State réside dans sa simplicité et sa flexibilité, permettant un partage facile de tout type de données entre différentes routes et gestionnaires sans code répétitif excessif.
 _**Exemple de code**_
 
 <Tabs>
@@ -47,4 +47,4 @@ _**Exemple de code**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:5dfff8f8a8238344561f9f829341312c */}
+{/* Auto generated, origin file hash:ab33e7002b7895dc8f4c574665f3af4f */}

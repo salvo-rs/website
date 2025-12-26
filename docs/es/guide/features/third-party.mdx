@@ -1,15 +1,15 @@
-# Complementos de Websocket de Terceros
+# Complemento WebSocket de Terceros
 
 ## salvo-websocket
 
-### Agregar dependencias del proyecto
+### Agregar Dependencia del Proyecto
 
 ```toml
 [dependencies]
 salvo-websocket = "0.0.4"
 ```
 
-### Definir parámetros de consulta al conectar ws
+### Definir Parámetros de Consulta para la Conexión WebSocket
 
 ```rust
 #[derive(Debug, Clone, Deserialize)]
@@ -19,46 +19,46 @@ struct User {
 }
 ```
 
-### Implementar el trait WebSocketHandler
+### Implementar el Rasgo WebSocketHandler
 
 ```rust
 impl WebSocketHandler for User {
     // Evento de conexión
     async fn on_connected(&self, ws_id: usize, sender: UnboundedSender<Result<Message, Error>>) {
-        tracing::info!("{} connected", ws_id);
+        tracing::info!("{} conectado", ws_id);
         WS_CONTROLLER.write().await.join_group(self.room.clone(), sender).unwrap();
         WS_CONTROLLER.write().await.send_group(
             self.room.clone(),
-            Message::text(format!("{:?} joined!", self.name)
+            Message::text(format!("{:?} se unió!", self.name)
             ),
         ).unwrap();
     }
 
     // Evento de desconexión
     async fn on_disconnected(&self, ws_id: usize) {
-        tracing::info!("{} disconnected", ws_id);
+        tracing::info!("{} desconectado", ws_id);
     }
 
     // Evento de recepción de mensajes
     async fn on_receive_message(&self, msg: Message) {
-        tracing::info!("{:?} received", msg);
+        tracing::info!("{:?} recibido", msg);
         let msg = if let Ok(s) = msg.to_str() {
             s
         } else {
             return;
         };
-        let new_msg = format!("<User#{}>: {}", self.name, msg);
+        let new_msg = format!("<Usuario#{}>: {}", self.name, msg);
         WS_CONTROLLER.write().await.send_group(self.room.clone(), Message::text(new_msg.clone())).unwrap();
     }
 
     async fn on_send_message(&self, msg: Message) -> Result<Message, Error> {
-        tracing::info!("{:?} sending", msg);
+        tracing::info!("{:?} enviando", msg);
         Ok(msg)
     }
 }
 ```
 
-### Escribir método de manejo de conexión
+### Escribir el Método de Manejo de Conexión
 
 ```rust
 #[tokio::main]
@@ -66,7 +66,7 @@ async fn main() {
     tracing_subscriber::fmt().init();
     let router = Router::new()
         .push(Router::with_path("chat").handle(user_connected));
-    tracing::info!("Listening on http://127.0.0.1:5800");
+    tracing::info!("Escuchando en http://127.0.0.1:5800");
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
 }
 
@@ -86,5 +86,5 @@ async fn user_connected(req: &mut Request, res: &mut Response) -> Result<(), Sta
 }
 ```
 
-Para más contenido, consulta directamente el [ejemplo](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)
-{/* Auto generated, origin file hash:ba1de026d713e14724d985e19918646a */}
+Para más detalles, consulte directamente el [ejemplo](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket).
+{/* Auto generated, origin file hash:82a9ae6391ef6b61ab4de0269fc9de16 */}

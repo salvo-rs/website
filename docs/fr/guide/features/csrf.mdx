@@ -1,35 +1,35 @@
-# Protection contre le CSRF
+# Protection CSRF
 
 ## Qu'est-ce que le CSRF ?
 
-Le CSRF (Cross-Site Request Forgery, ou falsification de requête intersite) est une vulnérabilité de sécurité réseau où un attaquant incite un utilisateur authentifié à exécuter des actions non intentionnelles à son insu. En termes simples, l'attaquant exploite l'identité déjà connectée de l'utilisateur pour envoyer des requêtes malveillantes en son nom.
+Le CSRF (Cross-Site Request Forgery) est une vulnérabilité de sécurité web où des attaquants incitent des utilisateurs authentifiés à effectuer des actions non désirées à leur insu. En termes simples, les attaquants exploitent le statut de connexion d'un utilisateur pour envoyer des requêtes malveillantes en son nom.
 
-## Principe d'une attaque CSRF
+## Fonctionnement des attaques CSRF
 
-Les étapes d'une attaque sont généralement les suivantes :
-1. L'utilisateur se connecte au site cible A et obtient un cookie d'authentification
-2. L'utilisateur visite un site malveillant B
-3. Le code du site B envoie automatiquement une requête au site A, en incluant le cookie de l'utilisateur
-4. Le site A ne peut pas distinguer si cette requête est malveillante ou une action légitime de l'utilisateur
+Le processus d'attaque typique comprend :
+1. L'utilisateur se connecte au site cible A et obtient un cookie d'authentification.
+2. L'utilisateur visite un site malveillant B.
+3. Le code du site malveillant B envoie automatiquement une requête au site A, en transmettant le cookie de l'utilisateur.
+4. Le site A ne peut pas distinguer s'il s'agit d'une requête malveillante ou d'une action légitime de l'utilisateur.
 
 ## Stratégies de protection
 
-Salvo fournit un middleware CSRF pour protéger votre application contre ce type d'attaque :
+Salvo fournit un middleware CSRF pour protéger vos applications contre ce type d'attaques :
 
-- Ajout d'un jeton CSRF caché dans les formulaires
-- Vérification que les requêtes soumises par l'utilisateur contiennent un jeton CSRF valide
-- Validation par défaut des requêtes POST, PATCH, DELETE et PUT
+- Ajouter un jeton CSRF caché dans les formulaires.
+- Vérifier que les requêtes soumises par l'utilisateur contiennent un jeton CSRF valide.
+- Par défaut, valider les requêtes POST, PATCH, DELETE et PUT.
 
 ## Implémentation du CSRF dans Salvo
 
-`Csrf` est une structure qui implémente `Handler`, contenant également un champ `skipper` permettant d'exclure certaines requêtes ne nécessitant pas de vérification. Par défaut, les requêtes `Method::POST`, `Method::PATCH`, `Method::DELETE` et `Method::PUT` sont validées.
+`Csrf` est une structure qui implémente le trait `Handler` et inclut un champ interne `skipper` pour spécifier les requêtes qui doivent contourner la validation. Par défaut, il valide les requêtes `Method::POST`, `Method::PATCH`, `Method::DELETE` et `Method::PUT`.
 
 Salvo prend en charge deux méthodes de stockage des jetons CSRF :
 
-1. **CookieStore** : Stocke le jeton dans un cookie, vérifie la correspondance entre le `csrf-token` dans l'en-tête ou le formulaire et la valeur du cookie
-2. **SessionStore** : Stocke le jeton dans une session, nécessite une utilisation conjointe avec le middleware de session
+1. **CookieStore** : Stocke le jeton dans un cookie et vérifie si le `csrf-token` dans les en-têtes de requête ou le formulaire correspond à la valeur du cookie.
+2. **SessionStore** : Stocke le jeton dans la session et nécessite l'utilisation d'un middleware de session.
 
-_**Exemple de code**_ (cookie store)
+_**Exemple de code**_ (stockage par cookie)
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -44,7 +44,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
   </Tab>
 </Tabs>
 
-_**Exemple de code**_ (session store)
+_**Exemple de code**_ (stockage par session)
 
 <Tabs>
   <Tab label="main.rs">
@@ -56,4 +56,4 @@ _**Exemple de code**_ (session store)
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:2eb072bb663695f226b56a34f14cdbb0 */}
+{/* Auto generated, origin file hash:281af9db9061b1bf9710319568d31c6d */}

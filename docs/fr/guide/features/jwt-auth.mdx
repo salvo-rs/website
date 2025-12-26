@@ -1,21 +1,21 @@
 # Authentification JWT
 
-JWT (JSON Web Token) est un standard ouvert (RFC 7519) permettant de transmettre des informations de manière sécurisée entre différentes parties. Il s'agit d'une méthode compacte et sûre pour les URL, représentant des revendications sous forme d'objet JSON, généralement utilisées pour l'authentification et l'échange d'informations.
+JWT (JSON Web Token) est un standard ouvert (RFC 7519) permettant de transmettre des informations de manière sécurisée entre différentes parties. Il s'agit d'une méthode compacte et sûre pour les URL de représenter des revendications au format d'objet JSON, couramment utilisée pour l'authentification et l'échange d'informations.
 
 Un JWT se compose de trois parties :
-- **En-tête (Header)** - Spécifie le type de jeton et l'algorithme de signature utilisé
-- **Charge utile (Payload)** - Contient les revendications (claims), telles que l'ID utilisateur, les rôles, la date d'expiration, etc.
-- **Signature (Signature)** - Utilisée pour vérifier que le message n'a pas été modifié pendant la transmission
+- **En-tête** - Spécifie le type de jeton et l'algorithme de signature utilisé
+- **Charge utile** - Contient les revendications, telles que l'ID utilisateur, les rôles, la date d'expiration, etc.
+- **Signature** - Utilisée pour vérifier que le message n'a pas été altéré pendant la transmission
 
-Utilisation typique du JWT dans un processus d'authentification :
+Utilisation typique du JWT dans le flux d'authentification :
 1. Après la connexion de l'utilisateur, le serveur génère un jeton JWT
-2. Le jeton est renvoyé au client et stocké (généralement dans le localStorage ou un cookie)
+2. Le jeton est renvoyé au client et stocké (généralement dans localStorage ou les cookies)
 3. Dans les requêtes suivantes, le client inclut ce jeton dans l'en-tête Authorization
-4. Le serveur vérifie la validité du jeton et autorise l'accès
+4. Le serveur valide l'authenticité du jeton et accorde l'accès
 
-Fournit un middleware pour l'authentification JWT.
+Fournit un middleware pour l'authentification JWT Auth.
 
-_**Exemple de code**_
+_**Exemple de Code**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -29,4 +29,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:44ba61e41e4c4e0937054ac0328a42ab */}
+{/* Auto generated, origin file hash:6ac72db73439017bc946bcdb54b74e13 */}

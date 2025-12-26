@@ -1,17 +1,17 @@
 ---
-title: Bibliothèque de dates et heures Rust
+title: Bibliothèque de Dates et Heures en Rust
 ---
 
-# Chrono : Bibliothèque de dates et heures Rust
+# Chrono : Bibliothèque de Dates et Heures en Rust
 
-[Chrono](https://docs.rs/chrono/latest/chrono/) vise à fournir toutes les fonctionnalités nécessaires pour effectuer des opérations de date et d'heure correctes dans le calendrier grégorien proleptique :
+[Chrono](https://docs.rs/chrono/latest/chrono/) vise à fournir toutes les fonctionnalités nécessaires pour effectuer des opérations correctes sur les dates et heures dans le calendrier grégorien proléptique :
 
-- Le type `DateTime` est conscient du fuseau horaire par défaut, tout en fournissant des types indépendants du fuseau horaire.
-- Les opérations qui pourraient produire des dates et heures invalides ou ambiguës renvoient `Option` ou `MappedLocalTime`.
-- Analyse et formatage configurables, avec une syntaxe de formatage de date et d'heure inspirée de strftime.
-- Le fuseau horaire `Local` peut fonctionner avec le fuseau horaire actuel du système d'exploitation.
-- Les types et opérations sont implémentés en tenant compte d'une efficacité raisonnable.
-- Pour limiter la taille du binaire, Chrono n'inclut pas de données de fuseau horaire par défaut. Utilisez la crate compagnon `Chrono-TZ` ou `tzfile` pour une prise en charge complète des fuseaux horaires.
+- Le type `DateTime` est conscient du fuseau horaire par défaut, avec des types distincts non liés aux fuseaux horaires.
+- Les opérations pouvant produire une date ou heure invalide ou ambiguë renvoient `Option` ou `MappedLocalTime`.
+- Analyse et formatage configurables avec une syntaxe de formatage de dates et heures inspirée de strftime.
+- Le fuseau horaire `Local` fonctionne avec le fuseau horaire local actuel du système d'exploitation.
+- Les types et opérations sont implémentés pour être raisonnablement efficaces.
+- Pour éviter d'augmenter la taille du binaire, Chrono n'inclut pas de données de fuseaux horaires par défaut. Utilisez les crates compagnons `Chrono-TZ` ou `tzfile` pour une prise en charge complète des fuseaux horaires.
 
 ## Fonctionnalités
 
@@ -19,11 +19,11 @@ title: Bibliothèque de dates et heures Rust
 
 ### Fonctionnalités par défaut :
 
-- `alloc` : Active les fonctionnalités dépendant de l'allocation mémoire (principalement le formatage de chaînes).
-- `std` : Active les fonctionnalités dépendant de la bibliothèque standard. C'est un sur-ensemble de `alloc`, ajoutant l'interopérabilité avec les types et traits de la bibliothèque standard.
+- `alloc` : Active les fonctionnalités dépendant de l'allocation (principalement le formatage de chaînes).
+- `std` : Active les fonctionnalités dépendant de la bibliothèque standard. Il s'agit d'un sur-ensemble de `alloc`, ajoutant l'interopérabilité avec les types et traits de la bibliothèque standard.
 - `clock` : Active la lecture du fuseau horaire local (`Local`). C'est un sur-ensemble de `now`.
 - `now` : Active la lecture de l'heure système (`now`).
-- `wasmbind` : Fournit une interface avec l'API Date JS pour les cibles wasm32.
+- `wasmbind` : Fournit une interface vers l'API JS Date pour la cible wasm32.
 
 ### Fonctionnalités optionnelles :
 
@@ -36,31 +36,31 @@ title: Bibliothèque de dates et heures Rust
 
 ## Aperçu
 
-### Différence de temps / Durée
+### Différence de Temps / Durée
 
-Chrono fournit le type `TimeDelta` pour représenter l'étendue d'un intervalle de temps. Il s'agit d'une durée "exacte" exprimée en secondes et nanosecondes, ne représentant pas de composants "nominaux" comme les jours ou les mois.
+Chrono fournit le type `TimeDelta` pour représenter l'amplitude d'un intervalle de temps. Il s'agit d'une durée "exacte" représentée en secondes et nanosecondes, et ne représente pas les composants "nominaux" tels que les jours ou les mois.
 
-Le type `TimeDelta` s'appelait auparavant `Duration` (toujours disponible comme alias de type). Une différence notable avec `core::time::Duration` similaire est qu'il s'agit d'une valeur signée plutôt que non signée.
+Le type `TimeDelta` s'appelait auparavant `Duration` (toujours disponible comme alias de type). Une différence notable avec le `core::time::Duration` similaire est qu'il s'agit d'une valeur signée plutôt que non signée.
 
-### Dates et heures
+### Date et Heure
 
 Chrono fournit le type `DateTime` pour représenter une date et une heure dans un fuseau horaire.
 
-`DateTime` est conscient du fuseau horaire et doit être construit à partir d'un objet `TimeZone` qui définit comment les dates locales sont converties en dates UTC et vice versa. Il existe trois implémentations bien connues de `TimeZone` :
+`DateTime` est conscient du fuseau horaire et doit être construit à partir d'un objet `TimeZone`, qui définit comment la date locale est convertie vers et depuis UTC. Il existe trois implémentations connues de `TimeZone` :
 
-- `Utc` spécifie le fuseau horaire UTC. C'est le plus efficace.
+- `Utc` spécifie le fuseau horaire UTC. Il est le plus efficace.
 - `Local` spécifie le fuseau horaire local du système.
-- `FixedOffset` spécifie un fuseau horaire fixe arbitraire, comme UTC+09:00 ou UTC-10:30.
+- `FixedOffset` spécifie un fuseau horaire à décalage fixe arbitraire, tel que UTC+09:00 ou UTC-10:30.
 
-Les `DateTime` de différents types `TimeZone` sont distincts et ne peuvent pas être mélangés, mais peuvent être convertis les uns en autres à l'aide de la méthode `DateTime::with_timezone`.
+Les valeurs `DateTime` avec différents types de `TimeZone` sont distinctes et ne peuvent pas être mélangées, mais peuvent être converties les unes dans les autres en utilisant la méthode `DateTime::with_timezone`.
 
 Vous pouvez obtenir la date et l'heure actuelles dans le fuseau horaire UTC (`Utc::now()`) ou dans le fuseau horaire local (`Local::now()`).
 
 ```rust
 use chrono::prelude::*;
 
-let utc: DateTime<Utc> = Utc::now(); // Par exemple `2014-11-28T12:45:59.324310806Z`
-let local: DateTime<Local> = Local::now(); // Par exemple `2014-11-28T21:45:59.324310806+09:00`
+let utc: DateTime<Utc> = Utc::now(); // ex. `2014-11-28T12:45:59.324310806Z`
+let local: DateTime<Local> = Local::now(); // ex. `2014-11-28T21:45:59.324310806+09:00`
 ```
 
 De plus, vous pouvez créer vos propres dates et heures :
@@ -72,13 +72,13 @@ use chrono::prelude::*;
 let dt = Utc.with_ymd_and_hms(2014, 7, 8, 9, 10, 11).unwrap(); // `2014-07-08T09:10:11Z`
 ```
 
-### Formatage et analyse
+### Formatage et Analyse
 
-Le formatage se fait via la méthode `format`, dont le format est équivalent à la syntaxe strftime familière.
+Le formatage se fait via la méthode `format`, dont le format est équivalent au format strftime familier.
 
-La méthode `to_string` par défaut et le spécificateur `{:?}` fournissent également une représentation raisonnable. Chrono fournit également les méthodes `to_rfc2822` et `to_rfc3339` pour les formats courants.
+La méthode `to_string` par défaut et le spécificateur `{:?}` donnent également une représentation raisonnable. Chrono fournit également les méthodes `to_rfc2822` et `to_rfc3339` pour les formats courants.
 
-Chrono fournit désormais le formatage de dates dans presque toutes les langues, sans bibliothèque C supplémentaire. Cette fonctionnalité est disponible sous la fonctionnalité `unstable-locales` :
+Chrono fournit désormais également le formatage de dates dans presque toutes les langues sans bibliothèques C supplémentaires. Cette fonctionnalité est disponible sous la fonctionnalité `unstable-locales` :
 
 ```rust
 use chrono::prelude::*;
@@ -101,28 +101,28 @@ let dt = "2014-11-28T12:00:09Z".parse::<DateTime<Utc>>().unwrap();
 let fixed_dt = DateTime::parse_from_str("2014-11-28 21:00:09 +09:00", "%Y-%m-%d %H:%M:%S %z").unwrap();
 ```
 
-### Conversion avec les horodatages EPOCH
+### Conversion vers/depuis les Horodatages d'Époque
 
-Utilisez `DateTime::from_timestamp(seconds, nanoseconds)` pour construire un `DateTime<Utc>` à partir d'un horodatage UNIX.
+Construisez `DateTime<Utc>` à partir d'un horodatage UNIX en utilisant `DateTime::from_timestamp(seconds, nanoseconds)`.
 
-Utilisez `DateTime.timestamp` pour obtenir l'horodatage (en secondes) à partir d'un `DateTime`. De plus, vous pouvez utiliser `DateTime.timestamp_subsec_nanos` pour obtenir le nombre supplémentaire de nanosecondes.
+Obtenez l'horodatage (en secondes) d'un `DateTime` en utilisant `DateTime.timestamp`. De plus, vous pouvez obtenir le nombre supplémentaire de nanosecondes avec `DateTime.timestamp_subsec_nanos`.
 
 ```rust
 use chrono::{DateTime, Utc};
 
-// Construire un datetime à partir de l'epoch :
+// Construire une datetime à partir de l'époque :
 let dt: DateTime<Utc> = DateTime::from_timestamp(1_500_000_000, 0).unwrap();
 assert_eq!(dt.to_rfc2822(), "Fri, 14 Jul 2017 02:40:00 +0000");
 
-// Obtenir la valeur de l'epoch à partir d'un datetime :
+// Obtenir la valeur d'époque depuis une datetime :
 let dt = DateTime::parse_from_rfc2822("Fri, 14 Jul 2017 02:40:00 +0000").unwrap();
 assert_eq!(dt.timestamp(), 1_500_000_000);
 ```
 
 ## Limitations
 
-- Seul le calendrier grégorien proleptique est pris en charge (c'est-à-dire étendu pour prendre en charge des dates antérieures).
-- Les types de date sont limités à environ ±262 000 ans à partir de l'ère commune.
-- Les types d'heure sont limités à une précision nanoseconde.
+- Seul le calendrier grégorien proléptique est pris en charge (c'est-à-dire étendu pour prendre en charge les dates avant l'ère).
+- Les types de date sont limités à environ +/- 262 000 ans à partir de l'ère commune.
+- Les types de temps sont limités à une précision à la nanoseconde.
 - Les secondes intercalaires peuvent être représentées, mais Chrono ne les prend pas entièrement en charge.
-{/* Auto generated, origin file hash:67733bfd2ba618b44f19c1449b096c42 */}
+{/* Auto generated, origin file hash:10bcf1127b3b63767462c43c36ecf9da */}

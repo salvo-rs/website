@@ -2,21 +2,21 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware fournissant la prise en charge de `Session`.
+Middleware fournissant la prise en charge des `Sessions`.
 
-## Qu'est-ce qu'une Session ?
+## Qu'est-ce qu'une Session
 
-Une Session est un ensemble de données utilisateur stockées côté serveur, généralement utilisées pour suivre l'état de l'utilisateur et conserver des données temporaires. Dans les applications Web, les Sessions permettent de résoudre le problème de l'absence d'état du protocole HTTP, permettant ainsi au serveur d'identifier les requêtes multiples provenant du même utilisateur.
+Une Session fait référence aux données utilisateur stockées côté serveur, généralement utilisées pour suivre l'état de l'utilisateur et stocker des données temporaires. Dans les applications web, la Session résout le caractère sans état du protocole HTTP, permettant au serveur de reconnaître plusieurs requêtes provenant du même utilisateur.
 
 ## Utilisation des Sessions dans Salvo
 
-Dans Salvo, le middleware Session fournit une API simple pour lire et écrire des données de session. L'instance de session peut être obtenue via `SessionDepot`, et les données de session peuvent être gérées à l'aide de méthodes telles que `get`, `set`, `remove`, etc.
+Dans Salvo, le middleware Session offre une API simple pour lire et écrire les données de session. Le `SessionDepot` peut être utilisé pour obtenir une instance de session, tandis que des méthodes telles que `get`, `set` et `remove` permettent de gérer les données de session.
 
-## Utilisations courantes
+## Cas d'utilisation courants
 
 - Authentification des utilisateurs et gestion de l'état de connexion
 - Stockage temporaire des données de formulaire
-- Conservation des préférences utilisateur
+- Stockage des préférences de l'utilisateur
 
 _**Exemple de code**_ 
 
@@ -30,4 +30,4 @@ _**Exemple de code**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:f8de91b5a58a71598fb1dfee41bb6a6f */}
+{/* Auto generated, origin file hash:4c03e5410a4d4c13f01b56ddfd7edd2c */}

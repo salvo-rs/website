@@ -1,40 +1,40 @@
-# Affix State - Gemeinsame Daten in Anfragen
+# Affix State – Gemeinsame Daten in Anfragen
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Das Affix State-Middleware wird verwendet, um gemeinsame Daten zum Depot hinzuzufügen.
-Um die Affix State-Funktionalität zu nutzen, muss das `affix-state`-Feature in der Cargo.toml aktiviert werden.
+Die Affix-State-Middleware wird verwendet, um gemeinsame Daten zum Depot hinzuzufügen.
+Um die Affix-State-Funktion zu nutzen, müssen Sie das Feature `affix-state` in der Cargo.toml aktivieren.
 
 ## Funktionsanalyse
-Affix State bietet eine einfache Möglichkeit, Daten während der Anfrageverarbeitung gemeinsam zu nutzen. Es ermöglicht Ihnen:
+Affix State bietet eine einfache Möglichkeit, Daten während der Anfrageverarbeitung zu teilen. Es ermöglicht Ihnen:
 
-- Globale Konfigurationen oder gemeinsame Daten in der Routing-Konfigurationsphase zu injizieren
-- Zugriff auf diese Daten über das Depot in jedem Handler
-- Unterstützung für jeden klonbaren Typ als Zustandsdaten
+- Globale Konfigurationen oder gemeinsame Daten während der Routenkonfiguration einzufügen
+- Auf diese Daten über das Depot in jedem Handler zuzugreifen
+- Jeden klonbaren Typ als Zustandsdaten zu unterstützen
 
-## Konzeptverständnis im Vergleich zu anderen Frameworks
-| Framework | Sprache | Zustandsverwaltung |
-|-----------|---------|-------------------|
-| Salvo (Affix State) | Rust | Speicherung und Zugriff über Depot, unterstützt verschiedene Typen |
-| Axum | Rust | Zustandsspeicherung über Extension, ähnlich aber mit anderer Nutzung |
-| Actix-web | Rust | Nutzung von App Data und Web::Data für gemeinsame Zustände |
-| Gin | Go | Datenzugriff über context.Set und context.Get |
-| Echo | Go | Verwaltung gemeinsamer Zustände mit context.Set und context.Get |
-| Spring | Java | Abhängigkeitsverwaltung mit ApplicationContext oder @Bean-Annotation |
-| Quarkus | Java | Nutzung von CDI und Dependency-Injection-Mechanismen |
-| Express.js | JavaScript | Globale Zustände in app.locals oder req.app.locals |
-| Nest.js | JavaScript | Verwaltung gemeinsamer Dienste durch Dependency-Injection-System |
-| Koa.js | JavaScript | Speicherung anfragespezifischer Zustände in ctx.state |
+## Vergleich mit anderen Frameworks zum schnellen Konzeptverständnis
+| Framework | Sprache | Ansatz zur Zustandsverwaltung |
+|-----------|----------|---------------------------|
+| Salvo (Affix State) | Rust | Speichert und greift über Depot zu, unterstützt mehrere Typen |
+| Axum | Rust | Speichert Zustand über Extension, ähnlich aber mit anderer Verwendung |
+| Actix-web | Rust | Nutzt App Data und Web::Data zum Teilen von Zuständen |
+| Gin | Go | Verwendet context.Set und context.Get zum Speichern und Abrufen von Daten |
+| Echo | Go | Nutzt context.Set und context.Get zur Verwaltung gemeinsamer Zustände |
+| Spring | Java | Verwendet ApplicationContext oder @Bean-Annotationen zur Abhängigkeitsverwaltung |
+| Quarkus | Java | Nutzt CDI und Dependency-Injection-Mechanismen |
+| Express.js | JavaScript | Verwendet app.locals oder req.app.locals zum Speichern globaler Zustände |
+| Nest.js | JavaScript | Nutzt ein Dependency-Injection-System zur Verwaltung gemeinsamer Dienste |
+| Koa.js | JavaScript | Verwendet ctx.state zum Speichern von anfragebezogenen Zuständen |
 
-## Häufige Anwendungsfälle
+## Typische Anwendungsfälle
 
 - Gemeinsame Nutzung von Datenbankverbindungspools
-- Freigabe von Anwendungskonfigurationen
+- Teilen von Anwendungskonfigurationen
 - Gemeinsame Nutzung von Cache-Instanzen
-- Freigabe von API-Clients
+- Teilen von API-Clients
 - Globale Zähler oder Zustandsverfolgung
 
-Der Vorteil von Affix State liegt in seiner Einfachheit und Flexibilität, die es ermöglicht, Daten beliebigen Typs mühelos zwischen verschiedenen Routen und Handlern zu teilen, ohne umfangreichen Boilerplate-Code zu benötigen.
+Der Vorteil von Affix State liegt in seiner Einfachheit und Flexibilität, die es ermöglicht, jeden Datentyp problemlos über verschiedene Routen und Handler hinweg zu teilen, ohne umfangreichen Boilerplate-Code.
 _**Beispielcode**_
 
 <Tabs>
@@ -47,4 +47,4 @@ _**Beispielcode**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:5dfff8f8a8238344561f9f829341312c */}
+{/* Auto generated, origin file hash:ab33e7002b7895dc8f4c574665f3af4f */}

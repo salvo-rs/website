@@ -2,17 +2,17 @@
 
 Middleware que proporciona funcionalidad de almacenamiento en caché.
 
-El middleware Cache puede almacenar en caché el `StatusCode`, `Headers` y `Body` de una `Response`. Para contenido ya almacenado en caché, cuando se procesen solicitudes posteriores, el middleware Cache enviará directamente el contenido almacenado en memoria al cliente.
+El middleware Cache puede almacenar en caché el `StatusCode`, los `Headers` y el `Body` de una `Response`. Para el contenido que ya ha sido almacenado en caché, el middleware Cache enviará directamente el contenido almacenado en memoria al cliente al procesar solicitudes posteriores.
 
-Nota: Este complemento no almacena en caché `Response` cuyo `Body` sea `ResBody::Stream`. Si se aplica a este tipo de `Response`, Cache no procesará estas solicitudes y no generará errores.
+Nota: Este complemento no almacena en caché objetos `Response` cuyo `Body` sea `ResBody::Stream`. Si se aplica a dicha `Response`, Cache no procesará estas solicitudes y no se producirá ningún error.
 
-## Funcionalidades principales
+## Características Principales
 
-- `CacheIssuer` proporciona una abstracción para la asignación de claves de caché. `RequestIssuer` es una implementación que permite definir la generación de claves de caché basándose en partes específicas de la URL de la solicitud y el `Method`. También puedes definir tu propia lógica de generación de claves. Las claves de caché no necesitan ser de tipo cadena; cualquier tipo que cumpla con las restricciones `Hash + Eq + Send + Sync + 'static` puede usarse como clave.
+- `CacheIssuer` proporciona una abstracción para generar claves de caché. `RequestIssuer` es una de sus implementaciones, permitiéndote definir qué partes de la URL de la solicitud y del `Method` de la solicitud deben usarse para generar la clave de caché. También puedes definir tu propia lógica de generación de claves de caché. La clave de caché no necesariamente tiene que ser una cadena; cualquier tipo que cumpla con las restricciones `Hash + Eq + Send + Sync + 'static` puede usarse como clave.
 
-- `CacheStore` proporciona operaciones de almacenamiento y recuperación de datos. `MokaStore` es una implementación de caché en memoria integrada basada en `moka`. También puedes definir tu propia implementación.
+- `CacheStore` proporciona operaciones para almacenar y recuperar datos. `MokaStore` es una implementación de caché en memoria incorporada basada en `moka`. También puedes definir tu propia implementación.
 
-- `Cache` es una estructura que implementa `Handler`, que internamente incluye un campo `skipper` para especificar qué solicitudes deben omitirse del almacenamiento en caché. Por defecto, se utiliza `MethodSkipper` para omitir todas las solicitudes excepto `Method::GET`.
+- `Cache` es una estructura que implementa `Handler`. También contiene un campo interno `skipper`, que puede usarse para especificar solicitudes que deben omitir el almacenamiento en caché. Por defecto, utiliza `MethodSkipper` para omitir todas las solicitudes excepto aquellas con `Method::GET`.
 
   Código de ejemplo de implementación interna:
 
@@ -29,27 +29,27 @@ Nota: Este complemento no almacena en caché `Response` cuyo `Body` sea `ResBody
   }
   ```
 
-## Migración rápida desde otros frameworks
+## Migración Rápida desde Otros Frameworks
 
-Si has utilizado mecanismos de caché en otros frameworks, la siguiente correspondencia de conceptos te ayudará a adaptarte más rápido a la implementación de caché de Salvo:
+Si has utilizado mecanismos de caché en otros frameworks, las siguientes correspondencias conceptuales te ayudarán a adaptarte más rápidamente a la implementación de caché de Salvo:
 
-### Guía de migración desde frameworks Rust
+### Guía de Migración desde Frameworks Rust
 
-- **Migración desde Actix-web**: Complementos como `actix-web-cache` en Actix-web generalmente requieren inclusión por separado, mientras que la caché de Salvo es parte de la biblioteca principal.
+- **Migrando desde Actix-web**: Complementos como `actix-web-cache` en Actix-web normalmente deben introducirse por separado, mientras que el almacenamiento en caché en Salvo es parte de la biblioteca principal.
 
   ```rust
   // Ejemplo de caché en Actix-web
   use actix_web_cache::Cache;
   App::new().wrap(Cache::new().ttl(30))
 
-  // Implementación equivalente en Salvo
+  // Implementación correspondiente en Salvo
   use salvo::prelude::*;
   Router::new().hoop(Cache::new(MokaStore::new(100), RequestIssuer::new()))
   ```
 
-### Guía de migración desde frameworks de otros lenguajes
+### Guía de Migración para Frameworks en Otros Lenguajes
 
-- **Migración desde Go/Gin**: Gin utiliza el patrón de middleware, similar a Salvo:
+- **Migrando desde Go/Gin**: Gin utiliza un patrón de middleware, que Salvo también adopta de manera similar:
 
   ```go
   // Ejemplo de caché en Gin
@@ -58,12 +58,12 @@ Si has utilizado mecanismos de caché en otros frameworks, la siguiente correspo
   ```
 
   ```rust
-  // Implementación equivalente en Salvo
+  // Implementación correspondiente en Salvo
   let store = MokaStore::new(100).with_ttl(Duration::from_secs(30));
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-- **Migración desde Spring Boot**: La caché declarativa de Spring Boot debe convertirse a configuración explícita de middleware en Salvo:
+- **Migrando desde Spring Boot**: El almacenamiento en caché declarativo de Spring Boot debe convertirse a la configuración explícita de middleware de Salvo:
 
   ```java
   // Spring Boot
@@ -71,32 +71,32 @@ Si has utilizado mecanismos de caché en otros frameworks, la siguiente correspo
   public Book findBook(ISBN isbn) { ... }
   ```
   ```rust
-  // Implementación equivalente en Salvo - aplicar caché a nivel de ruta
+  // Implementación correspondiente en Salvo - aplicando caché a nivel de ruta
   let custom_issuer = YourCustomIssuer::new(); // Implementa la interfaz CacheIssuer
   Router::with_path("books").hoop(Cache::new(MokaStore::new(100), custom_issuer))
   ```
 
-- **Migración desde Express.js**: El middleware de caché de Express es conceptualmente similar a Salvo, pero con sintaxis diferente:
+- **Migrando desde Express.js**: El middleware de caché de Express es conceptualmente similar al de Salvo, pero la sintaxis difiere:
 
   ```javascript
   // Express.js
   const apicache = require('apicache');
   app.use(apicache.middleware('5 minutes'));
 
-  // Implementación equivalente en Salvo
+  // Implementación correspondiente en Salvo
   let store = MokaStore::new(100).with_ttl(Duration::from_secs(300));
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-Al migrar desde otros frameworks, es importante considerar estos conceptos clave de la caché de Salvo:
+Al migrar desde otros frameworks, presta atención a varios conceptos clave del almacenamiento en caché de Salvo:
 
-1. **Generación de claves de caché** - Controlada a través de la interfaz `CacheIssuer`
-2. **Almacenamiento de caché** - Implementado a través de la interfaz `CacheStore`
-3. **Lógica de omisión de caché** - Personalizable mediante el mecanismo `skipper`
+1. **Generación de Claves de Caché** - Controlada a través de la interfaz `CacheIssuer`.
+2. **Almacenamiento en Caché** - Implementado a través de la interfaz `CacheStore`.
+3. **Lógica de Omisión de Caché** - Personalizada a través del mecanismo `skipper`.
 
-Por defecto, Salvo solo almacena en caché solicitudes GET, lo que coincide con el comportamiento predeterminado de la mayoría de frameworks.
+Por defecto, Salvo solo almacena en caché solicitudes GET, lo que se alinea con el comportamiento predeterminado de la mayoría de los frameworks.
 
-_**Código de ejemplo**_
+_**Código de Ejemplo**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -110,4 +110,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:df2bc60555363c109d61ba033738ce41 */}
+{/* Auto generated, origin file hash:6ae106316ebd0ee4b0ba1fabf6fe7a3f */}

@@ -1,14 +1,14 @@
-# Arresto Elegante
+# Arresto Grazioso
 
-L'arresto elegante si riferisce alla modalità di chiusura del server in cui non tutte le connessioni vengono terminate immediatamente, ma si interrompe prima l'accettazione di nuove richieste, concedendo alle richieste già accettate il tempo necessario per completare l'elaborazione prima di chiudere il servizio. Questo approccio evita l'interruzione improvvisa delle richieste, migliorando l'esperienza utente e l'affidabilità del sistema.
+L'arresto grazioso (Graceful Shutdown) si riferisce al processo in cui, durante lo spegnimento di un server, non vengono immediatamente terminate tutte le connessioni. Invece, il server interrompe prima l'accettazione di nuove richieste, concedendo alle richieste esistenti il tempo necessario per completare l'elaborazione prima di chiudere il servizio. Questo approccio evita l'interruzione brusca delle richieste, migliorando così l'esperienza utente e l'affidabilità del sistema.
 
-Salvo offre supporto per l'arresto elegante attraverso il metodo `handle` del `Server`, che restituisce un handle del server, seguito dalla chiamata al metodo `stop_graceful`. Dopo l'invocazione di questo metodo, il server:
+Salvo fornisce supporto per l'arresto grazioso tramite il metodo `handle` del `Server`, che recupera l'handle del server, seguito dalla chiamata al metodo `stop_graceful` per implementare lo spegnimento. Dopo aver invocato questo metodo, il server:
 
-- Cessa di accettare nuove connessioni
-- Attende il completamento delle richieste in corso
-- Forza la chiusura delle connessioni rimanenti dopo il timeout specificato (se fornito)
+- Interrompe l'accettazione di nuove richieste di connessione
+- Attende il completamento dell'elaborazione delle richieste esistenti
+- Chiude forzatamente eventuali connessioni rimanenti dopo un timeout specificato (se fornito)
 
-Ecco un esempio semplice:
+Ecco un semplice esempio:
 
 ```rust
 use salvo_core::prelude::*;
@@ -19,7 +19,7 @@ async fn main() {
     let server = Server::new(acceptor);
     let handle = server.handle();
 
-    // Arresto elegante del server
+    // Arresta il server in modo grazioso
     tokio::spawn(async move {
         tokio::time::sleep(std::time::Duration::from_secs(60)).await;
         handle.stop_graceful(None);
@@ -30,9 +30,9 @@ async fn main() {
 
 Nell'esempio sopra:
 
-- `server.handle()` ottiene l'handle del server, utilizzabile per controllarne il ciclo di vita
-- `handle.stop_graceful(None)` avvia il processo di arresto elegante; `None` indica l'assenza di timeout, attendendo indefinitamente il completamento di tutte le richieste
-- Per impostare un timeout, è possibile passare `Some(Duration)`; allo scadere del timeout, le connessioni residue verranno forzatamente chiuse
+- `server.handle()` recupera l'handle del server, che può essere utilizzato per controllare il ciclo di vita del server
+- `handle.stop_graceful(None)` avvia il processo di arresto grazioso, dove `None` indica che non è impostato alcun timeout, il che significa che il server attenderà indefinitamente il completamento di tutte le richieste
+- Per impostare un timeout, è possibile passare `Some(Duration)`, dopo il quale eventuali connessioni rimanenti verranno chiuse forzatamente
 
-Questo approccio è particolarmente adatto per applicazioni distribuite in ambienti containerizzati o su piattaforme cloud, nonché per garantire che le richieste non vengano interrotte accidentalmente durante aggiornamenti a caldo.
-{/* Auto generated, origin file hash:37a3d8a11c033b0d07dca20cf5f3b96b */}
+Questo approccio è particolarmente adatto per applicazioni distribuite in ambienti containerizzati o su piattaforme cloud, nonché per scenari che richiedono aggiornamenti a caldo per garantire che le richieste non vengano interrotte inaspettatamente.
+{/* Auto generated, origin file hash:046b3113209f454ef7a16224e721cfcb */}

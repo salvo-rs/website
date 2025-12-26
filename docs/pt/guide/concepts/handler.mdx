@@ -2,28 +2,28 @@
 
 ## Visão Geral Rápida
 
-Handler é um conceito central do framework Salvo, que pode ser entendido de forma simplificada como uma unidade de processamento de requisições. Ele tem duas finalidades principais:
+Handler é um conceito central no framework Salvo, que pode ser entendido simplesmente como uma unidade de processamento de requisições. Ele tem dois propósitos principais:
 
-1. **Como um Endpoint**: Um objeto que implementa `Handler` pode ser colocado no sistema de roteamento para atuar como o ponto final que processa a requisição. Ao usar a macro `#[handler]`, uma função pode ser usada diretamente como um endpoint; já a macro `#[endpoint]`, além de permitir seu uso como endpoint, também gera automaticamente a documentação OpenAPI (este tópico será detalhado em documentação posterior).
+1. **Como um Endpoint**: Um objeto que implementa `Handler` pode ser colocado no sistema de roteamento como o endpoint final para processar requisições. Ao usar a macro `#[handler]`, uma função pode ser usada diretamente como um endpoint; enquanto o uso da macro `#[endpoint]` não só permite que sirva como endpoint, mas também gera automaticamente a documentação OpenAPI (isso será detalhado na documentação subsequente).
 
-2. **Como um Middleware**: O mesmo `Handler` também pode ser usado como middleware, para processar a requisição antes ou depois dela chegar ao endpoint final.
+2. **Como Middleware**: O mesmo `Handler` também pode ser usado como middleware para processar requisições antes ou depois que elas cheguem ao endpoint final.
 
-O fluxo de processamento de requisições no Salvo pode ser visto como um "pipeline": a requisição passa primeiro por uma série de middlewares (processamento vertical) e depois chega ao endpoint correspondente (processamento horizontal). Tanto os middlewares quanto os endpoints são implementações de `Handler`, o que confere consistência e flexibilidade a todo o sistema.
+O fluxo de processamento de requisições do Salvo pode ser visto como um "pipeline": uma requisição primeiro passa por uma série de middlewares (processamento vertical) e depois chega ao endpoint correspondente (processamento horizontal). Tanto middleware quanto endpoints são implementações de `Handler`, o que garante consistência e flexibilidade em todo o sistema.
 
-### Diagrama de Fluxo do Handler no Salvo
+### Fluxograma do Handler no Salvo
 
 ```mermaid
 flowchart TD
     Client[Cliente] -->|Requisição| Request[Requisição HTTP]
     Request --> M1
 
-    subgraph "Implementação Handler"
+    subgraph "Implementação do Handler"
         M1[Middleware de Log] -->|Processamento Vertical| M2[Middleware de Autenticação] -->|Processamento Vertical| M3[Outro Middleware de Negócio]
         M3 --> Router[Correspondência de Rota]
 
-        Router -->|Processamento Horizontal| E1["Endpoint1<br>#[handler]"]
-        Router -->|Processamento Horizontal| E2["Endpoint2<br>#[endpoint]"]
-        Router -->|Processamento Horizontal| E3["Endpoint3<br>Implementa Trait Handler"]
+        Router -->|Processamento Horizontal| E1["Endpoint 1<br>#[handler]"]
+        Router -->|Processamento Horizontal| E2["Endpoint 2<br>#[endpoint]"]
+        Router -->|Processamento Horizontal| E3["Endpoint 3<br>Implementa o Trait Handler"]
     end
 
     E1 --> Response[Resposta HTTP]
@@ -40,19 +40,20 @@ flowchart TD
 
 ### Middleware e o Modelo Cebola
 
-A essência do modelo cebola é que, através da posição (antes/depois) da chamada `ctrl.call_next()`, é implementado um fluxo bidirecional de processamento da requisição e da resposta, permitindo que cada middleware participe do ciclo completo requisição-resposta.
-### Estrutura de Exemplo Completa de Middleware
+A essência do modelo cebola é que, ao colocar `ctrl.call_next()` antes e depois da lógica específica, ele implementa um fluxo de processamento bidirecional para requisições e respostas, permitindo que cada middleware participe do ciclo completo de requisição-resposta.
+
+### Estrutura de Exemplo Completo de Middleware
 
 ```rust
-async fn example_middleware(req: &mut Request, depot: &mut Depot,resp: &mut Response, ctrl: &mut FlowCtrl) {
+async fn example_middleware(req: &mut Request, depot: &mut Depot, resp: &mut Response, ctrl: &mut FlowCtrl) {
     // Pré-processamento (Fase da Requisição)
-    // Coloque aqui a lógica a ser executada quando a requisição entra
+    // Coloque aqui a lógica a ser executada quando a requisição entra.
 
-    // Chama o próximo handler na cadeia
-    ctrl.call_next(req, depot,resp).await;
+    // Chama o próximo handler na cadeia.
+    ctrl.call_next(req, depot, resp).await;
 
     // Pós-processamento (Fase da Resposta)
-    // Coloque aqui a lógica a ser executada após o processamento da requisição
+    // Coloque aqui a lógica a ser executada após o processamento da requisição.
 }
 ```
 
@@ -63,20 +64,20 @@ flowchart TB
     subgraph "Fluxo de Processamento do Modelo Cebola"
         direction TB
 
-        subgraph M1["Middleware1"]
+        subgraph M1["Middleware 1"]
             M1A["Pré-processamento<br>Log: Início da Requisição"] --> M1B["Pós-processamento<br>Log: Fim da Requisição"]
         end
 
-        subgraph M2["Middleware2"]
-            M2A["Pré-processamento<br>Registra Hora de Início"] --> M2B["Pós-processamento<br>Calcula Tempo de Processamento"]
+        subgraph M2["Middleware 2"]
+            M2A["Pré-processamento<br>Registrar Hora de Início"] --> M2B["Pós-processamento<br>Calcular Tempo de Processamento"]
         end
 
-        subgraph M3["Middleware3"]
-            M3A["Pré-processamento<br>Verifica Permissões do Usuário"] --> M3B["Pós-processamento<br>"]
+        subgraph M3["Middleware 3"]
+            M3A["Pré-processamento<br>Validar Permissões do Usuário"] --> M3B["Pós-processamento<br>"]
         end
 
-        subgraph Core["Lógica Central de Processamento"]
-            Handler["Processador do Endpoint<br>#[handler]"]
+        subgraph Core["Lógica de Processamento Central"]
+            Handler["Handler do Endpoint<br>#[handler]"]
         end
 
         Request --> M1A
@@ -104,7 +105,7 @@ flowchart TB
 
 ## O que é um Handler
 
-Handler é o objeto concreto responsável por processar uma requisição (Request). Handler é em si uma Trait, que contém internamente um método assíncrono `handle`:
+Um Handler é o objeto concreto responsável por processar objetos Request. O próprio Handler é um Trait contendo um método assíncrono `handle`:
 
 ```rust
 #[async_trait]
@@ -113,36 +114,33 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-A função de processamento `handle` tem, por padrão, uma assinatura que inclui quatro parâmetros, na ordem: `&mut Request, &mut Depot. &mut Response, &mut FlowCtrl`. Depot é um armazenamento temporário que pode guardar dados relacionados à requisição atual.
+A assinatura padrão da função `handle` inclui quatro parâmetros, na ordem: `&mut Request, &mut Depot, &mut Response, &mut FlowCtrl`. Depot é um armazenamento temporário que pode conter dados relacionados à requisição atual.
 
-Dependendo do modo de uso, ele pode ser empregado como middleware (hoop), que pode realizar algum processamento antes ou depois que a requisição chegue ao `Handler` que a processará formalmente. Exemplos: verificação de login, compressão de dados, etc.
+Dependendo de como é usado, pode servir como middleware (hoop), que pode executar processamento antes ou depois que a requisição chegue ao `Handler` formal de processamento de requisições, como: verificação de login, compactação de dados, etc.
 
-Middlewares são adicionados através da função `hoop` do `Router`. O middleware adicionado afetará o `Router` atual e todos os seus `Router` descendentes.
+O middleware é adicionado através da função `hoop` de um `Router`. O middleware adicionado afeta o `Router` atual e todos os seus `Router`s descendentes.
 
-`Handler` também pode ser usado como um `Handler` que participa da correspondência de rotas e é executado no final, sendo chamado de `goal`.
+Um `Handler` também pode ser usado como um `Handler` que participa da correspondência de rota e é finalmente executado, conhecido como `goal`.
 
 ## `Handler` como Middleware (hoop)
 
-Quando `Handler` atua como middleware, ele pode ser adicionado a três tipos de objetos que suportam middleware:
+Quando um `Handler` atua como middleware, ele pode ser adicionado aos três tipos de objetos que suportam middleware:
 
-- `Service`: Qualquer requisição passará pelos middlewares definidos no `Service`.
+- `Service`: Qualquer requisição passará pelo middleware no `Service`.
+- `Router`: Somente quando a correspondência de rota for bem-sucedida, a requisição passará pelo middleware definido no `Service` e todo o middleware coletado ao longo do caminho correspondente.
+- `Catcher`: Quando ocorre um erro e nenhuma informação de erro personalizada foi escrita, a requisição passará pelo middleware no `Catcher`.
+- `Handler`: O próprio `Handler` suporta a adição de wrappers de middleware para executar alguma lógica pré ou pós.
 
-- `Router`: Apenas quando a correspondência de rota for bem-sucedida, a requisição passará sequencialmente pelos middlewares definidos no `Service` e por todos os middlewares coletados ao longo do caminho correspondente.
+## Usando a Macro `#[handler]`
 
-- `Catcher`: Quando ocorre um erro e nenhuma informação de erro personalizada foi escrita, a requisição passará pelos middlewares do `Catcher`.
+A macro `#[handler]` pode simplificar muito a escrita de código e melhorar a flexibilidade do código.
 
-- `Handler`: O próprio `Handler` suporta a adição de um wrapper de middleware para executar lógica pré ou pós-processamento.
-
-## Uso da Macro `#[handler]`
-
-`#[handler]` pode simplificar significativamente a escrita do código e aumentar sua flexibilidade.
-
-Ela pode ser aplicada a uma função, fazendo com que ela implemente `Handler`:
+Pode ser aplicada a uma função para fazê-la implementar `Handler`:
 
 ```rust
 #[handler]
 async fn hello() -> &'static str {
-    "hello world!"
+    "olá mundo!"
 }
 ```
 
@@ -154,18 +152,18 @@ struct hello;
 #[async_trait]
 impl Handler for hello {
     async fn handle(&self, _req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
-        res.render(Text::Plain("hello world!"));
+        res.render(Text::Plain("olá mundo!"));
     }
 }
 ```
 
-Como pode ser visto, ao usar `#[handler]`, o código se torna muito mais simples:
+Como você pode ver, com `#[handler]`, o código se torna muito mais simples:
 
-- Não é mais necessário adicionar manualmente `#[async_trait]`.
-- Parâmetros não necessários na função são omitidos, e os parâmetros necessários podem ser organizados em qualquer ordem.
-- Para objetos que implementam as abstrações `Writer` ou `Scribe`, eles podem ser retornados diretamente como valor da função. Aqui, `&'static str` implementa `Scribe`, portanto pode ser retornado diretamente.
+- Não é necessário adicionar manualmente `#[async_trait]`.
+- Parâmetros desnecessários na função são omitidos, e os parâmetros necessários podem ser organizados em qualquer ordem.
+- Para objetos que implementam as abstrações `Writer` ou `Scribe`, eles podem ser retornados diretamente como valor de retorno da função. Aqui, `&'static str` implementa `Scribe`, então pode ser retornado diretamente.
 
-`#[handler]` não pode ser aplicada apenas a funções, mas também ao bloco `impl` de um `struct`, fazendo com que o `struct` implemente `Handler`. Neste caso, a função `handle` dentro do bloco `impl` será reconhecida como a implementação concreta do método `handle` da trait `Handler`:
+`#[handler]` pode não só ser aplicado a funções, mas também ao bloco `impl` de uma `struct` para fazer a `struct` implementar `Handler`. Nesse caso, a função `handle` dentro do bloco `impl` é reconhecida como a implementação concreta do método `handle` em `Handler`:
 
 ```rust
 struct Hello;
@@ -173,15 +171,15 @@ struct Hello;
 #[handler]
 impl Hello {
     async fn handle(&self, res: &mut Response) {
-        res.render(Text::Plain("hello world!"));
+        res.render(Text::Plain("olá mundo!"));
     }
 }
 ```
 
 ## Tratamento de Erros
 
-Em Salvo, um `Handler` pode retornar um `Result`, desde que os tipos `Ok` e `Err` dentro do `Result` implementem a trait `Writer`.
-Considerando que o uso do anyhow é bastante difundido, ao habilitar o recurso `anyhow`, `anyhow::Error` implementará a trait `Writer`. `anyhow::Error` será mapeado para `InternalServerError`.
+No Salvo, um `Handler` pode retornar um `Result`, desde que tanto o tipo `Ok` quanto `Err` dentro do `Result` implementem o trait `Writer`.
+Considerando o uso generalizado do anyhow, quando o recurso `anyhow` está ativado, `anyhow::Error` implementará o trait `Writer`. `anyhow::Error` será mapeado para `InternalServerError`.
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -193,7 +191,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-Para tipos de erro personalizados, você pode gerar páginas de erro diferentes conforme necessário.
+Para tipos de erro personalizados, você pode gerar diferentes páginas de erro conforme necessário.
 
 ```rust
 use salvo::anyhow;
@@ -204,13 +202,13 @@ struct CustomError;
 impl Writer for CustomError {
     async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
         res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
-        res.render("custom error");
+        res.render("erro personalizado");
     }
 }
 
 #[handler]
 async fn handle_anyhow() -> Result<(), anyhow::Error> {
-    Err(anyhow::anyhow!("anyhow error"))
+    Err(anyhow::anyhow!("erro anyhow"))
 }
 #[handler]
 async fn handle_custom() -> Result<(), CustomError> {
@@ -227,7 +225,7 @@ async fn main() {
 }
 ```
 
-## Implementando Diretamente a Trait Handler
+## Implementando Diretamente o Trait Handler
 
 ```rust
 use salvo_core::prelude::*;
@@ -248,4 +246,4 @@ impl Handler for MaxSizeHandler {
     }
 }
 ```
-{/* Auto generated, origin file hash:aba76a058ee7c27a6a982876209eae78 */}
+{/* Auto generated, origin file hash:d20a5e643c01f98f895dfcba095711b2 */}

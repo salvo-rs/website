@@ -1,10 +1,10 @@
 # HTTP/3-Unterstützung
 
-Salvo bietet Unterstützung für HTTP/3, die durch das `quinn`-Feature aktiviert werden kann. HTTP/3 basiert auf dem QUIC-Protokoll und bietet im Vergleich zu den traditionellen Protokollen HTTP/1.1 und HTTP/2 eine geringere Latenz und bessere Leistung, insbesondere in instabilen Netzwerkumgebungen.
+Salvo bietet Unterstützung für HTTP/3, die über das Feature `quinn` aktiviert werden kann. HTTP/3 basiert auf dem QUIC-Protokoll und bietet im Vergleich zu herkömmlichem HTTP/1.1 und HTTP/2 geringere Latenz und bessere Leistung, insbesondere in instabilen Netzwerkumgebungen.
 
-## HTTP/3-Unterstützung aktivieren
+## Aktivierung der HTTP/3-Unterstützung
 
-Um HTTP/3-Unterstützung in Salvo zu aktivieren, müssen Sie das `quinn`-Feature in der `Cargo.toml`-Datei aktivieren:
+Um HTTP/3-Unterstützung in Salvo zu aktivieren, müssen Sie das Feature `quinn` in Ihrer `Cargo.toml`-Datei aktivieren:
 
 ```toml
 salvo = { workspace = true, features = ["quinn"] }
@@ -16,18 +16,18 @@ HTTP/3 ist besonders geeignet für folgende Szenarien:
 
 - Anwendungen auf Mobilgeräten und in instabilen Netzwerkumgebungen
 - Echtzeitanwendungen mit geringen Latenzanforderungen
-- Parallele Downloads vieler kleiner Dateien
-- Anwendungen mit Anforderungen an Verbindungsmigration (z. B. unterbrechungsfreier Wechsel von WLAN zu Mobilfunk)
+- Szenarien mit parallelen Downloads zahlreicher kleiner Dateien
+- Anwendungen, die Verbindungsmigration benötigen (z.B. nahtloses Wechseln von WLAN zu Mobilfunknetzen ohne Verbindungsunterbrechung)
 
 ## Beispielcode
 
-Hier ist ein einfaches Beispiel für einen HTTP/3-Server, der sowohl HTTP/3 (QUIC) als auch HTTPS (TCP) unterstützt:
+Hier ist ein einfaches HTTP/3-Serverbeispiel, das sowohl HTTP/3 (QUIC) als auch HTTPS (TCP) unterstützt:
 
 ```rust
 use salvo::conn::rustls::{Keycert, RustlsConfig};
 use salvo::prelude::*;
 
-// Handler-Funktion, die "Hello World" zurückgibt
+// Handler-Funktion, die mit "Hello World" antwortet
 #[handler]
 async fn hello() -> &'static str {
     "Hello World"
@@ -45,10 +45,10 @@ async fn main() {
     // Router erstellen und Endpunkt hinzufügen
     let router = Router::new().get(hello);
 
-    // TLS-Konfiguration mit Rustls erstellen
+    // TLS-Einstellungen mit Rustls konfigurieren
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // TLS-verschlüsselten TCP-Listener für Port 5800 erstellen
+    // TLS-verschlüsselten TCP-Listener auf Port 5800 erstellen
     let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
     // QUIC-Listener erstellen und mit TCP-Listener kombinieren
@@ -62,18 +62,18 @@ async fn main() {
 }
 ```
 
-## Wichtiger Code erklärt
+## Wichtige Code-Analyse
 
 ### TLS-Konfiguration
 
 ```rust
-// TLS-Konfiguration mit Rustls erstellen
+// TLS-Einstellungen mit Rustls konfigurieren
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 ```
 
-Da HTTP/3 auf dem QUIC-Protokoll basiert und QUIC TLS 1.3 für die Verschlüsselung erfordert, müssen TLS-Zertifikate und Schlüssel konfiguriert werden. In Salvo verwenden wir `RustlsConfig` für die TLS-Konfiguration.
+Da HTTP/3 auf dem QUIC-Protokoll basiert, das TLS 1.3 für die Verschlüsselung benötigt, müssen TLS-Zertifikate und -Schlüssel konfiguriert werden. In Salvo verwenden wir `RustlsConfig` für die TLS-Konfiguration.
 
-### Listener kombinieren
+### Kombinieren von Listenern
 
 ```rust
 // TLS-verschlüsselten TCP-Listener erstellen
@@ -86,17 +86,17 @@ let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.
     .await;
 ```
 
-Dieser Code ist der Kern der HTTP/3-Verarbeitung in Salvo. Zuerst wird ein TLS-fähiger TCP-Listener (für HTTP/1.1 und HTTP/2) erstellt, dann ein QUIC-Listener (für HTTP/3). Durch die `join`-Methode werden beide Listener kombiniert, sodass der Server Anfragen in verschiedenen Protokollen gleichzeitig verarbeiten kann.
+Dieser Code ist der Kern der HTTP/3-Verarbeitung in Salvo. Zuerst wird ein TLS-fähiger TCP-Listener (für HTTP/1.1 und HTTP/2) erstellt, dann ein QUIC-Listener (für HTTP/3). Die `join`-Methode kombiniert diese beiden Listener, sodass der Server Anfragen von verschiedenen Protokollen gleichzeitig verarbeiten kann.
 
-## Beispiel ausführen
+## Ausführung des Beispiels
 
-Um dieses Beispiel auszuführen, benötigen Sie gültige TLS-Zertifikate und private Schlüssel. In Entwicklungsumgebungen können selbstsignierte Zertifikate verwendet werden. Den vollständigen Beispielcode finden Sie im [Salvo GitHub-Repository](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
+Um dieses Beispiel auszuführen, benötigen Sie gültige TLS-Zertifikate und private Schlüssel. In einer Entwicklungsumgebung können selbstsignierte Zertifikate verwendet werden. Den vollständigen Beispielcode finden Sie im [Salvo GitHub-Repository](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
 
-Da viele Clients HTTP/3 derzeit noch nicht vollständig unterstützen, ist es wichtig, dass dieser Server sowohl HTTP/3 als auch HTTPS unterstützt.
+Beachten Sie, dass viele Clients HTTP/3 noch nicht vollständig unterstützen, weshalb dieser Server sowohl HTTP/3 als auch HTTPS unterstützen muss.
 
 ## Wichtige Hinweise
 
 1. HTTP/3 erfordert TLS 1.3-Unterstützung, daher müssen gültige Zertifikate und Schlüssel konfiguriert werden.
-2. Clients müssen das HTTP/3-Protokoll unterstützen, um diese Funktion nutzen zu können, andernfalls wird auf HTTP/1.1 oder HTTP/2 zurückgefallen.
-3. In Produktionsumgebungen sollten Zertifikate von vertrauenswürdigen Zertifizierungsstellen verwendet werden, nicht selbstsignierte Zertifikate.
-{/* Auto generated, origin file hash:b4abbc723f2cb070d8584564bf96ce8a */}
+2. Clients müssen das HTTP/3-Protokoll unterstützen, um diese Funktion nutzen zu können; andernfalls greifen sie auf HTTP/1.1 oder HTTP/2 zurück.
+3. In Produktionsumgebungen sollten Zertifikate einer vertrauenswürdigen Zertifizierungsstelle (CA) verwendet werden, anstatt selbstsignierter Zertifikate.
+{/* Auto generated, origin file hash:f135699b9ae12daf6d88fc1e8c22a61e */}

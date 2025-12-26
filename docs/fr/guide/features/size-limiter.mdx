@@ -1,18 +1,18 @@
-# Middleware de limitation de taille des fichiers téléchargés
+# Middleware de Limitation de Taille de Téléchargement de Fichiers
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Fournit un middleware pour limiter la taille des fichiers téléchargés dans les requêtes.
+Un middleware pour limiter la taille des fichiers téléchargés dans les requêtes.
 
-## Cas d'utilisation
+## Cas d'Utilisation
 
-Size Limiter est principalement utilisé dans les scénarios suivants :
-- Empêcher les utilisateurs de télécharger des fichiers trop volumineux qui consommeraient les ressources du serveur
-- Éviter que des attaquants malveillants ne provoquent un débordement de mémoire du serveur en téléchargeant de grandes quantités de données
-- Définir des stratégies de limitation de taille de requête différentes pour différents points de terminaison d'API
-- Améliorer l'efficacité et la stabilité du traitement des requêtes par le serveur
+Le Limiteur de Taille est principalement utilisé dans les scénarios suivants :
+- Empêcher les utilisateurs de télécharger des fichiers excessivement volumineux qui consomment les ressources du serveur
+- Éviter le débordement de mémoire du serveur causé par des attaquants malveillants téléchargeant de grandes quantités de données
+- Définir des politiques de limitation de taille de requête différentes pour différents points de terminaison d'API
+- Améliorer l'efficacité et la stabilité du traitement des requêtes du serveur
 
-_**Exemple de code**_
+_**Exemple de Code**_
 
 <Tabs>
   <Tab label="main.rs">
@@ -24,4 +24,4 @@ _**Exemple de code**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:e8fe97542f86e069c6a192945b8303da */}
+{/* Auto generated, origin file hash:dcaab72e263599802483c91ae5fc9b85 */}

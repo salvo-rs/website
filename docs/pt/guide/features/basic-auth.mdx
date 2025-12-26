@@ -1,39 +1,39 @@
 # Autenticação Básica
 
-Middleware que fornece suporte para Basic Auth.
+Um middleware que fornece suporte para Autenticação Básica.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Introdução à Autenticação Básica
 
-A Autenticação Básica (Basic Auth) é um mecanismo simples de autenticação HTTP que transmite nome de usuário e senha através do campo `Authorization` no cabeçalho da requisição HTTP. O formato é `Authorization: Basic <base64(username:password)>`. Embora simples, como as credenciais são apenas codificadas em Base64 e não criptografadas, geralmente é necessário usar com HTTPS para garantir a segurança.
+A Autenticação Básica é um mecanismo simples de autenticação HTTP que transmite um nome de usuário e senha através do cabeçalho `Authorization` em requisições HTTP. O formato é `Authorization: Basic <base64(usuário:senha)>`. Embora simples, como as credenciais são apenas codificadas em Base64 e não criptografadas, normalmente é usada com HTTPS para garantir segurança.
 
-## Comparação de Implementações de Basic Auth em Frameworks Comuns
+## Comparação das Implementações de Autenticação Básica em Frameworks Comuns
 
-| Framework | Linguagem | Implementação de Basic Auth |
-|-----------|-----------|-----------------------------|
-| Salvo | Rust | Implementado através do middleware `BasicAuth` e `BasicAuthValidator` personalizado |
-| Express | JavaScript | Usa o pacote de middleware `express-basic-auth` |
+| Framework | Linguagem | Implementação de Autenticação Básica |
+|-----------|----------|--------------------------------------|
+| Salvo | Rust | Implementada através do middleware `BasicAuth` e `BasicAuthValidator` personalizado |
+| Express | JavaScript | Utiliza o pacote de middleware `express-basic-auth` |
 | Spring Security | Java | Configurado via `httpBasic()` e implementado com `UserDetailsService` |
 | ASP.NET Core | C# | Usa `.UseAuthentication()` e `AddAuthentication(AuthenticationSchemes.Basic)` |
-| Gin | Go | Através de middleware personalizado ou usando o pacote `gin-contrib/auth` |
+| Gin | Go | Implementado via middleware personalizado ou usando o pacote `gin-contrib/auth` |
 
-## Cenários de Uso
+## Casos de Uso
 
 A Autenticação Básica é adequada para os seguintes cenários:
 
-1. **APIs e ferramentas internas**: Ferramentas de administração e APIs usadas internamente na empresa
-2. **Ambientes de desenvolvimento e teste**: Implementação rápida de autenticação sem sistemas de login complexos
-3. **Proteção simples de API**: Quando não é necessário um sistema complexo de gerenciamento de usuários
-4. **Combinação com outras medidas de segurança**: Como parte de uma arquitetura de segurança em múltiplas camadas
+1. **APIs e Ferramentas Internas**: Ferramentas de gerenciamento e APIs usadas dentro de uma empresa
+2. **Ambientes de Desenvolvimento e Teste**: Implementar autenticação rapidamente sem um sistema de login complexo
+3. **Proteção Simples de API**: Quando um sistema complexo de gerenciamento de usuários não é necessário
+4. **Combinado com Outras Medidas de Segurança**: Como parte de uma arquitetura de segurança em múltiplas camadas
 
-No Salvo, o middleware Basic Auth pode ser facilmente integrado às rotas. A lógica de validação é personalizada implementando a trait `BasicAuthValidator`, oferecendo grande flexibilidade.
+No Salvo, o middleware de Autenticação Básica pode ser facilmente integrado em rotas. Ao implementar a trait `BasicAuthValidator`, é possível definir lógica de validação personalizada, oferecendo grande flexibilidade.
 
-## Considerações Importantes
+## Considerações
 
-- Sempre use com HTTPS para proteger a transmissão das credenciais
+- Sempre use com HTTPS para proteger a transmissão de credenciais
 - Não é adequado para ambientes de produção que armazenam informações sensíveis
-- Considere usar métodos de autenticação mais seguros como JWT, OAuth, etc., para ambientes de produção
+- Considere usar métodos de autenticação mais seguros como JWT ou OAuth para ambientes de produção
 
 <Tabs>
   <Tab label="main.rs">
@@ -45,4 +45,4 @@ No Salvo, o middleware Basic Auth pode ser facilmente integrado às rotas. A ló
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:d01ddb1691782cd7ed28227dcc89e19f */}
+{/* Auto generated, origin file hash:221f2dd3a7cc0491c1e80844627d2e2e */}

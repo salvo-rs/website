@@ -1,83 +1,83 @@
 # Ablaufverarbeitung
 
-Der `Service` wandelt die Anfrage zunächst in eine `Response` von Salvo um und tritt dann in die Phase der Routenübereinstimmung ein.
+Der `Service` wandelt die Anfrage zunächst in die `Response` von Salvo um und tritt dann in die Routing-Matching-Phase ein.
 
-## Phase der Routenübereinstimmung
+## Routing-Matching-Phase
 
-Die Routenübereinstimmung folgt der Reihenfolge der hinzugefügten Filter und wird von außen nach innen sowie von oben nach unten ausgeführt. Sobald ein Filter fehlschlägt, wird die Übereinstimmung als gescheitert betrachtet.
+Beim Routing-Matching werden Filter in der Reihenfolge ihrer Hinzufügung ausgeführt, von außen nach innen und von oben nach unten. Wenn ein Filter fehlschlägt, gilt der Match als nicht erfolgreich.
 
-Während des Übereinstimmungsprozesses gibt es Pfadinformationen für die Anfrage. Sobald ein Pfadfilter erfolgreich übereinstimmt, wird der entsprechende Pfad verbraucht. Wenn alle Pfade vollständig verbraucht sind und keine Filter auf der Übereinstimmungskette fehlschlagen, und der letzte `Router` auf der aktuellen Kette über einen `goal`-`Handler` verfügt, gilt die Übereinstimmung als erfolgreich. Die Übereinstimmungsphase endet, und alle `Handler` auf den Übereinstimmungsketten werden gesammelt und in die Ausführungsphase überführt.
+Während des Matching-Prozesses werden die Pfadinformationen der Anfrage schrittweise verbraucht. Sobald ein Pfadfilter erfolgreich matched, verbraucht er den gematchten Teil des Pfads. Wenn alle Pfadsegmente verbraucht sind, kein Filter in der Matching-Kette fehlschlägt und der letzte `Router` in der aktuellen Kette ein `goal`-`Handler` hat, ist der Match erfolgreich und die Matching-Phase endet. Alle `Handler`, die aus der Matching-Kette gesammelt wurden, gehen in die Ausführungsphase über.
 
-Wenn die Pfade nicht vollständig verbraucht sind, die Filter auf der Kette keine Fehler melden, aber keine weiteren Unterrouten zur weiteren Übereinstimmung verfügbar sind, wird die aktuelle Kette als fehlgeschlagen betrachtet, und die nächste Routenübereinstimmung wird versucht.
+Wenn der Pfad nicht vollständig verbraucht ist, keine Fehler in der Kette auftreten, aber keine weiteren untergeordneten Routen zum Fortsetzen des Matchings vorhanden sind, gilt die aktuelle Kette als Match-Fehler, und der Prozess wechselt zur nächsten Route für das Matching.
 
-Wenn alle Routen überprüft wurden und keine erfolgreiche Übereinstimmung gefunden wurde, tritt die Phase der Fehlerbehandlung ein.
+Wenn alle Routen ohne Erfolg gematcht wurden, tritt der Prozess in die Fehlerbehandlungsphase ein.
 
-## Phase der Handler-Ausführung
+## Handler-Ausführungsphase
 
-Die gesammelten `Handler`-Listen aus der Übereinstimmungsphase werden nacheinander ausgeführt. Während der Ausführung können vorherige Middleware-Funktionen `ctrl::call_next()` aufrufen, um nachfolgende Middleware-Funktionen zuerst auszuführen, bevor sie ihre eigene Logik ausführen. Wenn während der Ausführung ein Statuscodefehler oder eine Umleitung auftritt, werden die nachfolgenden `Handler` nicht mehr ausgeführt. In diesem Fall, wenn der Statuscode ein Fehler ist und der `Body` der `Response` nicht gesetzt oder `ResBody::Error` ist, tritt die Phase der Fehlerbehandlung ein. Andernfalls wird diese Phase übersprungen.
+Die während der Matching-Phase gesammelten `Handler` werden nacheinander ausgeführt. Während der Ausführung können vorherige Middleware `ctrl::call_next()` aufrufen, um nachfolgende Middleware zuerst ausführen zu lassen, bevor ihre eigene Logik ausgeführt wird. Wenn während der Ausführung ein Fehlerstatuscode oder eine Weiterleitung auftritt, werden nachfolgende `Handler` nicht ausgeführt. Wenn der Statuscode einen Fehler anzeigt und der `Body` der `Response` nicht gesetzt ist oder `ResBody::Error` ist, tritt der Prozess in die Fehlerbehandlungsphase ein; andernfalls wird die Fehlerbehandlungsphase übersprungen.
 
-## Phase der Fehlerbehandlung
+## Fehlerbehandlungsphase
 
-`Catcher` ist ein Typ zur Fehlerbehandlung, der ebenfalls Middleware-Funktionen (Hoops) hinzufügen kann. Fehler durchlaufen nacheinander alle `Handler` innerhalb des `Catchers`. Wenn ein `Handler` den Fehler bereits behandelt hat und nicht möchte, dass nachfolgende `Handler` weiter ausgeführt werden, kann er `ctrl.skip_rest()` aufrufen, um die nachfolgenden `Handler` zu überspringen und die Fehlerbehandlungsphase direkt zu beenden.
+`Catcher` ist ein Typ zur Fehlerbehandlung und kann auch Middleware (Hoops) enthalten. Fehler durchlaufen nacheinander alle `Handler` innerhalb des `Catchers`. Wenn ein `Handler` den Fehler bereits behandelt hat und nicht möchte, dass nachfolgende `Handler` fortfahren, kann er den Rest mit `ctrl.skip_rest()` überspringen und die Fehlerbehandlungsphase direkt beenden.
 
-Ein `Catcher` muss standardmäßig einen `Handler` enthalten, der als Standardfehlerbehandlung dient. Standardmäßig ist dies `DefaultGoal`. Sie können jedoch auch einen vollständig benutzerdefinierten `Handler` als Standardimplementierung für die Fehlerbehandlung verwenden. Basierend auf dem im Anfrage-Header angeforderten `content-type` zeigt es Fehlermeldungen in den entsprechenden Formaten an, unterstützt werden `json`, `xml`, `text` und `html`. `DefaultGoal` bietet auch einige Anzeigeeinstellungen. Standardmäßig zeigt es beispielsweise beim Anzeigen im HTML-Format Links zu Salvo an. Sie können `DefaultGoal::footer` oder `DefaultGoal::with_footer` aufrufen, um den Footer nach Ihren Wünschen anzupassen.
+`Catcher` muss mindestens einen `Handler` als Standard-Fehlerbehandler enthalten. Der Standard ist `DefaultGoal`, aber Sie können Ihren eigenen `Handler` vollständig anpassen, um die Standard-Fehlerbehandlung zu implementieren. Es zeigt Fehlerinformationen im vom `content-type`-Header angeforderten Format an und unterstützt `json`, `xml`, `text` und `html` Formate. `DefaultGoal` bietet auch Anzeigeeinstellungen; standardmäßig zeigt es beispielsweise Salvo-bezogene Links an, wenn das HTML-Format angezeigt wird. Sie können `DefaultGoal::footer` oder `DefaultGoal::with_footer` aufrufen, um eine benutzerdefinierte Fußzeile nach Wunsch festzulegen.
 
-Der `Service` wandelt die `Response` von Salvo in den `Response`-Typ von Hyper um und gibt sie schließlich an Clients wie Browser zurück.
+`Service` wandelt die `Response` von Salvo in den Hyper-`Response`-Typ um, der letztendlich an Clients wie Browser zurückgegeben wird.
 
-## Lebenszyklus einer Salvo-Anfrage
-Dies ist eine visuelle Darstellung und Erläuterung des Lebenszyklus einer HTTP-Anfrage im Salvo-Web-Framework.
+## Salvo-Anfragelebenszyklus
+Dies ist eine visuelle Darstellung und Erklärung des HTTP-Anfragelebenszyklus im Salvo-Web-Framework.
 
 ```mermaid
 flowchart TD
-    subgraph MainGraph[Salvo-Framework-Anfragelebenszyklus]
-        Start[Client-Anfrage] --> Convert[Service wandelt HTTP-Anfrage in Salvo-Response um]
+    subgraph MainGraph[Salvo Framework Request Lifecycle]
+        Start[Client Request] --> Convert[Service converts HTTP request to Salvo Response]
         
-        %% Phase der Routenübereinstimmung
-        subgraph RoutingPhase[1. Phase der Routenübereinstimmung]
-            Convert --> Routing[Routenübereinstimmung in Reihenfolge, von außen nach innen, von oben nach unten]
-            Routing --> FilterCheck{Sind alle Filter erfolgreich?}
-            FilterCheck -->|Nein| NextRoute[Nächste Route versuchen]
-            FilterCheck -->|Ja| PathConsume[Übereinstimmenden Pfadteil verbrauchen]
-            PathConsume --> PathCheck{Wurde der Pfad vollständig verbraucht und gibt es einen goal-Handler?}
-            PathCheck -->|Nein| SubRouteCheck{Gibt es Unterrouten zur weiteren Übereinstimmung?}
-            SubRouteCheck -->|Ja| Routing
-            SubRouteCheck -->|Nein| NextRoute
-            NextRoute --> RouteLeft{Gibt es weitere Routen?}
-            RouteLeft -->|Ja| Routing
-            RouteLeft -->|Nein| NoMatchRoute[Routenübereinstimmung fehlgeschlagen]
-            PathCheck -->|Ja| MatchSuccess[Routenübereinstimmung erfolgreich]
-            MatchSuccess --> CollectHandlers[Alle Handler auf Übereinstimmungskette sammeln]
+        %% Routing Matching Phase
+        subgraph RoutingPhase[1. Routing Matching Phase]
+            Convert --> Routing[Match routes in added order, outer to inner, top to bottom]
+            Routing --> FilterCheck{Do all filters pass?}
+            FilterCheck -->|No| NextRoute[Try next route]
+            FilterCheck -->|Yes| PathConsume[Consume matched path segment]
+            PathConsume --> PathCheck{Is path fully consumed with a goal Handler?}
+            PathCheck -->|No| SubRouteCheck{Are there sub-routes to continue matching?}
+            SubRouteCheck -->|Yes| Routing
+            SubRouteCheck -->|No| NextRoute
+            NextRoute --> RouteLeft{Are there other routes?}
+            RouteLeft -->|Yes| Routing
+            RouteLeft -->|No| NoMatchRoute[Routing match failed]
+            PathCheck -->|Yes| MatchSuccess[Routing match successful]
+            MatchSuccess --> CollectHandlers[Collect all Handlers from the matching chain]
         end
         
-        %% Phase der Handler-Ausführung
-        subgraph HandlerPhase[2. Phase der Handler-Ausführung]
-            CollectHandlers --> ExecHandlers[Handler in Reihenfolge ausführen]
-            ExecHandlers --> ErrorCheck{Fehler oder Umleitung während der Ausführung?}
-            ErrorCheck -->|Nein| FinishHandlers[Alle Handler ausgeführt]
-            ErrorCheck -->|Ja| StatusCheck{Ist Statuscode ein Fehler und Body nicht gesetzt oder Error?}
-            StatusCheck -->|Ja| EnterCatcher[Fehlerbehandlungsphase starten]
-            StatusCheck -->|Nein| SkipCatcher[Fehlerbehandlungsphase überspringen]
+        %% Handler Execution Phase
+        subgraph HandlerPhase[2. Handler Execution Phase]
+            CollectHandlers --> ExecHandlers[Execute Handlers sequentially]
+            ExecHandlers --> ErrorCheck{Error or redirect during execution?}
+            ErrorCheck -->|No| FinishHandlers[All Handlers executed]
+            ErrorCheck -->|Yes| StatusCheck{Is status code an error and Body unset or Error?}
+            StatusCheck -->|Yes| EnterCatcher[Enter error-catching phase]
+            StatusCheck -->|No| SkipCatcher[Skip error-catching phase]
         end
         
-        %% Phase der Fehlerbehandlung
-        subgraph CatcherPhase[3. Phase der Fehlerbehandlung]
-            EnterCatcher --> CatcherHandlers[Handler des Catchers nacheinander ausführen]
+        %% Error-Catching Phase
+        subgraph CatcherPhase[3. Error-Catching Phase]
+            EnterCatcher --> CatcherHandlers[Execute Catcher's Handlers sequentially]
             NoMatchRoute --> CatcherHandlers
-            CatcherHandlers --> DefaultHandler[DefaultGoal oder benutzerdefinierte Fehlerbehandlung]
+            CatcherHandlers --> DefaultHandler[DefaultGoal or custom error handling]
         end
         
-        %% Endgültige Antwort
-        FinishHandlers --> FinalConvert[Service wandelt Salvo-Response in Hyper-Response um]
+        %% Final Response
+        FinishHandlers --> FinalConvert[Service converts Salvo Response to Hyper Response]
         SkipCatcher --> FinalConvert
         DefaultHandler --> FinalConvert
         
-        FinalConvert --> End[Antwort an Client zurückgeben]
+        FinalConvert --> End[Return response to client]
     end
     
-    %% Stile
+    %% Styling
     class RoutingPhase,HandlerPhase,CatcherPhase phase;
     class MainGraph mainGraph;
     classDef mainGraph fill:#f5f5f5,stroke:#333,stroke-width:1px;
     classDef phase fill:#e6f3ff,stroke:#333,stroke-width:2px;
 ```
-{/* Auto generated, origin file hash:2934d9d3636688c10dfde8c3c36424c3 */}
+{/* Auto generated, origin file hash:76cc6c9018ddf6bdbf1b59044abae994 */}

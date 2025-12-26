@@ -1,15 +1,15 @@
-# Plugins Websocket tiers
+# Plugin WebSocket tiers
 
 ## salvo-websocket
 
-### Ajouter les dépendances du projet
+### Ajouter la dépendance au projet
 
 ```toml
 [dependencies]
 salvo-websocket = "0.0.4"
 ```
 
-### Définir les paramètres de requête lors de la connexion ws
+### Définir les paramètres de requête pour la connexion WebSocket
 
 ```rust
 #[derive(Debug, Clone, Deserialize)]
@@ -58,7 +58,7 @@ impl WebSocketHandler for User {
 }
 ```
 
-### Écrire la méthode de traitement de connexion
+### Écrire la méthode de gestion de connexion
 
 ```rust
 #[tokio::main]
@@ -86,5 +86,5 @@ async fn user_connected(req: &mut Request, res: &mut Response) -> Result<(), Sta
 }
 ```
 
-Pour plus de contenu, consultez directement les [exemples](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)
-{/* Auto generated, origin file hash:ba1de026d713e14724d985e19918646a */}
+Pour plus de détails, veuillez consulter directement l'[exemple](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket).
+{/* Auto generated, origin file hash:82a9ae6391ef6b61ab4de0269fc9de16 */}

@@ -1,8 +1,8 @@
 # Manejo de Errores
 
-## Métodos Comunes de Manejo de Errores en Aplicaciones Rust
+## Enfoques Comunes para el Manejo de Errores en Aplicaciones Rust
 
-El manejo de errores en Rust difiere de lenguajes como Java, ya que no cuenta con estructuras como `try...catch`. La práctica habitual es definir un tipo de error global a nivel de aplicación:
+El manejo de errores en Rust difiere de lenguajes como Java; carece de construcciones como `try...catch`. El enfoque típico es definir un tipo de error global a nivel de la aplicación:
 
 ```rust
 use thiserror::Error;
@@ -21,30 +21,30 @@ pub enum AppError {
 pub type AppResult<T> = Result<T, AppError>;
 ```
 
-Aquí se utiliza la biblioteca `thiserror`, que permite definir fácilmente tipos de error personalizados, simplificando el código. Para facilitar la escritura, también se define un `AppResult`.
+Aquí se utiliza la biblioteca `thiserror`, que facilita la definición de tipos de error personalizados y simplifica el código. Por brevedad, también se define un alias de tipo `AppResult`.
 
-### thiserror vs anyhow
+### thiserror vs. anyhow
 
-En el ecosistema de manejo de errores de Rust, dos bibliotecas comúnmente utilizadas son `thiserror` y `anyhow`:
+En el ecosistema de manejo de errores de Rust, dos bibliotecas de uso común son `thiserror` y `anyhow`:
 
-- **thiserror**: Ideal para desarrolladores de bibliotecas, ya que permite definir tipos de error claros. Utiliza macros derivadas para ayudar a implementar el trait `std::error::Error` en tipos de error personalizados, permitiendo definir cómo se representan los errores. Es la mejor opción al construir una biblioteca o cuando se necesita proporcionar tipos de error claros a los usuarios.
+- **thiserror**: Adecuada para desarrolladores de bibliotecas para definir tipos de error claros. Utiliza macros derive para ayudar a implementar el trait `std::error::Error` para tipos de error personalizados, permitiéndote definir representaciones de error. Al construir una biblioteca o proporcionar tipos de error claros a los usuarios, `thiserror` es la mejor opción.
 
-- **anyhow**: Dirigida a desarrolladores de aplicaciones, proporciona un tipo de error genérico `anyhow::Error` que puede contener cualquier error que implemente el trait `std::error::Error`. Se centra más en la propagación de errores que en su definición, siendo especialmente adecuada para código a nivel de aplicación. Permite convertir rápidamente diversos errores en `anyhow::Error`, reduciendo la necesidad de escribir código repetitivo.
+- **anyhow**: Orientada a desarrolladores de aplicaciones, proporciona un tipo de error genérico `anyhow::Error` que puede encapsular cualquier error que implemente el trait `std::error::Error`. Se centra más en la propagación de errores que en su definición, lo que la hace particularmente adecuada para código a nivel de aplicación. Puedes convertir rápidamente varios errores en `anyhow::Error`, reduciendo la necesidad de código repetitivo.
 
-En algunos casos, es posible utilizar ambas bibliotecas simultáneamente: `thiserror` para definir tipos de error en bibliotecas y `anyhow` para manejar y propagar esos errores en aplicaciones.
+En algunos escenarios, podrías usar ambas bibliotecas: definir tipos de error con `thiserror` en bibliotecas y manejar y propagar estos errores con `anyhow` en aplicaciones.
 
 ## Manejo de Errores en Handlers
 
-En Salvo, los `Handler` también suelen encontrar diversos errores, como errores de conexión a bases de datos, acceso a archivos, conexiones de red, etc. Para este tipo de errores, se puede aplicar el enfoque de manejo de errores mencionado anteriormente:
+En Salvo, los `Handler` a menudo encuentran varios errores, como errores de conexión a base de datos, errores de acceso a archivos, errores de conexión de red, etc. Para este tipo de errores, se puede aplicar el enfoque de manejo de errores mencionado anteriormente:
 
 ```rust
 #[handler]
-async fn home()-> AppResult<()> {
+async fn home() -> AppResult<()> {
 
 }
 ```
 
-Aquí, `home` devuelve directamente un `AppResult<()>`. Pero, ¿cómo se debe mostrar este error? Necesitamos implementar `Writer` para el tipo de error personalizado `AppResult`, donde podemos decidir cómo mostrar el error:
+Aquí, `home` devuelve directamente un `AppResult<()>`. Pero, ¿cómo se debe mostrar este error? Necesitamos implementar el trait `Writer` para el tipo de error personalizado `AppResult`, donde podemos decidir cómo mostrar el error:
 
 ```rust
 #[async_trait]
@@ -55,11 +55,11 @@ impl Writer for AppError {
 }
 ```
 
-Los `Handler` en Salvo pueden devolver `Result`, siempre que tanto el tipo `Ok` como `Err` en `Result` implementen el trait `Writer`.
+En Salvo, un `Handler` puede devolver un `Result`, siempre que tanto el tipo `Ok` como el tipo `Err` en el `Result` implementen el trait `Writer`.
 
 ### Manejo de Errores con anyhow
 
-Dado que anyhow es ampliamente utilizado, Salvo ofrece soporte integrado para `anyhow::Error`. Al habilitar la funcionalidad `anyhow`, `anyhow::Error` implementa el trait `Writer` y se mapea a `InternalServerError`:
+Dado el uso generalizado de anyhow, Salvo proporciona soporte integrado para `anyhow::Error`. Cuando la característica `anyhow` está habilitada, `anyhow::Error` implementa el trait `Writer` y se asigna a `InternalServerError`:
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -71,7 +71,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-Para utilizar la funcionalidad anyhow, es necesario habilitar el feature `anyhow` de Salvo en Cargo.toml:
+Para usar la característica anyhow, habilita la característica `anyhow` de Salvo en Cargo.toml:
 
 ```toml
 [dependencies]
@@ -79,7 +79,7 @@ salvo = { version = "*", features = ["anyhow"] }
 anyhow = "1.0"
 ```
 
-De esta manera, sus funciones de manejo pueden devolver directamente `anyhow::Result<T>`:
+Esto permite que tus funciones handler devuelvan directamente `anyhow::Result<T>`:
 
 ```rust
 #[handler]
@@ -89,9 +89,9 @@ async fn home() -> anyhow::Result<impl Writer> {
 }
 ```
 
-Los errores a menudo contienen información sensible que, por lo general, no se desea mostrar a usuarios comunes, ya que sería inseguro y carecería de privacidad. Sin embargo, si es desarrollador o administrador del sitio, su perspectiva podría ser diferente: quizás desee que el error se muestre completamente desnudo, revelando la información de error más precisa.
+Los errores a menudo contienen información sensible, que generalmente no debería ser visible para usuarios regulares por razones de seguridad y privacidad. Sin embargo, si eres un desarrollador o administrador del sitio, podrías preferir que los errores se expongan completamente, revelando la información de error más precisa.
 
-Como se puede observar, en el método `write` tenemos acceso a referencias de `Request` y `Depot`, lo que permite implementar fácilmente la funcionalidad descrita:
+Como se muestra, en el método `write`, podemos acceder a referencias de `Request` y `Depot`, lo que facilita la implementación del enfoque anterior:
 
 ```rust
 #[async_trait]
@@ -107,9 +107,9 @@ impl Writer for AppError {
 }
 ```
 
-## Visualización de Páginas de Error
+## Mostrar Páginas de Error
 
-Las páginas de error integradas en Salvo satisfacen la mayoría de las necesidades, ya que pueden mostrar páginas en Html, Json o Xml según el tipo de datos de la solicitud. Sin embargo, en ciertos casos, aún puede ser deseable personalizar la visualización de páginas de error.
+Las páginas de error integradas de Salvo cumplen con los requisitos en la mayoría de los casos, mostrando páginas Html, Json o Xml según el tipo de datos de la solicitud. Sin embargo, hay situaciones en las que aún se desean pantallas de error personalizadas.
 
-Esto se puede lograr implementando un `Catcher` personalizado. Para una explicación detallada, consulte la sección sobre [`Catcher`](../concepts/catcher.html).
-{/* Auto generated, origin file hash:ccc3ad5dca846f6b6415dbe84e0c5166 */}
+Esto se puede lograr implementando un `Catcher` personalizado. Para instrucciones detalladas, consulta la sección [`Catcher`](../concepts/catcher.html).
+{/* Auto generated, origin file hash:fef605b82586fd46d5b4413daad859c1 */}

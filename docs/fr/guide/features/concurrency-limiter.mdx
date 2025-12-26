@@ -1,28 +1,28 @@
 import { Tab, Tabs } from '@rspress/core/theme';
 
-# Limitation de la concurrence
+# Limitation de Concurrence
 
-Le middleware Concurrency Limiter permet de contrôler le nombre de requêtes traitées simultanément. Pour les détails de l'API, veuillez [consulter la documentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
+Le middleware Limiteur de Concurrence permet de contrôler le nombre de requêtes simultanées. Pour les détails spécifiques de l'API, veuillez [consulter la documentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
 
-## Scénarios d'application
+## Scénarios d'Application
 
 Le limiteur de concurrence est particulièrement utile dans les situations suivantes :
 
-- **Protection des sites à fort trafic** : Limite le nombre de requêtes traitées simultanément lors de pics de trafic pour éviter la surcharge du serveur.
-- **Contrôle des opérations intensives en ressources** : Restreint la concurrence des opérations consommatrices de ressources comme le téléchargement de fichiers ou l'écriture en base de données.
-- **Limitation des appels aux API tierces** : Contrôle le nombre de requêtes simultanées lors de l'appel à des services externes avec des limites de débit.
+- **Protection des Sites Web à Fort Trafic** : Limite le nombre de requêtes traitées simultanément lors de pics de trafic pour éviter la surcharge du serveur.
+- **Contrôle des Opérations à Forte Consommation de Ressources** : Restreint la concurrence pour les opérations gourmandes en ressources, telles que les téléchargements de fichiers et les écritures en base de données.
+- **Limitation des Appels aux API Tierces** : Contrôle le nombre de requêtes simultanées lors de l'appel à des services externes avec des limites de débit.
 
-## Principales fonctions
+## Fonctions Principales
 
-- **Prévention de la surcharge du serveur** : Maintient la stabilité du serveur pendant les périodes de trafic élevé en limitant les requêtes concurrentes.
-- **Amélioration de la fiabilité du système** : Évite les plantages dus à l'épuisement des ressources.
-- **Optimisation de l'allocation des ressources** : Garantit que les services critiques disposent de suffisamment de ressources pour traiter les requêtes.
+- **Prévenir la Surcharge du Serveur** : Maintient la stabilité du serveur pendant les pics de trafic en limitant les requêtes simultanées.
+- **Améliorer la Fiabilité du Système** : Évite les plantages du système causés par l'épuisement des ressources.
+- **Optimiser l'Allocation des Ressources** : Garantit que les services critiques disposent de ressources suffisantes pour traiter les requêtes.
 
-## Mode d'emploi
+## Utilisation
 
-Il suffit d'ajouter le middleware `max_concurrency(n)` à la route, où `n` est le nombre maximal de requêtes simultanées autorisées. Les requêtes dépassant cette limite recevront une réponse `503 Service Unavailable`.
+Ajoutez simplement le middleware `max_concurrency(n)` à votre route, où `n` est le nombre maximum de requêtes simultanées autorisées. Les requêtes dépassant cette limite recevront une réponse `503 Service Indisponible`.
 
-_**Exemple de code**_
+_**Exemple de Code**_
 
 <Tabs>
   <Tab label="main.rs">
@@ -34,4 +34,4 @@ _**Exemple de code**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:e608fa24b412ca88671cf77efea06bad */}
+{/* Auto generated, origin file hash:eb0d1d053dfdeefd6150fb9fd7bb825f */}

@@ -1,21 +1,21 @@
 # Autenticación JWT
 
-JWT (JSON Web Token) es un estándar abierto (RFC 7519) utilizado para transmitir información de forma segura entre partes. Es un método compacto y seguro para URL que representa declaraciones en forma de objeto JSON, comúnmente empleado para autenticación e intercambio de información.
+JWT (JSON Web Token) es un estándar abierto (RFC 7519) para transmitir información de forma segura entre partes. Es un método compacto y seguro para URL que representa afirmaciones en formato de objeto JSON, comúnmente utilizado para autenticación e intercambio de información.
 
 Un JWT consta de tres partes:
-- **Encabezado (Header)** - Especifica el tipo de token y el algoritmo de firma utilizado
-- **Carga útil (Payload)** - Contiene las declaraciones (claims), como ID de usuario, roles, tiempo de expiración, etc.
-- **Firma (Signature)** - Se utiliza para verificar que el mensaje no ha sido alterado durante la transmisión
+- **Encabezado** - Especifica el tipo de token y el algoritmo de firma utilizado
+- **Carga útil** - Contiene las afirmaciones, como ID de usuario, roles, tiempo de expiración, etc.
+- **Firma** - Se utiliza para verificar que el mensaje no fue alterado durante la transmisión
 
-Uso típico de JWT en flujos de autenticación:
-1. Tras el inicio de sesión del usuario, el servidor genera un token JWT
+Uso típico de JWT en el flujo de autenticación:
+1. Después del inicio de sesión del usuario, el servidor genera un token JWT
 2. El token se devuelve al cliente y se almacena (normalmente en localStorage o cookies)
-3. En solicitudes posteriores, el cliente incluye este token en la cabecera Authorization
-4. El servidor verifica la validez del token y autoriza el acceso
+3. En solicitudes posteriores, el cliente incluye este token en el encabezado de Autorización
+4. El servidor valida la autenticidad del token y concede acceso
 
-Proporciona middleware para la autenticación mediante JWT Auth.
+Proporciona middleware para autenticación JWT Auth.
 
-_**Código de ejemplo**_ 
+_**Código de Ejemplo**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -29,4 +29,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:44ba61e41e4c4e0937054ac0328a42ab */}
+{/* Auto generated, origin file hash:6ac72db73439017bc946bcdb54b74e13 */}

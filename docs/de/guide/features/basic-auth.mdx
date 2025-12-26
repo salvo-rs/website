@@ -1,38 +1,38 @@
 # Grundlegende Authentifizierung
 
-Middleware, die Unterstützung für Basic Auth bietet.
+Eine Middleware, die Unterstützung für Basic Auth bietet.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Einführung in Basic Auth
 
-Basic Auth ist ein einfacher HTTP-Authentifizierungsmechanismus, bei dem Benutzername und Passwort über das `Authorization`-Feld im HTTP-Request-Header übertragen werden. Das Format lautet `Authorization: Basic <base64(Benutzername:Passwort)>`. Obwohl einfach, werden die Anmeldedaten lediglich Base64-kodiert und nicht verschlüsselt, weshalb es üblicherweise in Kombination mit HTTPS verwendet werden sollte, um die Sicherheit zu gewährleisten.
+Basic Auth ist ein einfacher HTTP-Authentifizierungsmechanismus, der Benutzername und Passwort über den `Authorization`-Header in HTTP-Anfragen überträgt. Das Format lautet `Authorization: Basic <base64(Benutzername:Passwort)>`. Obwohl einfach, da die Anmeldedaten nur Base64-kodiert und nicht verschlüsselt sind, wird es typischerweise mit HTTPS verwendet, um die Sicherheit zu gewährleisten.
 
-## Vergleich der Basic-Auth-Implementierungen in gängigen Frameworks
+## Vergleich von Basic Auth-Implementierungen in gängigen Frameworks
 
-| Framework | Sprache | Basic-Auth-Implementierung |
-|-----------|---------|----------------------------|
-| Salvo | Rust | Über `BasicAuth`-Middleware und benutzerdefinierten `BasicAuthValidator` |
-| Express | JavaScript | Verwendung des `express-basic-auth`-Middleware-Pakets |
-| Spring Security | Java | Über `httpBasic()`-Konfiguration und `UserDetailsService` |
-| ASP.NET Core | C# | Verwendung von `.UseAuthentication()` und `AddAuthentication(AuthenticationSchemes.Basic)` |
-| Gin | Go | Über benutzerdefinierte Middleware oder das `gin-contrib/auth`-Paket |
+| Framework | Sprache | Basic Auth-Implementierung |
+|-----------|----------|----------------------------|
+| Salvo | Rust | Implementiert über die `BasicAuth`-Middleware und benutzerdefinierten `BasicAuthValidator` |
+| Express | JavaScript | Verwendet das `express-basic-auth`-Middleware-Paket |
+| Spring Security | Java | Konfiguriert über `httpBasic()` und implementiert mit `UserDetailsService` |
+| ASP.NET Core | C# | Verwendet `.UseAuthentication()` und `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | Implementiert über benutzerdefinierte Middleware oder das `gin-contrib/auth`-Paket |
 
 ## Anwendungsfälle
 
 Basic Auth eignet sich für folgende Szenarien:
 
-1. **Interne APIs und Tools**: Innerhalb eines Unternehmens genutzte Verwaltungstools und APIs
-2. **Entwicklungs- und Testumgebungen**: Schnelle Implementierung von Authentifizierung ohne komplexe Anmeldesysteme
-3. **Einfacher API-Schutz**: Wenn kein komplexes Benutzerverwaltungssystem benötigt wird
-4. **In Kombination mit anderen Sicherheitsmaßnahmen**: Als Teil einer mehrschichtigen Sicherheitsarchitektur
+1. **Interne APIs und Tools**: Verwaltungstools und APIs, die innerhalb eines Unternehmens verwendet werden
+2. **Entwicklungs- und Testumgebungen**: Schnelle Implementierung von Authentifizierung ohne komplexes Anmeldesystem
+3. **Einfacher API-Schutz**: Wenn kein komplexes Benutzerverwaltungssystem erforderlich ist
+4. **Kombiniert mit anderen Sicherheitsmaßnahmen**: Als Teil einer mehrschichtigen Sicherheitsarchitektur
 
-In Salvo kann die Basic-Auth-Middleware einfach in Routen integriert werden. Durch Implementierung des `BasicAuthValidator`-Traits lässt sich die Validierungslogik flexibel anpassen.
+In Salvo kann die Basic Auth-Middleware einfach in Routen integriert werden. Durch Implementierung des `BasicAuthValidator`-Traits kann benutzerdefinierte Validierungslogik definiert werden, was große Flexibilität bietet.
 
 ## Hinweise
 
-- Immer in Kombination mit HTTPS verwenden, um die Übertragung der Anmeldedaten zu schützen
-- Für Produktionsumgebungen mit sensiblen Daten nicht geeignet
+- Immer mit HTTPS verwenden, um die Übertragung von Anmeldedaten zu schützen
+- Nicht geeignet für Produktionsumgebungen, die sensible Informationen speichern
 - Für Produktionsumgebungen sollten sicherere Authentifizierungsmethoden wie JWT oder OAuth in Betracht gezogen werden
 
 <Tabs>
@@ -45,4 +45,4 @@ In Salvo kann die Basic-Auth-Middleware einfach in Routen integriert werden. Dur
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:d01ddb1691782cd7ed28227dcc89e19f */}
+{/* Auto generated, origin file hash:221f2dd3a7cc0491c1e80844627d2e2e */}

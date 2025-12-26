@@ -1,14 +1,14 @@
-# Utilisation des moteurs de templates
+# Utilisation des moteurs de template
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Salvo n'intègre aucun moteur de template par défaut, car les préférences en matière de style de moteur de template varient d'une personne à l'autre.
+Salvo ne dispose d'aucun moteur de template intégré, car les préférences en matière de style de moteur de template varient d'une personne à l'autre.
 
-Fondamentalement, un moteur de template repose sur le principe : données + template = chaîne de caractères.
+Fondamentalement, un moteur de template se résume à : données + template = chaîne de caractères.
 
-Ainsi, tant qu'il est possible de produire la chaîne de caractères finale, n'importe quel moteur de template peut être pris en charge.
+Par conséquent, tant que la chaîne finale peut être rendue, n'importe quel moteur de template peut être pris en charge.
 
-Par exemple, pour la prise en charge d'`askama` :
+Par exemple, la prise en charge d'`askama` :
 
 <Tabs>
   <Tab label="main.rs">
@@ -25,5 +25,5 @@ Par exemple, pour la prise en charge d'`askama` :
   </Tab>
 </Tabs>
 
-**Remarque** : Pour les projets qui ne sont pas particulièrement complexes, nous recommandons plutôt une approche de développement avec séparation frontend/backend. Utilisez des frameworks UI plus flexibles et bénéficiant d'un meilleur écosystème (comme React, Vue, Svelte, etc.) pour construire le frontend, tandis que Salvo sert de service backend d'API. Cette méthode offre une meilleure efficacité de développement, une séparation claire des responsabilités entre frontend et backend, et correspond davantage aux tendances actuelles de développement d'applications web modernes.
-{/* Auto generated, origin file hash:241763674e531713bf3187516a914e3b */}
+**Remarque** : Pour les projets qui ne sont pas particulièrement complexes, nous recommandons vivement d'adopter une approche de séparation frontend-backend. Utilisez des frameworks d'interface utilisateur plus flexibles et disposant d'un écosystème riche (comme React, Vue, Svelte, etc.) pour construire le frontend, tandis que Salvo sert de service d'API backend. Cette approche permet une efficacité de développement accrue, des responsabilités plus claires entre le frontend et le backend, et correspond mieux aux tendances modernes de développement d'applications web.
+{/* Auto generated, origin file hash:135167bcf744deafe63296c57d646607 */}

@@ -1,16 +1,16 @@
 # Compresión de Respuesta
 
-Middleware para el procesamiento de compresión del contenido de `Response`.
+Un middleware para comprimir el contenido de `Response`.
 
-Ofrece soporte para tres formatos de compresión: `br`, `gzip`, `deflate`. Se puede configurar la prioridad de cada método de compresión según las necesidades.
+Soporta tres formatos de compresión: `br`, `gzip` y `deflate`. La prioridad y configuración de cada método de compresión se pueden personalizar según sea necesario.
 
 ## Compresión de Datos en el Protocolo HTTP
 
-1. Nivel de formato de archivo: tipos de archivo específicos utilizan algoritmos de compresión especializados
-2. Nivel de protocolo HTTP: implementa transmisión de recursos comprimidos de extremo a extremo mediante codificación de contenido
-3. Nivel de conexión: compresión de datos entre nodos de conexión HTTP
+1. Nivel de formato de archivo: Tipos de archivo específicos utilizan algoritmos de compresión dedicados.
+2. Nivel de protocolo HTTP: Se logra la transmisión de recursos comprimidos de extremo a extremo mediante la codificación de contenido.
+3. Nivel de conexión: La compresión de datos se realiza entre nodos de una conexión HTTP.
 
-Para más información sobre compresión HTTP, consulta la [documentación de Mozilla Developer Network](https://developer.mozilla.org/es/docs/Web/HTTP/Guides/Compression).
+Para obtener más información sobre la compresión HTTP, consulta la [documentación de Mozilla Developer Network](https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Compression).
 
 ## Código de Ejemplo
 
@@ -26,4 +26,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:adfd8752c21601fac83a31d329cf6dae */}
+{/* Auto generated, origin file hash:0fd5e60897421152fcc9f44bf5f4fb39 */}

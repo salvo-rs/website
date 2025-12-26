@@ -1,30 +1,30 @@
 [
   {
-    "text": "Handbuch",
+    "text": "Guide",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
   {
-    "text": "Konzepte",
+    "text": "Concepts",
     "link": "/guide/concepts/",
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Themen",
+    "text": "Topics",
     "link": "/guide/topics/",
     "activeMatch": "/guide/topics/"
   },
   {
-    "text": "Funktionen",
+    "text": "Features",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
   {
-    "text": "API-Dokumentation",
+    "text": "API-Docs",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "Spenden",
+    "text": "Donate",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

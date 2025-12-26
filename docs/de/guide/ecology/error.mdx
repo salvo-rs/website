@@ -4,22 +4,22 @@ title: Rust-Fehlerbehandlungsbibliotheken
 
 # Rust-Fehlerbehandlungsbibliotheken
 
-- (thiserror)[https://docs.rs/thiserror/latest/thiserror/] bietet bequeme Ableitungsmakros für benutzerdefinierte Fehlertypen.
+- [thiserror](https://docs.rs/thiserror/latest/thiserror/) bietet praktische Ableitungsmakros für benutzerdefinierte Fehlertypen.
 
-- (snafu)[https://docs.rs/snafu/latest/snafu/] ist ein Framework für kontextbezogene Fehlerbehandlung und -berichterstattung.
+- [snafu](https://docs.rs/snafu/latest/snafu/) ist ein Fehlerbehandlungs- und Berichtsframework mit Kontextunterstützung.
 
-- (anyhow)[https://docs.rs/anyhow/latest/anyhow/] ist eine flexible Bibliothek für Fehlerbehandlung und -berichterstattung.
+- [anyhow](https://docs.rs/anyhow/latest/anyhow/) ist eine flexible Fehlerbehandlungs- und Berichtsbibliothek.
 
 ## thiserror vs snafu
 
 ### thiserror
 
-thiserror ist eine leichtgewichtige Bibliothek, die Ableitungsmakros zur einfachen Fehlerdefinition bereitstellt.
+thiserror ist eine leichtgewichtige Bibliothek, die Ableitungsmakros zur Vereinfachung von Fehlerdefinitionen bereitstellt.
 
 Merkmale:
-- Prägnante Syntax mit geringem Boilerplate-Aufwand
+- Prägnante Syntax mit geringem Aufwand
 - Geeignet für die Erstellung von Fehlertyp-Bibliotheken und APIs
-- Wird typischerweise für Bibliotheken verwendet, die von anderen genutzt werden
+- Typischerweise für Bibliotheken verwendet, die für andere bestimmt sind
 
 ```rust
 use thiserror::Error;
@@ -39,12 +39,12 @@ pub enum DataError {
 
 ### snafu
 
-snafu bietet ein umfassenderes Framework für Fehlerbehandlung mit Fokus auf Fehlerkontext und Fehlerketten.
+snafu bietet ein umfassenderes Fehlerbehandlungsframework mit Fokus auf Fehlerkontext und Fehlerverkettung.
 
 Merkmale:
-- Ermutigt präzisere Fehlerkontext-Ergänzung durch "Kontext-Selektor"-Muster
-- Empfiehlt das Muster "Ein Fehler-Enum pro Modul"
-- Unterstützt strukturierte und Tupel-basierte Fehlervarianten
+- Ermutigt präzisere Fehlerkontext-Ergänzung durch das "Kontext-Selektor"-Muster
+- Fördert das "Ein-Fehler-Enum-pro-Modul"-Muster
+- Unterstützt sowohl Struct- als auch Tupel-Stil-Fehlervarianten
 - Eingebaute Backtrace-Unterstützung
 
 ```rust
@@ -59,12 +59,12 @@ pub enum Error {
         backtrace: Backtrace,
     },
     
-    // Tupel-Stil ist ebenfalls möglich
-    #[snafu(display("IO-Fehler aufgetreten"))]
+    // Tupel-Stil wird ebenfalls unterstützt
+    #[snafu(display("E/A-Fehler"))]
     Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
 }
 
-// Beispiel für Kontext-Selektor
+// Kontext-Selektor-Beispiel
 fn read_config(path: &str) -> Result<Config, Error> {
     std::fs::read_to_string(path).context(ReadConfigSnafu { filename: path })?;
     // ...
@@ -77,24 +77,24 @@ fn read_config(path: &str) -> Result<Config, Error> {
 |---------|-----------|-------|
 | Syntax-Prägnanz | Prägnanter | Ausführlicher |
 | Fehlerkontext | Grundlegende Unterstützung | Umfangreiche Kontextmechanismen |
-| Projekteignung | Kleine bis mittlere Projekte | Mittlere bis große Projekte |
-| Codezeilen pro Fehler | Ca. 2 Zeilen | Ca. 5 Zeilen |
-| Fehlerorganisation | Typischerweise einzelnes Fehler-Enum | Ermutigt modulare Fehler-Enums |
+| Geeigneter Umfang | Kleine bis mittlere Projekte | Mittlere bis große Projekte |
+| Zeilen pro Fehler | ~2 Zeilen pro Fehler | ~5 Zeilen pro Fehler |
+| Fehlerorganisation | Normalerweise ein Fehler-Enum | Fördert modulbezogene Fehler-Enums |
 | Backtrace-Unterstützung | Keine eingebaute Unterstützung | Eingebaute Unterstützung |
 
-**Empfehlung**:
-- **Wählen Sie thiserror**, wenn Sie einfache, klare Fehlertypen benötigen, insbesondere in Bibliotheken
+**Auswahlberatung**:
+- **Wählen Sie thiserror**, wenn Sie einfache und klare Fehlertypen benötigen, insbesondere in Bibliotheken
 - **Wählen Sie snafu**, wenn Sie strukturiertere Fehlerbehandlung benötigen, besonders in großen Anwendungen
 
 ## anyhow
 
-anyhow ist eine Fehlerbehandlungsbibliothek mit anderem Ansatz, die sich auf Anwendungen statt Bibliotheken konzentriert.
+anyhow ist eine andere Fehlerbehandlungsbibliothek als die beiden oben genannten, mit Fokus auf Anwendungen statt Bibliotheken.
 
 Merkmale:
 - Entwickelt für Fehlerbehandlung in Anwendungen, nicht in Bibliotheken
-- Bietet dynamischen `anyhow::Error`-Typ, der jeden Fehler enthalten kann, der das `Error`-Trait implementiert
+- Bietet einen dynamischen `anyhow::Error`-Typ, der jeden Fehler enthalten kann, der das `Error`-Trait implementiert
 - Vereinfacht die Handhabung über mehrere Fehlertypen hinweg
-- Erfordert keine Definition benutzerdefinierter Fehlertypen
+- Keine Notwendigkeit, benutzerdefinierte Fehlertypen zu definieren
 
 ```rust
 use anyhow::{Context, Result};
@@ -112,10 +112,10 @@ fn main() -> Result<()> {
 ```
 
 **anyhow vs thiserror/snafu**:
-- anyhow konzentriert sich auf Fehlerbehandlung bei schneller Anwendungsentwicklung
-- thiserror/snafu konzentrieren sich auf präzise Fehlertyp-Hierarchien
-- anyhow wird typischerweise in Anwendungscode verwendet
-- thiserror/snafu werden typischerweise in Bibliothekscode verwendet
+- anyhow konzentriert sich auf Fehlerbehandlung während der schnellen Anwendungsentwicklung
+- thiserror/snafu konzentrieren sich auf die Erstellung präziser Fehlertyp-Hierarchien
+- anyhow wird typischerweise im Anwendungscode verwendet
+- thiserror/snafu werden typischerweise im Bibliothekscode verwendet
 
-In der Praxis werden anyhow und thiserror oft gemeinsam verwendet: Bibliotheken definieren präzise Fehlertypen mit thiserror, während Anwendungen anyhow zur Behandlung verschiedener Fehlerquellen nutzen.
-{/* Auto generated, origin file hash:e786d782f2c0d052350def02a332c83f */}
+In der Praxis werden anyhow und thiserror oft zusammen verwendet: Bibliotheken nutzen thiserror zur Definition präziser Fehlertypen, während Anwendungen anyhow zur Behandlung von Fehlern aus verschiedenen Quellen verwenden.
+{/* Auto generated, origin file hash:22ecf8c206f01cd4508abe6c2e8be0a6 */}

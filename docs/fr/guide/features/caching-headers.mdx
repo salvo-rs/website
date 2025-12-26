@@ -1,16 +1,16 @@
-# En-têtes de cache
+# En-têtes de mise en cache
 
-Middleware fournissant la prise en charge de la configuration des en-têtes de cache.
+Un middleware qui fournit un support pour configurer les en-têtes de mise en cache.
 
-Le contrôle du cache est une partie essentielle de l'optimisation des performances web. En configurant correctement les en-têtes de cache, on peut réduire les requêtes réseau inutiles et améliorer les performances de l'application. [Cache-Control](https://developer.mozilla.org/fr/docs/Web/HTTP/Headers/Cache-Control) est un en-tête de réponse HTTP qui spécifie les directives de stratégie de cache du navigateur, contrôlant qui peut mettre en cache la réponse, sous quelles conditions et pour combien de temps.
+Le contrôle du cache est un élément crucial de l'optimisation des performances web. En configurant correctement les en-têtes de mise en cache, on peut réduire les requêtes réseau inutiles, améliorant ainsi les performances de l'application. [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) est un en-tête de réponse HTTP utilisé pour spécifier les politiques de mise en cache du navigateur. Il contrôle qui peut mettre en cache les réponses, sous quelles conditions et pendant combien de temps.
 
-L'implémentation interne comprend trois gestionnaires (`Handler`) : `CachingHeaders`, `Modified` et `ETag`. `CachingHeaders` est une combinaison des deux derniers. En usage normal, on utilise `CachingHeaders`.
+En interne, il inclut les implémentations de trois `Handler` : `CachingHeaders`, `Modified` et `ETag`. `CachingHeaders` est une combinaison des deux derniers. Dans des circonstances normales, `CachingHeaders` est utilisé.
 
-- `Modified` : Fournit une validation de cache basée sur la date de dernière modification de la ressource.
-- `ETag` : Utilise une balise d'entité (Entity Tag) pour offrir un mécanisme de validation de ressource plus précis.
-- `CachingHeaders` : Combine les deux mécanismes ci-dessus pour fournir une prise en charge complète du contrôle de cache.
+- `Modified` : Fournit une validation de cache basée sur la dernière heure de modification de la ressource.
+- `ETag` : Utilise les étiquettes d'entité (Entity Tags) pour offrir un mécanisme de validation de ressources plus précis.
+- `CachingHeaders` : Combine les deux mécanismes ci-dessus pour fournir un support complet de contrôle du cache.
 
-_**Exemple de code**_ 
+_**Exemple de code**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -24,4 +24,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:08699e65af0ef5c9fac56f0fb8d73153 */}
+{/* Auto generated, origin file hash:cb14e5ae25e20d47dc9f3545411e408d */}

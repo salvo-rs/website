@@ -1,67 +1,69 @@
+```javascript
 import { Tab, Tabs } from '@rspress/core/theme';
+```
 
-# Génération de documentation OpenAPI
+# Génération de Documentation OpenAPI
 
-OpenAPI est une spécification open source utilisée pour décrire la conception d'interfaces d'APIs RESTful. Elle définit, au format JSON ou YAML, la structure des requêtes et réponses de l'API, les paramètres, les types de retour, les codes d'erreur, et d'autres détails, rendant ainsi la communication entre le client et le serveur plus claire et normalisée.
+OpenAPI est une spécification open source pour décrire la conception d'interfaces d'API RESTful. Il définit les structures de requête et de réponse de l'API, les paramètres, les types de retour, les codes d'erreur et autres détails au format JSON ou YAML, rendant la communication entre le client et le serveur plus explicite et standardisée.
 
-OpenAPI était à l'origine la version open source de la spécification Swagger. Il est désormais devenu un projet indépendant et bénéficie du soutien de nombreuses grandes entreprises et développeurs. L'utilisation de la spécification OpenAPI peut aider les équipes de développement à mieux collaborer, réduire les coûts de communication et améliorer l'efficacité du développement. Parallèlement, OpenAPI fournit également aux développeurs des outils pour générer automatiquement la documentation de l'API, des données fictives (Mock) et des cas de test, facilitant ainsi les travaux de développement et de test.
+OpenAPI était à l'origine la version open source de la spécification Swagger et est désormais devenu un projet indépendant soutenu par de nombreuses grandes entreprises et développeurs. L'utilisation de la spécification OpenAPI aide les équipes de développement à mieux collaborer, à réduire les coûts de communication et à améliorer l'efficacité du développement. De plus, OpenAPI fournit aux développeurs des outils pour générer automatiquement la documentation d'API, des données fictives (mock) et des cas de test, facilitant ainsi les travaux de développement et de test.
 
-Salvo propose une intégration OpenAPI (modifiée à partir de [utoipa](https://github.com/juhaku/utoipa)). Salvo, en fonction de ses propres caractéristiques, récupère de manière très élégante les informations de type de données OpenAPI pertinentes à partir du `Handler`. Salvo intègre également plusieurs interfaces OpenAPI open source populaires telles que SwaggerUI, scalar, rapidodc et redoc.
+Salvo fournit une intégration OpenAPI (modifiée à partir de [utoipa](https://github.com/juhaku/utoipa)). Salvo extrait élégamment et automatiquement les informations pertinentes sur les types de données OpenAPI à partir du `Handler` en fonction de ses propres caractéristiques. Salvo intègre également plusieurs interfaces OpenAPI open source populaires telles que SwaggerUI, Scalar, RapiDoc et ReDoc.
 
-Étant donné que les noms de types Rust sont souvent longs et pas toujours adaptés à une utilisation avec OpenAPI, `salvo-oapi` fournit le type `Namer`, qui permet de personnaliser des règles pour modifier les noms de types dans OpenAPI selon les besoins.
+Étant donné que les noms de types Rust peuvent être longs et pas toujours adaptés à l'utilisation OpenAPI, `salvo-oapi` fournit le type `Namer`, qui permet de personnaliser les règles pour modifier les noms de types dans OpenAPI selon les besoins.
 
-_**Exemple de code**_
+_**Exemple de Code**_
 
 <Tabs>
-  <Tab label="main.rs">
-  ```rust file="<root>/codes/oapi-hello/src/main.rs"
-  ```
-  </Tab>
-  <Tab label="Cargo.toml">
-  ```toml file="<root>/codes/oapi-hello/Cargo.toml"
-  ```
-  </Tab>
+<Tab label="main.rs">
+```rust file="<root>/codes/oapi-hello/src/main.rs"
+```
+</Tab>
+<Tab label="Cargo.toml">
+```toml file="<root>/codes/oapi-hello/Cargo.toml"
+```
+</Tab>
 </Tabs>
 
-En entrant `http://localhost:5800/swagger-ui` dans le navigateur, vous pouvez voir la page Swagger UI.
+Entrez `http://localhost:5800/swagger-ui` dans votre navigateur pour voir la page Swagger UI.
 
-L'intégration d'OpenAPI dans Salvo est assez élégante. Pour l'exemple ci-dessus, comparé à un projet Salvo ordinaire, nous avons simplement effectué les étapes suivantes :
+L'intégration OpenAPI dans Salvo est assez élégante. Pour l'exemple ci-dessus, comparé à un projet Salvo normal, nous avons simplement effectué les étapes suivantes :
 
 - Activer la fonctionnalité `oapi` dans `Cargo.toml` : `salvo = { workspace = true, features = ["oapi"] }`;
 
 - Remplacer `#[handler]` par `#[endpoint]`;
 
-- Utiliser `name: QueryParam<String, false>` pour obtenir la valeur de la chaîne de requête. Lorsque vous accédez à l'URL `http://localhost/hello?name=chris`, cette chaîne de requête `name` sera analysée. Le `false` dans `QueryParam<String, false>` indique que ce paramètre est facultatif ; accéder à `http://localhost/hello` ne générera pas d'erreur. Inversement, `QueryParam<String, true>` signifie que ce paramètre est obligatoire, sinon une erreur sera retournée.
+- Utiliser `name: QueryParam<String, false>` pour obtenir la valeur de la chaîne de requête. Lorsque vous visitez `http://localhost/hello?name=chris`, la chaîne de requête `name` sera analysée. Le `false` dans `QueryParam<String, false>` signifie que ce paramètre est facultatif. Si vous visitez `http://localhost/hello`, cela ne générera pas d'erreur. À l'inverse, s'il s'agit de `QueryParam<String, true>`, cela signifie que ce paramètre doit être fourni, sinon une erreur sera retournée.
 
-- Créer `OpenAPI` et créer le `Router` correspondant. `OpenApi::new("test api", "0.0.1").merge_router(&router)` : ici, `merge_router` signifie que cet `OpenAPI` obtient les informations de documentation nécessaires en analysant un certain routeur et ses routeurs descendants. Certains `Handler` de routeurs peuvent ne pas fournir d'informations pour générer la documentation ; ces routeurs seront ignorés, comme les `Handler` définis avec la macro `#[handler]` plutôt qu'avec `#[endpoint]`. Autrement dit, dans un projet réel, pour des raisons de progression du développement, vous pouvez choisir de ne pas générer de documentation OpenAPI, ou de ne générer qu'une partie. Vous pourrez ensuite augmenter progressivement le nombre d'interfaces OpenAPI générées, et tout ce que vous aurez à faire est de changer `#[handler]` en `#[endpoint]`, ainsi que de modifier la signature de la fonction.
+- Créer `OpenAPI` et le `Router` correspondant. Le `merge_router` dans `OpenApi::new("test api", "0.0.1").merge_router(&router)` signifie que cet `OpenAPI` obtient les informations documentaires nécessaires en analysant une certaine route et ses sous-routes. Certains `Handler` de routes peuvent ne pas fournir d'informations pour générer des documents, et ces routes seront ignorées, comme les `Handler` définis à l'aide de la macro `#[handler]` au lieu de la macro `#[endpoint]`. Autrement dit, dans des projets réels, pour des raisons telles que l'avancement du développement, vous pouvez choisir de ne pas générer de documents OpenAPI, ou de générer partiellement des documents OpenAPI. Par la suite, vous pouvez augmenter progressivement le nombre d'interfaces OpenAPI générées, et tout ce que vous avez à faire est de changer `#[handler]` en `#[endpoint]` et de modifier la signature de la fonction.
 
-## Extracteurs de données
+## Extracteurs de Données
 
-En utilisant `use salvo::oapi::extract::*;`, vous pouvez importer des extracteurs de données prédéfinis couramment utilisés. Les extracteurs fourniront certaines informations nécessaires à Salvo pour que Salvo puisse générer la documentation OpenAPI.
+Vous pouvez importer des extracteurs de données communs prédéfinis via `use salvo::oapi::extract::*;`. L'extracteur fournira certaines informations nécessaires à Salvo afin que Salvo puisse générer des documents OpenAPI.
 
-- `QueryParam<T, const REQUIRED: bool>` : Un extracteur qui récupère des données à partir de la chaîne de requête. `QueryParam<T, false>` signifie que ce paramètre n'est pas obligatoire et peut être omis. `QueryParam<T, true>` signifie que ce paramètre est obligatoire et ne peut pas être omis ; s'il n'est pas fourni, une erreur est retournée.
+- `QueryParam<T, const REQUIRED: bool>` : Un extracteur pour extraire des données des chaînes de requête. `QueryParam<T, false>` signifie que ce paramètre n'est pas requis et peut être omis. `QueryParam<T, true>` signifie que ce paramètre est requis et ne peut être omis. S'il n'est pas fourni, une erreur sera retournée ;
 
-- `HeaderParam<T, const REQUIRED: bool>` : Un extracteur qui récupère des données à partir des en-têtes de la requête. `HeaderParam<T, false>` signifie que ce paramètre n'est pas obligatoire et peut être omis. `HeaderParam<T, true>` signifie que ce paramètre est obligatoire et ne peut pas être omis ; s'il n'est pas fourni, une erreur est retournée.
+- `HeaderParam<T, const REQUIRED: bool>` : Un extracteur pour extraire des données de l'en-tête de la requête. `HeaderParam<T, false>` signifie que ce paramètre n'est pas requis et peut être omis. `HeaderParam<T, true>` signifie que ce paramètre est requis et ne peut être omis. S'il n'est pas fourni, une erreur sera retournée ;
 
-- `CookieParam<T, const REQUIRED: bool>` : Un extracteur qui récupère des données à partir des cookies de la requête. `CookieParam<T, false>` signifie que ce paramètre n'est pas obligatoire et peut être omis. `CookieParam<T, true>` signifie que ce paramètre est obligatoire et ne peut pas être omis ; s'il n'est pas fourni, une erreur est retournée.
+- `CookieParam<T, const REQUIRED: bool>` : Un extracteur pour extraire des données du cookie de la requête. `CookieParam<T, false>` signifie que ce paramètre n'est pas requis et peut être omis. `CookieParam<T, true>` signifie que ce paramètre est requis et ne peut être omis. S'il n'est pas fourni, une erreur sera retournée ;
 
-- `PathParam<T>` : Un extracteur qui récupère les paramètres de chemin à partir de l'`URL` de la requête. Si ce paramètre n'existe pas, la correspondance de route échoue, donc il n'y a pas de cas où il pourrait être omis.
+- `PathParam<T>` : Un extracteur pour extraire les paramètres de chemin de l'URL de la requête. Si ce paramètre n'existe pas, la correspondance de route ne réussira pas, donc il n'y a pas de cas où il peut être omis ;
 
-- `FormBody<T>` : Récupère des informations à partir du formulaire soumis dans la requête.
+- `FormBody<T>` : Extrait les informations du formulaire soumis par la requête ;
 
-- `JsonBody<T>` : Récupère des informations à partir de la charge utile au format JSON soumise dans la requête.
+- `JsonBody<T>` : Extrait les informations de la charge utile au format JSON soumise par la requête ;
 
 ## `#[endpoint]`
 
-Lors de la génération de la documentation OpenAPI, il est nécessaire d'utiliser la macro `#[endpoint]` à la place de la macro `#[handler]` habituelle. Il s'agit en réalité d'une version améliorée de la macro `#[handler]`.
+Lors de la génération de documents OpenAPI, vous devez utiliser la macro `#[endpoint]` au lieu de la macro `#[handler]` habituelle. Il s'agit en réalité d'une version améliorée de la macro `#[handler]`.
 
-- Elle peut obtenir les informations nécessaires à la génération d'OpenAPI à partir de la signature de la fonction.
+- Elle peut obtenir les informations nécessaires à la génération d'OpenAPI via la signature de la fonction ;
 
-- Pour les informations qui ne peuvent pas être fournies facilement via la signature, elles peuvent être fournies directement en ajoutant des attributs dans la macro `#[endpoint]`. Les informations fournies de cette manière seront fusionnées avec celles obtenues à partir de la signature de la fonction. En cas de conflit, elles remplaceront les informations fournies par la signature.
+- Pour les informations qu'il n'est pas pratique de fournir via la signature, vous pouvez les fournir directement en ajoutant des attributs dans la macro `#[endpoint]`. Les informations fournies de cette manière seront fusionnées avec les informations obtenues via la signature de la fonction. En cas de conflit, elles écraseront les informations fournies par la signature de la fonction.
 
-Vous pouvez utiliser l'attribut `#[deprecated]` intégré à Rust pour indiquer qu'un certain Handler est obsolète et déprécié. Bien que l'attribut `#[deprecated]` prenne en charge l'ajout d'informations telles que la raison de la dépréciation ou la version, OpenAPI ne les prend pas en charge, donc ces informations seront ignorées lors de la génération d'OpenAPI.
+Vous pouvez utiliser l'attribut intégré `#[deprecated]` de Rust pour marquer un Handler comme obsolète. Bien que l'attribut `#[deprecated]` prenne en charge l'ajout d'informations telles que la raison de la dépréciation et la version, OpenAPI ne le prend pas en charge, donc ces informations seront ignorées lors de la génération d'OpenAPI.
 
-Les commentaires de documentation dans le code seront automatiquement extraits pour générer OpenAPI. La première ligne sera utilisée pour générer le _`summary`_, et l'ensemble du commentaire sera utilisé pour générer la _`description`_.
+La partie commentaire de documentation dans le code sera automatiquement extraite pour générer OpenAPI. La première ligne est utilisée pour générer le _`summary`_, et l'ensemble de la partie commentaire sera utilisé pour générer la _`description`_.
 
 ```rust
 /// Ceci est un résumé de l'opération
@@ -85,7 +87,7 @@ struct Pet {
 
 Vous pouvez utiliser `#[salvo(schema(...))]` pour définir des paramètres optionnels :
 
-- `example = ...` peut être `json!(...)`. `json!(...)` sera analysé par `serde_json::json!` en `serde_json::Value`.
+- `example = ...` peut être `json!(...)`. `json!(...)` sera analysé par `serde_json::json!` comme `serde_json::Value`.
 
   ```rust
   #[derive(ToSchema)]
@@ -96,7 +98,7 @@ Vous pouvez utiliser `#[salvo(schema(...))]` pour définir des paramètres optio
   }
   ```
 
-- `xml(...)` peut être utilisé pour définir les propriétés d'un objet Xml :
+- `xml(...)` peut être utilisé pour définir les propriétés de l'objet Xml :
 
   ```rust
   #[derive(ToSchema)]
@@ -109,36 +111,36 @@ Vous pouvez utiliser `#[salvo(schema(...))]` pour définir des paramètres optio
 
 ## ToParameters
 
-Génère des [paramètres de chemin][path_parameters] à partir des champs d'une structure.
+Génère les [paramètres de chemin][path_parameters] à partir des champs de la structure.
 
-Il s'agit de l'implémentation `#[derive]` du trait [`ToParameters`][to_parameters].
+Ceci est l'implémentation `#[derive]` du trait [`ToParameters`][to_parameters].
 
-Normalement, les paramètres de chemin doivent être définis dans [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters] de l'`endpoint`. Cependant, lorsque des [`struct`][struct] sont utilisées pour définir les paramètres, cette étape peut être omise. Néanmoins, si une description doit être fournie ou si la configuration par défaut doit être modifiée, les paramètres de chemin de type [`primitive types`][primitive] et [`String`][std_string] ou les paramètres de chemin de style [tuple] doivent toujours être définis dans `parameters(...)`.
+Habituellement, les paramètres de chemin doivent être définis dans [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters] du point de terminaison. Cependant, lors de l'utilisation d'une [`struct`][struct] pour définir les paramètres, les étapes ci-dessus peuvent être omises. Néanmoins, si vous devez donner une description ou modifier la configuration par défaut, alors les paramètres de chemin de [`types primitifs`][primitive] et de [`String`][std_string] ou les paramètres de chemin de style [tuple] doivent toujours être définis dans `parameters(...)`.
 
-Vous pouvez utiliser l'attribut `#[deprecated]` intégré à Rust pour marquer un champ comme obsolète, ce qui se reflétera dans la spécification OpenAPI générée.
+Vous pouvez utiliser l'attribut intégré `#[deprecated]` de Rust pour marquer les champs comme obsolètes, ce qui sera reflété dans la spécification OpenAPI générée.
 
-L'attribut `#[deprecated]` prend en charge l'ajout d'informations supplémentaires telles que la raison de la dépréciation ou la version à partir de laquelle elle est dépréciée, mais OpenAPI ne le prend pas en charge. OpenAPI ne prend en charge qu'une valeur booléenne pour déterminer si un élément est déprécié. Bien qu'il soit tout à fait possible de déclarer une dépréciation avec une raison, comme `#[deprecated  = "There is better way to do this"]`, cette raison n'apparaîtra pas dans la spécification OpenAPI.
+L'attribut `#[deprecated]` prend en charge l'ajout d'informations supplémentaires telles que la raison de la dépréciation ou la version à partir de laquelle elle est dépréciée, mais OpenAPI ne le prend pas en charge. OpenAPI ne prend en charge qu'une valeur booléenne pour déterminer si quelque chose est déprécié. Bien qu'il soit parfaitement possible de déclarer une dépréciation avec une raison, comme `#[deprecated  = "Il existe une meilleure façon de faire cela"]`, cette raison ne sera pas présentée dans la spécification OpenAPI.
 
-Les commentaires de documentation sur les champs de la structure seront utilisés comme description des paramètres dans la spécification OpenAPI générée.
+Le commentaire de documentation sur le champ de la structure sera utilisé comme description du paramètre dans la spécification OpenAPI générée.
 
 ```rust
 #[derive(salvo_oapi::ToParameters, serde::Deserialize)]
 struct Query {
-    /// Filtrer les éléments de tâche par nom.
+    /// Filtre les éléments de tâche par nom.
     name: String
 }
 ```
 
-### Attributs de conteneur ToParameters pour `#[salvo(parameters(...))]`
+### Attributs de Conteneur ToParameters pour `#[salvo(parameters(...))]`
 
-Les attributs suivants peuvent être utilisés dans l'attribut de conteneur `#[salvo(parameters(…))]` des structures qui dérivent de `ToParameters` :
+Les attributs suivants peuvent être utilisés dans l'attribut de conteneur `#[salvo(parameters(…))]` de la structure dérivée de `ToParameters`
 
-- `names(...)` définit une liste de noms séparés par des virgules pour les champs non nommés de la structure utilisés comme paramètres de chemin. Pris en charge uniquement sur les structures non nommées.
-- `style = ...` peut définir le mode de sérialisation de tous les paramètres, spécifié par [`ParameterStyle`][style]. La valeur par défaut est basée sur l'attribut _`parameter_in`_.
-- `default_parameter_in = ...` définit l'emplacement par défaut utilisé pour les paramètres de ce champ, la valeur provenant de [`parameter::ParameterIn`][in_enum]. Si cet attribut n'est pas fourni, la valeur par défaut est `query`.
-- `rename_all = ...` peut servir d'alternative à `rename_all` de `serde`. Il offre en réalité la même fonctionnalité.
+- `names(...)` Définit une liste de noms séparés par des virgules pour les champs non nommés de la structure utilisés comme paramètres de chemin. Pris en charge uniquement sur les structures non nommées.
+- `style = ...` Définit la méthode de sérialisation pour tous les paramètres, spécifiée par [`ParameterStyle`][style]. La valeur par défaut est basée sur l'attribut _`parameter_in`_.
+- `default_parameter_in = ...` Définit la position par défaut utilisée par les paramètres de ce champ. La valeur de cette position provient de [`parameter::ParameterIn`][in_enum]. Si cet attribut n'est pas fourni, la valeur par défaut est `query`.
+- `rename_all = ...` peut être utilisé comme alternative au `rename_all` de `serde`. Il fournit en réalité la même fonctionnalité.
 
-Utiliser `names` pour définir un nom pour un seul paramètre non nommé.
+Utilisez `names` pour définir un nom pour un seul paramètre non nommé.
 
 ```rust
 # use salvo_oapi::ToParameters;
@@ -148,7 +150,7 @@ Utiliser `names` pour définir un nom pour un seul paramètre non nommé.
 struct Id(u64);
 ```
 
-Utiliser `names` pour définir des noms pour plusieurs paramètres non nommés.
+Utilisez `names` pour définir des noms pour plusieurs paramètres non nommés.
 
 ```rust
 # use salvo_oapi::ToParameters;
@@ -158,61 +160,59 @@ Utiliser `names` pour définir des noms pour plusieurs paramètres non nommés.
 struct IdAndName(u64, String);
 ```
 
-### Attributs de champ ToParameters pour `#[salvo(parameter(...))]`
+### Attributs de Champ ToParameters pour `#[salvo(parameter(...))]`
 
-Les attributs suivants peuvent être utilisés sur les champs de structure avec `#[salvo(parameter(...))]` :
+Les attributs suivants peuvent être utilisés sur les champs de structure `#[salvo(parameter(...))]` :
 
-- `style = ...` définit comment le paramètre est sérialisé par [`ParameterStyle`][style]. La valeur par défaut est basée sur l'attribut _`parameter_in`_.
+- `style = ...` Définit comment les paramètres sont sérialisés par [`ParameterStyle`][style]. La valeur par défaut est basée sur l'attribut _`parameter_in`_.
 
-- `parameter_in = ...` définit où se trouve ce paramètre de champ en utilisant une valeur de [`parameter::ParameterIn`][in_enum]. Si cette valeur n'est pas fournie, la valeur par défaut est `query`.
+- `parameter_in = ...` Utilise la valeur de [`parameter::ParameterIn`][in_enum] pour définir où se trouve ce paramètre de champ. Si cette valeur n'est pas fournie, la valeur par défaut est `query`.
 
-- `explode` définit s'il faut créer une nouvelle paire _`parameter=valeur`_ pour chaque paramètre dans un _`objet`_ ou un _`tableau`_.
+- `explode` Définit s'il faut créer une nouvelle paire _`parameter=valeur`_ pour chaque paramètre dans un _`objet`_ ou un _`tableau`_.
 
-- `allow_reserved` définit si les caractères réservés _`:/?#[]@!$&'()*+,;=`_ sont autorisés dans la valeur du paramètre.
+- `allow_reserved` Définit si les caractères réservés _`:/?#[]@!$&'()*+,;=`_ sont autorisés dans la valeur du paramètre.
 
-- `example = ...` peut être une référence à une méthode ou _`json!(...)`_. L'exemple donné remplacera tout exemple du type de paramètre sous-jacent.
+- `example = ...` peut être une référence de méthode ou _`json!(...)`_. L'exemple donné écrasera tout exemple du type de paramètre sous-jacent.
 
-- `value_type = ...` peut être utilisé pour remplacer le type par défaut utilisé pour le champ dans la spécification OpenAPI. Utile lorsque le type par défaut ne correspond pas au type réel, par exemple lors de l'utilisation de types tiers non définis dans [`ToSchema`][to_schema] ou les [types primitifs][primitive]. La valeur peut être n'importe quel type Rust pouvant normalement être sérialisé en JSON, ou un type personnalisé comme _`Object`_. _`Object`_ sera rendu comme un objet OpenAPI générique.
+- `value_type = ...` peut être utilisé pour remplacer le type par défaut utilisé par les champs dans la spécification OpenAPI. Ceci est utile lorsque le type par défaut ne correspond pas au type réel, par exemple, lors de l'utilisation de types tiers non définis dans [`ToSchema`][to_schema] ou des types [`primitifs`][primitive]`. La valeur peut être n'importe quel type Rust pouvant être sérialisé en JSON dans des circonstances normales, ou un type personnalisé comme _`Object`_._`Object`_ qui sera rendu comme un objet OpenAPI générique.
 
-- `inline` si activé, la définition du type de ce champ doit provenir de [`ToSchema`][to_schema], et cette définition sera intégrée en ligne.
+- `inline` Si activé, la définition de ce type de champ doit provenir de [`ToSchema`][to_schema], et cette définition sera intégrée en ligne.
 
-- `default = ...` peut être une référence à une méthode ou _`json!(...)`_.
+- `default = ...` peut être une référence de méthode ou _`json!(...)`_.
 
-- `format = ...` peut être une variante de l'énumération [`KnownFormat`][known_format], ou une valeur ouverte sous forme de chaîne. Par défaut, le format est déduit du type de la propriété selon la spécification OpenAPI.
+- `format = ...` peut être une variante de l'énumération [`KnownFormat`][known_format], ou une valeur ouverte sous forme de chaîne. Par défaut, le format est déduit du type de l'attribut selon la spécification OpenApi.
 
-- `write_only` définit que la propriété est utilisée uniquement pour les opérations d'**écriture** _POST, PUT, PATCH_ et non pour _GET_.
+- `write_only` Définit que l'attribut est uniquement utilisé pour les opérations d'**écriture** _POST, PUT, PATCH_ et non pour _GET_.
 
-- `read_only` définit que la propriété est utilisée uniquement pour les opérations de **lecture** _GET_ et non pour _POST, PUT, PATCH_.
+- `read_only` Définit que l'attribut est uniquement utilisé pour les opérations de **lecture** _GET_ et non pour _POST, PUT, PATCH_.
 
-- `nullable` définit si la propriété peut être `null` (notez que cela est différent de non requis).
+- `nullable` Définit si l'attribut peut être `null` (notez que ceci est différent de non requis).
 
-- `required = ...` utilisé pour forcer un paramètre à être obligatoire. [Voir les règles](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules).
+- `required = ...` est utilisé pour forcer le paramètre à être requis. [Voir les règles](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules).
 
-- `rename = ...` peut servir d'alternative à `rename` de `serde`. Il offre en réalité la même fonctionnalité.
+- `rename = ...` peut être utilisé comme alternative au `rename` de `serde`. Il fournit en réalité la même fonctionnalité.
 
-- `multiple_of = ...` utilisé pour définir un multiple de la valeur. Une valeur de paramètre n'est considérée comme valide que si elle peut être divisée par la valeur de ce mot-clé et que le résultat est un entier. La valeur du multiple doit être strictement supérieure à _`0`_.
+- `multiple_of = ...` est utilisé pour définir un multiple de la valeur. La valeur du paramètre est considérée comme valide uniquement lorsque la valeur du paramètre est divisée par la valeur de ce mot-clé et que le résultat est un entier. La valeur multiple doit être strictement supérieure à _`0`_.
 
-- `maximum = ...` utilisé pour définir une limite supérieure inclusive pour la valeur.
+- `maximum = ...` est utilisé pour définir la limite supérieure de la valeur, y compris la valeur actuelle.
 
-- `minimum = ...` utilisé pour définir une limite inférieure inclusive pour la valeur.
+- `minimum = ...` est utilisé pour définir la limite inférieure de la valeur, y compris la valeur actuelle.
 
-- `exclusive_maximum = ...` utilisé pour définir une limite supérieure exclusive pour la valeur.
+- `exclusive_maximum = ...` est utilisé pour définir la limite supérieure de la valeur, à l'exclusion de la valeur actuelle.
 
-- `exclusive_minimum = ...` utilisé pour définir une limite inférieure exclusive pour la valeur.
+- `exclusive_minimum = ...` est utilisé pour définir la limite inférieure de la valeur, à l'exclusion de la valeur actuelle.
 
-- `max_length = ...` peut être utilisé pour définir la longueur maximale des valeurs de type `string`.
+- `max_length = ...` est utilisé pour définir la longueur maximale d'une valeur de type `string`.
 
-- `min_length = ...` peut être utilisé pour définir la longueur minimale des valeurs de type `string`.
+- `min_length = ...` est utilisé pour définir la longueur minimale d'une valeur de type `string`.
 
-- `pattern = ...` utilisé pour définir une expression régulière valide que la valeur du champ doit correspondre, l'expression régulière utilise la version _ECMA-262_.
+- `pattern = ...` est utilisé pour définir une expression régulière valide à laquelle la valeur du champ doit correspondre. L'expression régulière adopte la version _ECMA-262_.
 
-- `max_items = ...` peut être utilisé pour définir le nombre maximum d'éléments autorisés pour un champ de type `array`. La valeur doit être un entier non négatif.
+- `max_items = ...` peut être utilisé pour définir le nombre maximum d'éléments autorisés dans un champ de type `array`. La valeur doit être un entier non négatif.
 
-- `min_items = ...` peut être utilisé pour définir le nombre minimum d'éléments autorisés pour un champ de type `array`. La valeur doit être un entier non négatif.
+- `min_items = ...` peut être utilisé pour définir le nombre minimum d'éléments autorisés dans un champ de type `array`. La valeur doit être un entier non négatif.
 
-- `with_schema = ...` utilise un _`schéma`_ créé par une référence de fonction au lieu du _`schéma`_ par défaut. La fonction doit satisfaire la définition `fn() -> Into<RefOr<Schema>>`. Elle ne prend aucun paramètre et doit retourner une valeur pouvant être convertie en `RefOr<Schema>`.
+- `with_schema = ...` utilise une référence de fonction pour créer un _`schéma`_ au lieu du _`schéma`_ par défaut. La fonction doit satisfaire la définition `fn() -> Into<RefOr<Schema>>`. Elle ne reçoit aucun paramètre et doit retourner n'importe quelle valeur pouvant être convertie en `RefOr<Schema>`.
 
-- `additional_properties = ...` utilisé pour définir un type de forme libre pour une `map`, comme [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) et [`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html). Le type de forme libre permet d'utiliser des types arbitraires dans les valeurs de la map. Les formats pris en charge sont _`additional_properties`_ et _`additional_properties = true`_.
-
-#### Règles de nullabilité et d'ob
-{/* Auto generated, origin file hash:0cd338da7f2e4cf2b5d77a3752808958 */}
+- `additional_properties = ...` est utilisé pour définir des types de forme libre pour `map`, tels que [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) et [`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html). Les types de forme libre permettent d'utiliser n'importe quel type dans les valeurs de la map. Les formats pris en charge sont _`additional_properties`
+{/* Auto generated, origin file hash:92932333caa2cef840088509d50af1ef */}

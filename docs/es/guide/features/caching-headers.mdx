@@ -1,14 +1,14 @@
 # Encabezados de Caché
 
-Middleware que proporciona soporte para la configuración de encabezados de caché.
+Un middleware que proporciona soporte para configurar encabezados de caché.
 
-El control de caché es una parte fundamental de la optimización del rendimiento web. Al configurar correctamente los encabezados de caché, se pueden reducir solicitudes de red innecesarias y mejorar el rendimiento de la aplicación. [Cache-Control](https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control) es una directiva en los encabezados de respuesta HTTP que especifica la política de caché del navegador, controlando quién puede almacenar en caché la respuesta, bajo qué condiciones y por cuánto tiempo.
+El control de caché es una parte crucial de la optimización del rendimiento web. Al configurar correctamente los encabezados de caché, se pueden reducir solicitudes de red innecesarias, mejorando así el rendimiento de la aplicación. [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) es un encabezado de respuesta HTTP utilizado para especificar políticas de almacenamiento en caché del navegador. Controla quién puede almacenar respuestas en caché, bajo qué condiciones y durante cuánto tiempo.
 
-La implementación interna incluye tres manejadores (`Handler`): `CachingHeaders`, `Modified` y `ETag`. `CachingHeaders` es una combinación de los dos últimos. En condiciones normales, se recomienda utilizar `CachingHeaders`.
+Internamente, incluye implementaciones de tres `Handler`s: `CachingHeaders`, `Modified` y `ETag`. `CachingHeaders` es una combinación de los dos últimos. En circunstancias normales, se utiliza `CachingHeaders`.
 
-- `Modified`: Proporciona validación de caché basada en la última fecha de modificación del recurso.
-- `ETag`: Utiliza etiquetas de entidad (Entity Tag) para ofrecer un mecanismo de validación de recursos más preciso.
-- `CachingHeaders`: Combina ambos mecanismos anteriores para brindar un soporte completo de control de caché.
+- `Modified`: Proporciona validación de caché basada en la última hora de modificación del recurso.
+- `ETag`: Utiliza Etiquetas de Entidad para ofrecer un mecanismo de validación de recursos más preciso.
+- `CachingHeaders`: Combina los dos mecanismos anteriores para proporcionar un soporte integral de control de caché.
 
 _**Código de Ejemplo**_
 
@@ -24,4 +24,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:08699e65af0ef5c9fac56f0fb8d73153 */}
+{/* Auto generated, origin file hash:cb14e5ae25e20d47dc9f3545411e408d */}

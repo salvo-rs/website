@@ -1,12 +1,12 @@
-# SSE-Server-Sent Events
+# Server-Sent Events (SSE)
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Was ist SSE?
 
-Server-Sent Events (SSE) ist eine Webtechnologie, die es Servern ermöglicht, Daten an Clients zu pushen. Im Gegensatz zu WebSocket ist SSE eine unidirektionale Kommunikation, bei der Daten nur vom Server zum Client gesendet werden können. Es eignet sich für Szenarien, in denen der Server Echtzeitdaten pushen muss, der Client jedoch keine häufigen Daten senden muss. SSE basiert auf dem HTTP-Protokoll, ist einfach zu implementieren und verfügt über einen integrierten Mechanismus zur Wiederherstellung der Verbindung bei Unterbrechungen.
+Server-Sent Events (SSE) ist eine Webtechnologie, die es Servern ermöglicht, Daten an Clients zu pushen. Im Gegensatz zu WebSocket handelt es sich bei SSE um eine unidirektionale Kommunikationsmethode, bei der Daten nur vom Server zum Client gesendet werden können. Sie eignet sich für Szenarien, in denen der Server Daten in Echtzeit pushen muss, der Client jedoch keine Daten häufig senden muss. SSE basiert auf dem HTTP-Protokoll, ist einfach zu implementieren und verfügt über integrierte Wiederherstellungsmechanismen.
 
-Middleware zur Unterstützung von `SSE`.
+Bietet Middleware-Unterstützung für `SSE`.
 
 _**Beispielcode**_
 
@@ -21,7 +21,7 @@ _**Beispielcode**_
   </Tab>
 </Tabs>
 
-## Beispiel für ein Chat-Programm
+## Chat-Anwendungsbeispiel
 
 <Tabs>
   <Tab label="main.rs">
@@ -36,7 +36,7 @@ _**Beispielcode**_
 
 ## Integration mit großen Sprachmodellen
 
-Bei der Integration von KI über das OpenAI SDK oder andere SDKs für große Sprachmodelle ist die Rückgabe von Streaming-Ergebnissen (Stream) ein häufiges Anforderungsszenario. SSE bietet eine perfekte Lösung, um KI-generierte Inhalte in Echtzeit an das Frontend zu pushen und so eine bessere Benutzererfahrung zu ermöglichen.
+Bei der Integration von KI mithilfe des OpenAI SDK oder anderer SDKs für große Sprachmodelle sind Streaming-Antworten (Stream) eine häufige Anforderung. SSE bietet eine perfekte Lösung, die es ermöglicht, KI-generierte Inhalte in Echtzeit an das Frontend zu liefern und so eine bessere Benutzererfahrung zu bieten.
 
-Beispielsweise kann bei der Nutzung der Chat Completion API von OpenAI mit Streaming-Antworten die SSE-Funktion von Salvo genutzt werden, um KI-generierte Inhalte schrittweise an den Client zu senden und so die Verzögerung zu vermeiden, die durch das Warten auf eine vollständige Antwort entsteht.
-{/* Auto generated, origin file hash:a6de063d6b9d92c4c8245bfb4028820b */}
+Wenn Sie beispielsweise die Chat Completion API von OpenAI mit Streaming-Antworten verwenden, kann die SSE-Funktionalität von Salvo genutzt werden, um KI-generierte Inhalte schrittweise an den Client zu senden und so die Verzögerung beim Warten auf eine vollständige Antwort zu vermeiden.
+{/* Auto generated, origin file hash:0f340060f8ee924f0397d3ff12980727 */}

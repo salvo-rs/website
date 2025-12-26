@@ -1,10 +1,10 @@
 # Soporte para HTTP/3
 
-Salvo proporciona soporte para HTTP/3, que puede habilitarse mediante la funcionalidad `quinn`. HTTP/3, basado en el protocolo QUIC, ofrece menor latencia y mejor rendimiento en comparación con HTTP/1.1 y HTTP/2 tradicionales, especialmente en entornos de red inestables.
+Salvo ofrece soporte para HTTP/3, el cual puede habilitarse mediante la funcionalidad `quinn`. HTTP/3 está basado en el protocolo QUIC y proporciona menor latencia y mejor rendimiento en comparación con HTTP/1.1 y HTTP/2 tradicionales, especialmente en entornos de red inestables.
 
-## Habilitar soporte para HTTP/3
+## Habilitar el soporte para HTTP/3
 
-Para habilitar el soporte de HTTP/3 en Salvo, debes activar la funcionalidad `quinn` en el archivo `Cargo.toml`:
+Para habilitar el soporte de HTTP/3 en Salvo, es necesario activar la funcionalidad `quinn` en el archivo `Cargo.toml`:
 
 ```toml
 salvo = { workspace = true, features = ["quinn"] }
@@ -16,8 +16,8 @@ HTTP/3 es especialmente adecuado para los siguientes escenarios:
 
 - Aplicaciones en dispositivos móviles y entornos de red inestables
 - Aplicaciones en tiempo real que requieren baja latencia
-- Escenarios de descarga paralela de múltiples archivos pequeños
-- Aplicaciones que necesitan migración de conexión (por ejemplo, cambiar de WiFi a red celular sin interrupción)
+- Escenarios que involucran descargas paralelas de numerosos archivos pequeños
+- Aplicaciones que necesitan migración de conexión (por ejemplo, cambio sin interrupciones de WiFi a redes celulares)
 
 ## Código de ejemplo
 
@@ -27,7 +27,7 @@ A continuación se muestra un ejemplo simple de servidor HTTP/3 que soporta tant
 use salvo::conn::rustls::{Keycert, RustlsConfig};
 use salvo::prelude::*;
 
-// Función manejadora que responde "Hello World"
+// Función manejadora que responde con "Hello World"
 #[handler]
 async fn hello() -> &'static str {
     "Hello World"
@@ -42,22 +42,22 @@ async fn main() {
     let cert = include_bytes!("../certs/cert.pem").to_vec();
     let key = include_bytes!("../certs/key.pem").to_vec();
 
-    // Crear enrutador y añadir un endpoint
+    // Crear un enrutador y agregar un endpoint
     let router = Router::new().get(hello);
 
-    // Configurar TLS usando Rustls
+    // Configurar ajustes TLS usando Rustls
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // Crear listener TCP con cifrado TLS en el puerto 5800
+    // Crear un oyente TCP cifrado con TLS en el puerto 5800
     let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
-    // Crear listener QUIC y combinarlo con el listener TCP
+    // Crear un oyente QUIC y combinarlo con el oyente TCP
     let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
         .join(listener)
         .bind()
         .await;
 
-    // Iniciar servidor que soporta HTTP/3 (QUIC) y HTTPS (TCP)
+    // Iniciar el servidor que soporta tanto HTTP/3 (QUIC) como HTTPS (TCP)
     Server::new(acceptor).serve(router).await;
 }
 ```
@@ -67,36 +67,36 @@ async fn main() {
 ### Configuración TLS
 
 ```rust
-// Configurar TLS usando Rustls
+// Configurar ajustes TLS usando Rustls
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 ```
 
 Dado que HTTP/3 se basa en el protocolo QUIC, que requiere TLS 1.3 para cifrado, es necesario configurar certificados y claves TLS. En Salvo, utilizamos `RustlsConfig` para configurar TLS.
 
-### Combinación de listeners
+### Combinación de oyentes
 
 ```rust
-// Crear listener TCP con cifrado TLS
+// Crear un oyente TCP cifrado con TLS
 let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
-// Crear listener QUIC y combinarlo con el listener TCP
+// Crear un oyente QUIC y combinarlo con el oyente TCP
 let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
     .join(listener)
     .bind()
     .await;
 ```
 
-Este código es la parte central del manejo de HTTP/3 en Salvo. Primero crea un listener TCP con soporte TLS (para HTTP/1.1 y HTTP/2), luego crea un listener QUIC (para HTTP/3). El método `join` combina ambos listeners, permitiendo al servidor manejar solicitudes de diferentes protocolos simultáneamente.
+Este código es la parte central del manejo de HTTP/3 en Salvo. Primero crea un oyente TCP habilitado para TLS (para HTTP/1.1 y HTTP/2), luego crea un oyente QUIC (para HTTP/3). El método `join` combina estos dos oyentes, permitiendo que el servidor maneje solicitudes de diferentes protocolos simultáneamente.
 
 ## Ejecutar el ejemplo
 
-Para ejecutar este ejemplo, necesitas certificados TLS y claves privadas válidas. En entornos de desarrollo, puedes usar certificados autofirmados. El código completo del ejemplo está disponible en el [repositorio de GitHub de Salvo](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
+Para ejecutar este ejemplo, se necesitan certificados TLS y claves privadas válidas. En un entorno de desarrollo, se pueden utilizar certificados autofirmados. El código completo del ejemplo se puede encontrar en el [repositorio GitHub de Salvo](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
 
-Es importante notar que muchos clientes aún no soportan completamente HTTP/3, por lo que es necesario que este servidor soporte tanto HTTP/3 como HTTPS.
+Tenga en cuenta que, dado que muchos clientes aún no soportan completamente HTTP/3, es esencial que este servidor soporte tanto HTTP/3 como HTTPS.
 
-## Consideraciones importantes
+## Consideraciones
 
 1. HTTP/3 requiere soporte para TLS 1.3, por lo que deben configurarse certificados y claves válidos.
-2. Los clientes necesitan soportar el protocolo HTTP/3 para aprovechar esta funcionalidad; de lo contrario, se revertirá a HTTP/1.1 o HTTP/2.
-3. En entornos de producción, deben usarse certificados emitidos por una Autoridad Certificadora reconocida, no certificados autofirmados.
-{/* Auto generated, origin file hash:b4abbc723f2cb070d8584564bf96ce8a */}
+2. Los clientes deben soportar el protocolo HTTP/3 para utilizar esta funcionalidad; de lo contrario, recurrirán a HTTP/1.1 o HTTP/2.
+3. En entornos de producción, deben utilizarse certificados emitidos por una Autoridad de Certificación (CA) confiable en lugar de certificados autofirmados.
+{/* Auto generated, origin file hash:f135699b9ae12daf6d88fc1e8c22a61e */}

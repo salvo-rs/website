@@ -2,13 +2,13 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 # Timeout-Middleware
 
-Bietet Middleware-Unterstützung für Timeouts.
+Bietet Middleware-Unterstützung für Timeout-Behandlung.
 
 ## Anwendungsfälle
 
-In Webdiensten können bestimmte Anfragen aufgrund verschiedener Gründe (wie langsame Datenbankabfragen, verzögerte Antworten externer Dienste usw.) zu langen Verarbeitungszeiten führen. Um zu verhindern, dass diese langlaufenden Anfragen Serverressourcen blockieren und die Verarbeitung anderer Anfragen beeinträchtigen, kann die Timeout-Middleware verwendet werden, um eine maximale Verarbeitungszeit für Anfragen festzulegen. Überschreitet eine Anfrage dieses Zeitlimit, wird sie automatisch abgebrochen und ein Timeout-Fehler zurückgegeben.
+In Webdiensten können bestimmte Anfragen aus verschiedenen Gründen (wie langsame Datenbankabfragen, verzögerte Antworten externer Dienste usw.) zu lange zur Verarbeitung benötigen. Um zu verhindern, dass diese langlaufenden Anfragen Serverressourcen beanspruchen und die Verarbeitung anderer Anfragen beeinträchtigen, kann eine Timeout-Middleware verwendet werden, um eine maximale Verarbeitungszeitbegrenzung für Anfragen festzulegen. Wenn diese Zeitbegrenzung überschritten wird, wird die Anfrage automatisch beendet und ein Timeout-Fehler zurückgegeben.
 
-_**Beispielcode**_
+_**Beispielcode**_ 
 
 <Tabs>
   <Tab label="main.rs">
@@ -21,5 +21,5 @@ _**Beispielcode**_
   </Tab>
 </Tabs>
 
-Im obigen Beispiel haben wir zwei Handler-Funktionen erstellt: einen schnell antwortenden `fast`-Handler und einen `slow`-Handler, der erst nach 6 Sekunden antwortet. Durch `Timeout::new(Duration::from_secs(5))` wurde für alle Anfragen ein Timeout-Limit von 5 Sekunden festgelegt. Beim Aufruf des Pfads `/slow` wird die Anfrage aufgrund der Überschreitung der 5-Sekunden-Grenze ein Timeout erzeugen, während Anfragen an den Pfad `/fast` normal verarbeitet und ein Ergebnis zurückgegeben wird.
-{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}
+Im obigen Beispiel haben wir zwei Handler-Funktionen erstellt: einen schnell antwortenden `fast` und einen `slow`, der 6 Sekunden verzögert, bevor er antwortet. Für alle Anfragen wird eine Timeout-Begrenzung von 5 Sekunden mit `Timeout::new(Duration::from_secs(5))` festgelegt. Beim Zugriff auf den Pfad `/slow` wird die Anfrage aufgrund der Überschreitung der 5-Sekunden-Grenze zeitlich begrenzt. Im Gegensatz dazu wird beim Zugriff auf den Pfad `/fast` die Anfrage normal verarbeitet und ein Ergebnis zurückgegeben.
+{/* Auto generated, origin file hash:6b1b3f8e371841e4b0fca9bc07d59eec */}

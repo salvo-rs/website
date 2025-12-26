@@ -8,28 +8,28 @@
   {
     "type": "dir",
     "name": "concepts",
-    "label": "Konzepte",
+    "label": "Concepts",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "topics",
-    "label": "Themen",
+    "label": "Topics",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "features",
-    "label": "Funktionen",
+    "label": "Features",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "ecology",
-    "label": "Ökosystem",
+    "label": "Ecology",
     "collapsible": true,
     "collapsed": false
   },

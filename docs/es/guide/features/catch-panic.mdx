@@ -1,17 +1,17 @@
-# Capturar Pánico en las Solicitudes
+# Capturando Pánicos en Peticiones
 
-Catch Panic se utiliza para capturar bloqueos que ocurren durante el procesamiento de solicitudes mientras el programa se ejecuta. Para conocer la API específica, [consulta la documentación](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
+Catch Panic se utiliza para capturar fallos que ocurren durante el procesamiento de peticiones en el programa. Para APIs específicas, por favor [consulta la documentación](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
 
-> **Nota**: Para usar `CatchPanic`, debes habilitar la característica `catch-panic` en `Cargo.toml`:
+> **Nota**: Para usar `CatchPanic`, necesitas habilitar la característica `catch-panic` en `Cargo.toml`:
 > ```toml
-> salvo= { version = "xxx", features = ["catch-panic"] }
+> salvo = { version = "xxx", features = ["catch-panic"] }
 > ```
 
 ## Introducción al Middleware
 
-`CatchPanic` es un middleware diseñado para capturar pánicos en los manejadores. Cuando ocurre un pánico durante el procesamiento de una solicitud, este middleware lo captura y escribe un error 500 Internal Server Error en la respuesta, evitando que el servidor completo colapse.
+`CatchPanic` es un middleware diseñado para capturar pánicos en los manejadores. Cuando ocurre un pánico durante el procesamiento de una petición, lo captura y escribe un error 500 Internal Server Error en la respuesta, evitando que todo el servidor se bloquee.
 
-**Importante**: Este middleware debe utilizarse como el primer middleware para garantizar que pueda capturar pánicos provenientes de otros middlewares o manejadores.
+**Nota importante**: Este middleware debe usarse como el primer middleware para asegurar que pueda capturar pánicos de otros middlewares o manejadores.
 
 ## Uso Básico
 
@@ -32,11 +32,11 @@ async fn main() {
 }
 ```
 
-## Comparación con Otros Frameworks para una Comprensión Rápida
+## Comparación con Otros Frameworks para una Comprensión Rápida del Concepto
 
 ### Axum
 
-Similar al middleware `catch_panic` de `Tower` en Axum:
+Similar al middleware `catch_panic` en `Tower` de Axum:
 
 ```rust
 use axum::{
@@ -103,4 +103,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:ad03110400c39a35184d54e9554276b5 */}
+{/* Auto generated, origin file hash:5242c3a9da24068edd412c0516cdb270 */}

@@ -1,22 +1,22 @@
-# Controle de Tráfego
+# Limitação de Taxa
 
-Middleware que fornece funcionalidade de controle de tráfego.
+Middleware que fornece funcionalidade de limitação de taxa.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-## Funcionalidades Principais
+## Características Principais
 
-* `RateIssuer` fornece uma abstração para atribuir chaves que identificam visitantes. `RemoteIpIssuer` é uma de suas implementações, capaz de determinar o visitante com base no endereço IP da requisição. A chave não precisa ser necessariamente uma string; qualquer tipo que satisfaça as restrições `Hash + Eq + Send + Sync + 'static` pode ser usado como chave.
+* `RateIssuer` fornece uma abstração para identificar chaves de visitantes. `RemoteIpIssuer` é uma de suas implementações, que determina os visitantes com base em seus endereços IP. As chaves não são necessariamente strings; qualquer tipo que satisfaça as restrições `Hash + Eq + Send + Sync + 'static` pode servir como chave.
 
-* `RateGuard` oferece uma abstração para algoritmos de controle de tráfego. São fornecidas implementações padrão para janela fixa (`FixedGuard`) e janela deslizante (`SlidingGuard`).
+* `RateGuard` oferece uma abstração para algoritmos de limitação de taxa. As implementações padrão incluem janela fixa (`FixedGuard`) e janela deslizante (`SlidingGuard`).
 
-* `RateStore` fornece operações de armazenamento e recuperação de dados. `MokaStore` é uma implementação interna de cache em memória baseada em `moka`. Você também pode definir sua própria implementação.
+* `RateStore` fornece operações de armazenamento de dados. `MokaStore` é uma implementação de cache em memória integrada baseada em `moka`. Você também pode definir sua própria implementação.
 
-* `RateLimiter` é uma estrutura que implementa `Handler`, contendo internamente um campo `skipper` que permite especificar requisições a serem ignoradas (que não precisam de cache). Por padrão, utiliza `none_skipper`, que não ignora nenhuma requisição.
+* `RateLimiter` é uma estrutura que implementa `Handler`, que inclui um campo `skipper` para especificar solicitações que devem ignorar a limitação de taxa. Por padrão, `none_skipper` é usado, o que significa que nenhuma solicitação é ignorada.
 
-* `QuotaGetter` fornece uma abstração para obtenção de cotas, permitindo recuperar um objeto de cota com base na chave (`Key`) do visitante. Isso significa que podemos configurar informações como cotas de usuário em um banco de dados, permitindo alterações dinâmicas e recuperação dinâmica.
+* `QuotaGetter` fornece uma abstração para recuperar cotas. Ele busca um objeto de cota com base na `Key` do visitante, permitindo que as cotas do usuário e outras configurações sejam armazenadas em bancos de dados e modificadas ou recuperadas dinamicamente.
 
-_**Código de Exemplo**_ 
+_**Código de Exemplo**_
 
 ### Exemplo de Cota Estática
 
@@ -43,4 +43,4 @@ _**Código de Exemplo**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:3d248fa793d9b3aab28760c03d743c7a */}
+{/* Auto generated, origin file hash:408bc2d46428cb1116038d58bdda7a66 */}

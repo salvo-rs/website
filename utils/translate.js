@@ -9,19 +9,29 @@ let config = {};
 //   config = {
 //     apiKey: process.env.GEMINI_API_KEY,
 //     baseURL: "https://api.deepseek.com/v1",
+//     model: 'gemini-1.5-turbo',
 //   };
 // } else 
-if (process.env.DEEPSEEK_API_KEY) {
+if (process.env.MOONSHOT_API_KEY) {
+  console.log("使用 Moonshot API Key 进行翻译");
+  config = {
+    apiKey: process.env.MOONSHOT_API_KEY,
+    baseURL: "https://api.moonshot.cn/v1",
+    model: 'kimi-k2-turbo-preview',
+  };
+} else if (process.env.DEEPSEEK_API_KEY) {
   console.log("使用 DeepSeek API Key 进行翻译");
   config = {
     apiKey: process.env.DEEPSEEK_API_KEY,
     baseURL: "https://api.deepseek.com/v1",
+    model: 'deepseek-chat',
   };
 } else if (process.env.OPENAI_API_KEY) {
   console.log("使用 OpenAI API Key 进行翻译");
   config = {
     apiKey: process.env.OPENAI_API_KEY,
     baseURL: "https://api.openai.com/v1",
+    model: 'gpt-3.5-turbo',
   };
 }
 export const client = new OpenAI(config);
@@ -39,7 +49,7 @@ async function translate(text, targetLanguage) {
 
   const stream = client.chat.completions
     .stream({
-      model: 'deepseek-chat',
+      model: config.model,
       messages: [
         {
           role: 'system',

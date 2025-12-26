@@ -1,17 +1,17 @@
-# Capturando Panics em Requisições
+# Captura de Pânicos em Requisições
 
-O Catch Panic é utilizado para capturar falhas que ocorrem durante o processamento de requisições pelo programa. Para detalhes da API específica, [consulte a documentação](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
+A Captura de Pânico é utilizada para interceptar falhas que ocorrem durante o processamento de requisições no programa. Para APIs específicas, consulte [a documentação](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
 
-> **Nota**: Para usar `CatchPanic`, é necessário habilitar o recurso `catch-panic` no `Cargo.toml`:
+> **Nota**: Para usar `CatchPanic`, é necessário ativar o recurso `catch-panic` no `Cargo.toml`:
 > ```toml
 > salvo = { version = "xxx", features = ["catch-panic"] }
 > ```
 
 ## Introdução ao Middleware
 
-`CatchPanic` é um middleware projetado para capturar panics nos handlers. Quando um panic ocorre durante o processamento de uma requisição, ele o intercepta e escreve um erro 500 Internal Server Error na resposta, evitando que o servidor inteiro falhe.
+`CatchPanic` é um middleware projetado para capturar pânicos nos manipuladores. Quando ocorre um pânico durante o processamento da requisição, ele o intercepta e grava um erro 500 Internal Server Error na resposta, evitando que o servidor inteiro falhe.
 
-**Importante**: Este middleware deve ser utilizado como o primeiro na cadeia, garantindo que possa capturar panics provenientes de outros middlewares ou handlers.
+**Observação Importante**: Este middleware deve ser utilizado como o primeiro middleware para garantir que possa capturar pânicos de outros middlewares ou manipuladores.
 
 ## Uso Básico
 
@@ -21,7 +21,7 @@ use salvo_extra::catch_panic::CatchPanic;
 
 #[handler]
 async fn hello() {
-    panic!("panic error!");
+    panic!("erro de pânico!");
 }
 
 #[tokio::main]
@@ -32,11 +32,11 @@ async fn main() {
 }
 ```
 
-## Comparação com Outros Frameworks para Compreensão Rápida
+## Comparação com Outros Frameworks para Compreensão Rápida do Conceito
 
 ### Axum
 
-Equivalente ao middleware `catch_panic` do `Tower` no Axum:
+Similar ao middleware `catch_panic` no `Tower` do Axum:
 
 ```rust
 use axum::{
@@ -48,7 +48,7 @@ use tower::ServiceBuilder;
 use tower_http::catch_panic::CatchPanicLayer;
 
 async fn panic_handler() -> &'static str {
-    panic!("panic error!");
+    panic!("erro de pânico!");
 }
 
 #[tokio::main]
@@ -69,7 +69,7 @@ async fn main() {
 
 ### Gin (Go)
 
-No framework Gin da linguagem Go, o middleware análogo é o Recovery:
+No framework Gin da linguagem Go, similar ao middleware Recovery:
 
 ```go
 package main
@@ -79,10 +79,10 @@ import (
 )
 
 func main() {
-    r := gin.Default() // Já inclui o middleware Recovery por padrão
+    r := gin.Default() // Inclui o middleware Recovery por padrão
     
     r.GET("/", func(c *gin.Context) {
-        panic("panic error!")
+        panic("erro de pânico!")
     })
     
     r.Run(":8080")
@@ -103,4 +103,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:ad03110400c39a35184d54e9554276b5 */}
+{/* Auto generated, origin file hash:5242c3a9da24068edd412c0516cdb270 */}

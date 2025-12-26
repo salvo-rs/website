@@ -1,14 +1,14 @@
 # Cache-Header
 
-Middleware zur Unterstützung der Konfiguration von Cache-Headern.
+Ein Middleware, der Unterstützung für die Konfiguration von Cache-Headern bietet.
 
-Die Cache-Steuerung ist ein wesentlicher Bestandteil der Web-Performance-Optimierung. Durch korrektes Setzen von Cache-Headern können unnötige Netzwerkanfragen reduziert und die Anwendungsleistung verbessert werden. [Cache-Control](https://developer.mozilla.org/de/docs/Web/HTTP/Headers/Cache-Control) ist ein HTTP-Antwort-Header, der Anweisungen zur Festlegung der Browser-Cache-Strategie enthält. Er steuert, wer unter welchen Bedingungen Antworten cachen darf und wie lange diese zwischengespeichert werden.
+Die Cache-Steuerung ist ein entscheidender Teil der Web-Performance-Optimierung. Durch korrektes Setzen von Cache-Headern können unnötige Netzwerkanfragen reduziert werden, wodurch die Anwendungsleistung verbessert wird. [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) ist ein HTTP-Antwort-Header, der verwendet wird, um Browser-Caching-Richtlinien festzulegen. Es steuert, wer Antworten cachen kann, unter welchen Bedingungen und für wie lange.
 
-Die Implementierung umfasst intern drei `Handler`: `CachingHeaders`, `Modified` und `ETag`. `CachingHeaders` ist eine Kombination der beiden letzteren. Normalerweise wird `CachingHeaders` verwendet.
+Intern enthält es Implementierungen von drei `Handler`s: `CachingHeaders`, `Modified` und `ETag`. `CachingHeaders` ist eine Kombination der beiden letzteren. Unter normalen Umständen wird `CachingHeaders` verwendet.
 
-- `Modified`: Bietet Cache-Validierung basierend auf der letzten Änderungszeit einer Ressource.
-- `ETag`: Verwendet Entity Tags für einen präziseren Ressourcen-Validierungsmechanismus.
-- `CachingHeaders`: Kombiniert die beiden oben genannten Mechanismen und bietet umfassende Cache-Steuerungsunterstützung.
+- `Modified`: Bietet Cache-Validierung basierend auf der letzten Änderungszeit der Ressource.
+- `ETag`: Verwendet Entity Tags, um einen präziseren Ressourcen-Validierungsmechanismus zu bieten.
+- `CachingHeaders`: Kombiniert die beiden oben genannten Mechanismen, um umfassende Cache-Steuerungsunterstützung zu bieten.
 
 _**Beispielcode**_
 
@@ -24,4 +24,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:08699e65af0ef5c9fac56f0fb8d73153 */}
+{/* Auto generated, origin file hash:cb14e5ae25e20d47dc9f3545411e408d */}

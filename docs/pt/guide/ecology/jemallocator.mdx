@@ -5,24 +5,24 @@ title: Alternativas de Alocadores de Memória Rust
 # Jemallocator: Alternativa de Alocador de Memória jemalloc para Rust
 
 :::tip
-O alocador padrão pode, por vezes, não liberar memória de forma oportuna. Recomenda-se o uso do (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] como alocador global em substituição ao alocador padrão.
+O alocador padrão pode, por vezes, não liberar memória prontamente. Recomenda-se utilizar o [jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) como alocador global para substituir o padrão.
 :::
 
-O (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] é uma biblioteca que vincula o alocador de memória jemalloc, fornecendo o tipo de unidade `Jemalloc`. Este tipo implementa a API de alocador e pode ser configurado como `#[global_allocator]`.
+O [jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) é uma biblioteca vinculada ao alocador de memória jemalloc, fornecendo o tipo unitário `Jemalloc` que implementa a API de alocador e pode ser configurado como `#[global_allocator]`.
 
-O `tikv-jemallocator` é o sucessor do projeto `jemallocator`. Ambos os crates são idênticos, exceto pelo nome. Para novos projetos, recomenda-se a versão `tikv-xxx`.
+O `tikv-jemallocator` é o projeto sucessor do `jemallocator`. Essas duas *crates* são idênticas, exceto pelos nomes. Para novos projetos, recomenda-se utilizar a versão `tikv-xxx`.
 
 ## Ecossistema jemalloc
 
-O ecossistema de suporte ao jemalloc é composto pelos seguintes crates:
+O ecossistema de suporte ao jemalloc consiste nas seguintes *crates*:
 
-- **tikv-jemalloc-sys**: Compila e vincula ao jemalloc, expondo as ligações C brutas para ele.
-- **tikv-jemallocator**: Fornece o tipo `Jemalloc`, que implementa os traits `GlobalAlloc` e `Alloc`.
-- **tikv-jemalloc-ctl**: Encapsulamento de alto nível para as APIs de controle e introspecção do jemalloc (família de funções `mallctl*()` e `MALLCTL NAMESPACE`).
+- **tikv-jemalloc-sys**: Compila e vincula ao jemalloc, expondo suas ligações C brutas.
+- **tikv-jemallocator**: Fornece o tipo `Jemalloc` que implementa as *traits* `GlobalAlloc` e `Alloc`.
+- **tikv-jemalloc-ctl**: *Wrappers* de alto nível para as APIs de controle e introspecção do jemalloc (a família de funções `mallctl*()` e `MALLCTL NAMESPACE`).
 
-## Como Usar
+## Utilização
 
-### Adicionar Dependência
+### Adicionando Dependências
 
 Para usar o tikv-jemallocator, adicione-o como dependência:
 
@@ -33,9 +33,9 @@ Para usar o tikv-jemallocator, adicione-o como dependência:
 tikv-jemallocator = "0.5"
 ```
 
-### Configurar como Alocador Global
+### Configurando como Alocador Global
 
-Para configurar `tikv_jemallocator::Jemalloc` como alocador global, adicione o seguinte código ao seu projeto:
+Para configurar `tikv_jemallocator::Jemalloc` como o alocador global, adicione o seguinte código ao seu projeto:
 
 ```rust
 #[cfg(not(target_env = "msvc"))]
@@ -46,11 +46,11 @@ use tikv_jemallocator::Jemalloc;
 static GLOBAL: Jemalloc = Jemalloc;
 ```
 
-Pronto! Uma vez definida essa variável estática, o jemalloc será usado para todas as alocações de memória solicitadas pelo código Rust no mesmo programa.
+Pronto! Uma vez que esta variável estática é definida, o jemalloc será utilizado para todas as alocações de memória solicitadas pelo código Rust dentro do mesmo programa.
 
 ## Vantagens
 
-O jemalloc é uma implementação de malloc de propósito geral, focada em:
+O jemalloc é uma implementação de *malloc* de propósito geral que se concentra em:
 
 - Reduzir a fragmentação de memória
 - Escalabilidade em cenários de alta concorrência
@@ -63,5 +63,5 @@ O jemalloc é uma implementação de malloc de propósito geral, focada em:
 
 ## Notas de Compatibilidade
 
-O jemalloc não suporta o ambiente de destino MSVC, portanto, não está disponível ao usar a toolchain MSVC no Windows. É por isso que o código de exemplo inclui a condição `cfg(not(target_env = "msvc"))`.
-{/* Auto generated, origin file hash:97d5bd2f5d44a1facae329972bdc937f */}
+O jemalloc não suporta o ambiente de destino MSVC e, portanto, não está disponível ao usar a *toolchain* MSVC no Windows. É por isso que a condição `cfg(not(target_env = "msvc"))` está incluída no código de exemplo.
+{/* Auto generated, origin file hash:02aa32143bfd3592039f518984bc0bb5 */}

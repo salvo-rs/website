@@ -1,20 +1,20 @@
 # Barra Final
 
-Middleware para agregar o eliminar automáticamente la barra `/` al final.
+Un middleware para agregar o eliminar automáticamente la barra final `/`.
 
 ## Casos de Uso
 
 El middleware Barra Final es especialmente útil en los siguientes escenarios:
 
-- **Normalización de URL**: Asegura que todas las URL sigan un formato consistente (agregando o eliminando uniformemente la barra final), lo que ayuda a mejorar el SEO y evita problemas de contenido duplicado.
+- **Normalización de URL**: Garantiza que todas las URL sigan un formato consistente (agregando o eliminando uniformemente barras finales), lo que ayuda a mejorar el SEO y evita problemas de contenido duplicado.
+  
+- **Manejo Simplificado de Rutas**: Elimina la necesidad de escribir lógica de enrutamiento separada para URL con y sin barras finales, ya que el middleware maneja automáticamente esta conversión.
 
-- **Simplificación del manejo de rutas**: Elimina la necesidad de escribir lógica de manejo de rutas por separado para casos con y sin barra final, ya que el middleware maneja automáticamente esta conversión.
+- **Compatibilidad**: Algunos clientes pueden agregar o eliminar automáticamente barras finales de las URL. Este middleware asegura que las solicitudes se enruten correctamente.
 
-- **Compatibilidad**: Algunos clientes pueden agregar o eliminar automáticamente la barra final de la URL; este middleware garantiza que las solicitudes se enruten correctamente.
+- **Gestión de Redirecciones**: Puede configurarse para redirigir automáticamente las URL con barras finales a aquellas sin ellas (o viceversa), mejorando la experiencia del usuario.
 
-- **Gestión de redirecciones**: Puede configurarse para redirigir automáticamente las URL con barra final a versiones sin ella (o viceversa), mejorando la experiencia del usuario.
-
-- **Evitar conflictos de rutas**: En muchos frameworks web, `/ruta` y `/ruta/` pueden tratarse como rutas diferentes; este middleware las unifica.
+- **Evitar Conflictos de Rutas**: En muchos frameworks web, `/ruta` y `/ruta/` pueden tratarse como rutas diferentes. Este middleware puede manejarlas de manera uniforme.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -30,4 +30,4 @@ _**Código de Ejemplo**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:7bb4e1e210c23aa687c6aa13c130a763 */}
+{/* Auto generated, origin file hash:23d0fc6bb76dc1e9e171298973f37983 */}

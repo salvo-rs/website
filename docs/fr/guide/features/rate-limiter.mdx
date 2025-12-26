@@ -1,24 +1,24 @@
-# Contrôle de flux
+# Limitation de Débit
 
-Middleware fournissant des fonctionnalités de contrôle de flux.
+Middleware fournissant une fonctionnalité de limitation de débit.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-## Fonctionnalités principales
+## Fonctionnalités Clés
 
-* `RateIssuer` fournit une abstraction pour l'identification des visiteurs via des clés attribuées. `RemoteIpIssuer` en est une implémentation qui détermine les visiteurs selon l'adresse IP des requêtes. La clé n'est pas nécessairement de type chaîne de caractères ; tout type satisfaisant les contraintes `Hash + Eq + Send + Sync + 'static` peut servir de clé.
+* `RateIssuer` fournit une abstraction pour identifier les clés des visiteurs. `RemoteIpIssuer` est l'une de ses implémentations, qui détermine les visiteurs en fonction de leurs adresses IP. Les clés ne sont pas nécessairement des chaînes de caractères ; tout type satisfaisant les contraintes `Hash + Eq + Send + Sync + 'static` peut servir de clé.
 
-* `RateGuard` offre une abstraction pour les algorithmes de contrôle de flux. Deux implémentations par défaut sont fournies : fenêtre fixe (`FixedGuard`) et fenêtre glissante (`SlidingGuard`).
+* `RateGuard` offre une abstraction pour les algorithmes de limitation de débit. Les implémentations par défaut incluent la fenêtre fixe (`FixedGuard`) et la fenêtre glissante (`SlidingGuard`).
 
-* `RateStore` permet les opérations de stockage et de récupération des données. `MokaStore` est une implémentation de cache en mémoire intégrée, basée sur `moka`. Vous pouvez également définir votre propre implémentation.
+* `RateStore` fournit des opérations de stockage de données. `MokaStore` est une implémentation de cache en mémoire intégrée basée sur `moka`. Vous pouvez également définir votre propre implémentation.
 
-* `RateLimiter` est une structure implémentant `Handler`, contenant également un champ `skipper` permettant de spécifier les requêtes à exclure de la mise en cache. Par défaut, `none_skipper` est utilisé pour ne sauter aucune requête.
+* `RateLimiter` est une structure implémentant `Handler`, qui inclut un champ `skipper` pour spécifier les requêtes qui doivent contourner la limitation de débit. Par défaut, `none_skipper` est utilisé, ce qui signifie qu'aucune requête n'est ignorée.
 
-* `QuotaGetter` fournit une abstraction pour l'obtention de quotas, permettant de récupérer un objet de quota en fonction de la clé (`Key`) du visiteur. Cela signifie que nous pouvons configurer des informations telles que les quotas utilisateurs dans une base de données, les modifier dynamiquement et les récupérer dynamiquement.
+* `QuotaGetter` fournit une abstraction pour récupérer les quotas. Il récupère un objet de quota en fonction de la `Key` du visiteur, permettant aux quotas utilisateurs et autres configurations d'être stockés dans des bases de données et modifiés ou récupérés dynamiquement.
 
-_**Exemple de code**_ 
+_**Exemple de Code**_
 
-### Exemple de quota statique
+### Exemple de Quota Statique
 
 <Tabs>
   <Tab label="main.rs">
@@ -31,7 +31,7 @@ _**Exemple de code**_
   </Tab>
 </Tabs>
 
-### Exemple de quota dynamique
+### Exemple de Quota Dynamique
 
 <Tabs>
   <Tab label="main.rs">
@@ -43,4 +43,4 @@ _**Exemple de code**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:3d248fa793d9b3aab28760c03d743c7a */}
+{/* Auto generated, origin file hash:408bc2d46428cb1116038d58bdda7a66 */}

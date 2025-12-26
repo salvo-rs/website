@@ -1,20 +1,20 @@
-# Caching
+# Cache
 
 Middleware, das Caching-Funktionalität bereitstellt.
 
-Das Cache-Middleware kann `Response`-Inhalte wie `StatusCode`, `Headers` und `Body` zwischenspeichern. Bei bereits zwischengespeicherten Inhalten sendet das Cache-Middleware bei der nächsten Anfragebearbeitung direkt den im Arbeitsspeicher gepufferten Inhalt an den Client.
+Das Cache-Middleware kann den `StatusCode`, die `Headers` und den `Body` einer `Response` zwischenspeichern. Für bereits zwischengespeicherte Inhalte sendet das Cache-Middleware bei der Verarbeitung nachfolgender Anfragen den gepufferten Inhalt direkt aus dem Speicher an den Client.
 
-Hinweis: Dieses Plugin speichert keine `Response`-Objekte zwischen, deren `Body` vom Typ `ResBody::Stream` ist. Wenn es auf solche `Response`-Typen angewendet wird, verarbeitet Cache diese Anfragen nicht und löst auch keine Fehler aus.
+Hinweis: Dieses Plugin speichert keine `Response`-Objekte, deren `Body` `ResBody::Stream` ist. Wenn es auf eine solche `Response` angewendet wird, verarbeitet Cache diese Anfragen nicht und es tritt kein Fehler auf.
 
 ## Hauptfunktionen
 
-- `CacheIssuer` bietet eine Abstraktion für die Zuweisung von Cache-Schlüsseln. `RequestIssuer` ist eine Implementierung davon und kann definieren, welche Teile der Anfrage-URL und welche `Method` der Anfrage zur Generierung des Cache-Schlüssels verwendet werden. Sie können auch Ihre eigene Logik zur Generierung von Cache-Schlüsseln definieren. Der Cache-Schlüssel muss nicht unbedingt ein String sein; jeder Typ, der die Einschränkungen `Hash + Eq + Send + Sync + 'static` erfüllt, kann als Schlüssel dienen.
+- `CacheIssuer` bietet eine Abstraktion zur Erzeugung von Cache-Schlüsseln. `RequestIssuer` ist eine seiner Implementierungen, mit der Sie definieren können, welche Teile der Anfrage-URL und der Anfrage-`Method` zur Erzeugung des Cache-Schlüssels verwendet werden sollen. Sie können auch Ihre eigene Logik zur Erzeugung von Cache-Schlüsseln definieren. Der Cache-Schlüssel muss nicht unbedingt eine Zeichenkette sein; jeder Typ, der die Einschränkungen `Hash + Eq + Send + Sync + 'static` erfüllt, kann als Schlüssel verwendet werden.
 
-- `CacheStore` bietet Lese- und Schreiboperationen für Daten. `MokaStore` ist eine integrierte, auf `moka` basierende In-Memory-Cache-Implementierung. Sie können auch Ihre eigene Implementierung definieren.
+- `CacheStore` bietet Operationen zum Speichern und Abrufen von Daten. `MokaStore` ist eine eingebaute, speicherbasierte Cache-Implementierung auf Basis von `moka`. Sie können auch Ihre eigene Implementierung definieren.
 
-- `Cache` ist eine Struktur, die `Handler` implementiert und intern ein `skipper`-Feld enthält, mit dem Anfragen angegeben werden können, die nicht zwischengespeichert werden sollen. Standardmäßig wird `MethodSkipper` verwendet, um alle Anfragen außer `Method::GET` zu überspringen.
+- `Cache` ist eine Struktur, die `Handler` implementiert. Sie enthält auch ein internes `skipper`-Feld, mit dem Anfragen angegeben werden können, die das Caching überspringen sollen. Standardmäßig wird `MethodSkipper` verwendet, um alle Anfragen außer denen mit `Method::GET` zu überspringen.
 
-  Beispielcode für die interne Implementierung:
+  Beispiel für internen Implementierungscode:
 
   ```rust
   impl<S, I> Cache<S, I> {
@@ -31,11 +31,11 @@ Hinweis: Dieses Plugin speichert keine `Response`-Objekte zwischen, deren `Body`
 
 ## Schnelle Migration von anderen Frameworks
 
-Wenn Sie zuvor Caching-Mechanismen anderer Frameworks verwendet haben, hilft Ihnen das folgende Konzept-Mapping, sich schneller an die Cache-Implementierung von Salvo zu gewöhnen:
+Wenn Sie Caching-Mechanismen in anderen Frameworks verwendet haben, helfen Ihnen die folgenden konzeptionellen Zuordnungen, sich schneller an die Cache-Implementierung von Salvo anzupassen:
 
 ### Migrationsleitfaden für Rust-Frameworks
 
-- **Migration von Actix-web**: Plugins wie `actix-web-cache` in Actix-web müssen normalerweise separat eingebunden werden, während Caching in Salvo Teil der Kernbibliothek ist.
+- **Migration von Actix-web**: Plugins wie `actix-web-cache` in Actix-web müssen in der Regel separat eingeführt werden, während Caching in Salvo Teil der Kernbibliothek ist.
 
   ```rust
   // Actix-web Cache-Beispiel
@@ -47,9 +47,9 @@ Wenn Sie zuvor Caching-Mechanismen anderer Frameworks verwendet haben, hilft Ihn
   Router::new().hoop(Cache::new(MokaStore::new(100), RequestIssuer::new()))
   ```
 
-### Migrationsleitfaden für Frameworks anderer Sprachen
+### Migrationsleitfaden für Frameworks in anderen Sprachen
 
-- **Migration von Go/Gin**: Gin verwendet ein Middleware-Modell, Salvo verwendet einen ähnlichen Ansatz:
+- **Migration von Go/Gin**: Gin verwendet ein Middleware-Muster, das Salvo auf ähnliche Weise übernimmt:
 
   ```go
   // Gin Cache-Beispiel
@@ -63,7 +63,7 @@ Wenn Sie zuvor Caching-Mechanismen anderer Frameworks verwendet haben, hilft Ihn
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-- **Migration von Spring Boot**: Das deklarative Caching von Spring Boot muss in eine explizite Middleware-Konfiguration von Salvo umgewandelt werden:
+- **Migration von Spring Boot**: Das deklarative Caching von Spring Boot muss in die explizite Middleware-Konfiguration von Salvo umgewandelt werden:
 
   ```java
   // Spring Boot
@@ -71,12 +71,12 @@ Wenn Sie zuvor Caching-Mechanismen anderer Frameworks verwendet haben, hilft Ihn
   public Book findBook(ISBN isbn) { ... }
   ```
   ```rust
-  // Entsprechende Salvo-Implementierung - Cache auf Routing-Ebene anwenden
-  let custom_issuer = YourCustomIssuer::new(); // CacheIssuer-Interface implementieren
+  // Entsprechende Salvo-Implementierung - Anwendung des Caches auf Routenebene
+  let custom_issuer = YourCustomIssuer::new(); // Implementiert die CacheIssuer-Schnittstelle
   Router::with_path("books").hoop(Cache::new(MokaStore::new(100), custom_issuer))
   ```
 
-- **Migration von Express.js**: Das Cache-Middleware von Express.js ist konzeptionell ähnlich zu Salvo, aber die Syntax ist unterschiedlich:
+- **Migration von Express.js**: Das Caching-Middleware von Express.js ist konzeptionell ähnlich wie das von Salvo, aber die Syntax unterscheidet sich:
 
   ```javascript
   // Express.js
@@ -88,11 +88,11 @@ Wenn Sie zuvor Caching-Mechanismen anderer Frameworks verwendet haben, hilft Ihn
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-Bei der Migration von anderen Frameworks sind folgende Schlüsselkonzepte des Salvo-Cachings zu beachten:
+Bei der Migration von anderen Frameworks sollten Sie auf mehrere Schlüsselkonzepte des Caching in Salvo achten:
 
-1. **Cache-Schlüsselgenerierung** - Gesteuert über das `CacheIssuer`-Interface
-2. **Cache-Speicher** - Implementiert über das `CacheStore`-Interface
-3. **Cache-Überspringungslogik** - Angepasst über den `skipper`-Mechanismus
+1. **Cache-Schlüsselgenerierung** - Gesteuert über die `CacheIssuer`-Schnittstelle.
+2. **Cache-Speicher** - Implementiert über die `CacheStore`-Schnittstelle.
+3. **Logik zum Überspringen des Caches** - Angepasst über den `skipper`-Mechanismus.
 
 Standardmäßig speichert Salvo nur GET-Anfragen zwischen, was mit dem Standardverhalten der meisten Frameworks übereinstimmt.
 
@@ -110,4 +110,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:df2bc60555363c109d61ba033738ce41 */}
+{/* Auto generated, origin file hash:6ae106316ebd0ee4b0ba1fabf6fe7a3f */}

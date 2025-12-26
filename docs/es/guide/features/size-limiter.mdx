@@ -1,16 +1,16 @@
-# Middleware de Límite de Tamaño de Archivos Subidos
+# Middleware de Límite de Tamaño para Carga de Archivos
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Proporciona middleware para limitar el tamaño de archivos subidos en las solicitudes.
+Un middleware para limitar el tamaño de los archivos cargados en las solicitudes.
 
 ## Casos de Uso
 
-Size Limiter se utiliza principalmente en los siguientes escenarios:
-- Evitar que los usuarios suban archivos demasiado grandes que consuman recursos del servidor
-- Prevenir ataques maliciosos que puedan causar desbordamiento de memoria del servidor mediante la subida de grandes cantidades de datos
-- Establecer diferentes políticas de límite de tamaño de solicitud para distintos endpoints de API
-- Mejorar la eficiencia y estabilidad del servidor al procesar solicitudes
+El Limitador de Tamaño se utiliza principalmente en los siguientes escenarios:
+- Evitar que los usuarios carguen archivos excesivamente grandes que consuman recursos del servidor
+- Prevenir el desbordamiento de memoria del servidor causado por atacantes maliciosos que carguen grandes cantidades de datos
+- Establecer políticas de límite de tamaño de solicitud diferentes para distintos endpoints de API
+- Mejorar la eficiencia y estabilidad del procesamiento de solicitudes del servidor
 
 _**Código de Ejemplo**_ 
 
@@ -24,4 +24,4 @@ _**Código de Ejemplo**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:e8fe97542f86e069c6a192945b8303da */}
+{/* Auto generated, origin file hash:dcaab72e263599802483c91ae5fc9b85 */}

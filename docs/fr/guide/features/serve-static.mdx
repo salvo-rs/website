@@ -1,19 +1,17 @@
-# Serveur statique
+# Serveur Statique
 
-import { Tab, Tabs } from '@rspress/core/theme';
-
-Un middleware qui sert des fichiers statiques ou des fichiers intégrés. Pour l'API détaillée, veuillez [consulter la documentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Middleware qui sert des fichiers statiques ou des fichiers intégrés. Pour l'API détaillée, veuillez [consulter la documentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
 ## Cas d'utilisation
-Le service de fichiers statiques a de nombreuses applications dans les applications web :
-- Fournir des ressources statiques pour les sites web, telles que les fichiers CSS, JavaScript, images, etc.
+Les serveurs de fichiers statiques ont un large éventail d'applications dans le développement web :
+- Servir des ressources statiques pour les sites web, telles que CSS, JavaScript, images, etc.
 - Héberger des applications monopages (SPA)
 - Distribuer des documents, des fichiers multimédias, des contenus téléchargeables, etc.
 - Servir de solution d'hébergement complète pour des sites web simples
 
 ## Fonctionnalités principales
 
-- `StaticDir` prend en charge les dossiers locaux statiques. Il peut accepter une liste de plusieurs dossiers comme paramètres. Par exemple :
+- `StaticDir` fournit un support pour servir des fichiers statiques à partir de répertoires locaux. Il peut accepter une liste de plusieurs répertoires comme paramètres. Par exemple :
 
 <Tabs>
   <Tab label="main.rs">
@@ -25,24 +23,24 @@ Le service de fichiers statiques a de nombreuses applications dans les applicati
   ```
   </Tab>
 </Tabs>
-  Si le fichier correspondant n'est pas trouvé dans le premier dossier, il sera recherché dans le deuxième dossier.
+  Si un fichier n'est pas trouvé dans le premier répertoire, il sera recherché dans le second répertoire.
 
-`StaticDir` prend en charge l'envoi prioritaire de fichiers compressés lorsqu'ils existent. Par exemple, s'il existe les fichiers `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br`, alors `index.html.gz`, `index.html.zst`, `index.html.br` sont considérés comme des versions précompressées de `index.html`. Selon les informations de la requête, le fichier compressé correspondant sera envoyé.
+`StaticDir` prend en charge le service de fichiers pré-compressés lorsqu'ils sont disponibles. Par exemple, si des fichiers comme `index.html`, `index.html.gz`, `index.html.zst` et `index.html.br` existent, alors `index.html.gz`, `index.html.zst` et `index.html.br` sont considérés comme des versions pré-compressées de `index.html`. Le fichier compressé approprié sera servi en fonction des informations de la requête.
 
-- Prend en charge `rust-embed`, par exemple :
+- Fournit un support pour `rust-embed`. Par exemple :
 
 ## Avantages et inconvénients de rust-embed
 
 **Avantages :**
-- Compile les fichiers statiques dans le binaire, simplifiant le déploiement
-- Pas besoin de gérer séparément les fichiers statiques en production
-- Peut offrir de meilleures performances (accès mémoire vs I/O disque)
-- Plus sécurisé, les fichiers ne peuvent pas être modifiés accidentellement
+- Compile les fichiers statiques dans le binaire, simplifiant le déploiement.
+- Pas besoin de gérer séparément les fichiers statiques dans les environnements de production.
+- Performance potentiellement meilleure (accès mémoire vs I/O disque).
+- Sécurité renforcée, car les fichiers ne peuvent pas être modifiés accidentellement.
 
 **Inconvénients :**
-- Augmente la taille du binaire de l'application
-- Mettre à jour le contenu statique nécessite de recompiler et redéployer toute l'application
-- Pas adapté aux contenus statiques volumineux qui changent fréquemment
+- Augmente la taille du binaire de l'application.
+- Mettre à jour le contenu statique nécessite de recompiler et redéployer toute l'application.
+- Ne convient pas aux contenus statiques volumineux qui changent fréquemment.
 
 <Tabs>
   <Tab label="main.rs">
@@ -55,5 +53,5 @@ Le service de fichiers statiques a de nombreuses applications dans les applicati
   </Tab>
 </Tabs>
 
-Il est possible de définir une page par défaut avec `default`. `with_fallback` et `fallback` permettent de spécifier un fichier de remplacement lorsqu'un fichier n'est pas trouvé, ce qui est utile pour certaines applications web monopages.
-{/* Auto generated, origin file hash:42f7ce7c0dec48cc37b3300fbc400bb8 */}
+Vous pouvez définir une page par défaut à afficher en utilisant l'option `default`. Les méthodes `with_fallback` et `fallback` vous permettent de spécifier un fichier de secours à servir lorsqu'un fichier demandé n'est pas trouvé, ce qui est utile pour certaines applications de sites web monopages.
+{/* Auto generated, origin file hash:073ef52649e7c613a5829d94d56d9114 */}

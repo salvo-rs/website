@@ -1,24 +1,24 @@
 ---
-title: Rust-Speicherallokator-Alternativen
+title: Rust-Speicherzuweiser-Alternativen
 ---
 
-# Jemallocator: Rust jemalloc Speicherallokator-Alternative
+# Jemallocator: Alternative Rust jemalloc-Speicherzuweiser
 
 :::tip
-Der Standardallokator gibt manchmal Speicher nicht rechtzeitig frei. Es wird empfohlen, (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] als globalen Allokator anstelle des Standardallokators zu verwenden.
+Der Standard-Speicherzuweiser gibt Speicher manchmal nicht umgehend frei. Es wird empfohlen, [jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) als globalen Allokator zu verwenden, um den Standardzuweiser zu ersetzen.
 :::
 
-(jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] ist eine Bibliothek, die mit dem jemalloc-Speicherallokator verknüpft ist. Sie stellt den `Jemalloc`-Unit-Typ bereit, der die Allokator-API implementiert und als `#[global_allocator]` festgelegt werden kann.
+[jemallocator](https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/) ist eine mit dem jemalloc-Speicherzuweiser verknüpfte Bibliothek, die den `Jemalloc`-Einheitstyp bereitstellt. Dieser implementiert die Allokator-API und kann als `#[global_allocator]` festgelegt werden.
 
-`tikv-jemallocator` ist der Nachfolger von `jemallocator`. Diese beiden Crates sind identisch, abgesehen von ihren Namen. Für neue Projekte wird die `tikv-xxx`-Version empfohlen.
+`tikv-jemallocator` ist das Nachfolgeprojekt von `jemallocator`. Diese beiden Crates sind bis auf ihre Namen identisch. Für neue Projekte wird die `tikv-xxx`-Version empfohlen.
 
-## Das jemalloc-Ökosystem
+## jemalloc-Ökosystem
 
 Das jemalloc-Unterstützungsökosystem besteht aus folgenden Crates:
 
-- **tikv-jemalloc-sys**: Baut jemalloc und verlinkt es, stellt die rohen C-Bindings dafür bereit.
+- **tikv-jemalloc-sys**: Baut jemalloc und verknüpft es, stellt rohe C-Bindings bereit.
 - **tikv-jemallocator**: Stellt den `Jemalloc`-Typ bereit, der die `GlobalAlloc`- und `Alloc`-Traits implementiert.
-- **tikv-jemalloc-ctl**: Eine hochwertige Abstraktion für die jemalloc-Steuerungs- und Introspections-API (die `mallctl*()`-Funktionsfamilie und `MALLCTL NAMESPACE`).
+- **tikv-jemalloc-ctl**: Hochwertige Wrapper für jemalloc-Steuerungs- und Introspections-APIs (die `mallctl*()`-Funktionsfamilie und `MALLCTL NAMESPACE`).
 
 ## Verwendung
 
@@ -35,7 +35,7 @@ tikv-jemallocator = "0.5"
 
 ### Als globalen Allokator festlegen
 
-Um `tikv_jemallocator::Jemalloc` als globalen Allokator festzulegen, fügen Sie Ihrem Projekt folgenden Code hinzu:
+Um `tikv_jemallocator::Jemalloc` als globalen Allokator festzulegen, fügen Sie folgenden Code zu Ihrem Projekt hinzu:
 
 ```rust
 #[cfg(not(target_env = "msvc"))]
@@ -46,22 +46,22 @@ use tikv_jemallocator::Jemalloc;
 static GLOBAL: Jemalloc = Jemalloc;
 ```
 
-Das war's! Sobald diese statische Variable definiert ist, wird jemalloc für alle Speicherzuweisungen verwendet, die vom Rust-Code im selben Programm angefordert werden.
+Das war's! Sobald diese statische Variable definiert ist, wird jemalloc für alle Speicherzuweisungen verwendet, die von Rust-Code innerhalb desselben Programms angefordert werden.
 
 ## Vorteile
 
-jemalloc ist eine allgemeine malloc-Implementierung, die sich auf Folgendes konzentriert:
+jemalloc ist eine allgemeine malloc-Implementierung mit Fokus auf:
 
 - Reduzierung von Speicherfragmentierung
-- Skalierbarkeit unter hoher Nebenläufigkeit
+- Skalierbarkeit in hochgradig nebenläufigen Szenarien
 - Bereitstellung umfangreicher Introspections- und Steuerungsmöglichkeiten
 
-Besonders nützlich ist es in folgenden Szenarien:
-- Lang laufende Anwendungen
-- Speicherintensive Workloads
-- Hochleistungsdienste, die eine feingranulare Speicherverwaltung erfordern
+Es ist besonders nützlich in folgenden Szenarien:
+- Langlaufende Anwendungen
+- Speicherintensive Arbeitslasten
+- Hochleistungsdienste, die feingranulare Speicherverwaltung erfordern
 
-## Hinweise zur Kompatibilität
+## Kompatibilitätshinweise
 
-jemalloc unterstützt die MSVC-Zielumgebung nicht und ist daher unter Windows mit der MSVC-Toolchain nicht verfügbar. Deshalb sind in den Beispielcodes die Bedingungen `cfg(not(target_env = "msvc"))` enthalten.
-{/* Auto generated, origin file hash:97d5bd2f5d44a1facae329972bdc937f */}
+jemalloc unterstützt die MSVC-Zielumgebung nicht und ist daher bei Verwendung der MSVC-Toolchain unter Windows nicht verfügbar. Deshalb ist die `cfg(not(target_env = "msvc"))`-Bedingung im Beispielcode enthalten.
+{/* Auto generated, origin file hash:02aa32143bfd3592039f518984bc0bb5 */}

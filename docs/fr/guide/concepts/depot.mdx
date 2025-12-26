@@ -2,20 +2,21 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Le [Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) est utilisé pour stocker les données temporaires impliquées dans le traitement d'une requête. Les middlewares peuvent y placer les données qu'ils traitent, rendant celles-ci disponibles pour les programmes suivants.
+[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) est utilisé pour stocker les données temporaires impliquées dans une seule requête. Les intergiciels peuvent placer les données temporaires qu'ils traitent dans le Depot pour une utilisation par les programmes ultérieurs.
 
-Lorsqu'un serveur reçoit une requête d'un navigateur client, il crée une instance de `Depot`. Cette instance est détruite une fois que tous les middlewares et le `Handler` ont fini de traiter la requête.
+Lorsqu'un serveur reçoit une requête d'un navigateur client, il crée une instance de `Depot`. Cette instance est détruite après que tous les intergiciels et `Handler` ont terminé le traitement de la requête.
 
-Par exemple, un middleware d'authentification peut définir un `current_user` dans le `Depot`, que les middlewares suivants ou le `Handler` pourront ensuite lire pour obtenir les informations de l'utilisateur courant.
+Par exemple, nous pouvons définir `current_user` dans un intergiciel de connexion, puis lire les informations de l'utilisateur actuel dans les intergiciels ou `Handler` suivants.
 
 ## Compréhension rapide
 
-Le `Depot` sert à stocker et partager des données pendant le traitement d'une requête. Il implémente un conteneur de données typé de manière sûre, supportant deux modes d'utilisation principaux :
+`Depot` est utilisé pour stocker et partager des données pendant le traitement des requêtes. Il implémente un conteneur de données type-safe qui prend en charge deux principaux modes d'utilisation :
 
-1.  **Stockage clé-valeur** : Accéder aux valeurs via les méthodes `insert`/`get` en utilisant des clés de type chaîne de caractères.
-2.  **Injection par type** : Stocker et récupérer des valeurs via les méthodes `inject`/`obtain` en se basant sur leur type.
+1. **Stockage Clé-Valeur** : Accéder aux valeurs associées à des clés de chaîne via les méthodes `insert`/`get`.
+2. **Injection de type** : Stocker et récupérer des valeurs basées sur le type via les méthodes `inject`/`obtain`.
 
-Comme le montre l'exemple, le `Depot` est particulièrement utile pour transmettre des données entre les middlewares et les gestionnaires (handlers). Un middleware peut définir une valeur dans le `Depot` (comme des informations utilisateur, un état d'authentification), et les gestionnaires suivants peuvent la récupérer sans avoir à la recalculer ou la re-requêter. La conception du `Depot` garantit la cohérence et l'accessibilité des données tout au long de la chaîne de traitement de la requête, en faisant un outil central pour construire des applications Web complexes.
+Comme le montrent les exemples, `Depot` est particulièrement utile pour transmettre des données entre les intergiciels et les gestionnaires. Les intergiciels peuvent définir des valeurs dans `Depot` (telles que les informations utilisateur, l'état d'authentification), et les gestionnaires ultérieurs peuvent récupérer ces valeurs sans calculs ou requêtes redondants. La conception de `Depot` garantit la cohérence et l'accessibilité des données tout au long de la chaîne de traitement des requêtes, ce qui en fait un outil central pour construire des applications web complexes.
+
 <Tabs>
   <Tab label="main.rs">
   ```rust file="<root>/codes/use-depot/src/main.rs"
@@ -27,20 +28,20 @@ Comme le montre l'exemple, le `Depot` est particulièrement utile pour transmett
   </Tab>
 </Tabs>
 
-## Définir et récupérer des données via `insert` et `get`
+## Définition et récupération de données via `insert` et `get`
 
-Comme indiqué ci-dessus, vous pouvez insérer une paire `clé`-`valeur` dans le `Depot` en utilisant `insert`. Pour ce type de valeur, utilisez simplement `get` pour la récupérer.
+Comme indiqué ci-dessus, vous pouvez insérer une `clé` et une `valeur` dans `Depot` en utilisant `insert`. Pour les valeurs de ce type, vous pouvez les récupérer directement en utilisant `get`.
 
 ```rust
 depot.insert("a", "b");
 assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 ```
 
-Si la clé n'existe pas, ou si elle existe mais que le type ne correspond pas, la méthode retourne `None`.
+Si la `clé` n'existe pas, ou si la `clé` existe mais que le type ne correspond pas, cela retourne `None`.
 
-## Définir et récupérer des données via `inject` et `obtain`
+## Définition et récupération de données via `inject` et `obtain`
 
-Parfois, certaines données n'ont pas besoin d'une clé spécifique et il n'existe qu'une seule instance de ce type. Vous pouvez utiliser `inject` pour insérer la donnée, puis `obtain` pour la récupérer. Ces méthodes ne nécessitent pas de fournir de clé.
+Parfois, il existe des scénarios où une instance unique existe pour un type sans avoir besoin de la relier à une `clé` spécifique. Vous pouvez utiliser `inject` pour insérer des données, puis utiliser `obtain` pour les récupérer. Ces méthodes ne nécessitent pas que vous fournissiez une `clé`.
 
 ```rust
 depot.inject(Config::new());
@@ -50,20 +51,20 @@ depot.obtain::<Config>();
 # Aperçu des méthodes de la structure Depot
 
 | Catégorie | Méthode | Description |
-|------|------|------|
+|----------|--------|-------------|
 | **Création/Capacité** | `new()` | Crée un Depot vide |
-| | `with_capacity(capacity)` | Crée un Depot avec une capacité spécifiée |
-| | `capacity()` | Obtient la capacité actuelle |
+| | `with_capacity(capacity)` | Crée un Depot avec la capacité spécifiée |
+| | `capacity()` | Obtient la capacité |
 | | `inner()` | Obtient une référence au HashMap interne |
-| **Injection/Récupération par type** | `inject<V>(value)` | Injecte une valeur en fonction de son type |
-| | `obtain<T>()` | Obtient une référence à une valeur injectée par type |
-| | `obtain_mut<T>()` | Obtient une référence mutable à une valeur injectée par type |
-| | `contains<T>()` | Vérifie si une valeur d'un type spécifique est présente |
-| | `scrape<T>()` | Retire et retourne une valeur injectée par type |
-| **Opérations clé-valeur** | `insert(key, value)` | Insère une paire clé-valeur |
-| | `get<V>(key)` | Obtient une référence à la valeur associée à une clé |
-| | `get_mut<V>(key)` | Obtient une référence mutable à la valeur associée à une clé |
-| | `contains_key(key)` | Vérifie si une clé spécifique est présente |
-| | `remove<V>(key)` | Retire une clé et retourne sa valeur |
-| | `delete(key)` | Supprime une paire clé-valeur |
-{/* Auto generated, origin file hash:11bf72b48a504b8ce6ae390caf56080c */}
+| **Injection/Récupération par type** | `inject<V>(value)` | Injecte une valeur par type |
+| | `obtain<T>()` | Récupère une référence à la valeur injectée |
+| | `obtain_mut<T>()` | Récupère une référence mutable à la valeur injectée |
+| | `contains<T>()` | Vérifie si un type spécifique est contenu |
+| | `scrape<T>()` | Supprime et retourne la valeur injectée |
+| **Opérations Clé-Valeur** | `insert(key, value)` | Insère une paire clé-valeur |
+| | `get<V>(key)` | Récupère une référence à la valeur associée à la clé |
+| | `get_mut<V>(key)` | Récupère une référence mutable à la valeur associée à la clé |
+| | `contains_key(key)` | Vérifie si une clé spécifique est contenue |
+| | `remove<V>(key)` | Supprime la clé et retourne la valeur |
+| | `delete(key)` | Supprime la paire clé-valeur |
+{/* Auto generated, origin file hash:b95d84ad7fe6f9c1aae94fbe8ca18072 */}

@@ -10,21 +10,21 @@
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Thématiques",
+    "text": "Topics",
     "link": "/guide/topics/",
     "activeMatch": "/guide/topics/"
   },
   {
-    "text": "Fonctionnalités",
+    "text": "Features",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
   {
-    "text": "Documentation API",
+    "text": "API-Docs",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "Faire un don",
+    "text": "Donate",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

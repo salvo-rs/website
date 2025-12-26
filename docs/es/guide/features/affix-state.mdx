@@ -1,41 +1,41 @@
-# Estado Afijo Compartir datos en solicitudes
+# Estado Afijo: Datos Compartidos en Solicitudes
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
 El middleware Estado Afijo se utiliza para agregar datos compartidos al Depot.
-Para utilizar la funcionalidad Estado Afijo, es necesario habilitar la feature `affix-state` en Cargo.toml.
+Para utilizar la funcionalidad Estado Afijo, es necesario habilitar la característica `affix-state` en Cargo.toml.
 
-## Análisis de funcionalidad
-Estado Afijo proporciona una forma sencilla de compartir datos durante el procesamiento de solicitudes. Te permite:
+## Análisis de la Característica
+Estado Afijo proporciona una forma sencilla de compartir datos durante el procesamiento de solicitudes. Permite:
 
-Inyectar configuraciones globales o datos compartidos durante la fase de configuración de rutas
-Acceder a estos datos a través del Depot en cualquier manejador
-Soporta cualquier tipo clonable como datos de estado
+- Inyectar configuraciones globales o datos compartidos durante la configuración de rutas
+- Acceder a estos datos a través del Depot en cualquier manejador
+- Soportar cualquier tipo clonable como datos de estado
 
-## Comparación con otros marcos para una comprensión rápida del concepto
-| Marco | Lenguaje | Método de gestión de estado |
-|------|------|-------------|
+## Comparación con Otros Frameworks para una Comprensión Rápida del Concepto
+| Framework | Lenguaje | Enfoque de Gestión de Estado |
+|-----------|----------|---------------------------|
 | Salvo (Estado Afijo) | Rust | Almacena y accede a través del Depot, soporta múltiples tipos |
-| Axum | Rust | Almacena estado a través de Extension, similar pero con diferente uso |
+| Axum | Rust | Almacena estado mediante Extension, similar pero con uso diferente |
 | Actix-web | Rust | Utiliza App Data y Web::Data para compartir estado |
 | Gin | Go | Usa context.Set y context.Get para almacenar y recuperar datos |
 | Echo | Go | Utiliza context.Set y context.Get para gestionar estado compartido |
-| Spring | Java | Usa ApplicationContext o anotación @Bean para gestionar dependencias |
-| Quarkus | Java | Utiliza CDI y mecanismos de inyección de dependencias |
-| Express.js | JavaScript | Usa app.locals o req.app.locals para almacenar estado global |
-| Nest.js | JavaScript | Utiliza sistema de inyección de dependencias para gestionar servicios compartidos |
+| Spring | Java | Emplea ApplicationContext o anotaciones @Bean para gestión de dependencias |
+| Quarkus | Java | Usa mecanismos CDI e inyección de dependencias |
+| Express.js | JavaScript | Utiliza app.locals o req.app.locals para almacenar estado global |
+| Nest.js | JavaScript | Emplea un sistema de inyección de dependencias para gestionar servicios compartidos |
 | Koa.js | JavaScript | Usa ctx.state para almacenar estado a nivel de solicitud |
 
-## Escenarios de uso comunes
+## Casos de Uso Comunes
 
 - Compartir pool de conexiones a base de datos
 - Compartir configuración de aplicación
 - Compartir instancias de caché
-- Compartir cliente de API
-- Seguimiento de contadores globales o estado
+- Compartir clientes API
+- Seguimiento de contadores o estado global
 
 La ventaja de Estado Afijo radica en su simplicidad y flexibilidad, permitiendo compartir fácilmente cualquier tipo de datos entre diferentes rutas y manejadores sin necesidad de código repetitivo extenso.
-_**Código de ejemplo**_
+_**Código de Ejemplo**_
 
 <Tabs>
   <Tab label="main.rs">
@@ -47,4 +47,4 @@ _**Código de ejemplo**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:5dfff8f8a8238344561f9f829341312c */}
+{/* Auto generated, origin file hash:ab33e7002b7895dc8f4c574665f3af4f */}

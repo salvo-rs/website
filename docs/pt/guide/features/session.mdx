@@ -2,21 +2,21 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware que fornece suporte a `Session`.
+Middleware que fornece suporte para `Sessão`.
 
-## O que é Session
+## O que é Sessão
 
-Session é um conjunto de dados do usuário armazenados no lado do servidor, geralmente usados para rastrear o estado do usuário e salvar dados temporários. Em aplicações web, a Session resolve o problema da falta de estado no protocolo HTTP, permitindo que o servidor identifique múltiplas solicitações do mesmo usuário.
+Sessão refere-se aos dados do usuário armazenados no lado do servidor, normalmente usados para rastrear o estado do usuário e armazenar dados temporários. Em aplicações web, a Sessão aborda a natureza sem estado do protocolo HTTP, permitindo que o servidor reconheça múltiplas solicitações do mesmo usuário.
 
-## Uso de Session no Salvo
+## Usando Sessão no Salvo
 
-No Salvo, o middleware Session fornece uma API simples para ler e escrever dados de sessão. Através do `SessionDepot`, é possível obter uma instância da sessão, e métodos como `get`, `set`, `remove` permitem gerenciar os dados da sessão.
+No Salvo, o middleware de Sessão oferece uma API simples para leitura e escrita de dados de sessão. O `SessionDepot` pode ser usado para obter uma instância de sessão, enquanto métodos como `get`, `set` e `remove` permitem gerenciar os dados da sessão.
 
-## Usos Comuns
+## Casos de Uso Comuns
 
 - Autenticação de usuário e gerenciamento de estado de login
 - Armazenamento temporário de dados de formulário
-- Armazenamento de preferências do usuário
+- Armazenamento de configurações de preferência do usuário
 
 _**Código de Exemplo**_ 
 
@@ -30,4 +30,4 @@ _**Código de Exemplo**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:f8de91b5a58a71598fb1dfee41bb6a6f */}
+{/* Auto generated, origin file hash:4c03e5410a4d4c13f01b56ddfd7edd2c */}

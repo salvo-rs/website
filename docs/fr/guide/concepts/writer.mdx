@@ -18,13 +18,13 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-Les différences principales sont :
-- Leur utilité diffère : `Writer` représente l'écriture de contenu spécifique dans `Response`, implémentée par des contenus concrets tels que des chaînes de caractères, des messages d'erreur, etc. Alors que `Handler` est utilisé pour traiter l'intégralité de la requête.
-- `Writer` est créé dans `Handler` et se consomme lors de l'appel de la fonction `write`, ce qui en fait un appel unique. En revanche, `Handler` est partagé par toutes les requêtes.
-- `Writer` peut être utilisé comme contenu dans le `Result` retourné par `Handler`.
-- `Writer` ne contient pas de paramètre `FlowCtrl` et ne peut donc pas contrôler le déroulement de l'exécution de la requête.
+Les principales différences entre eux sont :
+- Objectifs différents : `Writer` représente l'écriture de contenu spécifique dans `Response`, implémentée par des contenus concrets tels que des chaînes de caractères, des messages d'erreur, etc. En revanche, `Handler` est utilisé pour traiter l'intégralité de la requête.
+- `Writer` est créé au sein d'un `Handler` et se consomme lui-même lorsque la fonction `write` est appelée, ce qui en fait un appel unique. En revanche, `Handler` est partagé entre toutes les requêtes.
+- `Writer` peut être retourné en tant que contenu dans le `Result` d'un `Handler`.
+- `Writer` ne comprend pas de paramètre `FlowCtrl`, il ne peut donc pas contrôler le flux d'exécution de la requête entière.
 
-`Scribe` implémente `Writer`, mais offre des fonctionnalités plus limitées que `Writer` :
+`Scribe` implémente `Writer` mais offre moins de capacités comparé à `Writer` :
 
 ```rust
 pub trait Scribe {
@@ -32,5 +32,5 @@ pub trait Scribe {
 }
 ```
 
-La fonction de rendu de `Scribe` se contente d'écrire des données dans `Response`, sans possibilité d'obtenir des informations depuis `Request` ou `Depot`.
-{/* Auto generated, origin file hash:a88019b69f080567caf2af39cb1d17e5 */}
+La fonction de rendu de `Scribe` ne fait qu'écrire des données dans `Response` et ne peut pas récupérer d'informations depuis `Request` ou `Depot` pendant ce processus.
+{/* Auto generated, origin file hash:df53cc52cfa8897aec795a4283df281b */}

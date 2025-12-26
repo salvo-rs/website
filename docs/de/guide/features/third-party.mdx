@@ -1,15 +1,15 @@
-# Drittanbieter-WebSocket-Plugin
+# WebSocket-Plugin von Drittanbietern
 
 ## salvo-websocket
 
-### Abhängigkeiten zum Projekt hinzufügen
+### Projektabhängigkeit hinzufügen
 
 ```toml
 [dependencies]
 salvo-websocket = "0.0.4"
 ```
 
-### Query-Parameter für WebSocket-Verbindungen definieren
+### Abfrageparameter für WebSocket-Verbindung definieren
 
 ```rust
 #[derive(Debug, Clone, Deserialize)]
@@ -86,5 +86,5 @@ async fn user_connected(req: &mut Request, res: &mut Response) -> Result<(), Sta
 }
 ```
 
-Weitere Inhalte finden Sie direkt im [Beispiel](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)
-{/* Auto generated, origin file hash:ba1de026d713e14724d985e19918646a */}
+Weitere Details finden Sie direkt im [Beispiel](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket).
+{/* Auto generated, origin file hash:82a9ae6391ef6b61ab4de0269fc9de16 */}
