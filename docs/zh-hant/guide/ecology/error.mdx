@@ -4,11 +4,11 @@ title: Rust 錯誤處理函式庫
 
 # Rust 錯誤處理函式庫
 
-- (thiserror)[https://docs.rs/thiserror/latest/thiserror/] 為自訂錯誤類型提供便捷的衍生巨集。
+- [thiserror](https://docs.rs/thiserror/latest/thiserror/) 為自訂錯誤類型提供便捷的衍生巨集。
 
-- (snafu)[https://docs.rs/snafu/latest/snafu/] 是具有上下文功能的錯誤處理與報告框架。
+- [snafu](https://docs.rs/snafu/latest/snafu/) 是具有上下文功能的錯誤處理與報告框架。
 
-- (anyhow)[https://docs.rs/anyhow/latest/anyhow/] 是靈活的錯誤處理與報告函式庫。
+- [anyhow](https://docs.rs/anyhow/latest/anyhow/) 是靈活的錯誤處理與報告函式庫。
 
 ## thiserror vs snafu
 
@@ -28,10 +28,10 @@ use thiserror::Error;
 pub enum DataError {
     #[error("資料庫錯誤: {0}")]
     DatabaseError(#[from] sqlx::Error),
-    
+
     #[error("驗證錯誤: {0}")]
     ValidationError(String),
-    
+
     #[error("找不到記錄")]
     NotFound,
 }
@@ -58,7 +58,7 @@ pub enum Error {
         source: std::io::Error,
         backtrace: Backtrace,
     },
-    
+
     // 也可以使用元組風格
     #[snafu(display("IO 錯誤"))]
     Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
@@ -102,10 +102,10 @@ use anyhow::{Context, Result};
 fn main() -> Result<()> {
     let config = std::fs::read_to_string("config.json")
         .context("無法讀取設定檔")?;
-        
+
     let app_config: AppConfig = serde_json::from_str(&config)
         .context("設定格式無效")?;
-        
+
     // 使用 Result<T> 作為 Result<T, anyhow::Error> 的型別別名
     Ok(())
 }
