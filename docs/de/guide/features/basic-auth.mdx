@@ -6,7 +6,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Einführung in Basic Auth
 
-Basic Auth ist ein einfacher HTTP-Authentifizierungsmechanismus, der Benutzername und Passwort über den `Authorization`-Header in HTTP-Anfragen überträgt. Das Format lautet `Authorization: Basic <base64(Benutzername:Passwort)>`. Obwohl einfach, da die Anmeldedaten nur Base64-kodiert und nicht verschlüsselt sind, wird es typischerweise mit HTTPS verwendet, um die Sicherheit zu gewährleisten.
+Basic Auth ist ein einfacher HTTP-Authentifizierungsmechanismus, der Benutzername und Passwort über den `Authorization`-Header in HTTP-Anfragen überträgt. Das Format lautet `Authorization: Basic <base64-Benutzername:Passwort>`. Obwohl einfach, da die Anmeldedaten nur Base64-kodiert und nicht verschlüsselt sind, wird es typischerweise mit HTTPS verwendet, um die Sicherheit zu gewährleisten.
 
 ## Vergleich von Basic Auth-Implementierungen in gängigen Frameworks
 
@@ -23,7 +23,7 @@ Basic Auth ist ein einfacher HTTP-Authentifizierungsmechanismus, der Benutzernam
 Basic Auth eignet sich für folgende Szenarien:
 
 1. **Interne APIs und Tools**: Verwaltungstools und APIs, die innerhalb eines Unternehmens verwendet werden
-2. **Entwicklungs- und Testumgebungen**: Schnelle Implementierung von Authentifizierung ohne komplexes Anmeldesystem
+2. **Entwicklungs- und Testumgebungen**: Schnelle Implementierung von Authentifizierung ohne komplexes Login-System
 3. **Einfacher API-Schutz**: Wenn kein komplexes Benutzerverwaltungssystem erforderlich ist
 4. **Kombiniert mit anderen Sicherheitsmaßnahmen**: Als Teil einer mehrschichtigen Sicherheitsarchitektur
 
@@ -31,7 +31,7 @@ In Salvo kann die Basic Auth-Middleware einfach in Routen integriert werden. Dur
 
 ## Hinweise
 
-- Immer mit HTTPS verwenden, um die Übertragung von Anmeldedaten zu schützen
+- Immer mit HTTPS verwenden, um die Übertragung der Anmeldedaten zu schützen
 - Nicht geeignet für Produktionsumgebungen, die sensible Informationen speichern
 - Für Produktionsumgebungen sollten sicherere Authentifizierungsmethoden wie JWT oder OAuth in Betracht gezogen werden
 
@@ -45,4 +45,4 @@ In Salvo kann die Basic Auth-Middleware einfach in Routen integriert werden. Dur
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:221f2dd3a7cc0491c1e80844627d2e2e */}
+{/* Auto generated, origin file hash:d90d9e96cf15954e0c0955ccb31aa796 */}

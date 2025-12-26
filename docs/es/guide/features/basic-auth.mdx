@@ -6,16 +6,16 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Introducción a la Autenticación Básica
 
-La Autenticación Básica es un mecanismo simple de autenticación HTTP que transmite un nombre de usuario y contraseña a través del encabezado `Authorization` en las solicitudes HTTP. El formato es `Authorization: Basic <base64(usuario:contraseña)>`. Aunque es simple, dado que las credenciales solo están codificadas en Base64 en lugar de estar encriptadas, normalmente se utiliza con HTTPS para garantizar la seguridad.
+La Autenticación Básica es un mecanismo simple de autenticación HTTP que transmite un nombre de usuario y contraseña a través del encabezado `Authorization` en las solicitudes HTTP. El formato es `Authorization: Basic <base64 usuario:contraseña>`. Aunque es simple, dado que las credenciales solo están codificadas en Base64 en lugar de estar encriptadas, normalmente se utiliza con HTTPS para garantizar la seguridad.
 
 ## Comparación de Implementaciones de Autenticación Básica en Frameworks Comunes
 
 | Framework | Lenguaje | Implementación de Autenticación Básica |
 |-----------|----------|----------------------------------------|
-| Salvo | Rust | Implementado a través del middleware `BasicAuth` y el `BasicAuthValidator` personalizado |
+| Salvo | Rust | Implementado a través del middleware `BasicAuth` y `BasicAuthValidator` personalizado |
 | Express | JavaScript | Utiliza el paquete de middleware `express-basic-auth` |
 | Spring Security | Java | Configurado mediante `httpBasic()` e implementado con `UserDetailsService` |
-| ASP.NET Core | C# | Utiliza `.UseAuthentication()` y `AddAuthentication(AuthenticationSchemes.Basic)` |
+| ASP.NET Core | C# | Usa `.UseAuthentication()` y `AddAuthentication(AuthenticationSchemes.Basic)` |
 | Gin | Go | Implementado mediante middleware personalizado o usando el paquete `gin-contrib/auth` |
 
 ## Casos de Uso
@@ -24,7 +24,7 @@ La Autenticación Básica es adecuada para los siguientes escenarios:
 
 1. **APIs y Herramientas Internas**: Herramientas de gestión y APIs utilizadas dentro de una empresa
 2. **Entornos de Desarrollo y Pruebas**: Implementar autenticación rápidamente sin un sistema de inicio de sesión complejo
-3. **Protección Simple de API**: Cuando no se requiere un sistema complejo de gestión de usuarios
+3. **Protección Simple de APIs**: Cuando no se requiere un sistema complejo de gestión de usuarios
 4. **Combinado con Otras Medidas de Seguridad**: Como parte de una arquitectura de seguridad multicapa
 
 En Salvo, el middleware de Autenticación Básica puede integrarse fácilmente en las rutas. Al implementar el trait `BasicAuthValidator`, se puede definir lógica de validación personalizada, ofreciendo gran flexibilidad.
@@ -45,4 +45,4 @@ En Salvo, el middleware de Autenticación Básica puede integrarse fácilmente e
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:221f2dd3a7cc0491c1e80844627d2e2e */}
+{/* Auto generated, origin file hash:d90d9e96cf15954e0c0955ccb31aa796 */}

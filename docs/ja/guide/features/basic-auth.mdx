@@ -6,7 +6,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Basic Auth 概要
 
-Basic Authは、HTTPリクエストヘッダーに`Authorization`フィールドを含めてユーザー名とパスワードを送信する、シンプルなHTTP認証メカニズムです。形式は`Authorization: Basic <base64(username:password)>`となります。簡易的ですが、認証情報がBase64エンコードされるだけで暗号化されないため、通常はHTTPSと併用してセキュリティを確保する必要があります。
+Basic Authは、HTTPリクエストヘッダーに`Authorization`フィールドを含めてユーザー名とパスワードを送信する、シンプルなHTTP認証メカニズムです。形式は`Authorization: Basic <base64 username:password>`となります。簡易的ですが、認証情報がBase64エンコードされるだけで暗号化されないため、通常はHTTPSと併用してセキュリティを確保する必要があります。
 
 ## 主要フレームワークにおけるBasic Auth実装の比較
 
@@ -24,8 +24,8 @@ Basic Authは以下のような場面に適しています：
 
 1. **内部APIおよびツール**：社内で使用する管理ツールやAPI
 2. **開発・テスト環境**：複雑なログインシステムを必要とせず迅速に認証を実装する場合
-3. **簡易的なAPI保護**：複雑なユーザー管理システムが不要な場合
-4. **その他のセキュリティ対策との併用**：多層セキュリティアーキテクチャの一部として
+3. **簡易的なAPI保護**：複雑なユーザー管理システムが必要ない場合
+4. **他のセキュリティ対策との併用**：多層セキュリティアーキテクチャの一部として
 
 Salvoでは、Basic Authミドルウェアをルーティングに簡単に統合でき、`BasicAuthValidator`トレイトを実装することで認証ロジックをカスタマイズできるため、非常に柔軟性があります。
 
@@ -33,7 +33,7 @@ Salvoでは、Basic Authミドルウェアをルーティングに簡単に統�
 
 - 認証情報の送信を保護するため、常にHTTPSと併用してください
 - 機密情報を扱う本番環境には適していません
-- 本番環境ではJWT、OAuthなどより安全な認証方式の使用を検討してください
+- 本番環境ではJWTやOAuthなど、より安全な認証方式の使用を検討してください
 
 <Tabs>
   <Tab label="main.rs">
@@ -45,4 +45,4 @@ Salvoでは、Basic Authミドルウェアをルーティングに簡単に統�
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:d01ddb1691782cd7ed28227dcc89e19f */}
+{/* Auto generated, origin file hash:b0e4f5b3ee860198826456d8e879926c */}

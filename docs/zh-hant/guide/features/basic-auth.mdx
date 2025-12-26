@@ -6,7 +6,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Basic Auth 簡介
 
-Basic Auth 是一種簡單的 HTTP 認證機制，透過在 HTTP 請求標頭中包含 `Authorization` 欄位來傳遞使用者名稱和密碼。格式為 `Authorization: Basic <base64(username:password)>`。雖然簡單，但由於憑證僅進行 Base64 編碼而非加密，通常需要與 HTTPS 一起使用以確保安全。
+Basic Auth 是一種簡單的 HTTP 認證機制，透過在 HTTP 請求標頭中包含 `Authorization` 欄位來傳遞使用者名稱和密碼。格式為 `Authorization: Basic <base64 username:password>`。雖然簡單，但由於憑證僅進行 Base64 編碼而非加密，通常需要與 HTTPS 一起使用以確保安全。
 
 ## 常見框架中的 Basic Auth 實作對比
 
@@ -14,7 +14,7 @@ Basic Auth 是一種簡單的 HTTP 認證機制，透過在 HTTP 請求標頭中
 |------|------|----------------|
 | Salvo | Rust | 透過 `BasicAuth` 中介軟體和自訂 `BasicAuthValidator` 實作 |
 | Express | JavaScript | 使用 `express-basic-auth` 中介軟體套件 |
-| Spring Security | Java | 透過 `httpBasic()` 設定和 `UserDetailsService` 實作 |
+| Spring Security | Java | 透過 `httpBasic()` 配置和 `UserDetailsService` 實作 |
 | ASP.NET Core | C# | 使用 `.UseAuthentication()` 和 `AddAuthentication(AuthenticationSchemes.Basic)` |
 | Gin | Go | 透過自訂中介軟體或使用 `gin-contrib/auth` 套件 |
 
@@ -45,4 +45,4 @@ Basic Auth 適用於以下場景：
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:d01ddb1691782cd7ed28227dcc89e19f */}
+{/* Auto generated, origin file hash:b0e4f5b3ee860198826456d8e879926c */}

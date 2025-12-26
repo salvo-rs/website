@@ -1,9 +1,0 @@
-[
-    "router",
-    "request",
-    "response",
-    "depot",
-    "handler",
-    "catcher",
-    "writer"
-]

@@ -323,10 +323,10 @@ await translateFolder(
   'docs/en',
   'docs/pt',
   'Português')
-await translateFolder(
-  'docs/en',
-  'docs/ru',
-  'Русский')
+// await translateFolder(
+//   'docs/en',
+//   'docs/ru',
+//   'Русский')
 
 // 法语: docs/fr
 // 德语: docs/de

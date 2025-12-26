@@ -1,18 +1,18 @@
-# Autenticazione di Base
+# Autenticazione Base
 
-Un middleware che fornisce supporto per l'autenticazione di base.
+Un middleware che fornisce supporto per l'autenticazione Base.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-## Introduzione all'Autenticazione di Base
+## Introduzione all'Autenticazione Base
 
-L'autenticazione di base è un semplice meccanismo di autenticazione HTTP che trasmette nome utente e password tramite l'intestazione `Authorization` nelle richieste HTTP. Il formato è `Authorization: Basic <base64(nomeutente:password)`. Sebbene semplice, poiché le credenziali sono solo codificate in Base64 anziché crittografate, viene tipicamente utilizzata con HTTPS per garantire la sicurezza.
+L'autenticazione Base è un semplice meccanismo di autenticazione HTTP che trasmette nome utente e password tramite l'intestazione `Authorization` nelle richieste HTTP. Il formato è `Authorization: Basic <nomeutente:password in base64>`. Sebbene semplice, poiché le credenziali sono solo codificate in Base64 anziché crittografate, viene tipicamente utilizzata con HTTPS per garantire la sicurezza.
 
-## Confronto delle Implementazioni di Autenticazione di Base nei Framework Comuni
+## Confronto delle Implementazioni di Autenticazione Base nei Framework Comuni
 
-| Framework | Linguaggio | Implementazione Autenticazione di Base |
+| Framework | Linguaggio | Implementazione Autenticazione Base |
 |-----------|----------|----------------------------|
-| Salvo | Rust | Implementata tramite middleware `BasicAuth` e `BasicAuthValidator` personalizzato |
+| Salvo | Rust | Implementata tramite il middleware `BasicAuth` e il `BasicAuthValidator` personalizzato |
 | Express | JavaScript | Utilizza il pacchetto middleware `express-basic-auth` |
 | Spring Security | Java | Configurata tramite `httpBasic()` e implementata con `UserDetailsService` |
 | ASP.NET Core | C# | Utilizza `.UseAuthentication()` e `AddAuthentication(AuthenticationSchemes.Basic)` |
@@ -20,14 +20,14 @@ L'autenticazione di base è un semplice meccanismo di autenticazione HTTP che tr
 
 ## Casi d'Uso
 
-L'autenticazione di base è adatta per i seguenti scenari:
+L'autenticazione Base è adatta per i seguenti scenari:
 
 1. **API e Strumenti Interni**: Strumenti di gestione e API utilizzati all'interno di un'azienda
-2. **Ambienti di Sviluppo e Testing**: Implementare rapidamente l'autenticazione senza un sistema di login complesso
-3. **Protezione di API Semplici**: Quando non è richiesto un sistema complesso di gestione utenti
+2. **Ambienti di Sviluppo e Test**: Implementare rapidamente l'autenticazione senza un sistema di login complesso
+3. **Protezione Semplice di API**: Quando non è richiesto un complesso sistema di gestione utenti
 4. **Combinata con Altre Misure di Sicurezza**: Come parte di un'architettura di sicurezza multilivello
 
-In Salvo, il middleware di autenticazione di base può essere facilmente integrato nelle rotte. Implementando il tratto `BasicAuthValidator`, è possibile definire logiche di validazione personalizzate, offrendo grande flessibilità.
+In Salvo, il middleware di autenticazione Base può essere facilmente integrato nelle rotte. Implementando il tratto `BasicAuthValidator`, è possibile definire una logica di validazione personalizzata, offrendo grande flessibilità.
 
 ## Considerazioni
 
@@ -45,4 +45,4 @@ In Salvo, il middleware di autenticazione di base può essere facilmente integra
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:221f2dd3a7cc0491c1e80844627d2e2e */}
+{/* Auto generated, origin file hash:d90d9e96cf15954e0c0955ccb31aa796 */}

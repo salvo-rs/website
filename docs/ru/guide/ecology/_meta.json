@@ -1,7 +1,0 @@
-[
-    "chrono",
-    "jemallocator",
-    "reqwest",
-    "serde",
-    "error"
-]
