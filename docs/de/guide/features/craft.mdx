@@ -1,32 +1,32 @@
 ---
-title: Craft-Funktionen
+title: Craft-Funktionalität
 ---
 
-# Craft-Funktionen
+# Craft-Funktionalität
 
-Craft ermöglicht Entwicklern die automatische Generierung von Handler-Funktionen und Endpunkten durch einfache Annotationen, während eine nahtlose Integration mit der OpenAPI-Dokumentationsgenerierung gewährleistet wird.
+Craft ermöglicht Entwicklern, durch einfache Annotationen automatisch Handler-Funktionen und Endpunkte zu generieren und nahtlos mit der OpenAPI-Dokumentationserstellung zu integrieren.
 
 ## Anwendungsfälle
 
-Die Craft-Funktionen sind besonders nützlich in folgenden Szenarien:
+Die Craft-Funktionalität ist in folgenden Szenarien besonders nützlich:
 
-- Wenn Sie schnell Routen-Handler aus Strukturmethoden erstellen müssen
-- Wenn Sie den manuellen Aufwand für Parameter-Extraktion und Fehlerbehandlung reduzieren möchten
-- Wenn Sie automatisch OpenAPI-Dokumentation für Ihre API generieren müssen
+- Wenn Sie aus Strukturmethoden schnell Routing-Handler-Funktionen erstellen müssen
+- Wenn Sie manuell geschriebenen Boilerplate-Code für Parameter-Extraktion und Fehlerbehandlung reduzieren möchten
+- Wenn Sie für Ihre API automatisch OpenAPI-Dokumentation generieren müssen
 - Wenn Sie Geschäftslogik vom Web-Framework entkoppeln möchten
 
 ## Grundlegende Verwendung
 
-Um die Craft-Funktionen zu nutzen, müssen folgende Module importiert werden:
+Um die Craft-Funktionalität zu nutzen, müssen folgende Module importiert werden:
 
 ```rust
 use salvo::oapi::extract::*;
 use salvo::prelude::*;
 ```
 
-### Erstellen einer Service-Struktur
+### Service-Struktur erstellen
 
-Mit dem `#[craft]`-Makro können Sie Ihren impl-Block annotieren, um Strukturmethoden in Handler-Funktionen oder Endpunkte umzuwandeln.
+Durch Annotation Ihres impl-Blocks mit dem `#[craft]`-Makro können Strukturmethoden in Handler-Funktionen oder Endpunkte umgewandelt werden.
 
 ```rust
 #[derive(Clone)]
@@ -45,7 +45,7 @@ impl Opts {
 }
 ```
 
-### Erstellen einer Handler-Funktion
+### Handler-Funktion erstellen
 
 Verwenden Sie `#[craft(handler)]`, um eine Methode in eine Handler-Funktion umzuwandeln:
 
@@ -57,11 +57,11 @@ fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
 ```
 
 Diese Methode wird zu einer Handler-Funktion, die:
-- Automatisch die Werte `left` und `right` aus den Query-Parametern extrahiert
-- Auf den `state`-Zustand in der Struktur zugreift
+- Automatisch die Werte `left` und `right` aus Query-Parametern extrahiert
+- Auf den `state`-Status in der Struktur zugreift
 - Das Berechnungsergebnis als String-Antwort zurückgibt
 
-### Erstellen eines Endpunkts
+### Endpunkt erstellen
 
 Verwenden Sie `#[craft(endpoint)]`, um eine Methode in einen Endpunkt umzuwandeln:
 
@@ -76,35 +76,35 @@ pub(crate) fn add2(
 }
 ```
 
-Endpunkte können `Arc` nutzen, um Zustände zu teilen, was besonders bei der Verarbeitung gleichzeitiger Anfragen hilfreich ist.
+Endpunkte können `Arc` nutzen, um Status zu teilen, was besonders bei der Verarbeitung gleichzeitiger Anfragen nützlich ist.
 
-### Statische Endpunkte
+### Statischer Endpunkt
 
-Sie können auch statische Endpunkte erstellen, die nicht vom Instanzzustand abhängen:
+Sie können auch statische Endpunkte erstellen, die nicht vom Instanzstatus abhängen:
 
 ```rust
-#[craft(endpoint(responses((status_code = 400, description = "Falsche Anfrageparameter."))))]
+#[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
 pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
     (*left + *right).to_string()
 }
 ```
 
-In diesem Beispiel wurde zusätzlich eine benutzerdefinierte Fehlerantwort hinzugefügt, die in der generierten OpenAPI-Dokumentation erscheint.
+In diesem Beispiel wurde auch eine Beschreibung für benutzerdefinierte Fehlerantworten hinzugefügt, die sich in der generierten OpenAPI-Dokumentation widerspiegelt.
 
 ## Parameter-Extraktoren
 
-Das `oapi::extract`-Modul von Salvo bietet verschiedene Parameter-Extraktoren, die gängigsten sind:
+Das `oapi::extract`-Modul von Salvo bietet verschiedene Parameter-Extraktoren, die häufigsten sind:
 
-- `QueryParam<T>`: Extrahiert Parameter aus der Query-Zeichenkette
+- `QueryParam<T>`: Extrahiert Parameter aus der Query-Zeichenfolge
 - `PathParam<T>`: Extrahiert Parameter aus dem URL-Pfad
 - `FormData<T>`: Extrahiert Parameter aus Formulardaten
-- `JsonBody<T>`: Extrahiert Parameter aus dem JSON-Request-Body
+- `JsonBody<T>`: Extrahiert Parameter aus dem JSON-Anfragekörper
 
-Diese Extraktoren übernehmen automatisch die Parameteranalyse und Typumwandlung, was das Schreiben von Handler-Funktionen erheblich vereinfacht.
+Diese Extraktoren führen automatisch Parameter-Parsing und Typkonvertierung durch und vereinfachen so die Erstellung von Handler-Funktionen erheblich.
 
 ## Integration mit OpenAPI
 
-Die Craft-Funktionen können automatisch OpenAPI-konforme API-Dokumentation generieren. Im Beispiel:
+Die Craft-Funktionalität kann automatisch API-Dokumentation generieren, die der OpenAPI-Spezifikation entspricht. Im Beispiel:
 
 ```rust
 let router = Router::new()
@@ -115,17 +115,17 @@ let router = Router::new()
 // OpenAPI-Dokumentation generieren
 let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
 
-// OpenAPI-Dokumentation und Swagger-UI-Routen hinzufügen
+// OpenAPI-Dokumentation und Swagger-UI-Routing hinzufügen
 let router = router
     .push(doc.into_router("/api-doc/openapi.json"))
     .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 ```
 
-Mit dieser Konfiguration wird die API-Dokumentation unter dem Endpunkt `/api-doc/openapi.json` bereitgestellt, und die Swagger-UI ist unter `/swagger-ui` verfügbar.
+Nach dieser Konfiguration wird die API-Dokumentation unter dem Endpunkt `/api-doc/openapi.json` bereitgestellt und die Swagger-UI unter dem Pfad `/swagger-ui` verfügbar sein.
 
 ## Vollständiges Beispiel
 
-Hier ist ein vollständiges Beispiel, das zeigt, wie Craft-Funktionen verwendet werden, um drei verschiedene Arten von Endpunkten zu erstellen:
+Hier ist ein vollständiges Beispiel, das zeigt, wie die Craft-Funktionalität verwendet wird, um drei verschiedene Arten von Endpunkten zu erstellen:
 
 ```rust
 use salvo::oapi::extract::*;
@@ -157,7 +157,7 @@ impl Opts {
         (self.state + *left + *right).to_string()
     }
 
-    #[craft(endpoint(responses((status_code = 400, description = "Falsche Anfrageparameter."))))]
+    #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
     pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
         (*left + *right).to_string()
     }
@@ -165,10 +165,10 @@ impl Opts {
 
 #[tokio::main]
 async fn main() {
-    // Gemeinsamen Zustand erstellen, Startwert ist 1
+    // Gemeinsamen Status mit Anfangswert 1 erstellen
     let opts = Arc::new(Opts::new(1));
 
-    // Routen für drei Endpunkte konfigurieren
+    // Routing für drei Endpunkte konfigurieren
     let router = Router::new()
         .push(Router::with_path("add1").get(opts.add1()))
         .push(Router::with_path("add2").get(opts.add2()))
@@ -177,7 +177,7 @@ async fn main() {
     // OpenAPI-Dokumentation generieren
     let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
     
-    // OpenAPI-Dokumentation und Swagger-UI-Routen hinzufügen
+    // OpenAPI-Dokumentation und Swagger-UI-Routing hinzufügen
     let router = router
         .push(doc.into_router("/api-doc/openapi.json"))
         .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));

@@ -1,59 +1,59 @@
-# 静的ファイルサーバ
+# 静的ファイルサーバー
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-静的ファイルまたは埋め込みファイルをサービスとして提供するミドルウェアです。詳細なAPIは[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
+静的ファイルまたは埋め込まれたファイルをサービスとして提供するミドルウェアです。詳細なAPIについては[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
 
 ## ユースケース
-静的ファイルサーバーはWebアプリケーションで幅広く使用されます：
-- ウェブサイトの静的リソース（CSS、JavaScript、画像など）の提供
-- シングルページアプリケーション（SPA）のホスティング
+静的ファイルサービスはWebアプリケーションで幅広く利用されています：
+- CSS、JavaScript、画像などの静的リソースの提供
+- シングルページアプリケーション(SPA)のホスティング
 - ドキュメント、メディアファイル、ダウンロードコンテンツの配布
-- シンプルなウェブサイトの完全なホスティングソリューション
+- シンプルなウェブサイトの完全なホスティングソリューションとして
 
 ## 主な機能
 
-- `StaticDir`はローカルフォルダ内の静的ファイルをサポートします。複数のフォルダをリストとして指定できます。例：
+- `StaticDir` はローカルフォルダの静的ファイルをサポートします。複数のフォルダリストを引数として指定できます。例：
 
 <Tabs>
   <Tab label="main.rs">
-<StaticDirListMainCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  最初のフォルダでファイルが見つからない場合、2番目のフォルダを検索します。
+  最初のフォルダに対応するファイルが見つからない場合、次のフォルダを検索します。
 
-`StaticDir`は圧縮ファイルが存在する場合、優先的に送信します。例えば`index.html`、`index.html.gz`、`index.html.zst`、`index.html.br`がある場合、`index.html.gz`、`index.html.zst`、`index.html.br`は`index.html`の事前圧縮バージョンとみなされ、リクエスト情報に基づいて対応する圧縮ファイルが送信されます。
+`StaticDir` は圧縮ファイルが存在する場合、優先的に圧縮ファイルを送信します。例えば `index.html`、`index.html.gz`、`index.html.zst`、`index.html.br` が存在する場合、`index.html.gz`、`index.html.zst`、`index.html.br` は `index.html` の事前圧縮バージョンと見なされ、リクエスト情報に基づいて対応する圧縮ファイルが送信されます。
 
-- `rust-embed`のサポートを提供します。例：
+- `rust-embed` のサポートを提供します。例：
 
-## rust-embedの利点と欠点
+## rust-embedの長所と短所
 
-**利点：**
+**長所：**
 - 静的ファイルをバイナリにコンパイルし、デプロイプロセスを簡素化
 - 本番環境で静的ファイルを個別に管理する必要がない
-- より良いパフォーマンスが得られる可能性（メモリアクセスvsディスクI/O）
-- より安全で、ファイルが誤って変更されることがない
+- より良いパフォーマンスが得られる可能性（メモリアクセス vs ディスクI/O）
+- ファイルが誤って変更されることがなく、より安全
 
-**欠点：**
+**短所：**
 - アプリケーションバイナリのサイズが増加
-- 静的コンテンツの更新にはアプリ全体の再コンパイルと再デプロイが必要
+- 静的コンテンツの更新にはアプリケーション全体の再コンパイルと再デプロイが必要
 - 頻繁に変更される大規模な静的コンテンツには不向き
 
 <Tabs>
   <Tab label="main.rs">
-<StaticEmbedFilesMainCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-defaultを使用してデフォルト表示ページを設定できます。`with_fallback`と`fallback`はファイルが見つからない場合に代わりに使用するファイルを設定し、これは一部のシングルページアプリケーションで有用です。
-{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}
+default設定でデフォルト表示ページを指定できます。`with_fallback` と `fallback` を使用すると、ファイルが見つからない場合に指定したファイルで代替できます。これは一部のシングルページアプリケーションで有用です。
+{/* 本行由工具自动生成,原文哈希值:42f7ce7c0dec48cc37b3300fbc400bb8 */}

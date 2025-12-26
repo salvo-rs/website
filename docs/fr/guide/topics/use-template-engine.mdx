@@ -1,29 +1,29 @@
 # Utilisation des moteurs de templates
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
-import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
-import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Salvo n'intègre aucun moteur de template par défaut, car les préférences en matière de style de moteur varient selon les individus.
+Salvo n'intègre aucun moteur de template par défaut, car les préférences en matière de style de moteur de template varient d'une personne à l'autre.
 
-Fondamentalement, un moteur de template repose sur : données + template = chaîne de caractères.
+Fondamentalement, un moteur de template repose sur le principe : données + template = chaîne de caractères.
 
-Ainsi, tant qu'il est possible de générer la chaîne finale, n'importe quel moteur de template peut être pris en charge.
+Ainsi, tant qu'il est possible de produire la chaîne de caractères finale, n'importe quel moteur de template peut être pris en charge.
 
-Par exemple, voici comment utiliser `askama` :
+Par exemple, pour la prise en charge d'`askama` :
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/template-askama/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/template-askama/Cargo.toml"
+  ```
   </Tab>
-  <Tab label="template/hello.toml">
-    <TemplateCode/>
+  <Tab label="templates/hello.html">
+  ```html file="<root>/codes/template-askama/templates/hello.html"
+  ```
   </Tab>
 </Tabs>
 
-**Remarque** : Pour les projets non particulièrement complexes, nous recommandons plutôt une approche de développement séparant front-end et back-end, en utilisant des frameworks UI plus flexibles et mieux intégrés (comme React, Vue, Svelte, etc.) pour le front-end, tandis que Salvo sert de service API back-end. Cette méthode améliore l'efficacité du développement, clarifie les responsabilités entre front-end et back-end, et correspond mieux aux tendances actuelles du développement d'applications web modernes.
-{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}
+**Remarque** : Pour les projets qui ne sont pas particulièrement complexes, nous recommandons plutôt une approche de développement avec séparation frontend/backend. Utilisez des frameworks UI plus flexibles et bénéficiant d'un meilleur écosystème (comme React, Vue, Svelte, etc.) pour construire le frontend, tandis que Salvo sert de service backend d'API. Cette méthode offre une meilleure efficacité de développement, une séparation claire des responsabilités entre frontend et backend, et correspond davantage aux tendances actuelles de développement d'applications web modernes.
+{/* 本行由工具自动生成,原文哈希值:241763674e531713bf3187516a914e3b */}

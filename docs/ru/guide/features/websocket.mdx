@@ -1,40 +1,40 @@
 # WebSocket
 
-import { Tab, Tabs } from 'rspress/theme';
-import WebsocketMainCode from '../../../../codes_md/websocket/src/main.mdx';
-import WebsocketCargoCode from '../../../../codes_md/websocket/Cargo.mdx';
-import WebsocketChatMainCode from '../../../../codes_md/websocket-chat/src/main.mdx';
-import WebsocketChatCargoCode from '../../../../codes_md/websocket-chat/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Промежуточное ПО для поддержки `WebSocket`.
+Промежуточное ПО, обеспечивающее поддержку `WebSocket`.
 
 ## Введение в WebSocket
 
-WebSocket — это протокол, обеспечивающий полнодуплексную связь через одно TCP-соединение. WebSocket упрощает обмен данными между клиентом и сервером, позволяя серверу активно отправлять данные клиенту. В протоколе WebSocket браузеру и серверу достаточно выполнить однократное рукопожатие, после чего между ними устанавливается постоянное соединение для двусторонней передачи данных.
+WebSocket — это протокол для полнодуплексной связи по одному TCP-соединению. Он упрощает обмен данными между клиентом и сервером, позволяя серверу активно отправлять данные клиенту. В протоколе WebSocket браузеру и серверу достаточно выполнить однократное рукопожатие, чтобы установить постоянное соединение и осуществлять двустороннюю передачу данных.
 
-В отличие от традиционных HTTP-запросов, соединение WebSocket остается открытым после установления, что исключает необходимость частого создания и разрыва соединений и значительно снижает накладные расходы на связь. Это делает WebSocket особенно подходящим для приложений реального времени, таких как онлайн-игры, чаты, биржевые котировки и другие приложения, требующие мгновенного обновления данных.
+В отличие от традиционных HTTP-запросов, соединение WebSocket остаётся открытым после установления, что исключает частое создание и разрыв соединений и значительно снижает коммуникационные издержки. Это делает WebSocket особенно подходящим для приложений реального времени, таких как онлайн-игры, чат-приложения, биржевые котировки и другие программы, требующие мгновенного обновления данных.
 
-Salvo предоставляет простой и мощный API через свое промежуточное ПО WebSocket, позволяя разработчикам легко интегрировать функциональность WebSocket в свои приложения.
+Salvo предоставляет простой и мощный API через своё промежуточное ПО WebSocket, позволяя разработчикам легко интегрировать функциональность WebSocket в приложения.
 
 _**Пример кода**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<WebsocketMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WebsocketCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/websocket/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/websocket/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
-### Пример чат-приложения
+### Пример чат-программы
 
 <Tabs>
-<Tab label="main.rs">
-<WebsocketChatMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WebsocketChatCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/websocket-chat/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/websocket-chat/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:3fb844d4872fe26a4a4923b5dcb4e68a */}
+{/* 本行由工具自动生成,原文哈希值:48f49024e0e641fc20ac341c7e824a5a */}

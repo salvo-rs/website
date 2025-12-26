@@ -1,27 +1,27 @@
 # WebTransport
 
-WebTransport is a network transport protocol based on HTTP/3. It provides bidirectional communication capabilities between clients and servers, balancing low latency, high throughput, and security.
+WebTransport is a network transport protocol based on HTTP/3, providing bidirectional communication capabilities between clients and servers while ensuring low latency, high throughput, and security.
 
-## Application Scenarios
+## Use Cases
 
 WebTransport is particularly suitable for the following scenarios:
 
-- **Real-time applications**: Applications requiring low-latency communication, such as online games, real-time collaboration tools, and video conferencing.
-- **Large file transfers**: Supports high-throughput data transfer, suitable for media streaming and large file uploads/downloads.
-- **Multiplexed communication**: Allows establishing multiple bidirectional and unidirectional data streams simultaneously.
-- **Datagram communication**: Supports datagram communication where order and reliability are not guaranteed, suitable for scenarios with extremely high real-time requirements.
+- **Real-time Applications**: Online gaming, real-time collaboration tools, video conferencing, and other applications requiring low-latency communication.
+- **Large File Transfers**: Supports high-throughput data transmission, ideal for media streaming and large file uploads/downloads.
+- **Multiplexed Communication**: Allows simultaneous establishment of multiple bidirectional and unidirectional data streams.
+- **Datagram Communication**: Supports datagram communication without guaranteed order or reliability, suitable for scenarios with extremely high real-time requirements.
 
-Compared to WebSocket, WebTransport offers lower latency and more flexible communication modes, performing particularly well in unstable network environments.
+Compared to WebSocket, WebTransport offers lower latency and more flexible communication patterns, especially performing better in unstable network environments.
 
 ## Salvo Implementation
 
-Salvo framework provides built-in support for WebTransport, allowing developers to easily build WebTransport-based applications. Key features include:
+The Salvo framework provides built-in support for WebTransport, allowing developers to easily build WebTransport-based applications. Key features include:
 
 - Support for establishing WebTransport sessions
-- Support for Bidirectional Streams communication
-- Support for Unidirectional Streams communication
-- Support for Datagrams transmission
-- Server can initiate communication streams
+- Support for bidirectional stream communication
+- Support for unidirectional stream communication
+- Support for datagram transmission
+- Server-initiated communication streams
 
 ### Simple Example
 
@@ -34,7 +34,7 @@ async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
     
     // Handle datagrams
     if let Ok(Some((_, datagram))) = session.accept_datagram().await {
-        // Process the received datagram
+        // Process received datagram
         let mut resp = BytesMut::from(&b"Response: "[..]);
         resp.put(datagram);
         session.send_datagram(resp.freeze())?;
@@ -64,21 +64,21 @@ let router = Router::new().push(Router::with_path("counter").goal(connect));
 // Configure TLS
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-// Set up the listener
+// Set up listeners
 let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 let acceptor = QuinnListener::new(config, ("0.0.0.0", 5800))
     .join(listener)
     .bind()
     .await;
 
-// Start the server
+// Start server
 Server::new(acceptor).serve(router).await;
 ```
 
 ## Complete Example
 
-To learn more about using WebTransport in Salvo, please refer to the complete example on GitHub:
+To learn more about using WebTransport in Salvo, check out the complete example on GitHub:
 [https://github.com/salvo-rs/salvo/blob/main/examples/webtransport](https://github.com/salvo-rs/salvo/blob/main/examples/webtransport)
 
-This example includes complete server-side and client-side implementations, demonstrating how to handle various types of WebTransport communication.
+This example includes complete implementations for both server and client, demonstrating how to handle various types of WebTransport communication.
 {/* 本行由工具自动生成,原文哈希值:56518c15094059054cd812ca62f2a97c */}

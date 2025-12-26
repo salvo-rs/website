@@ -1,18 +1,16 @@
-# Session
+# 會話
 
-import { Tab, Tabs } from 'rspress/theme';
-import SessionLoginMainCode from '../../../../codes_md/session-login/src/main.mdx';
-import SessionLoginCargoCode from '../../../../codes_md/session-login/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-提供對 `Session` 支援的中介軟體。
+提供支援 `Session` 功能的中介軟體。
 
-## 什麼是Session
+## 什麼是會話
 
-Session是在伺服器端儲存的一段使用者資料，通常用於追蹤使用者狀態和保存臨時資料。在Web應用中，Session能夠解決HTTP協議無狀態的問題，讓伺服器能夠識別來自同一使用者的多次請求。
+會話是伺服器端儲存的一段使用者資料，通常用於追蹤使用者狀態和暫存臨時資料。在網頁應用中，會話能夠解決 HTTP 協定無狀態的問題，讓伺服器能夠識別來自同一使用者的多次請求。
 
-## Salvo中的Session使用
+## Salvo 中的會話使用
 
-在Salvo中，Session中介軟體提供了簡單的API來讀取和寫入會話資料。透過`SessionDepot`可以獲取會話實例，透過`get`、`set`、`remove`等方法可以管理會話資料。
+在 Salvo 中，會話中介軟體提供了簡潔的 API 來讀取和寫入會話資料。透過 `SessionDepot` 可以取得會話實例，並使用 `get`、`set`、`remove` 等方法來管理會話資料。
 
 ## 常見用途
 
@@ -23,11 +21,13 @@ Session是在伺服器端儲存的一段使用者資料，通常用於追蹤使�
 _**範例程式碼**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SessionLoginMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SessionLoginCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/session-login/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/session-login/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:88af59e67d10a27580b5c0792b125c79 */}
+{/* 本行由工具自动生成,原文哈希值:f8de91b5a58a71598fb1dfee41bb6a6f */}

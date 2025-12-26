@@ -2,22 +2,14 @@
 title: Rust 内存分配器替代品
 ---
 
-# Jemallocator: Rust jemalloc 内存分配器
-
-import { LinkCard } from '@theme';
-
-<LinkCard
-  href="https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/"
-  title="tikv-jemallocator"
-  description="tikv-jemallocator"
-/>
+# Jemallocator: Rust jemalloc 内存分配器替代品
 
 :::tip
-默认分配器，有时会出现不能及时释放内存，推荐使用jemallocator
+默认分配器，有时会出现不能及时释放内存，推荐使用 (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] 作为全局分配器替代默认分配器。
 :::
 
 
-jemallocator 是一个与 jemalloc 内存分配器链接的库，提供了 `Jemalloc` 单元类型，该类型实现了分配器 API 并可以设置为 `#[global_allocator]`。
+(jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] 是一个与 jemalloc 内存分配器链接的库，提供了 `Jemalloc` 单元类型，该类型实现了分配器 API 并可以设置为 `#[global_allocator]`。
 
 `tikv-jemallocator` 是 `jemallocator` 的后继项目。这两个 crate 除了名称不同外完全相同。对于新项目，建议使用 `tikv-xxx` 版本。
 

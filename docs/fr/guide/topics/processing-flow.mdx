@@ -1,73 +1,73 @@
-# Processus de Traitement
+# Processus de traitement
 
-Le `Service` convertit d'abord la requête en `Response` de Salvo, puis entre dans la phase de correspondance des routes.
+Le `Service` convertit d'abord la requête en `Response` de Salvo, puis entre dans la phase de correspondance de routage.
 
-## Phase de Correspondance des Routes
+## Phase de correspondance de routage
 
-La correspondance des routes suit l'ordre d'ajout, exécutant les filtres de haut en bas et de l'extérieur vers l'intérieur. Si un filtre échoue, la correspondance est considérée comme un échec.
+La correspondance de routage exécute les filtres dans l'ordre d'ajout, de l'extérieur vers l'intérieur et de haut en bas. Si un filtre échoue, la correspondance est considérée comme un échec.
 
-Pendant le processus de correspondance, les informations du chemin de la requête sont traitées. Une fois qu'un filtre de chemin correspond avec succès, il consomme la partie du chemin correspondante. Si tout le chemin est consommé et qu'aucun filtre dans la chaîne n'a échoué, et que le dernier `Router` de la chaîne possède un `Handler` `goal`, alors la correspondance est réussie. La phase de correspondance se termine et tous les `Handler` des chaînes correspondantes sont collectés pour entrer dans la phase d'exécution.
+Pendant le processus de correspondance, les informations de chemin de la requête sont disponibles. Au fur et à mesure de la correspondance, une fois qu'un filtre de chemin correspond avec succès, il consomme la partie du chemin qu'il a correspondue. Lorsque tout le chemin est consommé et qu'aucun filtre sur la chaîne de correspondance n'a échoué, et que le dernier `Router` sur la chaîne actuelle possède un `Handler` `goal`, alors la correspondance est réussie. La phase de correspondance se termine, et tous les `Handler` collectés sur les chaînes de correspondance entrent dans la phase d'exécution.
 
-Si le chemin n'est pas entièrement consommé, qu'aucune erreur n'est survenue dans la chaîne, mais qu'il n'y a plus de sous-routes à matcher, la correspondance de la chaîne actuelle est considérée comme un échec et passe à la correspondance de la route suivante.
+Si le chemin n'est pas entièrement consommé, qu'aucune erreur n'est survenue sur la chaîne, mais qu'il n'y a plus de sous-routes à correspondre, alors la correspondance de la chaîne actuelle est considérée comme un échec, et on passe à la correspondance de la route suivante.
 
-Si toutes les routes ont été parcourues sans succès, le processus entre dans la phase de capture d'erreurs.
+Si toutes les routes ont été tentées sans succès, on entre dans la phase de capture d'erreurs.
 
-## Phase d'Exécution des Handlers
+## Phase d'exécution des Handler
 
-Les `Handler` collectés lors de la phase de correspondance sont exécutés séquentiellement. Pendant l'exécution, les middlewares précédents peuvent appeler `ctrl::call_next()` pour laisser les middlewares suivants s'exécuter en premier avant de poursuivre leur propre logique. Si une erreur de statut ou une redirection survient pendant l'exécution, les `Handler` suivants ne seront pas exécutés. Si le code de statut est une erreur et que le `Body` de la `Response` n'est pas défini ou est `ResBody::Error`, le processus entre dans la phase de capture d'erreurs. Sinon, cette phase est ignorée.
+Les `Handler` collectés lors de la phase de correspondance sont exécutés séquentiellement. Pendant l'exécution, les middlewares précédents peuvent appeler `ctrl::call_next()` pour laisser les middlewares suivants s'exécuter d'abord, puis exécuter leur propre logique. Si une erreur de code d'état ou une redirection survient pendant l'exécution, les `Handler` suivants ne seront pas exécutés. Dans ce cas, si le code d'état est une erreur et que le `Body` de la `Response` n'est pas défini ou est `ResBody::Error`, on entre dans la phase de capture d'erreurs. Sinon, on saute la phase de capture.
 
-## Phase de Capture d'Erreurs
+## Phase de capture d'erreurs
 
-Le `Catcher` est utilisé pour gérer les erreurs et peut également inclure des middlewares (hoops). Les erreurs passent séquentiellement à travers tous les `Handler` du `Catcher`. Si un `Handler` a déjà traité l'erreur et ne souhaite pas que les `Handler` suivants s'exécutent, il peut appeler `ctrl.skip_rest()` pour ignorer les `Handler` restants et terminer directement la phase de capture.
+`Catcher` est un type utilisé pour gérer les erreurs. Il peut également ajouter des middlewares (hoops). Les erreurs passent séquentiellement à travers tous les `Handler` du `Catcher`. Si un `Handler` a déjà traité l'erreur et ne souhaite pas que les `Handler` suivants continuent, il peut utiliser `ctrl.skip_rest()` pour sauter les `Handler` suivants et terminer directement la phase de capture.
 
-Un `Catcher` doit obligatoirement inclure un `Handler` par défaut pour la gestion des erreurs. Par défaut, il s'agit de `DefaultGoal`, mais vous pouvez également personnaliser entièrement votre propre `Handler` comme implémentation par défaut. Il affiche les messages d'erreur dans le format correspondant au `content-type` demandé par l'en-tête de la requête, prenant en charge `json`, `xml`, `text` et `html`. `DefaultGoal` offre également des options d'affichage, comme l'affichage des liens liés à Salvo dans le format HTML par défaut. Vous pouvez appeler `DefaultGoal::footer` ou `DefaultGoal::with_footer` pour personnaliser le pied de page selon vos besoins.
+Un `Catcher` doit par défaut contenir un `Handler` pour servir de gestionnaire d'erreurs par défaut. Par défaut, c'est `DefaultGoal`. Vous pouvez également entièrement personnaliser votre propre `Handler` comme implémentation par défaut de la gestion des erreurs. Il affichera les informations d'erreur dans le format correspondant au `content-type` demandé dans l'en-tête de la requête, prenant en charge quatre formats d'affichage : `json`, `xml`, `text` et `html`. `DefaultGoal` offre également quelques paramètres d'affichage. Par exemple, par défaut, lors de l'affichage au format HTML, il affiche des liens liés à Salvo. Vous pouvez appeler `DefaultGoal::footer` ou `DefaultGoal::with_footer` pour définir un pied de page personnalisé selon vos souhaits.
 
-Le `Service` convertit la `Response` de Salvo en `Response` de hyper, qui est finalement renvoyée au client (navigateur, etc.).
+Le `Service` convertit la `Response` de Salvo en type `Response` de Hyper, qui est finalement renvoyée au navigateur ou à d'autres clients.
 
-## Cycle de Vie d'une Requête Salvo
-Voici une représentation visuelle et une explication du cycle de vie du traitement d'une requête HTTP par le framework web Salvo.
+## Cycle de vie d'une requête Salvo
+Ceci est une représentation visuelle et une explication du cycle de vie du traitement d'une requête HTTP par le framework web Salvo.
 
 ```mermaid
 flowchart TD
-    subgraph MainGraph[Cycle de Vie d'une Requête Salvo]
-        Start[Requête Client] --> Convert[Service convertit la requête HTTP en Response Salvo]
+    subgraph MainGraph[Cycle de vie d'une requête dans le framework Salvo]
+        Start[Requête client] --> Convert[Service convertit la requête HTTP en Response Salvo]
         
-        %% Phase de Correspondance des Routes
-        subgraph RoutingPhase[1. Phase de Correspondance des Routes]
-            Convert --> Routing[Correspondance des routes par ordre d'ajout, de l'extérieur vers l'intérieur, de haut en bas]
-            Routing --> FilterCheck{Tous les filtres sont-ils passés?}
-            FilterCheck -->|Non| NextRoute[Essayer la route suivante]
-            FilterCheck -->|Oui| PathConsume[Consommer la partie correspondante du chemin]
-            PathConsume --> PathCheck{Le chemin est-il entièrement consommé avec un Handler goal?}
-            PathCheck -->|Non| SubRouteCheck{Y a-t-il des sous-routes à matcher?}
+        %% Phase de correspondance de routage
+        subgraph RoutingPhase[1. Phase de correspondance de routage]
+            Convert --> Routing[Correspondance des routes dans l'ordre d'ajout, de l'extérieur vers l'intérieur, de haut en bas]
+            Routing --> FilterCheck{Tous les filtres passent-ils?}
+            FilterCheck -->|Non| NextRoute[Tentative avec la route suivante]
+            FilterCheck -->|Oui| PathConsume[Consommation de la partie du chemin correspondante]
+            PathConsume --> PathCheck{Le chemin est-il entièrement consommé et y a-t-il un Handler goal?}
+            PathCheck -->|Non| SubRouteCheck{Y a-t-il des sous-routes pour continuer la correspondance?}
             SubRouteCheck -->|Oui| Routing
             SubRouteCheck -->|Non| NextRoute
             NextRoute --> RouteLeft{Y a-t-il d'autres routes?}
             RouteLeft -->|Oui| Routing
-            RouteLeft -->|Non| NoMatchRoute[Échec de la correspondance des routes]
-            PathCheck -->|Oui| MatchSuccess[Correspondance réussie]
-            MatchSuccess --> CollectHandlers[Collecter tous les Handlers des chaînes correspondantes]
+            RouteLeft -->|Non| NoMatchRoute[Échec de la correspondance de routage]
+            PathCheck -->|Oui| MatchSuccess[Correspondance de routage réussie]
+            MatchSuccess --> CollectHandlers[Collecte de tous les Handler sur la chaîne de correspondance]
         end
         
-        %% Phase d'Exécution des Handlers
-        subgraph HandlerPhase[2. Phase d'Exécution des Handlers]
-            CollectHandlers --> ExecHandlers[Exécuter les Handlers séquentiellement]
-            ExecHandlers --> ErrorCheck{Erreur ou redirection pendant l'exécution?}
-            ErrorCheck -->|Non| FinishHandlers[Tous les Handlers exécutés]
-            ErrorCheck -->|Oui| StatusCheck{Le code de statut est-il une erreur avec Body non défini ou Error?}
-            StatusCheck -->|Oui| EnterCatcher[Entrer en phase de capture d'erreurs]
-            StatusCheck -->|Non| SkipCatcher[Ignorer la phase de capture]
+        %% Phase d'exécution des Handler
+        subgraph HandlerPhase[2. Phase d'exécution des Handler]
+            CollectHandlers --> ExecHandlers[Exécution séquentielle des Handler]
+            ExecHandlers --> ErrorCheck{Une erreur ou une redirection survient-elle pendant l'exécution?}
+            ErrorCheck -->|Non| FinishHandlers[Tous les Handler exécutés]
+            ErrorCheck -->|Oui| StatusCheck{Le code d'état est-il une erreur et le Body n'est-il pas défini ou est-il Error?}
+            StatusCheck -->|Oui| EnterCatcher[Entrée dans la phase de capture d'erreurs]
+            StatusCheck -->|Non| SkipCatcher[Saut de la phase de capture d'erreurs]
         end
         
-        %% Phase de Capture d'Erreurs
-        subgraph CatcherPhase[3. Phase de Capture d'Erreurs]
-            EnterCatcher --> CatcherHandlers[Exécuter les Handlers du Catcher séquentiellement]
+        %% Phase de capture d'erreurs
+        subgraph CatcherPhase[3. Phase de capture d'erreurs]
+            EnterCatcher --> CatcherHandlers[Exécution séquentielle des Handler du Catcher]
             NoMatchRoute --> CatcherHandlers
-            CatcherHandlers --> DefaultHandler[DefaultGoal ou gestion personnalisée]
+            CatcherHandlers --> DefaultHandler[DefaultGoal ou gestionnaire d'erreurs personnalisé]
         end
         
-        %% Réponse Finale
-        FinishHandlers --> FinalConvert[Service convertit la Response Salvo en Response hyper]
+        %% Réponse finale
+        FinishHandlers --> FinalConvert[Service convertit la Response Salvo en Response Hyper]
         SkipCatcher --> FinalConvert
         DefaultHandler --> FinalConvert
         

@@ -1,8 +1,8 @@
 # Gestione degli Errori
 
-## Metodi comuni di gestione degli errori nelle applicazioni Rust
+## Approccio Convenzionale alla Gestione degli Errori nelle Applicazioni Rust
 
-La gestione degli errori in Rust è diversa da linguaggi come Java, non esiste il costrutto `try...catch`. L'approccio standard è definire un tipo di errore globale a livello applicativo:
+La gestione degli errori in Rust differisce da linguaggi come Java; non esiste un costrutto `try...catch`. La pratica comune consiste nel definire un tipo di errore globale a livello dell'applicazione:
 
 ```rust
 use thiserror::Error;
@@ -21,21 +21,21 @@ pub enum AppError {
 pub type AppResult<T> = Result<T, AppError>;
 ```
 
-Qui viene utilizzata la libreria `thiserror`, che semplifica la definizione di tipi di errore personalizzati. Per praticità, viene anche definito un `AppResult`.
+Qui viene utilizzata la libreria `thiserror`, che permette di definire comodamente i propri tipi di errore personalizzati, semplificando il codice. Per una scrittura più concisa, definiamo anche un `AppResult`.
 
 ### thiserror vs anyhow
 
-Nell'ecosistema Rust per la gestione degli errori, due librerie comunemente usate sono `thiserror` e `anyhow`:
+Nell'ecosistema della gestione degli errori in Rust, due librerie comunemente utilizzate sono `thiserror` e `anyhow`:
 
-- **thiserror**: Ideale per sviluppatori di librerie, permette di definire tipi di errore chiari. Attraverso macro derive aiuta a implementare il trait `std::error::Error` per tipi di errore personalizzati, consentendo di definirne la rappresentazione. È la scelta migliore quando si costruisce una libreria o si necessita di fornire tipi di errore chiari agli utenti.
+- **thiserror**: Ideale per gli sviluppatori di librerie, serve a definire tipi di errore chiari. Attraverso una macro derivata, aiuta a implementare il tratto `std::error::Error` per i tipi di errore personalizzati, consentendo allo stesso tempo di definirne la rappresentazione. Quando si costruisce una libreria o si ha bisogno di fornire tipi di errore chiari agli utenti, `thiserror` è la scelta migliore.
 
-- **anyhow**: Pensato per sviluppatori di applicazioni, fornisce un tipo di errore generico `anyhow::Error` in grado di contenere qualsiasi errore che implementi il trait `std::error::Error`. Si concentra più sulla propagazione che sulla definizione degli errori, risultando particolarmente adatto per codice a livello applicativo, dove è possibile convertire rapidamente vari errori in `anyhow::Error`, riducendo la necessità di codice ripetitivo.
+- **anyhow**: Rivolta agli sviluppatori di applicazioni, fornisce un tipo di errore generico `anyhow::Error`, in grado di contenere qualsiasi errore che implementi il tratto `std::error::Error`. Si concentra più sulla propagazione degli errori che sulla loro definizione, ed è particolarmente adatta per il codice a livello applicativo. Permette di convertire rapidamente vari errori in `anyhow::Error`, riducendo la necessità di scrivere codice boilerplate.
 
-In alcuni scenari potreste usare entrambe le librerie: `thiserror` nella libreria per definire i tipi di errore e `anyhow` nell'applicazione per gestirli e propagarli.
+In alcuni scenari, potreste utilizzare entrambe le librerie: `thiserror` per definire i tipi di errore nella libreria, e `anyhow` per gestirli e propagarli nell'applicazione.
 
-## Gestione degli errori negli Handler
+## Gestione degli Errori negli Handler
 
-In Salvo, gli `Handler` spesso incontrano diversi tipi di errori, come errori di connessione al database, accesso a file, connessioni di rete, ecc. Per questi errori si può adottare l'approccio descritto sopra:
+In Salvo, anche gli `Handler` incontrano frequentemente vari tipi di errori, come: errori di connessione al database, errori di accesso ai file, errori di connessione di rete, ecc. Per questo tipo di errori, si può adottare l'approccio di gestione sopra descritto:
 
 ```rust
 #[handler]
@@ -44,22 +44,22 @@ async fn home()-> AppResult<()> {
 }
 ```
 
-Qui `home` restituisce direttamente un `AppResult<()>`. Ma come mostrare questo errore? Dobbiamo implementare `Writer` per il tipo di errore personalizzato `AppResult`, dove possiamo decidere come visualizzare l'errore:
+Qui, `home` restituisce direttamente un `AppResult<()>`. Ma come dovrebbe essere visualizzato questo errore? Dobbiamo implementare `Writer` per il tipo di errore personalizzato `AppResult`, e in questa implementazione possiamo decidere come visualizzare l'errore:
 
 ```rust
 #[async_trait]
 impl Writer for AppError {
     async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
-        res.render(Text::Plain("I'm a error, hahaha!"));
+        res.render(Text::Plain("Sono un errore, ahahah!"));
     }
 }
 ```
 
-Gli `Handler` in Salvo possono restituire `Result`, purché sia il tipo `Ok` che `Err` implementino il trait `Writer`.
+Gli `Handler` in Salvo possono restituire `Result`, purché i tipi `Ok` e `Err` all'interno del `Result` implementino entrambi il tratto `Writer`.
 
-### Gestione degli errori con anyhow
+### Utilizzo di anyhow per la Gestione degli Errori
 
-Considerando la diffusione di anyhow, Salvo offre supporto integrato per `anyhow::Error`. Abilitando la funzionalità `anyhow`, `anyhow::Error` implementerà il trait `Writer` e verrà mappato su `InternalServerError`:
+Considerando l'ampio utilizzo di anyhow, Salvo fornisce supporto integrato per `anyhow::Error`. Dopo aver abilitato la funzionalità `anyhow`, `anyhow::Error` implementerà il tratto `Writer` e verrà mappato su `InternalServerError`:
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -71,7 +71,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-Per usare la funzionalità anyhow, abilitare il feature `anyhow` in Cargo.toml:
+Per utilizzare la funzionalità anyhow, è necessario abilitare la feature `anyhow` di Salvo in Cargo.toml:
 
 ```toml
 [dependencies]
@@ -79,19 +79,19 @@ salvo = { version = "*", features = ["anyhow"] }
 anyhow = "1.0"
 ```
 
-Così le vostre funzioni handler potranno restituire direttamente `anyhow::Result<T>`:
+In questo modo, le vostre funzioni handler possono restituire direttamente `anyhow::Result<T>`:
 
 ```rust
 #[handler]
 async fn home() -> anyhow::Result<impl Writer> {
-    let data = fetch_data().context("Failed to fetch data")?;
+    let data = fetch_data().context("Impossibile recuperare i dati")?;
     Ok(Text::Plain(data))
 }
 ```
 
-Gli errori spesso contengono informazioni sensibili che normalmente non si vogliono mostrare agli utenti comuni per questioni di sicurezza e privacy. Tuttavia, se siete sviluppatori o amministratori del sito, potreste voler vedere i dettagli completi degli errori.
+Gli `Error` spesso contengono informazioni sensibili che, in genere, non si desidera siano visibili agli utenti comuni, per motivi di sicurezza e privacy. Tuttavia, se siete sviluppatori o amministratori del sito, la prospettiva potrebbe cambiare: potreste voler vedere l'errore "nudo e crudo", con le informazioni più dettagliate possibili.
 
-Notate che nel metodo `write` abbiamo accesso ai riferimenti a `Request` e `Depot`, permettendoci di implementare facilmente questa logica:
+Come si può vedere, nel metodo `write` abbiamo accesso ai riferimenti a `Request` e `Depot`, il che permette di implementare facilmente l'operazione sopra descritta:
 
 ```rust
 #[async_trait]
@@ -101,15 +101,15 @@ impl Writer for AppError {
         if user.is_admin {
             res.render(Text::Plain(e.to_string()));
         } else {
-            res.render(Text::Plain("I'm a error, hahaha!"));
+            res.render(Text::Plain("Sono un errore, ahahah!"));
         }
     }
 }
 ```
 
-## Visualizzazione delle pagine di errore
+## Visualizzazione delle Pagine di Errore
 
-Le pagine di errore incluse in Salvo soddisfano la maggior parte delle esigenze, mostrando pagine Html, Json o Xml in base al tipo di dati richiesto. Tuttavia, in alcuni casi potreste voler personalizzare la visualizzazione delle pagine di errore.
+La pagina di errore integrata in Salvo soddisfa le esigenze nella maggior parte dei casi, poiché può visualizzare pagine Html, Json o Xml in base al tipo di dati della richiesta. Tuttavia, in alcune situazioni, potremmo comunque voler personalizzare la visualizzazione della pagina di errore.
 
-Questo può essere fatto implementando un `Catcher` personalizzato. Per maggiori dettagli, consultate la sezione [`Catcher`](../concepts/catcher.html).
+Questo può essere realizzato implementando un `Catcher` personalizzato. Per una spiegazione dettagliata, consultate la sezione [`Catcher`](../concepts/catcher.html).
 {/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

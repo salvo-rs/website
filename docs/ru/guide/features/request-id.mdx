@@ -1,21 +1,21 @@
-# Идентификатор цепочки запросов
+# ID цепочки запроса
 
-import { Tab, Tabs } from 'rspress/theme';
-import RequestIdMainCode from '../../../../codes_md/request-id/src/main.mdx';
-import RequestIdCargoCode from '../../../../codes_md/request-id/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Промежуточное ПО Request Id является достаточно гибким. Генератор (IdGenerator) используется для создания ID, и вы можете определить собственный генератор ID, просто реализовав трейт `IdGenerator`. Генератор по умолчанию — `UlidGenerator`. 
+Промежуточное ПО Request Id является достаточно гибким. Генератор (IdGenerator) используется для создания ID, и вы можете определить собственный генератор ID, реализовав трейт `IdGenerator`. Генератор по умолчанию — `UlidGenerator`.
 
-Кроме того, вы можете контролировать, перезаписывать ли уже существующий `requestid`. Также можно настроить `header_name` и другие параметры. Подробнее см. [в документации](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Кроме того, вы можете контролировать, перезаписывать ли уже существующий `requestid`. Также можно настроить `header_name` и другие параметры. Подробнее см. в [документации](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
 _**Пример кода**_
 
 <Tabs>
   <Tab label="main.rs">
-    <RequestIdMainCode/>
+  ```rust file="<root>/codes/request-id/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <RequestIdCargoCode/>
+  ```toml file="<root>/codes/request-id/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:c4254b7ef23c0b7cd5e4b30f6fc58cc8 */}
+{/* 本行由工具自动生成,原文哈希值:b57e0db0c2653d3019a927f03298bf44 */}

@@ -1,31 +1,29 @@
-# テンプレートエンジンの利用
+# テンプレートエンジンの使用
 
-```javascript
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
-import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
-import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
-```
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Salvoはデフォルトで特定のテンプレートエンジンを組み込んでいません。使用するテンプレートエンジンの好みは人それぞれ異なるからです。
+Salvo にはデフォルトでテンプレートエンジンは組み込まれていません。どのスタイルのテンプレートエンジンを好むかは、人それぞれだからです。
 
-テンプレートエンジンの本質は：データ + テンプレート = 文字列。
+テンプレートエンジンの本質は、データ + テンプレート = 文字列です。
 
-したがって、最終的に文字列をレンダリングできれば、どのようなテンプレートエンジンでもサポート可能です。
+したがって、最終的に文字列をレンダリングできれば、任意のテンプレートエンジンをサポートできます。
 
-例えば`askama`のサポート例：
+例えば、`askama` のサポート例：
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/template-askama/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/template-askama/Cargo.toml"
+  ```
   </Tab>
-  <Tab label="template/hello.toml">
-    <TemplateCode/>
+  <Tab label="templates/hello.html">
+  ```html file="<root>/codes/template-askama/templates/hello.html"
+  ```
   </Tab>
 </Tabs>
 
-**注意**: 特に複雑でないプロジェクトの場合、フロントエンドとバックエンドを分離した開発方式を推奨します。より柔軟でエコシステムの充実したUIフレームワーク（React、Vue、Svelteなど）を使用してフロントエンドを構築し、SalvoをバックエンドAPIサービスとして利用する方法です。この方式は開発効率が高く、フロントエンドとバックエンドの責任範囲が明確で、現代的なWebアプリケーション開発のトレンドにも適しています。
-{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}
+**注意**: 特に複雑なプロジェクトでない場合は、フロントエンドとバックエンドを分離した開発方法を推奨します。より柔軟でエコシステムが豊富なUIフレームワーク（React、Vue、Svelteなど）を使用してフロントエンドを構築し、SalvoをバックエンドAPIサービスとして利用します。この方法では開発効率が高く、フロントエンドとバックエンドの責務が明確になり、現代的なWebアプリケーション開発のトレンドにも合致します。
+{/* 本行由工具自动生成,原文哈希值:241763674e531713bf3187516a914e3b */}

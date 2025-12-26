@@ -1,14 +1,14 @@
-# Graceful Shutdown  
+# Graceful Shutdown
 
-Graceful shutdown refers to the process where, upon server termination, the system does not abruptly terminate all active connections. Instead, it first stops accepting new requests while allowing existing requests sufficient time to complete processing before shutting down the service. This approach prevents sudden request interruptions, enhancing both user experience and system reliability.  
+Graceful shutdown refers to the process where, when a server is being shut down, it does not immediately terminate all connections. Instead, it first stops accepting new requests while allowing existing requests sufficient time to complete their processing before closing the service. This approach prevents requests from being abruptly interrupted, thereby improving user experience and system reliability.
 
-Salvo provides built-in support for graceful shutdown. By obtaining the server handle through the `handle` method of `Server` and then invoking the `stop_graceful` method, you can achieve this functionality. After calling this method, the server will:  
+Salvo provides support for graceful shutdown through the `handle` method of the `Server`, which retrieves the server handle, followed by calling the `stop_graceful` method to implement the shutdown. After invoking this method, the server will:
 
-- Stop accepting new connection requests  
-- Allow ongoing requests to complete processing  
-- Forcefully close any remaining connections after a specified timeout (if provided)  
+- Stop accepting new connection requests
+- Wait for existing requests to complete processing
+- Forcefully close any remaining connections after a specified timeout (if provided)
 
-Here’s a simple example:  
+Here is a simple example:
 
 ```rust
 use salvo_core::prelude::*;
@@ -26,13 +26,13 @@ async fn main() {
     });
     server.serve(Router::new()).await;
 }
-```  
+```
 
-In the example above:  
+In the example above:
 
-- `server.handle()` retrieves the server handle, which can be used to control the server's lifecycle.  
-- `handle.stop_graceful(None)` initiates the graceful shutdown process. Passing `None` means no timeout is set, allowing the server to wait indefinitely for all requests to complete.  
-- To enforce a timeout, pass `Some(Duration)`, after which any remaining connections will be forcefully closed.  
+- `server.handle()` retrieves the server handle, which can be used to control the server's lifecycle
+- `handle.stop_graceful(None)` initiates the graceful shutdown process, where `None` indicates no timeout is set, meaning the server will wait indefinitely for all requests to complete
+- To set a timeout, you can pass `Some(Duration)`, after which any remaining connections will be forcefully closed
 
-This approach is particularly useful for applications deployed in containerized or cloud environments, as well as for scenarios requiring hot updates while ensuring uninterrupted request handling.
+This approach is particularly suitable for applications deployed in container environments or on cloud platforms, as well as for scenarios requiring hot updates to ensure that requests are not unexpectedly interrupted.
 {/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

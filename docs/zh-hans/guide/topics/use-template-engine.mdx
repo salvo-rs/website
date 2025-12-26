@@ -1,9 +1,6 @@
 # 使用模板引擎
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
-import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
-import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Salvo 没有内置任何模板引擎, 毕竟, 喜欢使用哪种风格的模板引擎, 因人而异.
 
@@ -15,13 +12,16 @@ Salvo 没有内置任何模板引擎, 毕竟, 喜欢使用哪种风格的模板�
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/template-askama/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/template-askama/Cargo.toml"
+  ```
   </Tab>
-  <Tab label="template/hello.toml">
-    <TemplateCode/>
+  <Tab label="templates/hello.html">
+  ```html file="<root>/codes/template-askama/templates/hello.html"
+  ```
   </Tab>
 </Tabs>
 

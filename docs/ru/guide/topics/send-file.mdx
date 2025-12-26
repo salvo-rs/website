@@ -2,19 +2,15 @@
 
 Salvo предоставляет несколько способов отправки файлов:
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ### NamedFile
 
-Salvo предлагает `salvo::fs::NamedFile` для эффективной отправки файлов клиенту. Вместо загрузки всего файла в память, он загружает только запрошенные части согласно заголовку `Range`.
+Salvo предлагает `salvo::fs::NamedFile`, который позволяет эффективно отправлять файлы клиенту. Он не загружает весь файл в кэш, а загружает и отправляет только ту часть содержимого, которая запрашивается в заголовке `Range`.
 
-Фактически, `Response::send_file` — это упрощённый способ использования `NamedFile`. Если требуется больше контроля над отправляемым файлом, можно использовать `NamedFileBuilder`.
+Фактически, использование `Response::send_file` — это упрощённый способ работы с `NamedFile`. Если вам требуется более тонкий контроль над отправляемым файлом, вы можете использовать `NamedFileBuilder`.
 
-Создать `NamedFileBuilder` можно через `NamedFile::builder`:
+Создать `NamedFileBuilder` можно с помощью `NamedFile::builder`:
 
 ```rust
 #[handler]
@@ -23,7 +19,7 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-После настройки можно отправить файл:
+Можно выполнить некоторые настройки, а затем отправить файл:
 
 ```rust
 #[handler]
@@ -32,29 +28,33 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-### Обслуживание статики
+### Serve Static
 
 Промежуточное ПО для обслуживания статических или встроенных файлов.
 
-- `StaticDir` поддерживает статические локальные папки. Можно указать список из нескольких папок. Например:
+- `StaticDir` обеспечивает поддержку статических локальных папок. В качестве параметра можно передать список из нескольких папок. Например:
 <Tabs>
   <Tab label="main.rs">
-        <StaticDirListCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  Если файл не найден в первой папке, поиск продолжится во второй.
+  Если соответствующий файл не найден в первой папке, поиск продолжится во второй.
 
-- Поддержка `rust-embed`. Например:
+- Предоставляется поддержка `rust-embed`, например:
 <Tabs>
   <Tab label="main.rs">
-        <StaticEmbedFilesCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  `with_fallback` позволяет указать файл для отображения при отсутствии запрошенного, что полезно для одностраничных приложений.
-{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}
+  `with_fallback` позволяет указать файл, который будет использоваться, если запрашиваемый файл не найден. Это может быть полезно, например, для одностраничных веб-приложений.
+{/* 本行由工具自动生成,原文哈希值:19063883c45fafc63ab4ff3751ac9892 */}

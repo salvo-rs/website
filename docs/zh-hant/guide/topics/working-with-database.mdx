@@ -119,11 +119,11 @@ pub async fn get_user(req: &mut Request, res: &mut Response) {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    // mysql 連線資訊
+    // mysql connect info
     let mysql_uri = "mysql://root:123456@localhost/test";
     RB.link(MysqlDriver {}, mysql_uri).await.unwrap();
 
-    // 路由設定
+    // router
     let router = Router::with_path("users").get(get_user);
 
     tracing::info!("Listening on http://127.0.0.1:5800");
@@ -133,7 +133,7 @@ async fn main() {
 
 ## [SeaORM](https://www.sea-ql.org/SeaORM/)
 
-SeaORM 是一個非同步、動態的 ORM，提供強大的關聯式資料庫支援，包含實體關係、遷移系統和完善的型別安全查詢建構器。適合需要完整功能 ORM 的中大型專案。
+SeaORM 是一個非同步、動態的 ORM，提供了強大的關聯式資料庫支援，包括實體關係、遷移系統和完善的型別安全查詢建構器。適合需要全功能 ORM 的中大型專案。
 
 ## [Tokio ORM (Toasty)](https://github.com/tokio-rs/toasty)
 
@@ -142,4 +142,4 @@ Toasty 是 Tokio 團隊開發的 ORM，目前仍在積極開發中，專注於�
 ## [SurrealDB Rust SDK](https://surrealdb.com/docs/sdk/rust)
 
 SurrealDB 的 Rust SDK 提供了與這個多模型資料庫的連接能力，適合需要處理圖資料、文件資料和關聯式資料的應用程式。對於需要靈活資料模型的專案是不錯的選擇。
-{/* 本行由工具自动生成,原文哈希值:1e253924948cbedf4d240486568b09f4 */}
+{/* 本行由工具自动生成,原文哈希值:bc23a03c686915fc88ee2cb8c32dfe63 */}

@@ -2,19 +2,19 @@
 
 Middleware que fornece funcionalidade de cache.
 
-O middleware Cache pode armazenar em cache o `StatusCode`, `Headers` e `Body` de uma `Response`. Para conteúdo já armazenado em cache, quando a próxima solicitação for processada, o middleware Cache enviará diretamente o conteúdo armazenado na memória para o cliente.
+O middleware Cache pode fornecer cache para `StatusCode`, `Headers` e `Body` em uma `Response`. Para conteúdo já armazenado em cache, quando uma solicitação subsequente for processada, o middleware Cache enviará diretamente o conteúdo armazenado em memória para o cliente.
 
-Observação: este plugin não armazena em cache `Response` cujo `Body` seja `ResBody::Stream`. Se aplicado a esse tipo de `Response`, o Cache não processará essas solicitações e não causará erros.
+Nota: este plugin não armazena em cache `Response` cujo `Body` seja `ResBody::Stream`. Se aplicado a este tipo de `Response`, o Cache não processará essas solicitações, mas também não causará erros.
 
-## Funcionalidades principais
+## Funcionalidades Principais
 
-- `CacheIssuer` fornece uma abstração para a atribuição de chaves de cache. `RequestIssuer` é uma implementação que pode definir quais partes da URL da solicitação e o `Method` serão usados para gerar a chave de cache. Você também pode definir sua própria lógica de geração de chaves. A chave de cache não precisa ser uma string - qualquer tipo que satisfaça as restrições `Hash + Eq + Send + Sync + 'static` pode ser usado como chave.
+- `CacheIssuer` fornece uma abstração para a atribuição de chaves de cache. `RequestIssuer` é uma de suas implementações, permitindo definir quais partes da URL da solicitação e o `Method` da solicitação serão usados para gerar a chave de cache. Você também pode definir sua própria lógica de geração de chaves de cache. A chave de cache não precisa ser necessariamente do tipo string; qualquer tipo que satisfaça as restrições `Hash + Eq + Send + Sync + 'static` pode ser usado como chave.
 
 - `CacheStore` fornece operações de armazenamento e recuperação de dados. `MokaStore` é uma implementação de cache em memória integrada, baseada em `moka`. Você também pode definir sua própria implementação.
 
-- `Cache` é uma estrutura que implementa `Handler`, contendo internamente um campo `skipper` que pode especificar quais solicitações devem ser ignoradas pelo cache. Por padrão, o `MethodSkipper` é usado para ignorar todas as solicitações, exceto `Method::GET`.
+- `Cache` é uma estrutura que implementa `Handler` e possui internamente um campo `skipper`, que pode ser usado para especificar quais solicitações devem ser ignoradas (não armazenadas em cache). Por padrão, `MethodSkipper` é usado para ignorar todas as solicitações, exceto `Method::GET`.
 
-  Código de exemplo de implementação interna:
+  Exemplo de código de implementação interna:
 
   ```rust
   impl<S, I> Cache<S, I> {
@@ -29,27 +29,27 @@ Observação: este plugin não armazena em cache `Response` cujo `Body` seja `Re
   }
   ```
 
-## Migração rápida de outros frameworks
+## Migração Rápida de Outros Frameworks
 
-Se você já usou mecanismos de cache em outros frameworks, o mapeamento conceitual abaixo ajudará você a se adaptar mais rapidamente à implementação de cache do Salvo:
+Se você já usou mecanismos de cache em outros frameworks, o mapeamento conceitual abaixo o ajudará a se adaptar mais rapidamente à implementação de cache do Salvo:
 
-### Guia de migração para frameworks Rust
+### Guia de Migração de Frameworks Rust
 
-- **Migrando do Actix-web**: Plugins como `actix-web-cache` no Actix-web geralmente precisam ser incluídos separadamente, enquanto o cache do Salvo faz parte da biblioteca principal.
+- **Migrando do Actix-web**: Plugins como `actix-web-cache` no Actix-web geralmente precisam ser importados separadamente, enquanto o cache do Salvo faz parte da biblioteca principal.
 
   ```rust
   // Exemplo de cache no Actix-web
   use actix_web_cache::Cache;
   App::new().wrap(Cache::new().ttl(30))
 
-  // Implementação equivalente no Salvo
+  // Implementação correspondente no Salvo
   use salvo::prelude::*;
   Router::new().hoop(Cache::new(MokaStore::new(100), RequestIssuer::new()))
   ```
 
-### Guia de migração para frameworks em outras linguagens
+### Guia de Migração de Frameworks de Outras Linguagens
 
-- **Migrando do Go/Gin**: O Gin usa um padrão de middleware, assim como o Salvo:
+- **Migrando do Go/Gin**: O Gin usa o padrão de middleware, e o Salvo adota uma abordagem semelhante:
 
   ```go
   // Exemplo de cache no Gin
@@ -58,7 +58,7 @@ Se você já usou mecanismos de cache em outros frameworks, o mapeamento conceit
   ```
 
   ```rust
-  // Implementação equivalente no Salvo
+  // Implementação correspondente no Salvo
   let store = MokaStore::new(100).with_ttl(Duration::from_secs(30));
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
@@ -71,43 +71,43 @@ Se você já usou mecanismos de cache em outros frameworks, o mapeamento conceit
   public Book findBook(ISBN isbn) { ... }
   ```
   ```rust
-  // Implementação equivalente no Salvo - aplicando cache no nível da rota
-  let custom_issuer = YourCustomIssuer::new(); // implementando a interface CacheIssuer
+  // Implementação correspondente no Salvo - aplicando cache no nível da rota
+  let custom_issuer = YourCustomIssuer::new(); // Implementa a interface CacheIssuer
   Router::with_path("books").hoop(Cache::new(MokaStore::new(100), custom_issuer))
   ```
 
-- **Migrando do Express.js**: O middleware de cache do Express é conceitualmente similar ao do Salvo, mas com sintaxe diferente:
+- **Migrando do Express.js**: O middleware de cache do Express é conceitualmente semelhante ao do Salvo, mas a sintaxe é diferente:
 
   ```javascript
   // Express.js
   const apicache = require('apicache');
   app.use(apicache.middleware('5 minutes'));
 
-  // Implementação equivalente no Salvo
+  // Implementação correspondente no Salvo
   let store = MokaStore::new(100).with_ttl(Duration::from_secs(300));
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-Ao migrar de outros frameworks, observe estes conceitos-chave do cache no Salvo:
+Ao migrar de outros frameworks, preste atenção a alguns conceitos-chave do cache do Salvo:
 
-1. **Geração de chaves de cache** - controlada pela interface `CacheIssuer`
-2. **Armazenamento de cache** - implementado pela interface `CacheStore`
-3. **Lógica de ignorar cache** - personalizada através do mecanismo `skipper`
+1. **Geração de chaves de cache** - Controlada pela interface `CacheIssuer`.
+2. **Armazenamento de cache** - Implementado pela interface `CacheStore`.
+3. **Lógica de ignorar cache** - Personalizada pelo mecanismo `skipper`.
 
-Por padrão, o Salvo armazena apenas solicitações GET em cache, comportamento consistente com a maioria dos frameworks.
+Por padrão, o Salvo armazena apenas solicitações GET em cache, o que é consistente com o comportamento padrão da maioria dos frameworks.
 
-_**Código de exemplo**_
+_**Código de Exemplo**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import CacheSimpleCode from '../../../../codes_md/cache-simple/src/main.mdx';
-import CacheSimpleCargoCode from '../../../../codes_md/cache-simple/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CacheSimpleCode />
+  ```rust file="<root>/codes/cache-simple/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CacheSimpleCargoCode />
+  ```toml file="<root>/codes/cache-simple/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:6d2da1026941698375433a39b8d4924c */}
+{/* 本行由工具自动生成,原文哈希值:df2bc60555363c109d61ba033738ce41 */}

@@ -1,12 +1,8 @@
 # Towerミドルウェアとの互換性
 
-```jsx
-import { Tab, Tabs } from 'rspress/theme';
-import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
-import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
-```
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Salvoは`tower-compat`機能を通じてTowerエコシステムとの互換性サポートを提供しています。詳細なAPIは[ドキュメントを参照](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html)してください。
+Salvoは`tower-compat`機能を通じて、Towerエコシステムとの互換性サポートを提供します。詳細なAPIについては[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html)。
 
 ## Towerのコアコンセプト
 
@@ -25,7 +21,7 @@ pub trait Service<Request> {
 }
 ```
 
-`Service`はリクエストを処理してレスポンスを返す役割を担い、Salvoのハンドラーに相当します。
+`Service`はリクエストを処理してレスポンスを返す役割を担い、Salvoのハンドラーと類似しています。
 
 ### Layerトレイト
 
@@ -36,11 +32,11 @@ pub trait Layer<S> {
 }
 ```
 
-`Layer`はサービスをラップして追加機能を提供するもので、Salvoのミドルウェアに相当します。
+`Layer`はサービスをラップして追加機能を提供するために使用され、Salvoのミドルウェアと類似しています。
 
 ## Salvoの互換性サポート
 
-SalvoはTowerエコシステムとの互換性を実現するため、2つの主要なトレイトを提供しています：
+SalvoはTowerエコシステムとの互換性を実現するために、2つの重要なトレイト実装を提供します：
 
 - **TowerLayerCompat**：Towerの`Layer`をSalvoの`Handler`に変換し、Hoop（ミドルウェア）として使用可能にします
 - **TowerServiceCompat**：Towerの`Service`をSalvoの`Handler`に変換します
@@ -52,14 +48,16 @@ let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
 let router = Router::new().hoop(limit).get(hello);
 ```
 
-_**サンプルコード**_ 
+_**サンプルコード**_
 
 <Tabs>
-<Tab label="main.rs">
-<WithTowerMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WithTowerCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/with-tower/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/with-tower/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}
+{/* 本行由工具自动生成,原文哈希值:e4430fa65292b4543e3cd6f2010c4932 */}

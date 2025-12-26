@@ -1,14 +1,14 @@
-# Antwort
+# Response
 
-In einem `Handler` wird die [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) als Parameter übergeben:
-* Die `Response`-Struktur kapselt alle Bestandteile einer HTTP-Antwort und bietet eine vollständige API zum Erstellen und Bearbeiten von HTTP-Antworten
-* Unterstützt einen verketteten Aufrufstil (z.B. `res.status_code(200).body("Hello")`), was den flüssigen Aufbau von Antworten erleichtert
+In `Handler`, [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) wird als Parameter übergeben:
+* Die `Response`-Struktur kapselt alle Bestandteile einer HTTP-Antwort und bietet eine vollständige API zum Erstellen und Bearbeiten von HTTP-Antworten.
+* Unterstützt einen verketteten Aufrufstil (z.B. `res.status_code(200).body("Hello")`), um Antworten flüssig aufzubauen.
 * Kernfunktionen umfassen:
-    * Setzen von Statuscodes und Headern
-    * Bearbeiten des Antwortkörpers (unterstützt Strings, Bytes, Dateien und Stream-Daten)
+    * Setzen von Statuscodes und Anforderungsheadern
+    * Bearbeiten des Antwortkörpers (Unterstützung für Zeichenketten, Bytes, Dateien und Streaming-Daten)
     * Verwalten von Cookies
     * Verschiedene Methoden zur Inhaltsdarstellung
-* Die Struktur verwendet ein veränderliches Referenzmodell, gibt über `&mut self` eine Selbstreferenz zurück und ermöglicht so Handlern, bequem HTTP-Antworten zu erstellen und anzupassen, um verschiedenen Webdienst-Anforderungen gerecht zu werden
+* Diese Struktur verwendet ein veränderliches Referenzmuster, das durch `&mut self` einen Selbstverweis zurückgibt, sodass Handler bequem HTTP-Antworten erstellen und anpassen können, um verschiedenen Webdienst-Anforderungen gerecht zu werden.
 
 ```rust
 #[handler]
@@ -29,15 +29,15 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
 ## Inhalte schreiben
 
-Das Schreiben von Daten in die `Response` ist sehr einfach:
+Das Schreiben von Daten in `Response` ist sehr einfach:
 
-- Schreiben von reinen Textdaten
+- Reine Textdaten schreiben
 
     ```rust
     res.render("Hello world!");
     ```
 
-- Schreiben von JSON-serialisierten Daten
+- JSON-serialisierte Daten schreiben
 
     ```rust
     use serde::Serialize;
@@ -52,11 +52,11 @@ Das Schreiben von Daten in die `Response` ist sehr einfach:
     ```
 
 :::warning
-Wenn die `render`-Methode mehrfach zum Schreiben von JSON-Daten aufgerufen wird, werden diese nicht zu einem JSON-Objekt zusammengeführt, sondern als unabhängige Textfragmente sequentiell verkettet, was zu einem ungültigen JSON-Format führen kann. Wenn mehrere Daten zurückgegeben werden sollen, sollten sie zu einem Objekt kombiniert und dann auf einmal serialisiert oder die Logik selbst verarbeitet werden.
+Wenn die `render`-Methode mehrmals aufgerufen wird, um JSON-Daten zu schreiben, werden diese Daten nicht zu einem JSON-Objekt zusammengeführt, sondern als unabhängige Textfragmente nacheinander verkettet, was zu einem ungültigen JSON-Format führen kann. Wenn mehrere Daten zurückgegeben werden müssen, sollten sie zu einem Objekt kombiniert und dann auf einmal serialisiert werden, oder die Logik sollte selbst verarbeitet werden.
 :::
 
 
-- Schreiben von HTML
+- HTML schreiben
     
     ```rust
     res.render(Text::Html("<html><body>hello</body></html>"));
@@ -65,22 +65,22 @@ Wenn die `render`-Methode mehrfach zum Schreiben von JSON-Daten aufgerufen wird,
 ## HTTP-Fehler schreiben
 
 
-- Mit `render` können detaillierte Fehlerinformationen in die `Response` geschrieben werden.
+- Mit `render` können detaillierte Fehlerinformationen in `Response` geschrieben werden.
 
     ```rust
     use salvo::http::errors::*;
-    res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
+    res.render(StatusError::internal_server_error().brief("Fehler beim Serialisieren des Objekts zu JSON"))
     ```
 
-- Falls keine benutzerdefinierten Fehlermeldungen benötigt werden, kann direkt `set_http_code` aufgerufen werden.
+- Wenn Sie keine benutzerdefinierten Fehlermeldungen benötigen, können Sie direkt `set_http_code` aufrufen.
 
     ```rust
     use salvo::http::StatusCode;
     res.status_code(StatusCode::BAD_REQUEST);
     ```
 
-## Weiterleitung zu einer anderen URL
-- Die `render`-Methode kann verwendet werden, um eine Weiterleitungsantwort in die `Response` zu schreiben, die zu einer neuen URL navigiert. Beim Aufruf der `Redirect::found`-Methode wird der HTTP-Statuscode auf 302 (Found) gesetzt, was eine temporäre Weiterleitung bedeutet. 
+## Umleitung auf andere URL
+- Mit der `render`-Methode kann eine Umleitungsantwort in `Response` geschrieben werden, um zu einer neuen URL zu navigieren. Wenn Sie die Methode `Redirect::found` aufrufen, wird der HTTP-Statuscode auf 302 (Found) gesetzt, was eine temporäre Umleitung bedeutet. 
     ```rust
     use salvo::prelude::*;
 
@@ -93,5 +93,28 @@ Wenn die `render`-Methode mehrfach zum Schreiben von JSON-Daten aufgerufen wird,
 
 ## ResBody
 
-Der von der Response zurückgegebene Body-Typ ist `ResBody`, eine Enumeration, die bei Fehlern auf `ResBody::Error` gesetzt wird. Diese enthält Fehlerinformationen zur späteren Verarbeitung. `StatusError` implementiert `Writer` nicht, um Ihnen die Möglichkeit zu geben, die Darstellungsweise in `Catcher` selbst zu definieren.
+Der von Response zurückgegebene Body-Typ ist `ResBody`, eine Enumeration, die bei einem Fehler auf `ResBody::Error` gesetzt wird. Hier sind Fehlerinformationen enthalten, um Fehler später zu verarbeiten. `StatusError` implementiert tatsächlich nicht `Writer`, sodass Sie in `Catcher` Ihre eigene Anzeigeart definieren können.
+
+
+
+# Übersicht über die Methoden der Response-Struktur
+
+| Kategorie | Methode | Beschreibung |
+|------|------|------|
+| **Erstellen** | `new()` / `with_cookies()` | Neue Antwort erstellen |
+| **Statuscode** | `status_code()` | Statuscode setzen |
+| **Anforderungsheader** | `headers()/headers_mut()` | Anforderungsheader abrufen |
+| | `set_headers()/add_header()` | Header setzen/hinzufügen |
+| | `content_type()` | Inhaltstyp abrufen |
+| **HTTP-Version** | `version()/version_mut()` | HTTP-Version abrufen/ändern |
+| **Antwortkörper** | `body()/body_mut()` | Antwortkörper setzen/abrufen |
+| | `replace_body()/take_body()` | Antwortkörper ersetzen/extrahieren |
+| | `write_body()` | Daten in Antwortkörper schreiben |
+| | `stream()/channel()` | Streaming-Antwort/Sende-Kanal erstellen |
+| **Cookie-Verarbeitung** | `cookies()/cookie()` | Cookies abrufen/bestimmtes Cookie |
+| | `add_cookie()/remove_cookie()` | Cookie hinzufügen/entfernen |
+| **Inhaltsantwort** | `render()` | Inhalt darstellen |
+| | `stuff()` | Statuscode setzen und Inhalt darstellen |
+| | `send_file()` | Datei senden |
+| **Statusabfrage** | `is_stamped()` | Prüfen, ob Antwort zum Zurückschreiben bereit ist |
 {/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

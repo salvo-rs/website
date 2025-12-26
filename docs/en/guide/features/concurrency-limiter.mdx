@@ -1,37 +1,37 @@
-# Concurrency Limiter
+import { Tab, Tabs } from '@rspress/core/theme';
 
-import { Tab, Tabs } from 'rspress/theme';
-import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
-import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+# Concurrency Limitation
 
-The Concurrency Limiter middleware controls the number of concurrent requests that can be processed simultaneously. For detailed API information, please [check the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
+The Concurrency Limiter middleware can control the number of concurrent requests. For specific API details, please [refer to the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
 
-## Use Cases
+## Application Scenarios
 
 The concurrency limiter is particularly useful in the following scenarios:
 
-- **High-traffic website protection**: Limiting the number of requests processed simultaneously during traffic surges to prevent server overload
-- **Resource-intensive operation control**: Restricting concurrent resource-intensive operations such as file uploads and database writes
-- **Third-party API call limitation**: Controlling concurrent requests when calling external services with rate limits
+- **High-Traffic Website Protection**: Limits the number of simultaneously processed requests during traffic surges to prevent server overload.
+- **Resource-Intensive Operation Control**: Restricts concurrency for resource-intensive operations such as file uploads and database writes.
+- **Third-Party API Call Limitation**: Controls concurrent request numbers when calling external services with rate limits.
 
-## Key Benefits
+## Main Functions
 
-- **Server overload prevention**: Maintaining server stability during peak traffic by limiting concurrent requests
-- **Improved system reliability**: Avoiding system crashes caused by resource exhaustion
-- **Optimized resource allocation**: Ensuring critical services have sufficient resources to process requests
+- **Prevent Server Overload**: Maintains server stability during traffic peaks by limiting concurrent requests.
+- **Enhance System Reliability**: Avoids system crashes caused by resource exhaustion.
+- **Optimize Resource Allocation**: Ensures critical services have sufficient resources to handle requests.
 
 ## Usage
 
-Simply add the `max_concurrency(n)` middleware to your routes, where `n` is the maximum number of concurrent requests allowed. Requests exceeding this limit will receive a `503 Service Unavailable` response.
+Simply add the `max_concurrency(n)` middleware to your route, where `n` is the maximum allowed concurrent requests. Requests exceeding this limit will receive a `503 Service Unavailable` response.
 
-_**Example Code**_ 
+_**Example Code**_
 
 <Tabs>
   <Tab label="main.rs">
-    <ConcurrencyLimiterCode/>
+  ```rust file="<root>/codes/concurrency-limiter/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <ConcurrencyLimiterCargoCode/>
+  ```toml file="<root>/codes/concurrency-limiter/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:764c09662183beca5fb5634badcad7bb */}
+{/* 本行由工具自动生成,原文哈希值:e608fa24b412ca88671cf77efea06bad */}

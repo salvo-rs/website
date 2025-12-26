@@ -1,33 +1,31 @@
-# Attrapeur
+# Catcher
+
+import { Tab, Tabs } from '@rspress/core/theme';
+
+Si le code d'état de la `Response` est une erreur et que le `Body` de la page est vide, Salvo tentera d'utiliser un `Catcher` pour intercepter cette erreur et afficher une page d'erreur conviviale.
+
+Vous pouvez utiliser `Catcher::default()` pour obtenir un `Catcher` par défaut du système, puis l'ajouter au `Service`.
 
 ```rust
-import { Tab, Tabs } from 'rspress/theme';
-import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
-import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+use salvo::catcher::Catcher;
+
+Service::new(router).catcher(Catcher::default());
 ```
 
-Si le code d'état de la `Response` est une erreur et que le `Body` de la page est vide, Salvo tentera alors d'utiliser un `Attrapeur` pour intercepter cette erreur et afficher une page d'erreur conviviale.
+Le `Catcher` par défaut prend en charge l'envoi de pages d'erreur aux formats `XML`, `JSON`, `HTML` et `Text`.
 
-Vous pouvez obtenir un `Attrapeur` par défaut du système en utilisant `Attrapeur::default()`, puis l'ajouter à un `Service`.
+Vous pouvez ajouter des programmes de capture d'erreurs personnalisés au `Catcher` en lui ajoutant des `hoop`. Ces programmes de capture d'erreurs restent des `Handler`.
 
-```rust
-use salvo::catcher::Attrapeur;
-
-Service::new(routeur).attrapeur(Attrapeur::default());
-```
-
-L'`Attrapeur` par défaut prend en charge l'envoi de pages d'erreur aux formats `XML`, `JSON`, `HTML` et `Texte`.
-
-Il est possible d'ajouter des programmes personnalisés de capture d'erreurs à l'`Attrapeur` en lui ajoutant des `hoop`. Ces programmes de capture d'erreurs personnalisés restent des `Handler`.
-
-Vous pouvez ajouter plusieurs programmes personnalisés de capture d'erreurs à l'`Attrapeur` via des `hoop`. Un gestionnaire d'erreurs personnalisé peut appeler la méthode `FlowCtrl::skip_next` après avoir traité l'erreur pour sauter les programmes suivants et retourner prématurément.
+Vous pouvez ajouter plusieurs programmes de capture d'erreurs personnalisés au `Catcher` via `hoop`. Les gestionnaires d'erreurs personnalisés peuvent appeler la méthode `FlowCtrl::skip_next` après avoir traité l'erreur pour ignorer les programmes d'erreur suivants et retourner plus tôt.
 
 <Tabs>
   <Tab label="main.rs">
-    <CustomErrorPageCode/>
+  ```rust file="<root>/codes/custom-error-page/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CustomErrorPageCargoCode/>
+  ```toml file="<root>/codes/custom-error-page/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f904ca235acae374d6a236a1bd7a027a */}
+{/* 本行由工具自动生成,原文哈希值:6d187ebda60dfda18718df8cd81080ad */}

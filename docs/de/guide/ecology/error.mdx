@@ -1,38 +1,24 @@
 ---
-title: Rust Fehlerbehandlungsbibliotheken
+title: Rust-Fehlerbehandlungsbibliotheken
 ---
 
-# Rust Fehlerbehandlungsbibliotheken
+# Rust-Fehlerbehandlungsbibliotheken
 
-import { LinkCard } from '@theme';
+- (thiserror)[https://docs.rs/thiserror/latest/thiserror/] bietet bequeme Ableitungsmakros für benutzerdefinierte Fehlertypen.
 
-<LinkCard
-  href="https://docs.rs/thiserror/latest/thiserror/"
-  title="thiserror"
-  description="Bietet bequeme Ableitungsmakros für benutzerdefinierte Fehlertypen"
-/>
+- (snafu)[https://docs.rs/snafu/latest/snafu/] ist ein Framework für kontextbezogene Fehlerbehandlung und -berichterstattung.
 
-<LinkCard
-  href="https://docs.rs/snafu/latest/snafu/"
-  title="snafu"
-  description="Ein Framework für Fehlerbehandlung und -berichterstattung mit Kontext"
-/>
-
-<LinkCard
-  href="https://docs.rs/anyhow/latest/anyhow/"
-  title="anyhow"
-  description="Flexible Bibliothek für Fehlerbehandlung und -berichterstattung"
-/>
+- (anyhow)[https://docs.rs/anyhow/latest/anyhow/] ist eine flexible Bibliothek für Fehlerbehandlung und -berichterstattung.
 
 ## thiserror vs snafu
 
 ### thiserror
 
-thiserror ist eine leichtgewichtige Bibliothek, die Ableitungsmakros für einfache Fehlerdefinitionen bereitstellt.
+thiserror ist eine leichtgewichtige Bibliothek, die Ableitungsmakros zur einfachen Fehlerdefinition bereitstellt.
 
 Merkmale:
-- Prägnante Syntax mit geringem Boilerplate
-- Ideal für die Erstellung von Fehlertyp-Bibliotheken und APIs
+- Prägnante Syntax mit geringem Boilerplate-Aufwand
+- Geeignet für die Erstellung von Fehlertyp-Bibliotheken und APIs
 - Wird typischerweise für Bibliotheken verwendet, die von anderen genutzt werden
 
 ```rust
@@ -46,20 +32,20 @@ pub enum DataError {
     #[error("Validierungsfehler: {0}")]
     ValidationError(String),
     
-    #[error("Eintrag nicht gefunden")]
+    #[error("Datensatz nicht gefunden")]
     NotFound,
 }
 ```
 
 ### snafu
 
-snafu bietet ein umfassenderes Framework für Fehlerbehandlung mit Fokus auf Fehlerkontext und -verketung.
+snafu bietet ein umfassenderes Framework für Fehlerbehandlung mit Fokus auf Fehlerkontext und Fehlerketten.
 
 Merkmale:
-- Fördert präzise Hinzufügung von Fehlerkontext durch "Context Selector"-Muster
-- Empfiehlt "Ein Fehlertyp pro Modul"-Ansatz
-- Unterstützt strukturierte und Tupel-Varianten für Fehler
-- Eingebaute Unterstützung für Backtraces
+- Ermutigt präzisere Fehlerkontext-Ergänzung durch "Kontext-Selektor"-Muster
+- Empfiehlt das Muster "Ein Fehler-Enum pro Modul"
+- Unterstützt strukturierte und Tupel-basierte Fehlervarianten
+- Eingebaute Backtrace-Unterstützung
 
 ```rust
 use snafu::{Snafu, ResultExt, Backtrace};
@@ -73,12 +59,12 @@ pub enum Error {
         backtrace: Backtrace,
     },
     
-    // Tupel-Variante
+    // Tupel-Stil ist ebenfalls möglich
     #[snafu(display("IO-Fehler aufgetreten"))]
     Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
 }
 
-// Beispiel für Context Selector
+// Beispiel für Kontext-Selektor
 fn read_config(path: &str) -> Result<Config, Error> {
     std::fs::read_to_string(path).context(ReadConfigSnafu { filename: path })?;
     // ...
@@ -89,26 +75,26 @@ fn read_config(path: &str) -> Result<Config, Error> {
 
 | Merkmal | thiserror | snafu |
 |---------|-----------|-------|
-| Syntax-Einfachheit | Prägnanter | Ausführlicher |
+| Syntax-Prägnanz | Prägnanter | Ausführlicher |
 | Fehlerkontext | Grundlegende Unterstützung | Umfangreiche Kontextmechanismen |
-| Projektskala | Kleine bis mittlere Projekte | Mittlere bis große Projekte |
-| Codezeilen | Ca. 2 Zeilen pro Fehler | Ca. 5 Zeilen pro Fehler |
-| Fehlerorganisation | Typisch ein zentraler Fehlertyp | Fördert modulspezifische Fehlertypen |
+| Projekteignung | Kleine bis mittlere Projekte | Mittlere bis große Projekte |
+| Codezeilen pro Fehler | Ca. 2 Zeilen | Ca. 5 Zeilen |
+| Fehlerorganisation | Typischerweise einzelnes Fehler-Enum | Ermutigt modulare Fehler-Enums |
 | Backtrace-Unterstützung | Keine eingebaute Unterstützung | Eingebaute Unterstützung |
 
-**Empfehlungen**:
-- **thiserror wählen** für einfache Fehlertypen, besonders in Bibliotheken
-- **snafu wählen** für strukturierte Fehlerbehandlung in größeren Anwendungen
+**Empfehlung**:
+- **Wählen Sie thiserror**, wenn Sie einfache, klare Fehlertypen benötigen, insbesondere in Bibliotheken
+- **Wählen Sie snafu**, wenn Sie strukturiertere Fehlerbehandlung benötigen, besonders in großen Anwendungen
 
 ## anyhow
 
-anyhow ist ein anderer Ansatz zur Fehlerbehandlung, der sich auf Anwendungen statt Bibliotheken konzentriert.
+anyhow ist eine Fehlerbehandlungsbibliothek mit anderem Ansatz, die sich auf Anwendungen statt Bibliotheken konzentriert.
 
 Merkmale:
-- Entwickelt für Fehlerbehandlung in Anwendungen, nicht Bibliotheken
-- Bietet dynamischen `anyhow::Error`-Typ für beliebige Fehler
-- Vereinfacht den Umgang mit verschiedenen Fehlertypen
-- Keine Definition benutzerdefinierter Fehlertypen nötig
+- Entwickelt für Fehlerbehandlung in Anwendungen, nicht in Bibliotheken
+- Bietet dynamischen `anyhow::Error`-Typ, der jeden Fehler enthalten kann, der das `Error`-Trait implementiert
+- Vereinfacht die Handhabung über mehrere Fehlertypen hinweg
+- Erfordert keine Definition benutzerdefinierter Fehlertypen
 
 ```rust
 use anyhow::{Context, Result};
@@ -120,16 +106,16 @@ fn main() -> Result<()> {
     let app_config: AppConfig = serde_json::from_str(&config)
         .context("Ungültiges Konfigurationsformat")?;
         
-    // Result<T> als Alias für Result<T, anyhow::Error>
+    // Verwendung von Result<T> als Typalias für Result<T, anyhow::Error>
     Ok(())
 }
 ```
 
 **anyhow vs thiserror/snafu**:
-- anyhow fokussiert auf schnelle Fehlerbehandlung in Anwendungen
-- thiserror/snafu fokussieren auf präzise Fehlertyp-Hierarchien
-- anyhow typisch für Anwendungscode
-- thiserror/snafu typisch für Bibliothekscode
+- anyhow konzentriert sich auf Fehlerbehandlung bei schneller Anwendungsentwicklung
+- thiserror/snafu konzentrieren sich auf präzise Fehlertyp-Hierarchien
+- anyhow wird typischerweise in Anwendungscode verwendet
+- thiserror/snafu werden typischerweise in Bibliothekscode verwendet
 
-In der Praxis werden anyhow und thiserror oft kombiniert: Bibliotheken definieren präzise Fehlertypen mit thiserror, während Anwendungen anyhow für die Fehlerbehandlung nutzen.
-{/* 本行由工具自动生成,原文哈希值:ac682487abf5cc66b7b4ee2508c7386d */}
+In der Praxis werden anyhow und thiserror oft gemeinsam verwendet: Bibliotheken definieren präzise Fehlertypen mit thiserror, während Anwendungen anyhow zur Behandlung verschiedener Fehlerquellen nutzen.
+{/* 本行由工具自动生成,原文哈希值:e786d782f2c0d052350def02a332c83f */}

@@ -12,3 +12,5 @@ doc_build/
 .vscode/*
 !.vscode/extensions.json
 .idea
+
+codes/target

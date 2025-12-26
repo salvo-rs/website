@@ -1,59 +1,59 @@
 # Server Statico
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware per servire file statici o incorporati. Per le API specifiche, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Middleware che fornisce file statici o incorporati come servizio. Per le API specifiche, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
-## Casi d'uso
-Il servizio di file statici ha ampie applicazioni nei web application:
-- Fornire risorse statiche come CSS, JavaScript, immagini
-- Ospitare Single Page Application (SPA)
-- Distribuire documenti, file multimediali, contenuti scaricabili
-- Soluzione completa per l'hosting di siti web semplici
+## Casi d'Uso
+Il servizio di file statici ha ampie applicazioni nelle applicazioni web:
+- Fornire risorse statiche del sito come file CSS, JavaScript, immagini, ecc.
+- Ospitare applicazioni a pagina singola (SPA)
+- Distribuire documenti, file multimediali, contenuti scaricabili, ecc.
+- Servire come soluzione di hosting completa per siti web semplici
 
-## Funzionalità principali
+## Funzionalità Principali
 
-- `StaticDir` supporta cartelle statiche locali. È possibile specificare più cartelle come parametri. Ad esempio:
+- `StaticDir` fornisce supporto per cartelle locali statiche. È possibile passare un elenco di più cartelle come parametro. Ad esempio:
 
 <Tabs>
   <Tab label="main.rs">
-<StaticDirListMainCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  Se il file non viene trovato nella prima cartella, verrà cercato nella seconda.
+  Se il file corrispondente non viene trovato nella prima cartella, la ricerca procederà nella seconda.
 
-`StaticDir` supporta l'invio preferenziale di file compressi quando disponibili. Ad esempio, se esistono `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br`, questi ultimi tre sono considerati versioni pre-compresse di `index.html` e verrà inviata quella corrispondente in base alla richiesta.
+`StaticDir` supporta l'invio prioritario di file compressi, se presenti. Ad esempio, se esistono i file `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br`, allora `index.html.gz`, `index.html.zst`, `index.html.br` sono considerati versioni precompresse di `index.html`. In base alle informazioni della richiesta, verrà inviato il file compresso corrispondente.
 
-- Supporto per `rust-embed`, ad esempio:
+- Fornisce supporto per `rust-embed`, ad esempio:
 
-## Vantaggi e svantaggi di rust-embed
+## Vantaggi e Svantaggi di rust-embed
 
 **Vantaggi:**
-- Compila i file statici nel binario, semplificando il deployment
-- Nessuna gestione separata dei file statici in produzione
-- Possibile miglioramento delle prestazioni (accesso in memoria vs I/O su disco)
+- Compila i file statici nel binario, semplificando il processo di distribuzione
+- Non richiede la gestione separata dei file statici in ambienti di produzione
+- Possibile miglioramento delle prestazioni (accesso in memoria vs I/O del disco)
 - Maggiore sicurezza, i file non possono essere modificati accidentalmente
 
 **Svantaggi:**
-- Aumenta la dimensione del binario
-- Aggiornare i contenuti statici richiede ricompilazione e redeployment
-- Non adatto per contenuti statici grandi e frequenti modifiche
+- Aumenta la dimensione del file binario dell'applicazione
+- L'aggiornamento dei contenuti statici richiede la ricompilazione e la ridistribuzione dell'intera applicazione
+- Non adatto per contenuti statici di grandi dimensioni che cambiano frequentemente
 
 <Tabs>
   <Tab label="main.rs">
-<StaticEmbedFilesMainCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-È possibile impostare una pagina predefinita con `default`. `with_fallback` e `fallback` permettono di specificare un file alternativo quando il file richiesto non viene trovato, utile per alcune Single Page Application.
-{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}
+È possibile impostare una pagina predefinita da visualizzare tramite `default`. `with_fallback` e `fallback` consentono di specificare un file da utilizzare quando il file richiesto non viene trovato. Questo è utile per alcune applicazioni web a pagina singola (SPA).
+{/* 本行由工具自动生成,原文哈希值:42f7ce7c0dec48cc37b3300fbc400bb8 */}

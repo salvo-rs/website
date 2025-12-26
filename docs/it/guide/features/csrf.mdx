@@ -2,47 +2,45 @@
 
 ## Cos'è il CSRF?
 
-CSRF (Cross-Site Request Forgery, falsificazione di richiesta intersito) è una vulnerabilità di sicurezza in cui un aggressore induce un utente autenticato a eseguire azioni non intenzionali a sua insaputa. In breve, l'aggressore sfrutta l'identità già autenticata dell'utente per inviare richieste malevole a suo nome.
+CSRF (Cross-Site Request Forgery, falsificazione di richieste cross-site) è una vulnerabilità di sicurezza informatica in cui un attaccante induce un utente autenticato a eseguire azioni non intenzionali senza la sua consapevolezza. In termini semplici, l'attaccante sfrutta l'identità già autenticata dell'utente per inviare richieste dannose a suo nome.
 
 ## Principio di attacco CSRF
 
-Le fasi dell'attacco sono tipicamente:
-1. L'utente accede al sito target A e ottiene il cookie di autenticazione
-2. L'utente visita un sito malevolo B
-3. Il codice nel sito B invia automaticamente richieste al sito A, includendo il cookie dell'utente
-4. Il sito A non può distinguere se si tratta di una richiesta malevola o di un'azione legittima dell'utente
+Le fasi dell'attacco sono tipicamente le seguenti:
+1. L'utente accede al sito web target A e ottiene un cookie di autenticazione
+2. L'utente visita il sito web dannoso B
+3. Il codice nel sito web B invia automaticamente una richiesta al sito A, includendo il cookie dell'utente
+4. Il sito A non riesce a distinguere se si tratta di una richiesta dannosa o di un'azione legittima dell'utente
 
 ## Strategie di protezione
 
 Salvo fornisce un middleware CSRF per proteggere la tua applicazione da questo tipo di attacchi:
 
-- Aggiunge un token CSRF nascosto nei form
-- Verifica che le richieste inviate dall'utente contengano un token CSRF valido
+- Aggiunge un token CSRF nascosto nei moduli
+- Verifica che le richieste inviate dagli utenti contengano un token CSRF valido
 - Per impostazione predefinita, verifica le richieste POST, PATCH, DELETE e PUT
 
 ## Implementazione CSRF in Salvo
 
-`Csrf` è una struttura che implementa `Handler`, contenente internamente un campo `skipper` per specificare richieste che non richiedono verifica. Di default, verifica le richieste `Method::POST`, `Method::PATCH`, `Method::DELETE`, `Method::PUT`.
+`Csrf` è una struttura che implementa `Handler`, contenente internamente anche un campo `skipper` che consente di specificare quali richieste saltare durante la verifica. Per impostazione predefinita, verifica le richieste `Method::POST`, `Method::PATCH`, `Method::DELETE`, `Method::PUT`.
 
-Salvo supporta due metodi di archiviazione dei token CSRF:
+Salvo supporta due metodi di memorizzazione dei token CSRF:
 
-1. **CookieStore**: memorizza il token in un cookie, verificando che il valore `csrf-token` nell'header o nel form corrisponda al valore del cookie
+1. **CookieStore**: memorizza il token in un cookie, verificando che il valore `csrf-token` nell'intestazione della richiesta o nel modulo corrisponda al valore del cookie
 2. **SessionStore**: memorizza il token nella sessione, richiedendo l'uso congiunto con il middleware di sessione
 
 _**Codice di esempio**_ (cookie store)
 
-import { Tab, Tabs } from 'rspress/theme';
-import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
-import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
-import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
-import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfCookieStoreCode/>
+  ```rust file="<root>/codes/csrf-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfCookieStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -50,10 +48,12 @@ _**Codice di esempio**_ (session store)
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfSessionStoreCode/>
+  ```rust file="<root>/codes/csrf-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfSessionStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:b6e191d0fb6f25b84764f3de28171886 */}
+{/* 本行由工具自动生成,原文哈希值:2eb072bb663695f226b56a34f14cdbb0 */}

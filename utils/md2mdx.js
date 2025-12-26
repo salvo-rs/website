@@ -80,13 +80,13 @@ function main() {
   
   if (args.length === 0) {
     console.error('错误: 请提供要处理的目录路径');
-    console.log('用法: bun md2mdx.js <目录路径>');
+    console.log('用法: pnpm md2mdx.js <目录路径>');
     return;
   }
   
   const inputDir = args[0];
   convertMd2Mdx(inputDir);
 }
-//bun run utils/md2mdx.js docs/zh-hans
+//pnpm run utils/md2mdx.js docs/zh-hans
 // 执行主函数
 main();

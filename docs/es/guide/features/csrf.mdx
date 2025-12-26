@@ -1,48 +1,46 @@
-# Defensa CSRF
+# Defensa contra CSRF
 
 ## ¿Qué es CSRF?
 
-CSRF (Cross-Site Request Forgery, falsificación de petición en sitios cruzados) es una vulnerabilidad de seguridad en la que un atacante induce a un usuario autenticado a realizar acciones no deseadas sin su conocimiento. En términos simples, el atacante aprovecha la sesión iniciada del usuario para enviar solicitudes maliciosas en su nombre.
+CSRF (Cross-Site Request Forgery, falsificación de solicitud en sitios cruzados) es una vulnerabilidad de seguridad en la que un atacante induce a un usuario autenticado a realizar acciones no deseadas sin su conocimiento. En términos simples, el atacante aprovecha la sesión activa del usuario para enviar solicitudes maliciosas en su nombre.
 
-## Mecanismo de ataque CSRF
+## Principio de ataque CSRF
 
 Los pasos típicos del ataque son:
 1. El usuario inicia sesión en el sitio web objetivo A y obtiene una cookie de autenticación
 2. El usuario visita un sitio malicioso B
-3. El código en el sitio B envía automáticamente una solicitud al sitio A, incluyendo la cookie del usuario
+3. El código del sitio malicioso B envía automáticamente una solicitud al sitio A, incluyendo la cookie del usuario
 4. El sitio A no puede distinguir si es una solicitud maliciosa o una acción legítima del usuario
 
 ## Estrategias de protección
 
-Salvo proporciona un middleware CSRF para proteger su aplicación contra este tipo de ataques:
+Salvo proporciona middleware CSRF para proteger su aplicación contra este tipo de ataques:
 
 - Agrega un token CSRF oculto en los formularios
 - Verifica que las solicitudes enviadas por el usuario contengan un token CSRF válido
-- Por defecto valida solicitudes POST, PATCH, DELETE y PUT
+- Por defecto, valida solicitudes POST, PATCH, DELETE y PUT
 
-## Implementación CSRF en Salvo
+## Implementación de CSRF en Salvo
 
-`Csrf` es una estructura que implementa `Handler`, con un campo interno `skipper` para especificar qué solicitudes pueden omitir la verificación. Por defecto, verifica solicitudes `Method::POST`, `Method::PATCH`, `Method::DELETE` y `Method::PUT`.
+`Csrf` es una estructura que implementa `Handler`, con un campo interno `skipper` que permite omitir la verificación de ciertas solicitudes. Por defecto, valida solicitudes `Method::POST`, `Method::PATCH`, `Method::DELETE` y `Method::PUT`.
 
-Salvo soporta dos métodos de almacenamiento de tokens CSRF:
+Salvo admite dos métodos de almacenamiento de tokens CSRF:
 
-1. **CookieStore**: Almacena el token en una cookie, verificando que coincida con el valor `csrf-token` en encabezados o formularios
-2. **SessionStore**: Almacena el token en la sesión, requiere uso conjunto con middleware de sesión
+1. **CookieStore**: Almacena el token en una cookie, verificando que el `csrf-token` en el encabezado o formulario coincida con el valor de la cookie
+2. **SessionStore**: Almacena el token en la sesión, requiriendo el uso conjunto con middleware de sesión
 
 _**Código de ejemplo**_ (cookie store)
 
-import { Tab, Tabs } from 'rspress/theme';
-import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
-import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
-import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
-import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfCookieStoreCode/>
+  ```rust file="<root>/codes/csrf-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfCookieStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -50,10 +48,12 @@ _**Código de ejemplo**_ (session store)
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfSessionStoreCode/>
+  ```rust file="<root>/codes/csrf-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfSessionStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:b6e191d0fb6f25b84764f3de28171886 */}
+{/* 本行由工具自动生成,原文哈希值:2eb072bb663695f226b56a34f14cdbb0 */}

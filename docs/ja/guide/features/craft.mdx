@@ -4,20 +4,20 @@ title: Craft 機能
 
 # Craft 機能
 
-Craft は、開発者がシンプルなアノテーション方式で処理関数とエンドポイントを自動生成し、OpenAPI ドキュメント生成とシームレスに連携できる機能を提供します。
+Craft は、開発者がシンプルなアノテーション方式でハンドラ関数とエンドポイントを自動生成し、OpenAPI ドキュメント生成とシームレスに連携することを可能にします。
 
 ## 使用シナリオ
 
-Craft 機能が特に有用なケース:
+Craft 機能は以下のシナリオで特に有用です：
 
-- 構造体メソッドから迅速にルート処理関数を作成する必要がある場合
+- 構造体メソッドから迅速にルートハンドラ関数を作成する必要がある場合
 - 手動でのパラメータ抽出やエラー処理の定型コードを削減したい場合
-- API の OpenAPI ドキュメントを自動生成したい場合
+- API の OpenAPI ドキュメントを自動生成する必要がある場合
 - ビジネスロジックと Web フレームワークを疎結合にしたい場合
 
-## 基本使用方法
+## 基本的な使い方
 
-Craft 機能を使用するには以下のモジュールをインポート:
+Craft 機能を使用するには、以下のモジュールをインポートします：
 
 ```rust
 use salvo::oapi::extract::*;
@@ -26,7 +26,7 @@ use salvo::prelude::*;
 
 ### サービス構造体の作成
 
-`#[craft]` マクロで impl ブロックを注釈すると、構造体メソッドを処理関数またはエンドポイントに変換できます。
+`#[craft]` マクロで impl ブロックをアノテーションすることで、構造体メソッドをハンドラ関数またはエンドポイントに変換できます。
 
 ```rust
 #[derive(Clone)]
@@ -45,9 +45,9 @@ impl Opts {
 }
 ```
 
-### 処理関数の作成
+### ハンドラ関数の作成
 
-`#[craft(handler)]` でメソッドを処理関数に変換:
+`#[craft(handler)]` を使用してメソッドをハンドラ関数に変換します：
 
 ```rust
 #[craft(handler)]
@@ -56,14 +56,14 @@ fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
 }
 ```
 
-この関数は以下の特徴を持つ処理関数になります:
-- クエリパラメータから `left` と `right` 値を自動抽出
+このメソッドは以下の特徴を持つハンドラ関数になります：
+- クエリパラメータから `left` と `right` の値を自動抽出
 - 構造体内の `state` 状態にアクセス
 - 計算結果を文字列レスポンスとして返却
 
 ### エンドポイントの作成
 
-`#[craft(endpoint)]` でメソッドをエンドポイントに変換:
+`#[craft(endpoint)]` を使用してメソッドをエンドポイントに変換します：
 
 ```rust
 #[craft(endpoint)]
@@ -76,35 +76,35 @@ pub(crate) fn add2(
 }
 ```
 
-エンドポイントは `Arc` を使用して状態を共有可能で、並行リクエスト処理に特に有用です。
+エンドポイントは `Arc` を活用して状態を共有でき、同時リクエスト処理時に特に有用です。
 
 ### 静的エンドポイント
 
-インスタンス状態に依存しない静的エンドポイントも作成可能:
+インスタンス状態に依存しない静的エンドポイントも作成できます：
 
 ```rust
-#[craft(endpoint(responses((status_code = 400, description = "不正なリクエストパラメータ"))))]
+#[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
 pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
     (*left + *right).to_string()
 }
 ```
 
-この例では、カスタムエラーレスポンスの説明も追加されており、生成される OpenAPI ドキュメントに反映されます。
+この例では、カスタムエラーレスポンスの説明も追加しており、生成される OpenAPI ドキュメントに反映されます。
 
 ## パラメータ抽出器
 
-Salvo の `oapi::extract` モジュールは様々なパラメータ抽出器を提供:
+Salvo の `oapi::extract` モジュールは、以下のような様々なパラメータ抽出器を提供します：
 
-- `QueryParam<T>`: クエリ文字列からパラメータ抽出
-- `PathParam<T>`: URL パスからパラメータ抽出
-- `FormData<T>`: フォームデータからパラメータ抽出
-- `JsonBody<T>`: JSON リクエストボディからパラメータ抽出
+- `QueryParam<T>`: クエリ文字列からパラメータを抽出
+- `PathParam<T>`: URL パスからパラメータを抽出
+- `FormData<T>`: フォームデータからパラメータを抽出
+- `JsonBody<T>`: JSON リクエストボディからパラメータを抽出
 
-これらの抽出器はパラメータ解析と型変換を自動化し、処理関数の記述を大幅に簡素化します。
+これらの抽出器はパラメータ解析と型変換を自動的に行い、ハンドラ関数の記述を大幅に簡素化します。
 
-## OpenAPI 連携
+## OpenAPI との統合
 
-Craft 機能は OpenAPI 仕様に準拠した API ドキュメントを自動生成。例:
+Craft 機能は OpenAPI 仕様に準拠した API ドキュメントを自動生成します。例：
 
 ```rust
 let router = Router::new()
@@ -112,20 +112,20 @@ let router = Router::new()
     .push(Router::with_path("add2").get(opts.add2()))
     .push(Router::with_path("add3").get(Opts::add3()));
 
-// OpenAPI ドキュメント生成
+// OpenAPI ドキュメントを生成
 let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
 
-// OpenAPI ドキュメントと Swagger UI ルート追加
+// OpenAPI ドキュメントと Swagger UI ルートを追加
 let router = router
     .push(doc.into_router("/api-doc/openapi.json"))
     .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 ```
 
-この設定で、API ドキュメントは `/api-doc/openapi.json` エンドポイントで提供され、Swagger UI は `/swagger-ui` パスで利用可能になります。
+この設定により、API ドキュメントは `/api-doc/openapi.json` エンドポイントで提供され、Swagger UI は `/swagger-ui` パスで利用可能になります。
 
-## 完全なサンプル
+## 完全な例
 
-Craft 機能を使用して3種類のエンドポイントを作成する完全なサンプル:
+以下は、Craft 機能を使用して3種類の異なるエンドポイントを作成する完全な例です：
 
 ```rust
 use salvo::oapi::extract::*;
@@ -157,7 +157,7 @@ impl Opts {
         (self.state + *left + *right).to_string()
     }
 
-    #[craft(endpoint(responses((status_code = 400, description = "不正なリクエストパラメータ")))]
+    #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
     pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
         (*left + *right).to_string()
     }
@@ -165,24 +165,24 @@ impl Opts {
 
 #[tokio::main]
 async fn main() {
-    // 初期値1で共有状態を作成
+    // 共有状態を作成（初期値1）
     let opts = Arc::new(Opts::new(1));
 
-    // 3つのエンドポイントルートを設定
+    // 3つのエンドポイントのルートを設定
     let router = Router::new()
         .push(Router::with_path("add1").get(opts.add1()))
         .push(Router::with_path("add2").get(opts.add2()))
         .push(Router::with_path("add3").get(Opts::add3()));
 
-    // OpenAPIドキュメント生成
+    // OpenAPI ドキュメントを生成
     let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
     
-    // OpenAPIドキュメントとSwagger UIルートを追加
+    // OpenAPI ドキュメントと Swagger UI ルートを追加
     let router = router
         .push(doc.into_router("/api-doc/openapi.json"))
         .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 
-    // localhost:5800でサーバー起動
+    // localhost:5800 でサーバーを起動
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }

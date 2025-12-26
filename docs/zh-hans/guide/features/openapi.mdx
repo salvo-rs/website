@@ -1,6 +1,4 @@
-import { Tab, Tabs } from 'rspress/theme';
-import OapiHelloCode from '../../../../codes_md/oapi-hello/src/main.mdx';
-import OapiHelloCargoCode from '../../../../codes_md/oapi-hello/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # OpenAPI 文档生成
 
@@ -16,10 +14,12 @@ _**示例代码**_
 
 <Tabs>
   <Tab label="main.rs">
-    <OapiHelloCode/>
+  ```rust file="<root>/codes/oapi-hello/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <OapiHelloCargoCode/>
+  ```toml file="<root>/codes/oapi-hello/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 

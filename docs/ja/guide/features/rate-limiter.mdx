@@ -1,37 +1,33 @@
-# 流量制御
+# レート制限
 
-流量制御機能を提供するミドルウェア。
+レート制限機能を提供するミドルウェア。
 
-```rust
-import { Tab, Tabs } from 'rspress/theme';
-import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
-import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
-import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
-import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
-```
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## 主な機能
 
-* `RateIssuer` は訪問者を識別するキーを割り当てる抽象化を提供します。`RemoteIpIssuer` はその実装の一つで、リクエストのIPアドレスに基づいて訪問者を特定します。キーは文字列型である必要はなく、`Hash + Eq + Send + Sync + 'static` 制約を満たす任意の型を使用できます。
+* `RateIssuer` は、割り当てられた訪問者識別キーの抽象化を提供します。`RemoteIpIssuer` はその実装の一つで、リクエストのIPアドレスに基づいて訪問者を特定できます。キーは必ずしも文字列型である必要はなく、`Hash + Eq + Send + Sync + 'static` の制約を満たす任意の型をキーとして使用できます。
 
-* `RateGuard` は流量制御アルゴリズムの抽象化を提供します。デフォルトで固定ウィンドウ(`FixedGuard`)とスライディングウィンドウ(`SlidingGuard`)の2つの実装が用意されています。
+* `RateGuard` は、レート制限アルゴリズムの抽象化を提供します。デフォルトで固定ウィンドウ(`FixedGuard`)とスライディングウィンドウ(`SlidingGuard`)の2つの実装が用意されています。
 
-* `RateStore` はデータの存取操作を提供します。`MokaStore` は組み込みの`moka`ベースのメモリキャッシュ実装です。独自の実装を定義することも可能です。
+* `RateStore` は、データの保存と取得操作を提供します。`MokaStore` は、`moka` をベースにした組み込みのメモリキャッシュ実装です。独自の実装を定義することも可能です。
 
-* `RateLimiter` は`Handler`を実装した構造体で、内部に`skipper`フィールドを持ち、キャッシュが不要なリクエストをスキップするように指定できます。デフォルトでは`none_skipper`が使用され、全てのリクエストが処理されます。
+* `RateLimiter` は `Handler` を実装した構造体で、内部に `skipper` フィールドも持っており、キャッシュが不要なリクエストをスキップするように指定できます。デフォルトでは、`none_skipper` を使用してすべてのリクエストをスキップしません。
 
-* `QuotaGetter` はクォータ取得の抽象化を提供し、訪問者の`Key`に基づいてクォータオブジェクトを取得できます。これにより、ユーザークォータなどの情報をデータベースに設定し、動的に変更・取得することが可能になります。
+* `QuotaGetter` は、クォータ取得の抽象化を提供します。訪問者の `Key` に基づいてクォータオブジェクトを取得できるため、ユーザークォータなどの情報をデータベースに設定し、動的に変更・取得することが可能です。
 
-_**サンプルコード**_
+_**サンプルコード**_ 
 
 ### 静的クォータの例
 
 <Tabs>
   <Tab label="main.rs">
-    <StaticMainCode/>
+  ```rust file="<root>/codes/rate-limiter-static/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <StaticCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-static/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -39,10 +35,12 @@ _**サンプルコード**_
 
 <Tabs>
   <Tab label="main.rs">
-    <DynamicMainCode/>
+  ```rust file="<root>/codes/rate-limiter-dynamic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <DynamicCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-dynamic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}
+{/* 本行由工具自动生成,原文哈希值:3d248fa793d9b3aab28760c03d743c7a */}

@@ -10,7 +10,7 @@ pub async fn home(res: &mut Response) {
     <html>
     <head><meta charset="UTF-8"><title>Csrf CookieStore</title></head>
     <body>
-    <h2>Csrf Exampe: CookieStore</h2>
+    <h2>Csrf Example: CookieStore</h2>
     <ul>
         <li><a href="/bcrypt/">Bcrypt</a></li>
         <li><a href="/hmac/">Hmac</a></li>
@@ -97,8 +97,8 @@ async fn main() {
                 .post(post_page),
         );
 
-    // Start server on port 5800
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    // Start server on port 8698
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -110,7 +110,7 @@ fn get_page_html(csrf_token: &str, msg: &str) -> String {
     <html>
     <head><meta charset="UTF-8"><title>Csrf Example</title></head>
     <body>
-    <h2>Csrf Exampe: CookieStore</h2>
+    <h2>Csrf Example: CookieStore</h2>
     <ul>
         <li><a href="/bcrypt/">Bcrypt</a></li>
         <li><a href="/hmac/">Hmac</a></li>

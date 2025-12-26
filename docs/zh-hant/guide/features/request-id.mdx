@@ -1,21 +1,21 @@
-# 請求鏈路Id
+# 請求鏈路識別碼
 
-import { Tab, Tabs } from 'rspress/theme';
-import RequestIdMainCode from '../../../../codes_md/request-id/src/main.mdx';
-import RequestIdCargoCode from '../../../../codes_md/request-id/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Request Id 中介軟體具有高度靈活性，生成器(IdGenerator) 用於產生 ID，您可以定義自己的 ID 生成器，只需實現 `IdGenerator` 這個 trait。預設提供的生成器是 `UlidGenerator`。
+Request Id 中介軟體具備高度彈性，其生成器(IdGenerator) 專門用於產生識別碼，您可以自訂專屬的識別碼生成器，只需實作 `IdGenerator` 這個特徵。系統預設提供的生成器為 `UlidGenerator`。
 
-此外，您可以控制是否覆蓋現有已存在的 `requestid`。還能設置 `header_name` 等參數，詳情請[查閱文件](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
+此外，您可自行控制是否覆蓋現有已存在的 `requestid`。還能設定 `header_name` 等參數，詳細內容請參閱[官方文件](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
 
 _**範例程式碼**_
 
 <Tabs>
   <Tab label="main.rs">
-    <RequestIdMainCode/>
+  ```rust file="<root>/codes/request-id/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <RequestIdCargoCode/>
+  ```toml file="<root>/codes/request-id/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:c4254b7ef23c0b7cd5e4b30f6fc58cc8 */}
+{/* 本行由工具自动生成,原文哈希值:b57e0db0c2653d3019a927f03298bf44 */}

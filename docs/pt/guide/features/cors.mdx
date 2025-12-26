@@ -1,33 +1,33 @@
-# Controle de Acesso Entre Origens (CORS)
+# Controle de CORS
 
-CORS (Cross-Origin Resource Sharing, Compartilhamento de Recursos entre Origens) é um mecanismo que permite que navegadores realizem solicitações a servidores de origens diferentes, superando as restrições da política de mesma origem dos navegadores.
+CORS (Cross-Origin Resource Sharing, Compartilhamento de Recursos entre Origens) é um mecanismo que permite que navegadores façam solicitações a servidores de origens diferentes, superando as restrições da política de mesma origem do navegador.
 
 ## O que é a Política de Mesma Origem?
 
-A política de mesma origem é um recurso de segurança dos navegadores que limita como documentos ou scripts carregados de uma origem podem interagir com recursos de outra origem. Considera-se "mesma origem" quando há o mesmo protocolo, domínio e número de porta.
+A política de mesma origem é uma funcionalidade de segurança do navegador que limita como documentos ou scripts carregados de uma origem podem interagir com recursos de outra origem. "Mesma origem" significa ter o mesmo protocolo, domínio e número da porta.
 
-## Por que precisamos de CORS?
+## Por que o CORS é necessário?
 
-Quando aplicações front-end precisam acessar APIs de origens diferentes, o CORS se torna necessário. Por exemplo:
-- Aplicação front-end hospedada em `https://frontend.com`
-- Serviço de API hospedado em `https://api.backend.com`
+Quando uma aplicação front-end precisa acessar APIs de origens diferentes, é necessário suporte a CORS. Por exemplo:
+- A aplicação front-end é implantada em `https://frontend.com`
+- O serviço de API é implantado em `https://api.backend.com`
 
-Sem CORS, o navegador bloquearia o acesso da aplicação front-end ao serviço de API.
+Sem CORS, o navegador impedirá que a aplicação front-end acesse o serviço de API.
 
-## Como o CORS funciona
+## Como o CORS Funciona
 
-O CORS utiliza cabeçalhos HTTP para controlar o acesso entre origens:
-- Solicitações simples: enviadas diretamente, com o servidor controlando a permissão via cabeçalhos de resposta
-- Solicitações de pré-voo (preflight): o navegador primeiro envia uma requisição OPTIONS para verificar a permissão, e só então envia a requisição real
+O CORS implementa o controle de acesso entre origens por meio de uma série de cabeçalhos HTTP:
+- **Solicitação Simples**: Enviada diretamente, o servidor controla se é permitida através dos cabeçalhos de resposta
+- **Solicitação de Pré-Voo (Preflight)**: O navegador primeiro envia uma solicitação OPTIONS para perguntar ao servidor se permite acesso entre origens e, após receber permissão, envia a solicitação real
 
-Como navegadores enviam requisições OPTIONS de pré-voo, é necessário adicionar tratamento para esse tipo de solicitação, aplicando o middleware CORS ao `Service`.
+Como o navegador envia solicitações de pré-voo `Method::OPTIONS`, é necessário adicionar tratamento para esse tipo de solicitação. O middleware CORS precisa ser adicionado ao `Service`.
 
 ## Usando CORS no Salvo
 
-O Salvo oferece um middleware CORS integrado, fácil de configurar e usar. Veja o exemplo:
+O Salvo fornece um middleware CORS integrado que pode ser facilmente configurado e usado. Aqui está um exemplo de código:
 
 :::warning
-Atenção: O middleware .hoop(cors) é aplicado ao `Service`, não ao `Router`. Isso permite o tratamento automático das requisições OPTIONS de pré-voo.
+**Atenção**. O middleware `.hoop(cors)` é aplicado no `Service`, não no `Router`. Isso permite o tratamento automático das solicitações OPTIONS de pré-voo.
 ```rust
 let cors = Cors::new()
     .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
@@ -35,7 +35,7 @@ let cors = Cors::new()
     .allow_headers("authorization")
     .into_handler();
 
-// Configuração do roteador com proteção CORS
+// Configura o roteador do backend com proteção CORS
 let router = Router::with_path("hello").post(hello);
 let service = Service::new(router).hoop(cors);
 ```
@@ -43,29 +43,29 @@ let service = Service::new(router).hoop(cors);
 
 _**Código de Exemplo**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import CorsCode from '../../../../codes_md/cors/src/main.mdx';
-import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CorsCode/>
+  ```rust file="<root>/codes/cors/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CorsCargoCode/>
+  ```toml file="<root>/codes/cors/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
 ## Principais Opções de Configuração
 
-O middleware CORS oferece diversas opções de configuração:
+O middleware CORS oferece várias opções de configuração:
 
-- **Origens permitidas**: controla quais domínios podem acessar os recursos
-- **Métodos permitidos**: especifica os métodos HTTP permitidos (GET, POST, etc.)
-- **Cabeçalhos permitidos**: define os cabeçalhos de solicitação permitidos
-- **Cabeçalhos expostos**: indica quais cabeçalhos de resposta podem ser acessados pelo cliente
-- **Credenciais permitidas**: determina se as solicitações podem incluir cookies e outras credenciais
-- **Tempo de cache para pré-voo**: duração do cache para resultados de requisições de pré-voo
+- **Origens Permitidas**: Controla quais domínios podem acessar os recursos
+- **Métodos Permitidos**: Especifica os métodos HTTP permitidos (GET, POST, etc.)
+- **Cabeçalhos Permitidos**: Especifica os cabeçalhos de solicitação permitidos
+- **Cabeçalhos Expostos**: Especifica quais cabeçalhos de resposta podem ser acessados pelo cliente
+- **Credenciais Permitidas**: Se as solicitações podem incluir informações de autenticação como cookies
+- **Tempo de Cache de Pré-Voo**: Tempo de cache para os resultados das solicitações de pré-voo
 
-Com uma configuração adequada do CORS, é possível garantir segurança enquanto atende às necessidades de acesso entre origens.
-{/* 本行由工具自动生成,原文哈希值:0b191eacd5af64466fceaea928dec4d4 */}
+Com uma configuração adequada do CORS, é possível garantir segurança e atender às necessidades de acesso entre origens.
+{/* 本行由工具自动生成,原文哈希值:cf229c3c39be32658130e3590ea819e7 */}

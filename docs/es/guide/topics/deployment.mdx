@@ -1,19 +1,19 @@
-# Cómo desplegar la aplicación
+# Cómo desplegar aplicaciones
 
-El proyecto Salvo, una vez compilado, se convierte en un archivo ejecutable. Para desplegarlo, simplemente necesitas subir este archivo ejecutable junto con los recursos estáticos que dependan de él al servidor.
+Un proyecto Salvo, después de compilarse, se convierte en un archivo ejecutable. Para desplegarlo, solo necesitas subir este archivo ejecutable junto con los recursos estáticos de los que depende al servidor.
 
-Para proyectos en Rust, existe una plataforma de despliegue muy sencilla: [shuttle.rs](https://www.shuttle.rs). Shuttle ofrece soporte para proyectos como Salvo, y puedes encontrar más detalles en la [documentación oficial](https://docs.shuttle.rs/guide/salvo-examples.html).
+Para proyectos de Rust, también existe una plataforma de despliegue muy sencilla: [shuttle.rs](https://www.shuttle.rs). Shuttle ofrece soporte para proyectos como Salvo. Para más detalles, puedes consultar la [documentación oficial](https://docs.shuttle.rs/guide/salvo-examples.html).
 
 ## Despliegue con Docker
 
-También puedes utilizar Docker para desplegar aplicaciones Salvo. A continuación, te mostramos un ejemplo básico de `Dockerfile` que puedes adaptar según las necesidades de tu proyecto:
+También puedes utilizar Docker para desplegar aplicaciones Salvo. A continuación, se muestra un ejemplo básico de `Dockerfile` que puedes ajustar según las necesidades de tu proyecto:
 
 ```dockerfile
 # Fase de construcción
 FROM rust:slim AS build
 WORKDIR /app
 
-# Copiar primero los archivos de dependencias para aprovechar el caché
+# Copiar archivos de dependencias y construir dependencias primero (aprovechando la caché de capas)
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
@@ -36,19 +36,19 @@ RUN useradd -ms /bin/bash appuser
 USER appuser
 WORKDIR /app
 
-# Copiar el binario desde la fase de construcción
+# Copiar el archivo binario desde la fase de construcción
 COPY --from=build /app/target/release/your_app_name ./app
 
-# Establecer el comando de inicio del contenedor
+# Configurar el comando de inicio del contenedor
 CMD ["./app"]
 ```
 
 ### Instrucciones de uso
 
-1. Guarda el `Dockerfile` anterior en la raíz de tu proyecto
-2. Reemplaza `your_app_name` con el nombre real del archivo binario de tu proyecto
-3. Si tu aplicación requiere archivos estáticos (como plantillas, CSS, JS, etc.), añade los comandos `COPY` correspondientes
-4. Para configuraciones que requieran variables de entorno, utiliza la instrucción `ENV`
+1. Guarda el `Dockerfile` anterior en el directorio raíz de tu proyecto.
+2. Ajusta `your_app_name` al nombre real del archivo binario de tu proyecto.
+3. Si tu aplicación requiere archivos estáticos (como plantillas, CSS, JS, etc.), puedes agregar comandos `COPY` correspondientes.
+4. Si tu aplicación necesita configuración de variables de entorno, puedes usar la instrucción `ENV`.
 5. Construye la imagen de Docker:
    ```bash
    docker build -t your-app-name .
@@ -58,5 +58,5 @@ CMD ["./app"]
    docker run -p 5800:5800 your-app-name
    ```
 
-Ajusta el número de puerto y otras configuraciones según los requisitos específicos de tu aplicación.
+Ajusta el número de puerto y otras configuraciones según las necesidades reales de tu aplicación.
 {/* 本行由工具自动生成,原文哈希值:cc4f6a8bac2d9ff67911bf45b473c2bd */}

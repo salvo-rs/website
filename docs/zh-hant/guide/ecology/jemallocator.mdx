@@ -2,22 +2,13 @@
 title: Rust 記憶體分配器替代方案
 ---
 
-# Jemallocator: Rust jemalloc 記憶體分配器
-
-import { LinkCard } from '@theme';
-
-<LinkCard
-  href="https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/"
-  title="tikv-jemallocator"
-  description="tikv-jemallocator"
-/>
+# Jemallocator：Rust jemalloc 記憶體分配器替代方案
 
 :::tip
-預設分配器有時會出現無法及時釋放記憶體的情況，推薦使用jemallocator
+預設分配器有時會出現無法及時釋放記憶體的情況，建議使用 (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] 作為全域分配器來替代預設分配器。
 :::
 
-
-jemallocator 是一個與 jemalloc 記憶體分配器連結的函式庫，提供了 `Jemalloc` 單元型別，該型別實作了分配器 API 並可設定為 `#[global_allocator]`。
+(jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] 是一個與 jemalloc 記憶體分配器連結的函式庫，提供了 `Jemalloc` 單元型別，該型別實作了分配器 API 並可設定為 `#[global_allocator]`。
 
 `tikv-jemallocator` 是 `jemallocator` 的後繼專案。這兩個 crate 除了名稱不同外完全相同。對於新專案，建議使用 `tikv-xxx` 版本。
 
@@ -25,7 +16,7 @@ jemallocator 是一個與 jemalloc 記憶體分配器連結的函式庫，提供
 
 jemalloc 支援生態系統由以下 crate 組成：
 
-- **tikv-jemalloc-sys**：建構並連結到 jemalloc，暴露對它的原始 C 綁定。
+- **tikv-jemalloc-sys**：建置並連結到 jemalloc，暴露對它的原始 C 綁定。
 - **tikv-jemallocator**：提供實作了 `GlobalAlloc` 和 `Alloc` trait 的 `Jemalloc` 型別。
 - **tikv-jemalloc-ctl**：jemalloc 控制與自省 API 的高階封裝（`mallctl*()` 函式家族與 `MALLCTL NAMESPACE`）。
 
@@ -33,7 +24,7 @@ jemalloc 支援生態系統由以下 crate 組成：
 
 ### 添加依賴
 
-要使用 tikv-jemallocator，將它添加為依賴：
+要使用 tikv-jemallocator，將其添加為依賴：
 
 ```toml
 [dependencies]
@@ -55,22 +46,22 @@ use tikv_jemallocator::Jemalloc;
 static GLOBAL: Jemalloc = Jemalloc;
 ```
 
-就是這樣！一旦定義了這個靜態變數，jemalloc 將用於同一程式中 Rust 程式碼請求的所有記憶體分配。
+就這樣！一旦定義了這個靜態變數，jemalloc 將用於同一程式中 Rust 程式碼請求的所有記憶體分配。
 
 ## 優勢
 
 jemalloc 是一個通用目的的 malloc 實作，專注於：
 
 - 減少記憶體碎片
-- 高並發場景下的可擴展性
+- 高並行場景下的可擴展性
 - 提供豐富的自省與控制能力
 
 在以下場景中特別有用：
-- 長時間運行的應用程式
+- 長時間執行的應用程式
 - 記憶體密集型工作負載
 - 需要細粒度記憶體管理的高效能服務
 
 ## 相容性說明
 
 jemalloc 不支援 MSVC 目標環境，因此在 Windows 上使用 MSVC 工具鏈時不可用。這就是為什麼在範例程式碼中包含 `cfg(not(target_env = "msvc"))` 條件的原因。
-{/* 本行由工具自动生成,原文哈希值:f1e3515e93e417fa34b6776be2e69244 */}
+{/* 本行由工具自动生成,原文哈希值:97d5bd2f5d44a1facae329972bdc937f */}

@@ -1,4 +1,4 @@
-# Plugin WebSocket tiers
+# Plugins Websocket tiers
 
 ## salvo-websocket
 
@@ -9,7 +9,7 @@
 salvo-websocket = "0.0.4"
 ```
 
-### Définir les paramètres de requête lors de la connexion WebSocket
+### Définir les paramètres de requête lors de la connexion ws
 
 ```rust
 #[derive(Debug, Clone, Deserialize)]
@@ -52,13 +52,13 @@ impl WebSocketHandler for User {
     }
 
     async fn on_send_message(&self, msg: Message) -> Result<Message, Error> {
-        tracing::info!("{:?} envoi", msg);
+        tracing::info!("{:?} en cours d'envoi", msg);
         Ok(msg)
     }
 }
 ```
 
-### Écrire la méthode de gestion de connexion
+### Écrire la méthode de traitement de connexion
 
 ```rust
 #[tokio::main]
@@ -86,5 +86,5 @@ async fn user_connected(req: &mut Request, res: &mut Response) -> Result<(), Sta
 }
 ```
 
-Pour plus de contenu, veuillez consulter directement [l'exemple](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)
-{/* 本行由工具自动生成,原文哈希值:860920905ee70ff25a056625fc9b22af */}
+Pour plus de contenu, consultez directement les [exemples](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)
+{/* 本行由工具自动生成,原文哈希值:ba1de026d713e14724d985e19918646a */}

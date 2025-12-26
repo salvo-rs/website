@@ -1,12 +1,10 @@
 # Catcher
 
-import { Tab, Tabs } from 'rspress/theme';
-import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
-import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Se o código de status da `Response` for um erro e o `Body` da página estiver vazio, o salvo tentará usar o `Catcher` para capturar esse erro e exibir uma página de erro amigável.
+Se o código de status da `Response` for um erro e o `Body` na página estiver vazio, o Salvo tentará usar o `Catcher` para capturar esse erro e exibir uma página de erro amigável.
 
-Você pode usar `Catcher::default()` para retornar um `Catcher` padrão do sistema e adicioná-lo ao `Service`.
+Você pode usar `Catcher::default()` para retornar um `Catcher` padrão do sistema e, em seguida, adicioná-lo ao `Service`.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -16,16 +14,18 @@ Service::new(router).catcher(Catcher::default());
 
 O `Catcher` padrão suporta o envio de páginas de erro nos formatos `XML`, `JSON`, `HTML` e `Text`.
 
-Você pode adicionar um manipulador de erros personalizado ao `Catcher` usando o método `hoop`. Esse manipulador de erros ainda é um `Handler`.
+Você pode adicionar manipuladores de erro personalizados ao `Catcher` adicionando um `hoop` a esse `Catcher` padrão. Esse manipulador de erro ainda é um `Handler`.
 
-É possível adicionar vários manipuladores de erros personalizados ao `Catcher` usando `hoop`. Um manipulador de erros personalizado pode chamar o método `FlowCtrl::skip_next` após processar o erro para pular os próximos manipuladores e retornar antecipadamente.
+Você pode adicionar vários manipuladores de erro personalizados ao `Catcher` usando `hoop`. Um manipulador de erro personalizado pode chamar o método `FlowCtrl::skip_next` após processar o erro para pular os manipuladores subsequentes e retornar antecipadamente.
 
 <Tabs>
   <Tab label="main.rs">
-    <CustomErrorPageCode/>
+  ```rust file="<root>/codes/custom-error-page/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CustomErrorPageCargoCode/>
+  ```toml file="<root>/codes/custom-error-page/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f904ca235acae374d6a236a1bd7a027a */}
+{/* 本行由工具自动生成,原文哈希值:6d187ebda60dfda18718df8cd81080ad */}

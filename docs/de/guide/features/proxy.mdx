@@ -1,16 +1,16 @@
-# Reverse Proxy
+# Reverse-Proxy
 
-Ein Reverse Proxy ist eine Server-Architektur, die Anfragen von Clients empfängt und an einen oder mehrere Backend-Server weiterleitet. Im Gegensatz zu einem Forward Proxy (der für Clients arbeitet) agiert der Reverse Proxy auf der Serverseite.
+Ein Reverse-Proxy ist eine Serverarchitektur, die Anfragen von Clients entgegennimmt und an einen oder mehrere Backend-Server weiterleitet. Im Gegensatz zu einem Forward-Proxy (der für Clients agiert) arbeitet der Reverse-Proxy auf Serverseite.
 
-Die Hauptvorteile eines Reverse Proxys:
+Die Hauptvorteile eines Reverse-Proxy:
 - Lastverteilung: Verteilung von Anfragen auf mehrere Server
-- Erhöhte Sicherheit: Verbergen der echten Serverinformationen
-- Inhalts-Caching: Verbesserte Leistung
-- Pfad-Umschreibung und -Weiterleitung: Flexible Anfragen-Routing
+- Erhöhte Sicherheit: Verbergen echter Serverinformationen
+- Inhaltscaching: Leistungssteigerung
+- Pfadumleitung und Weiterleitung: Flexible Anfragenrouting
 
-Das Salvo-Framework bietet Middleware für Reverse-Proxy-Funktionalitäten.
+Das Salvo-Framework bietet ein Middleware-Modul für Reverse-Proxy-Funktionalität.
 
-_**Beispielcode**_
+_**Beispielcode**_ 
 
 ```rust
 use salvo::prelude::*;

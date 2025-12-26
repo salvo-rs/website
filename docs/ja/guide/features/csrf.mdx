@@ -2,47 +2,45 @@
 
 ## CSRFとは？
 
-CSRF（Cross-Site Request Forgery、クロスサイトリクエストフォージェリ）は、ユーザーが認証済みの状態で意図しない操作を実行させられるセキュリティ上の脆弱性です。簡単に言えば、攻撃者がログイン済みのユーザーになりすまし、悪意のあるリクエストを送信する手法です。
+CSRF（Cross-Site Request Forgery、クロスサイトリクエストフォージェリ）は、攻撃者が認証済みユーザーに意図しない操作を実行させるサイバーセキュリティの脆弱性です。簡単に言えば、攻撃者はユーザーのログイン状態を悪用し、ユーザーになりすまして悪意のあるリクエストを送信します。
 
 ## CSRF攻撃の仕組み
 
-攻撃の流れは通常以下の通りです：
-1. ユーザーがターゲットサイトAにログインし、認証用クッキーを取得
-2. ユーザーが悪意あるサイトBにアクセス
-3. サイトBのコードが自動的にサイトAへリクエストを送信（ユーザーのクッキー付き）
-4. サイトAはこのリクエストが悪意あるものかユーザー本人の操作か判別できない
+攻撃の手順は通常以下の通りです：
+1. ユーザーがターゲットサイトAにログインし、認証Cookieを取得
+2. ユーザーが悪意のあるサイトBにアクセス
+3. サイトB内のコードが自動的にサイトAへリクエストを送信（ユーザーのCookie付き）
+4. サイトAは悪意のあるリクエストとユーザー本人の操作を区別できない
 
 ## 防御策
 
-SalvoはCSRFミドルウェアを提供し、この種の攻撃からアプリケーションを保護します：
+SalvoはCSRFミドルウェアを提供し、アプリケーションをこの種の攻撃から保護します：
 
 - フォームに隠しCSRFトークンを追加
-- ユーザーからのリクエストに有効なCSRFトークンが含まれているか検証
+- ユーザー送信のリクエストに有効なCSRFトークンが含まれているか検証
 - デフォルトでPOST、PATCH、DELETE、PUTリクエストを検証
 
 ## SalvoにおけるCSRF実装
 
-`Csrf`は`Handler`を実装した構造体で、内部に`skipper`フィールドを持ち、検証をスキップするリクエストを指定できます。デフォルトでは`Method::POST`、`Method::PATCH`、`Method::DELETE`、`Method::PUT`リクエストを検証します。
+`Csrf` は `Handler` を実装した構造体で、内部に `skipper` フィールドを持ち、検証不要なリクエストをスキップ指定できます。デフォルトでは `Method::POST`、`Method::PATCH`、`Method::DELETE`、`Method::PUT` リクエストを検証します。
 
-Salvoは2種類のCSRFトークン保存方式をサポートしています：
+Salvoは2種類のCSRFトークン保存方式をサポート：
 
-1. **CookieStore**：トークンをクッキーに保存し、リクエストヘッダーまたはフォームの`csrf-token`とクッキー値の一致を検証
-2. **SessionStore**：トークンをセッションに保存（セッションミドルウェアとの併用が必要）
+1. **CookieStore**：トークンをCookieに保存し、リクエストヘッダーまたはフォームの `csrf-token` とCookie値の一致を検証
+2. **SessionStore**：トークンをSessionに保存（セッションミドルウェアとの併用必須）
 
 _**サンプルコード**_ (cookie store)
 
-import { Tab, Tabs } from 'rspress/theme';
-import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
-import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
-import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
-import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfCookieStoreCode/>
+  ```rust file="<root>/codes/csrf-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfCookieStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -50,10 +48,12 @@ _**サンプルコード**_ (session store)
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfSessionStoreCode/>
+  ```rust file="<root>/codes/csrf-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfSessionStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:b6e191d0fb6f25b84764f3de28171886 */}
+{/* 本行由工具自动生成,原文哈希值:2eb072bb663695f226b56a34f14cdbb0 */}

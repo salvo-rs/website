@@ -1,32 +1,24 @@
 ---
-title: Rust メモリアロケータの代替案
+title: Rustメモリアロケータの代替案
 ---
 
-# Jemallocator: Rust jemalloc メモリアロケータ
-
-import { LinkCard } from '@theme';
-
-<LinkCard
-  href="https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/"
-  title="tikv-jemallocator"
-  description="tikv-jemallocator"
-/>
+# Jemallocator: Rust jemallocメモリアロケータ代替案
 
 :::tip
-デフォルトのアロケータでは、時々メモリが即座に解放されない場合があります。jemallocatorの使用を推奨します
+デフォルトアロケータは時折メモリ解放が遅延する場合があります。グローバルアロケータとして (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] をデフォルトアロケータの代替として使用することを推奨します。
 :::
 
-jemallocatorはjemallocメモリアロケータとリンクするライブラリで、`Jemalloc`ユニット型を提供します。この型はアロケータAPIを実装しており、`#[global_allocator]`として設定可能です。
+(jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] はjemallocメモリアロケータとリンクするライブラリで、アロケータAPIを実装した `Jemalloc` ユニット型を提供し、`#[global_allocator]` として設定可能です。
 
-`tikv-jemallocator`は`jemallocator`の後継プロジェクトです。両クレートは名前以外完全に同一です。新規プロジェクトでは`tikv-xxx`バージョンの使用を推奨します。
+`tikv-jemallocator` は `jemallocator` の後継プロジェクトです。両crateは名称以外完全に同一です。新規プロジェクトでは `tikv-xxx` バージョンの使用を推奨します。
 
 ## jemallocエコシステム
 
-jemallocサポートエコシステムは以下のクレートで構成されます：
+jemallocサポートエコシステムは以下のcrateで構成されます：
 
-- **tikv-jemalloc-sys**：jemallocをビルド＆リンクし、生のCバインディングを公開
-- **tikv-jemallocator**：`GlobalAlloc`と`Alloc`トレイトを実装した`Jemalloc`型を提供
-- **tikv-jemalloc-ctl**：jemalloc制御＆内省APIの高レベルラッパー（`mallctl*()`関数群と`MALLCTL NAMESPACE`）
+- **tikv-jemalloc-sys**：jemallocのビルドとリンクを行い、生のCバインディングを公開
+- **tikv-jemallocator**：`GlobalAlloc` および `Alloc` トレイトを実装した `Jemalloc` 型を提供
+- **tikv-jemalloc-ctl**：jemalloc制御・内省APIの高レベルラッパー（`mallctl*()` 関数群と `MALLCTL NAMESPACE`）
 
 ## 使用方法
 
@@ -43,7 +35,7 @@ tikv-jemallocator = "0.5"
 
 ### グローバルアロケータの設定
 
-`tikv_jemallocator::Jemalloc`をグローバルアロケータとして設定するには、プロジェクトに以下を追加：
+`tikv_jemallocator::Jemalloc` をグローバルアロケータとして設定するには、以下をプロジェクトに追加します：
 
 ```rust
 #[cfg(not(target_env = "msvc"))]
@@ -54,7 +46,7 @@ use tikv_jemallocator::Jemalloc;
 static GLOBAL: Jemalloc = Jemalloc;
 ```
 
-これだけです！この静的変数を定義すると、jemallocがそのプログラム内のRustコードによる全てのメモリ割り当てに使用されます。
+以上です！この静的変数を定義すると、同一プログラム内のRustコードによる全メモリ割り当てにjemallocが使用されます。
 
 ## 利点
 
@@ -62,14 +54,14 @@ jemallocは汎用malloc実装で、以下に重点を置いています：
 
 - メモリフラグメンテーションの低減
 - 高並列環境でのスケーラビリティ
-- 豊富な内省・制御機能の提供
+- 豊富な内省機能と制御機能の提供
 
-以下のシナリオで特に有用です：
+以下のシナリオで特に有効です：
 - 長時間動作するアプリケーション
 - メモリ集約型ワークロード
-- きめ細かいメモリ管理を要する高性能サービス
+- 細粒度メモリ管理を要する高性能サービス
 
 ## 互換性に関する注意
 
-jemallocはMSVCターゲット環境をサポートしていないため、WindowsでMSVCツールチェーンを使用する場合は利用できません。これがサンプルコードに`cfg(not(target_env = "msvc"))`条件を含める理由です。
-{/* 本行由工具自动生成,原文哈希值:f1e3515e93e417fa34b6776be2e69244 */}
+jemallocはMSVCターゲット環境をサポートしておらず、Windows上でMSVCツールチェーンを使用する場合は利用できません。これがサンプルコードに `cfg(not(target_env = "msvc"))` 条件を含める理由です。
+{/* 本行由工具自动生成,原文哈希值:97d5bd2f5d44a1facae329972bdc937f */}

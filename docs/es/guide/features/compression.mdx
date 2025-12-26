@@ -1,29 +1,29 @@
-# Compresión de respuesta
+# Compresión de Respuesta
 
-Middleware para comprimir el contenido de `Response`.
+Middleware para el procesamiento de compresión del contenido de `Response`.
 
-Ofrece soporte para tres formatos de compresión: `br`, `gzip`, `deflate`. Se pueden configurar prioridades y otros parámetros según las necesidades.
+Ofrece soporte para tres formatos de compresión: `br`, `gzip`, `deflate`. Se puede configurar la prioridad de cada método de compresión según las necesidades.
 
-## Compresión de datos en el protocolo HTTP
+## Compresión de Datos en el Protocolo HTTP
 
 1. Nivel de formato de archivo: tipos de archivo específicos utilizan algoritmos de compresión especializados
-2. Nivel de protocolo HTTP: compresión de recursos de extremo a extremo mediante codificación de contenido
+2. Nivel de protocolo HTTP: implementa transmisión de recursos comprimidos de extremo a extremo mediante codificación de contenido
 3. Nivel de conexión: compresión de datos entre nodos de conexión HTTP
 
-Para más información sobre compresión HTTP, consulta la [documentación de Mozilla Developer Network](https://developer.mozilla.org/es/docs/Web/HTTP/Compression).
+Para más información sobre compresión HTTP, consulta la [documentación de Mozilla Developer Network](https://developer.mozilla.org/es/docs/Web/HTTP/Guides/Compression).
 
-## Código de ejemplo
+## Código de Ejemplo
 
-import { Tab, Tabs } from 'rspress/theme';
-import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
-import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CompressionCode/>
+  ```rust file="<root>/codes/compression/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CompressionCargoCode/>
+  ```toml file="<root>/codes/compression/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:677ccdf714de83f86788e88c306cf8e4 */}
+{/* 本行由工具自动生成,原文哈希值:adfd8752c21601fac83a31d329cf6dae */}

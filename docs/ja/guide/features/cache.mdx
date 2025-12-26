@@ -2,17 +2,17 @@
 
 キャッシュ機能を提供するミドルウェア。
 
-Cacheミドルウェアは、`Response`内の`StatusCode`、`Headers`、`Body`に対してキャッシュ機能を提供します。既にキャッシュされた内容がある場合、次回のリクエスト処理時にCacheミドルウェアはメモリ内にキャッシュされた内容を直接クライアントに送信します。
+Cacheミドルウェアは、`Response`の`StatusCode`、`Headers`、`Body`に対してキャッシュ機能を提供します。すでにキャッシュされた内容については、次回リクエストを処理する際に、Cacheミドルウェアがメモリ内にキャッシュされた内容を直接クライアントに送信します。
 
-注意：このプラグインは`Body`が`ResBody::Stream`である`Response`をキャッシュしません。このタイプの`Response`に適用された場合、Cacheはこれらのリクエストを処理せず、エラーも引き起こしません。
+注意：このプラグインは、`Body`が`ResBody::Stream`である`Response`をキャッシュしません。このタイプの`Response`に適用された場合、Cacheはこれらのリクエストを処理せず、エラーも発生しません。
 
 ## 主な機能
 
-- `CacheIssuer`は割り当てられたキャッシュキーの抽象化を提供します。`RequestIssuer`はその実装の一つで、リクエストのURLのどの部分とリクエストの`Method`に基づいてキャッシュキーを生成するかを定義できます。独自のキャッシュキー生成ロジックを定義することも可能です。キャッシュキーは必ずしも文字列型である必要はなく、`Hash + Eq + Send + Sync + 'static`制約を満たす任意の型をキーとして使用できます。
+- `CacheIssuer`は、割り当てられたキャッシュキーの抽象化を提供します。`RequestIssuer`はその実装の一つで、リクエストのURLのどの部分とリクエストの`Method`に基づいてキャッシュキーを生成するかを定義できます。独自のキャッシュキー生成ロジックを定義することも可能です。キャッシュキーは文字列型である必要はなく、`Hash + Eq + Send + Sync + 'static`制約を満たす任意の型をキーとして使用できます。
 
-- `CacheStore`はデータの保存と取得操作を提供します。`MokaStore`は組み込みの`moka`ベースのメモリキャッシュ実装です。独自の実装方法を定義することも可能です。
+- `CacheStore`は、データの保存と取得操作を提供します。`MokaStore`は、`moka`をベースにした組み込みのメモリキャッシュ実装です。独自の実装方法を定義することもできます。
 
-- `Cache`は`Handler`を実装した構造体で、内部に`skipper`フィールドを持ち、キャッシュしないリクエストをスキップするように指定できます。デフォルトでは、`MethodSkipper`を使用して`Method::GET`以外のすべてのリクエストをスキップします。
+- `Cache`は`Handler`を実装した構造体で、内部には`skipper`フィールドもあり、キャッシュが不要なリクエストをスキップするように指定できます。デフォルトでは、`MethodSkipper`を使用して`Method::GET`以外のすべてのリクエストをスキップします。
 
   内部実装のサンプルコード：
 
@@ -31,7 +31,7 @@ Cacheミドルウェアは、`Response`内の`StatusCode`、`Headers`、`Body`�
 
 ## 他のフレームワークからの迅速な移行
 
-他のフレームワークのキャッシュメカニズムを使用したことがある場合、以下の概念マッピングがSalvoのキャッシュ実装に適応するのに役立ちます：
+以前に他のフレームワークのキャッシュメカニズムを使用したことがある場合、以下の概念マッピングがSalvoのキャッシュ実装への適応を助けます：
 
 ### Rustフレームワーク移行ガイド
 
@@ -63,7 +63,7 @@ Cacheミドルウェアは、`Response`内の`StatusCode`、`Headers`、`Body`�
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-- **Spring Bootからの移行**: Spring Bootの宣言型キャッシュはSalvoの明示的なミドルウェア設定に変換する必要があります：
+- **Spring Bootからの移行**: Spring Bootの宣言型キャッシュは、Salvoの明示的なミドルウェア設定に変換する必要があります：
 
   ```java
   // Spring Boot
@@ -76,7 +76,7 @@ Cacheミドルウェアは、`Response`内の`StatusCode`、`Headers`、`Body`�
   Router::with_path("books").hoop(Cache::new(MokaStore::new(100), custom_issuer))
   ```
 
-- **Express.jsからの移行**: Expressのキャッシュミドルウェアは概念的にSalvoと似ていますが、構文が異なります：
+- **Express.jsからの移行**: Expressのキャッシュミドルウェアは概念的にSalvoと類似していますが、構文が異なります：
 
   ```javascript
   // Express.js
@@ -88,26 +88,26 @@ Cacheミドルウェアは、`Response`内の`StatusCode`、`Headers`、`Body`�
   router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-他のフレームワークから移行する際に注意すべきSalvoキャッシュの重要な概念：
+他のフレームワークから移行する際には、Salvoキャッシュのいくつかの重要な概念に注意する必要があります：
 
 1. **キャッシュキー生成** - `CacheIssuer`インターフェースで制御
 2. **キャッシュストレージ** - `CacheStore`インターフェースで実装
 3. **キャッシュスキップロジック** - `skipper`メカニズムでカスタマイズ
 
-デフォルトでは、SalvoはGETリクエストのみをキャッシュし、これは多くのフレームワークのデフォルト動作と一致します。
+デフォルトでは、SalvoはGETリクエストのみをキャッシュします。これは多くのフレームワークのデフォルト動作と一致しています。
 
 _**サンプルコード**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import CacheSimpleCode from '../../../../codes_md/cache-simple/src/main.mdx';
-import CacheSimpleCargoCode from '../../../../codes_md/cache-simple/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CacheSimpleCode />
+  ```rust file="<root>/codes/cache-simple/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CacheSimpleCargoCode />
+  ```toml file="<root>/codes/cache-simple/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:6d2da1026941698375433a39b8d4924c */}
+{/* 本行由工具自动生成,原文哈希值:df2bc60555363c109d61ba033738ce41 */}

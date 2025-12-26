@@ -1,43 +1,42 @@
 # SSE 伺服器推送
 
-import { Tab, Tabs } from 'rspress/theme';
-import SseMainCode from '../../../../codes_md/sse/src/main.mdx';
-import SseCargoCode from '../../../../codes_md/sse/Cargo.mdx';
-import SseChatMainCode from '../../../../codes_md/sse-chat/src/main.mdx';
-import SseChatCargoCode from '../../../../codes_md/sse-chat/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## 什麼是 SSE
 
-Server-Sent Events (SSE) 是一種允許伺服器向客戶端推送資料的 Web 技術。與 WebSocket 不同，SSE 是單向通訊，只能從伺服器發送資料到客戶端，適合需要伺服器即時推送資料而客戶端無需頻繁發送資料的場景。SSE 基於 HTTP 協定，實現簡單，自帶斷線重連機制。
+伺服器推送事件（Server-Sent Events，SSE）是一種允許伺服器向客戶端推送資料的網路技術。與 WebSocket 不同，SSE 是單向通訊，只能從伺服器傳送資料到客戶端，適合需要伺服器即時推送資料而客戶端無需頻繁傳送資料的場景。SSE 基於 HTTP 協定，實作簡單，自帶斷線重連機制。
 
-提供對 `SSE` 支援的中介軟體.
+提供對 `SSE` 支援的中介軟體。
 
 _**範例程式碼**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SseMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SseCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/sse/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/sse/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-
 
 ## 聊天程式範例
 
 <Tabs>
-<Tab label="main.rs">
-<SseChatMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SseChatCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/sse-chat/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/sse-chat/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
 ## 與大型語言模型整合
 
 在使用 OpenAI SDK 或其他大型語言模型 SDK 接入 AI 時，串流返回結果（Stream）是常見的需求場景。SSE 提供了完美的解決方案，可以將 AI 生成的內容即時推送到前端，提供更好的使用者體驗。
 
-例如，當接入 OpenAI 的 Chat Completion API 並使用串流響應時，可以利用 Salvo 的 SSE 功能將 AI 生成的內容逐步發送到客戶端，避免使用者等待完整響應的延遲感。
-{/* 本行由工具自动生成,原文哈希值:c23a2cf16be4c8144514b22523991634 */}
+例如，當接入 OpenAI 的 Chat Completion API 並使用串流回應時，可以利用 Salvo 的 SSE 功能將 AI 生成的內容逐步傳送到客戶端，避免使用者等待完整回應的延遲感。
+{/* 本行由工具自动生成,原文哈希值:a6de063d6b9d92c4c8245bfb4028820b */}

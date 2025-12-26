@@ -1,33 +1,33 @@
-# Session
+# Sitzung
 
-import { Tab, Tabs } from 'rspress/theme';
-import SessionLoginMainCode from '../../../../codes_md/session-login/src/main.mdx';
-import SessionLoginCargoCode from '../../../../codes_md/session-login/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Middleware zur Unterstützung von `Session`.
 
-## Was ist eine Session
+## Was ist eine Session?
 
-Eine Session ist eine serverseitig gespeicherte Benutzerdatenmenge, die typischerweise zur Verfolgung des Benutzerstatus und zur Speicherung temporärer Daten verwendet wird. In Webanwendungen ermöglicht die Session die Lösung des zustandslosen Problems des HTTP-Protokolls, sodass der Server mehrere Anfragen desselben Benutzers erkennen kann.
+Eine Session ist ein serverseitig gespeicherter Datensatz eines Benutzers, der typischerweise zur Verfolgung des Benutzerstatus und zur Speicherung temporärer Daten verwendet wird. In Webanwendungen kann das Session-Konzept das zustandslose Problem des HTTP-Protokolls lösen, sodass der Server mehrere Anfragen desselben Benutzers identifizieren kann.
 
 ## Verwendung von Session in Salvo
 
-In Salvo bietet die Session-Middleware eine einfache API zum Lesen und Schreiben von Sitzungsdaten. Über `SessionDepot` kann die Sitzungsinstanz abgerufen werden, und mit Methoden wie `get`, `set` und `remove` können Sitzungsdaten verwaltet werden.
+In Salvo bietet die Session-Middleware eine einfache API zum Lesen und Schreiben von Sitzungsdaten. Über `SessionDepot` kann eine Sitzungsinstanz abgerufen werden, und mit Methoden wie `get`, `set` und `remove` können Sitzungsdaten verwaltet werden.
 
 ## Häufige Anwendungsfälle
 
-- Benutzerauthentifizierung und Login-Statusverwaltung
+- Benutzerauthentifizierung und Verwaltung des Anmeldestatus
 - Temporäre Speicherung von Formulardaten
 - Speicherung von Benutzereinstellungen
 
 _**Beispielcode**_
 
 <Tabs>
-<Tab label="main.rs">
-<SessionLoginMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SessionLoginCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/session-login/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/session-login/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:88af59e67d10a27580b5c0792b125c79 */}
+{/* 本行由工具自动生成,原文哈希值:f8de91b5a58a71598fb1dfee41bb6a6f */}

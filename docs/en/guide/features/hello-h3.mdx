@@ -16,12 +16,12 @@ HTTP/3 is particularly suitable for the following scenarios:
 
 - Applications on mobile devices and in unstable network environments
 - Real-time applications requiring low latency
-- Scenarios involving parallel downloads of many small files
-- Applications needing connection migration (e.g., switching from WiFi to cellular without interrupting the connection)
+- Scenarios involving parallel downloads of numerous small files
+- Applications needing connection migration (e.g., seamless switching from WiFi to cellular networks without connection interruption)
 
 ## Example Code
 
-The following is a simple HTTP/3 server example that supports both HTTP/3 (QUIC) and HTTPS (TCP) simultaneously:
+The following is a simple HTTP/3 server example that supports both HTTP/3 (QUIC) and HTTPS (TCP):
 
 ```rust
 use salvo::conn::rustls::{Keycert, RustlsConfig};
@@ -48,7 +48,7 @@ async fn main() {
     // Configure TLS settings using Rustls
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // Create a TCP listener with TLS encryption, listening on port 5800
+    // Create a TLS-encrypted TCP listener on port 5800
     let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
     // Create a QUIC listener and combine it with the TCP listener
@@ -71,12 +71,12 @@ async fn main() {
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 ```
 
-Since HTTP/3 is based on the QUIC protocol, and QUIC requires encryption using TLS 1.3, it's necessary to configure TLS certificates and keys. In Salvo, we use `RustlsConfig` to configure TLS.
+Since HTTP/3 is based on the QUIC protocol, which requires TLS 1.3 for encryption, TLS certificates and keys must be configured. In Salvo, we use `RustlsConfig` to configure TLS.
 
 ### Combining Listeners
 
 ```rust
-// Create a TCP listener with TLS encryption
+// Create a TLS-encrypted TCP listener
 let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
 // Create a QUIC listener and combine it with the TCP listener
@@ -86,17 +86,17 @@ let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.
     .await;
 ```
 
-This code is the core part of handling HTTP/3 in Salvo. It first creates a TLS-enabled TCP listener (for HTTP/1.1 and HTTP/2), then creates a QUIC listener (for HTTP/3). By using the `join` method, these two listeners are combined, allowing the server to handle requests from different protocols simultaneously.
+This code is the core part of handling HTTP/3 in Salvo. It first creates a TLS-enabled TCP listener (for HTTP/1.1 and HTTP/2), then creates a QUIC listener (for HTTP/3). The `join` method combines these two listeners, enabling the server to handle requests from different protocols simultaneously.
 
 ## Running the Example
 
-To run this example, you need available TLS certificates and private keys. In a development environment, you can use self-signed certificates. The complete example code can be found in the [Salvo GitHub repository](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
+To run this example, you need valid TLS certificates and private keys. In a development environment, self-signed certificates can be used. The complete example code can be found in the [Salvo GitHub repository](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
 
-It's important to note that many clients do not yet fully support HTTP/3, so it is essential for this server to support both HTTP/3 and HTTPS simultaneously.
+Note that since many clients do not yet fully support HTTP/3, it is essential for this server to support both HTTP/3 and HTTPS.
 
-## Important Notes
+## Considerations
 
 1. HTTP/3 requires TLS 1.3 support, so valid certificates and keys must be configured.
-2. Clients need to support the HTTP/3 protocol to utilize this feature; otherwise, they will fall back to HTTP/1.1 or HTTP/2.
-3. In a production environment, you should use certificates issued by a trusted Certificate Authority (CA), not self-signed certificates.
+2. Clients must support the HTTP/3 protocol to utilize this feature; otherwise, they will fall back to HTTP/1.1 or HTTP/2.
+3. In production environments, certificates issued by a trusted Certificate Authority (CA) should be used instead of self-signed certificates.
 {/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

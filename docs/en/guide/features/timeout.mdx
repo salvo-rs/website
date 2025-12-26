@@ -1,25 +1,25 @@
-import { Tab, Tabs } from 'rspress/theme';
-import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
-import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # Timeout Middleware
 
-Middleware that provides support for request timeouts.
+Provides middleware support for timeout handling.
 
 ## Use Cases
 
-In web services, some requests might take too long to process due to various reasons (e.g., slow database queries, slow responses from external services). To prevent these long-running requests from consuming server resources and affecting the processing of other requests, you can use timeout middleware to set a maximum processing time limit for requests. If this time limit is exceeded, the request will be automatically interrupted, and a timeout error will be returned.
+In web services, certain requests may take too long to process due to various reasons (such as slow database queries, delayed external service responses, etc.). To prevent these long-running requests from consuming server resources and affecting the processing of other requests, a timeout middleware can be used to set a maximum processing time limit for requests. If this time limit is exceeded, the request will be automatically terminated, and a timeout error will be returned.
 
-_**Example Code**_
+_**Example Code**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<TimeoutMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TimeoutCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/timeout/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/timeout/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
-In the example above, we created two handler functions: `fast`, which responds quickly, and `slow`, which delays for 6 seconds before responding. `Timeout::new(Duration::from_secs(5))` sets a 5-second timeout limit for all requests. When accessing the `/slow` path, the request will time out because its processing time exceeds the 5-second limit. Conversely, when accessing the `/fast` path, the request will be processed normally and return a result.
-{/* 本行由工具自动生成,原文哈希值:91c35a9e679382fc5ad89433063fa043 */}
+In the example above, we created two handler functions: a fast-responding `fast` and a `slow` that delays for 6 seconds before responding. A timeout limit of 5 seconds is set for all requests using `Timeout::new(Duration::from_secs(5))`. When accessing the `/slow` path, the request will time out because the processing time exceeds the 5-second limit. In contrast, when accessing the `/fast` path, the request will be processed normally and return a result.
+{/* 本行由工具自动生成,原文哈希值:f830ce34e2005274bbd246ff55e7c47e */}

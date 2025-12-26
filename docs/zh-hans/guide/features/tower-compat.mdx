@@ -1,8 +1,6 @@
 # 兼容 Tower 中间件
 
-import { Tab, Tabs } from 'rspress/theme';
-import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
-import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Salvo 通过 `tower-compat` 功能提供对 tower 生态的兼容性支持. 具体 API 请[查看文档](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
 
@@ -53,10 +51,12 @@ let router = Router::new().hoop(limit).get(hello);
 _**示例代码**_
 
 <Tabs>
-<Tab label="main.rs">
-<WithTowerMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WithTowerCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/with-tower/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/with-tower/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>

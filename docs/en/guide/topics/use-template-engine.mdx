@@ -1,29 +1,29 @@
 # Using Template Engines
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
-import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
-import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Salvo does not come with any built-in template engine, as preferences for template engine styles vary from person to person.
 
 At its core, a template engine is simply: data + template = string.
 
-Therefore, Salvo can support any template engine as long as it can render the final string.
+Therefore, as long as the final string can be rendered, any template engine can be supported.
 
-For example, here's how to use `askama`:
+For example, support for `askama`:
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/template-askama/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/template-askama/Cargo.toml"
+  ```
   </Tab>
-  <Tab label="template/hello.toml">
-    <TemplateCode/>
+  <Tab label="templates/hello.html">
+  ```html file="<root>/codes/template-askama/templates/hello.html"
+  ```
   </Tab>
 </Tabs>
 
-**Note**: For projects that aren't particularly complex, we highly recommend adopting a frontend-backend separation approach. Use more flexible and ecosystem-rich UI frameworks (such as React, Vue, Svelte, etc.) for frontend development, with Salvo serving as the backend API service. This approach offers higher development efficiency, clearer division of responsibilities between frontend and backend, and better aligns with modern web application development trends.
-{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}
+**Note**: For projects that are not particularly complex, we highly recommend adopting a frontend-backend separation approach. Use more flexible and ecosystem-rich UI frameworks (such as React, Vue, Svelte, etc.) to build the frontend, with Salvo serving as the backend API service. This approach leads to higher development efficiency, clearer responsibilities between frontend and backend, and better aligns with modern web application development trends.
+{/* 本行由工具自动生成,原文哈希值:241763674e531713bf3187516a914e3b */}

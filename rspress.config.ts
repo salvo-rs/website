@@ -1,30 +1,24 @@
-import * as path from 'node:path';
-import { defineConfig } from 'rspress/config';
-import { pluginFontOpenSans } from 'rspress-plugin-font-open-sans';
-import ga from 'rspress-plugin-google-analytics';
-import mermaid from 'rspress-plugin-mermaid';
+import { defineConfig } from '@rspress/core';
 import { pluginOpenGraph } from 'rsbuild-plugin-open-graph';
 
 const siteUrl = 'https://salvo.rs/';
 
 export default defineConfig({
-  plugins: [pluginFontOpenSans(),ga({
-    id: 'G-X828N63WC8',
-  },),mermaid(),
-  pluginOpenGraph({
-    title: 'Rspress',
-    type: 'website',
-    url: siteUrl,
-    image: 'https://salvo.rs/images/logo-text.svg',
-    description: 'Salvo Docs',
-    twitter: {
-      site: '@salvo',
-      card: 'summary_large_image',
-    },
-  }),
+  plugins: [
+    pluginOpenGraph({
+      title: 'Salvo - A perfect web framework written in Rust',
+      type: 'website',
+      url: siteUrl,
+      image: 'https://salvo.rs/images/logo-text.svg',
+      description: 'Salvo - A perfect web framework written in Rust',
+      // twitter: {
+      //   site: '@salvo',
+      //   card: 'summary_large_image',
+      // },
+    }),
 
-],
-  root: path.join(__dirname, 'docs'),
+  ],
+  root: 'docs',
   title: 'Salvo - A perfect web framework written in Rust',
   lang: 'en',
   locales: [
@@ -229,7 +223,7 @@ export default defineConfig({
       searchSuggestedQueryText: 'Prova a cercare',
     },
   ],
-  icon: 'docs/public/images/icons/icon.png',
+  icon: '/images/icons/icon.png',
   logo: {
     light: '/images/icons/icon.png',
     dark: '/images/icons/icon.png',
@@ -265,5 +259,13 @@ export default defineConfig({
       },
     ],
   },
+  markdown: {
+    mermaid: true,
+  },
+  themePlugins: {
+    ga: {
+      id: 'G-X828N63WC8',
+    }
+  }
 });
 

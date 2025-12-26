@@ -1,20 +1,16 @@
-# ファイルの送信
+# ファイル送信
 
-Salvoでは以下の方法でファイルを送信できます:
+Salvo では以下の方法でファイルを送信できます：
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ### NamedFile
 
-Salvoは`salvo::fs::NamedFile`を提供しており、これを使用してクライアントに効率的にファイルを送信できます。これはファイル全体をキャッシュに読み込むのではなく、リクエストの`Range`に基づいて部分的な内容を読み込み、クライアントに送信します。
+Salvo は `salvo::fs::NamedFile` を提供しており、これを使用してクライアントに効率的にファイルを送信できます。ファイル全体をキャッシュに読み込むのではなく、リクエストの `Range` に基づいて部分的な内容を読み込み、クライアントに送信します。
 
-実際、`Response::send_file`は`NamedFile`を簡略化して使用する方法です。ファイル送信をより細かく制御したい場合は、`NamedFileBuilder`を使用できます。
+実際には、`Response::send_file` は `NamedFile` の簡易的な使用法です。ファイル送信をより細かく制御する必要がある場合は、`NamedFileBuilder` を使用できます。
 
-`NamedFile::builder`で`NamedFileBuilder`を作成できます:
+`NamedFile::builder` を使用して `NamedFileBuilder` を作成できます：
 
 ```rust
 #[handler]
@@ -23,7 +19,7 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-いくつかの設定を行った後、ファイルを送信できます:
+設定を行った後、ファイルを送信できます：
 
 ```rust
 #[handler]
@@ -32,29 +28,33 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-### 静的ファイルの提供
+### 静的ファイル提供
 
-静的ファイルや埋め込まれたファイルをサービスとして提供するミドルウェアです。
+静的ファイルや埋め込みファイルをサービスとして提供するミドルウェアです。
 
-- `StaticDir`はローカルの静的フォルダをサポートしています。複数のフォルダのリストを引数として渡せます。例:
+- `StaticDir` はローカルの静的フォルダをサポートします。複数のフォルダのリストを引数として渡すことができます。例：
 <Tabs>
   <Tab label="main.rs">
-        <StaticDirListCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  最初のフォルダに対応するファイルが見つからない場合、2番目のフォルダを探します。
+  最初のフォルダに対応するファイルが見つからない場合、2番目のフォルダで検索します。
 
-- `rust-embed`のサポートも提供しています。例:
+- `rust-embed` のサポートを提供します。例：
 <Tabs>
   <Tab label="main.rs">
-        <StaticEmbedFilesCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  `with_fallback`を使用すると、ファイルが見つからない場合に代わりに使用するファイルを設定できます。これはシングルページアプリケーションなどで有用です。
-{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}
+  `with_fallback` を使用すると、ファイルが見つからない場合に指定したファイルで代替できます。これは一部のシングルページアプリケーション（SPA）で有用です。
+{/* 本行由工具自动生成,原文哈希值:19063883c45fafc63ab4ff3751ac9892 */}

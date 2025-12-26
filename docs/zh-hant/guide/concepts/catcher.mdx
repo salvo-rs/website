@@ -1,12 +1,10 @@
-# 錯誤捕獲器
+# 捕獲器
 
-import { Tab, Tabs } from 'rspress/theme';
-import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
-import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-當 `Response` 的狀態碼顯示錯誤，且頁面中的 `Body` 為空時，salvo 會嘗試使用 `Catcher` 來捕捉此錯誤，並顯示一個友善的錯誤頁面。
+當 `Response` 的狀態碼為錯誤狀態，且頁面中的 `Body` 為空時，salvo 會嘗試使用 `Catcher` 捕獲此錯誤，並顯示一個友好的錯誤頁面。
 
-您可以透過 `Catcher::default()` 返回一個系統預設的 `Catcher`，然後將其添加到 `Service` 上。
+可以透過 `Catcher::default()` 返回一個系統預設的 `Catcher`，然後將其添加到 `Service` 中。
 
 ```rust
 use salvo::catcher::Catcher;
@@ -14,18 +12,20 @@ use salvo::catcher::Catcher;
 Service::new(router).catcher(Catcher::default());
 ```
 
-預設的 `Catcher` 支援以 `XML`、`JSON`、`HTML`、`Text` 等格式發送錯誤頁面。
+預設的 `Catcher` 支援以 `XML`、`JSON`、`HTML`、`Text` 格式發送錯誤頁面。
 
-您可以透過為這個預設的 `Catcher` 添加 `hoop` 的方式，將自訂的錯誤捕捉程序附加到 `Catcher` 上。這些錯誤捕捉程序仍然是 `Handler` 類型。
+可以透過為此預設的 `Catcher` 添加 `hoop` 的方式，將自訂的錯誤捕獲程序附加到 `Catcher` 上。此錯誤捕獲程序本身仍是一個 `Handler`。
 
-您可以透過 `hoop` 為 `Catcher` 添加多個自訂的錯誤捕捉程序。自訂的錯誤處理程序在處理完錯誤後，可以呼叫 `FlowCtrl::skip_next` 方法跳過後續的錯誤程序，提前返回。
+您可以透過 `hoop` 為 `Catcher` 添加多個自訂的錯誤捕獲程序。自訂的錯誤處理程序在處理錯誤後，可以呼叫 `FlowCtrl::skip_next` 方法跳過後續的錯誤處理程序，提前返回。
 
 <Tabs>
   <Tab label="main.rs">
-    <CustomErrorPageCode/>
+  ```rust file="<root>/codes/custom-error-page/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CustomErrorPageCargoCode/>
+  ```toml file="<root>/codes/custom-error-page/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f904ca235acae374d6a236a1bd7a027a */}
+{/* 本行由工具自动生成,原文哈希值:6d187ebda60dfda18718df8cd81080ad */}

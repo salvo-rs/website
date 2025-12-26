@@ -1,50 +1,50 @@
-# Estado Affix - Datos compartidos en la solicitud
+# Estado Afijo Compartir datos en solicitudes
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
-import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-El middleware Affix State se utiliza para agregar datos compartidos al Depot.
-Para utilizar la funcionalidad Affix State, es necesario habilitar el feature `affix-state` en Cargo.toml.
+El middleware Estado Afijo se utiliza para agregar datos compartidos al Depot.
+Para utilizar la funcionalidad Estado Afijo, es necesario habilitar la feature `affix-state` en Cargo.toml.
 
 ## Análisis de funcionalidad
-Affix State proporciona una forma sencilla de compartir datos durante el procesamiento de solicitudes. Permite:
+Estado Afijo proporciona una forma sencilla de compartir datos durante el procesamiento de solicitudes. Te permite:
 
-Inyectar configuraciones globales o datos compartidos durante la configuración de rutas
-Acceder a estos datos desde cualquier manejador a través del Depot
-Soporta cualquier tipo clonable como dato de estado
+Inyectar configuraciones globales o datos compartidos durante la fase de configuración de rutas
+Acceder a estos datos a través del Depot en cualquier manejador
+Soporta cualquier tipo clonable como datos de estado
 
-## Comparación con otros frameworks para comprensión rápida
-| Framework | Lenguaje | Gestión de estado |
-|-----------|----------|-------------------|
-| Salvo (Affix State) | Rust | Almacenamiento y acceso mediante Depot, soporta múltiples tipos |
-| Axum | Rust | Estado almacenado en Extension, similar pero con diferente implementación |
-| Actix-web | Rust | Usa App Data y Web::Data para compartir estado |
-| Gin | Go | Utiliza context.Set y context.Get para acceder a datos |
-| Echo | Go | Gestiona estado compartido con context.Set y context.Get |
-| Spring | Java | Usa ApplicationContext o anotación @Bean para gestión de dependencias |
-| Quarkus | Java | Emplea CDI y mecanismos de inyección de dependencias |
-| Express.js | JavaScript | Almacena estado global en app.locals o req.app.locals |
-| Nest.js | JavaScript | Sistema de inyección de dependencias para servicios compartidos |
+## Comparación con otros marcos para una comprensión rápida del concepto
+| Marco | Lenguaje | Método de gestión de estado |
+|------|------|-------------|
+| Salvo (Estado Afijo) | Rust | Almacena y accede a través del Depot, soporta múltiples tipos |
+| Axum | Rust | Almacena estado a través de Extension, similar pero con diferente uso |
+| Actix-web | Rust | Utiliza App Data y Web::Data para compartir estado |
+| Gin | Go | Usa context.Set y context.Get para almacenar y recuperar datos |
+| Echo | Go | Utiliza context.Set y context.Get para gestionar estado compartido |
+| Spring | Java | Usa ApplicationContext o anotación @Bean para gestionar dependencias |
+| Quarkus | Java | Utiliza CDI y mecanismos de inyección de dependencias |
+| Express.js | JavaScript | Usa app.locals o req.app.locals para almacenar estado global |
+| Nest.js | JavaScript | Utiliza sistema de inyección de dependencias para gestionar servicios compartidos |
 | Koa.js | JavaScript | Usa ctx.state para almacenar estado a nivel de solicitud |
 
-## Casos de uso comunes
+## Escenarios de uso comunes
 
 - Compartir pool de conexiones a base de datos
 - Compartir configuración de aplicación
 - Compartir instancias de caché
 - Compartir cliente de API
-- Seguimiento de contadores o estado global
+- Seguimiento de contadores globales o estado
 
-La ventaja de Affix State radica en su simplicidad y flexibilidad, permitiendo compartir fácilmente cualquier tipo de datos entre diferentes rutas y manejadores sin necesidad de código repetitivo.
+La ventaja de Estado Afijo radica en su simplicidad y flexibilidad, permitiendo compartir fácilmente cualquier tipo de datos entre diferentes rutas y manejadores sin necesidad de código repetitivo extenso.
 _**Código de ejemplo**_
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/affix-state/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/affix-state/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:983c6e0b4ca9ff5e194da5a41d8d46f7 */}
+{/* 本行由工具自动生成,原文哈希值:5dfff8f8a8238344561f9f829341312c */}

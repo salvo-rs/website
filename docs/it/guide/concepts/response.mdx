@@ -1,14 +1,14 @@
-# Risposta
+# Response
 
-Nel framework `Handler`, la [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) viene passata come parametro:
-* La struttura `Response` incapsula tutti i componenti di una risposta HTTP, fornendo un'API completa per costruire e manipolare le risposte HTTP
-* Supporta uno stile di chiamata concatenata (es. `res.status_code(200).body("Hello")`), facilitando la costruzione fluida delle risposte
+Nel `Handler`, [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) viene passata come parametro:
+* La struttura `Response` incapsula tutti i componenti di una risposta HTTP, fornendo un'API completa per costruire e manipolare le risposte HTTP.
+* Supporta uno stile di chiamate concatenate (ad es. `res.status_code(200).body("Hello")`), facilitando la costruzione fluida delle risposte.
 * Le funzionalità principali includono:
     * Impostazione del codice di stato e degli header
     * Gestione del corpo della risposta (supporta stringhe, byte, file e dati in streaming)
     * Gestione dei Cookie
-    * Multiple modalità di rendering dei contenuti
-* La struttura utilizza un modello di riferimento mutabile, restituendo un riferimento a sé stessa tramite `&mut self`, permettendo agli handler di costruire e personalizzare facilmente le risposte HTTP per soddisfare varie esigenze dei servizi web
+    * Multipli metodi di rendering dei contenuti
+* La struttura utilizza un pattern di riferimento mutabile, restituendo un riferimento a sé stessa tramite `&mut self`, permettendo agli handler di costruire e personalizzare facilmente le risposte HTTP per soddisfare varie esigenze dei servizi web.
 
 ```rust
 #[handler]
@@ -17,7 +17,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-Dopo che il server riceve una richiesta dal client, qualsiasi `Handler` o middleware corrispondente può scrivere dati nella `Response`. In alcuni casi, ad esempio quando un middleware vuole impedire l'esecuzione dei middleware e `Handler` successivi, è possibile utilizzare `FlowCtrl`:
+Dopo che il server riceve una richiesta dal client, qualsiasi `Handler` e middleware corrispondente può scrivere dati nella `Response`. In alcuni casi, ad esempio se un middleware desidera impedire l'esecuzione dei middleware e `Handler` successivi, è possibile utilizzare `FlowCtrl`:
 
 ```rust
 #[handler]
@@ -31,13 +31,13 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
 Scrivere dati nella `Response` è molto semplice:
 
-- Scrittura di dati di testo semplice
+- Scrivere dati di testo semplice
 
     ```rust
     res.render("Hello world!");
     ```
 
-- Scrittura di dati serializzati in JSON
+- Scrivere dati serializzati in JSON
 
     ```rust
     use serde::Serialize;
@@ -52,16 +52,18 @@ Scrivere dati nella `Response` è molto semplice:
     ```
 
 :::warning
-Se si chiama più volte il metodo `render` per scrivere dati JSON, questi non verranno uniti in un unico oggetto JSON, ma concatenati come frammenti di testo indipendenti, potenzialmente generando un formato JSON non valido. Se è necessario restituire più dati, è consigliabile combinarli in un unico oggetto prima della serializzazione o gestire la logica manualmente.
+Se si chiama più volte il metodo `render` per scrivere dati JSON, questi non verranno uniti in un unico oggetto JSON, ma concatenati come frammenti di testo indipendenti nell'ordine di chiamata, potenzialmente risultando in un formato JSON non valido. Se è necessario restituire più dati, è consigliabile combinarli in un singolo oggetto prima della serializzazione, oppure gestire la logica manualmente.
 :::
 
-- Scrittura di HTML
+
+- Scrivere HTML
     
     ```rust
     res.render(Text::Html("<html><body>hello</body></html>"));
     ```
 
 ## Scrittura di errori HTTP
+
 
 - Utilizzando `render` è possibile scrivere informazioni dettagliate sull'errore nella `Response`.
 
@@ -77,8 +79,8 @@ Se si chiama più volte il metodo `render` per scrivere dati JSON, questi non ve
     res.status_code(StatusCode::BAD_REQUEST);
     ```
 
-## Reindirizzamento a un altro URL
-- Il metodo `render` può essere utilizzato per scrivere una risposta di reindirizzamento nella `Response`, navigando verso un nuovo URL. Quando si chiama il metodo Redirect::found, viene impostato il codice di stato HTTP a 302 (Found), indicando un reindirizzamento temporaneo. 
+## Reindirizzamento ad un altro URL
+- Il metodo `render` può essere utilizzato per scrivere nella `Response` una risposta di reindirizzamento verso un nuovo URL. Quando si chiama il metodo `Redirect::found`, questo imposta il codice di stato HTTP a 302 (Found), indicando un reindirizzamento temporaneo.
     ```rust
     use salvo::prelude::*;
 
@@ -91,5 +93,28 @@ Se si chiama più volte il metodo `render` per scrivere dati JSON, questi non ve
 
 ## ResBody
 
-Il tipo Body restituito dalla Response è `ResBody`, un'enumerazione che in caso di errore viene impostata su `ResBody::Error`, contenente informazioni sull'errore per una gestione posticipata. `StatusError` in realtà non implementa `Writer`, con lo scopo di permettere la personalizzazione della visualizzazione nel `Catcher`.
+Il tipo di Body restituito da Response è `ResBody`, un'enumerazione che in caso di errore viene impostata su `ResBody::Error`. Questo contiene le informazioni sull'errore, permettendo una gestione posticipata. `StatusError` in realtà non implementa `Writer`, con lo scopo di permettere di personalizzare la modalità di visualizzazione nel proprio `Catcher`.
+
+
+
+# Panoramica dei metodi della struttura Response
+
+| Categoria | Metodo | Descrizione |
+|------|------|------|
+| **Creazione** | `new()` / `with_cookies()` | Crea una nuova risposta |
+| **Codice di stato** | `status_code()` | Imposta il codice di stato |
+| **Header** | `headers()/headers_mut()` | Ottiene gli header |
+| | `set_headers()/add_header()` | Imposta/Aggiunge un header |
+| | `content_type()` | Ottiene il tipo di contenuto |
+| **Versione HTTP** | `version()/version_mut()` | Ottiene/Modifica la versione HTTP |
+| **Corpo della risposta** | `body()/body_mut()` | Imposta/Ottiene il corpo della risposta |
+| | `replace_body()/take_body()` | Sostituisce/Estrae il corpo della risposta |
+| | `write_body()` | Scrive dati nel corpo della risposta |
+| | `stream()/channel()` | Risposta in streaming/Crea un canale di invio |
+| **Gestione Cookie** | `cookies()/cookie()` | Ottiene i cookies/Un cookie specifico |
+| | `add_cookie()/remove_cookie()` | Aggiunge/Rimuove un cookie |
+| **Risposta di contenuto** | `render()` | Renderizza il contenuto |
+| | `stuff()` | Imposta il codice di stato e renderizza il contenuto |
+| | `send_file()` | Invia un file |
+| **Controllo stato** | `is_stamped()` | Controlla se la risposta è pronta per essere scritta indietro |
 {/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

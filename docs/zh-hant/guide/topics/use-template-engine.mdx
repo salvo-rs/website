@@ -1,29 +1,29 @@
 # 使用模板引擎
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
-import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
-import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Salvo 框架並未內建任何模板引擎，畢竟每個人偏好的模板引擎風格不盡相同。
+Salvo 並未內建任何模板引擎，畢竟每個人偏好的模板引擎風格各有不同。
 
-模板引擎的核心原理其實就是：數據 + 模板 = 字符串。
+模板引擎的本質可以歸納為：資料 + 模板 = 字串。
 
-因此，只要能渲染出最終字符串結果，理論上可以支援任何模板引擎。
+因此，只要能渲染出最終的字串，即可支援任意的模板引擎。
 
-以下是以 `askama` 為例的實作方式：
+例如對 `askama` 的支援：
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/template-askama/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/template-askama/Cargo.toml"
+  ```
   </Tab>
-  <Tab label="template/hello.toml">
-    <TemplateCode/>
+  <Tab label="templates/hello.html">
+  ```html file="<root>/codes/template-askama/templates/hello.html"
+  ```
   </Tab>
 </Tabs>
 
-**注意事項**：若非特別複雜的專案，我們更推薦採用前後端分離的開發模式。使用生態更完善、靈活性更高的前端框架（如 React、Vue、Svelte 等）來構建前端界面，而 Salvo 則專注於後端 API 服務。這種架構不僅開發效率更高，前後端職責劃分更清晰，也更符合現代 Web 應用的開發潮流。
-{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}
+**注意**：若非特別複雜的專案，我們更推薦採用前後端分離的開發方式，使用更靈活、生態更完善的 UI 框架（如 React、Vue、Svelte 等）來建構前端，並將 Salvo 作為後端 API 服務。這種方式不僅開發效率更高，前後端職責更清晰，也更符合現代 Web 應用的開發趨勢。
+{/* 本行由工具自动生成,原文哈希值:241763674e531713bf3187516a914e3b */}

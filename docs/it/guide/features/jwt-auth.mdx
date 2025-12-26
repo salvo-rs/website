@@ -1,32 +1,32 @@
 # Autenticazione JWT
 
-JWT (JSON Web Token) è uno standard aperto (RFC 7519) per trasmettere informazioni in modo sicuro tra le parti. È un metodo compatto e URL-safe per rappresentare dichiarazioni sotto forma di oggetto JSON, utilizzate tipicamente per autenticazione e scambio di informazioni.
+JWT (JSON Web Token) è uno standard aperto (RFC 7519) utilizzato per trasmettere informazioni in modo sicuro tra le parti. È un metodo compatto e sicuro per URL che rappresenta dichiarazioni sotto forma di oggetto JSON, comunemente impiegato per l'autenticazione e lo scambio di informazioni.
 
-Un JWT è composto da tre parti:
-- **Header** - Specifica il tipo di token e l'algoritmo di firma utilizzato
-- **Payload** - Contiene le dichiarazioni (claims) come ID utente, ruoli, data di scadenza, ecc.
-- **Signature** - Utilizzata per verificare che il messaggio non sia stato alterato durante la trasmissione
+Il JWT è composto da tre parti:
+- **Intestazione (Header)** - Specifica il tipo di token e l'algoritmo di firma utilizzato
+- **Carico utile (Payload)** - Contiene le dichiarazioni (claims), come ID utente, ruoli, data di scadenza, ecc.
+- **Firma (Signature)** - Utilizzata per verificare che il messaggio non sia stato alterato durante la trasmissione
 
-Flusso tipico di utilizzo JWT nell'autenticazione:
-1. Dopo il login, il server genera un token JWT
+Utilizzo tipico del JWT nel flusso di autenticazione:
+1. Dopo il login dell'utente, il server genera un token JWT
 2. Il token viene restituito al client e memorizzato (solitamente in localStorage o cookie)
-3. Nelle richieste successive, il client include il token nell'header Authorization
+3. Nelle richieste successive, il client include il token nell'intestazione Authorization
 4. Il server verifica la validità del token e autorizza l'accesso
 
-Fornisce un middleware per l'autenticazione JWT.
+Fornisce un middleware per la verifica dell'autenticazione JWT.
 
-_**Codice di esempio**_
+_**Codice di esempio**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
-import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <JwtAuthCode/>
+  ```rust file="<root>/codes/jwt-auth/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <JwtAuthCargoCode/>
+  ```toml file="<root>/codes/jwt-auth/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:4d9196c8fb1dedaa4b7291d33747b794 */}
+{/* 本行由工具自动生成,原文哈希值:44ba61e41e4c4e0937054ac0328a42ab */}

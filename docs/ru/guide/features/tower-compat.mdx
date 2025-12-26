@@ -1,14 +1,12 @@
-# Совместимость с Tower middleware
+# Совместимость с промежуточным ПО Tower
 
-import { Tab, Tabs } from 'rspress/theme';
-import WithTowerMainCode from '../../../../codes_md/with-tower/src/main.mdx';
-import WithTowerCargoCode from '../../../../codes_md/with-tower/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Salvo предоставляет поддержку совместимости с экосистемой Tower через функцию `tower-compat`. Подробности API смотрите в [документации](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
+Salvo обеспечивает поддержку совместимости с экосистемой Tower через функцию `tower-compat`. Подробную информацию об API смотрите в [документации](https://docs.rs/salvo_extra/latest/salvo_extra/tower_compat/index.html).
 
-## Ключевые концепции Tower
+## Основные концепции Tower
 
-Tower — это библиотека абстракций сервисов, основанная на двух основных трейтах:
+Tower — это библиотека абстракций сервисов, основанная на двух ключевых трейтах:
 
 ### Трейт Service
 
@@ -34,18 +32,18 @@ pub trait Layer<S> {
 }
 ```
 
-`Layer` используется для оборачивания сервисов и добавления дополнительной функциональности, аналогично middleware в Salvo.
+`Layer` используется для обёртывания сервисов и добавления дополнительной функциональности, аналогично промежуточному ПО в Salvo.
 
 ## Поддержка совместимости в Salvo
 
-Salvo предоставляет две ключевые реализации трейтов для совместимости с экосистемой Tower:
+Salvo предоставляет две ключевые реализации трейтов для обеспечения совместимости с экосистемой Tower:
 
-- **TowerLayerCompat**: преобразует Tower `Layer` в Salvo `Handler`, позволяя использовать его как Hoop (middleware)
-- **TowerServiceCompat**: преобразует Tower `Service` в Salvo `Handler`
+- **TowerLayerCompat**: преобразует `Layer` из Tower в `Handler` Salvo, позволяя использовать его как Hoop (промежуточное ПО)
+- **TowerServiceCompat**: преобразует `Service` из Tower в `Handler` Salvo
 
 Пример использования:
 ```rust
-// Используем RateLimitLayer из Tower и преобразуем в совместимый с Salvo формат через метод compat()
+// Использование RateLimitLayer из Tower с преобразованием в совместимый формат Salvo через метод compat()
 let limit = RateLimitLayer::new(5, Duration::from_secs(30)).compat();
 let router = Router::new().hoop(limit).get(hello);
 ```
@@ -53,11 +51,13 @@ let router = Router::new().hoop(limit).get(hello);
 _**Пример кода**_
 
 <Tabs>
-<Tab label="main.rs">
-<WithTowerMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WithTowerCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/with-tower/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/with-tower/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:6fb897bea3b41a227187c544462f2368 */}
+{/* 本行由工具自动生成,原文哈希值:e4430fa65292b4543e3cd6f2010c4932 */}

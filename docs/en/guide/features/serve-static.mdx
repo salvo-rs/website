@@ -1,59 +1,59 @@
 # Static Server
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware for serving static files or embedded files. For detailed API, please [refer to the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Middleware that serves static files or embedded files. For detailed API, please [view the documentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
 ## Use Cases
-Static file serving has wide applications in web development:
-- Serving static assets for websites, such as CSS, JavaScript, and image files.
-- Hosting Single Page Applications (SPAs).
+Static file servers have a wide range of applications in web development:
+- Serving static resources for websites, such as CSS, JavaScript, images, etc.
+- Hosting Single Page Applications (SPAs)
 - Distributing documents, media files, downloadable content, etc.
-- Acting as a complete hosting solution for simple websites.
+- Serving as a complete hosting solution for simple websites
 
-## Key Features
+## Main Features
 
-- `StaticDir` provides support for serving static files from local directories. You can pass a list of multiple directories as arguments. For example:
+- `StaticDir` provides support for serving static files from local directories. It can accept a list of multiple directories as parameters. For example:
 
 <Tabs>
   <Tab label="main.rs">
-<StaticDirListMainCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  If a corresponding file is not found in the first directory, it will be searched for in the second directory.
+  If a file is not found in the first directory, it will be searched for in the second directory.
 
-`StaticDir` supports prioritizing sending pre-compressed files if they exist. For instance, if `index.html`, `index.html.gz`, `index.html.zst`, and `index.html.br` all exist, then `index.html.gz`, `index.html.zst`, and `index.html.br` are considered pre-compressed versions of `index.html`. The appropriate compressed file will be sent based on the request information (e.g., `Accept-Encoding` header).
+`StaticDir` supports serving pre-compressed files when available. For example, if files like `index.html`, `index.html.gz`, `index.html.zst`, and `index.html.br` exist, then `index.html.gz`, `index.html.zst`, and `index.html.br` are considered pre-compressed versions of `index.html`. The appropriate compressed file will be served based on the request information.
 
-- Provides support for `rust-embed`, for example:
+- Provides support for `rust-embed`. For example:
 
-## Pros and Cons of `rust-embed`
+## Pros and Cons of rust-embed
 
 **Pros:**
-- Embeds static files directly into the binary, simplifying the deployment process.
-- Eliminates the need to manage static files separately in the production environment.
-- Potentially offers better performance (memory access vs. disk I/O).
-- More secure, as files cannot be accidentally modified.
+- Compiles static files into the binary, simplifying deployment.
+- No need to manage static files separately in production environments.
+- Potentially better performance (memory access vs. disk I/O).
+- Enhanced security, as files cannot be accidentally modified.
 
 **Cons:**
 - Increases the size of the application binary.
 - Updating static content requires recompiling and redeploying the entire application.
-- Not suitable for large static assets that change frequently.
+- Not suitable for large static content that changes frequently.
 
 <Tabs>
   <Tab label="main.rs">
-<StaticEmbedFilesMainCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-You can set a default page using `default`. The `with_fallback` and `fallback` options allow you to specify a file to serve when the requested file is not found. This is particularly useful for certain Single Page Applications (SPAs).
-{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}
+You can set a default page to display using the `default` option. The `with_fallback` and `fallback` methods allow you to specify a fallback file to serve when a requested file is not found, which is useful for certain single-page website applications.
+{/* 本行由工具自动生成,原文哈希值:42f7ce7c0dec48cc37b3300fbc400bb8 */}

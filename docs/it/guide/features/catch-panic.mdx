@@ -1,6 +1,6 @@
 # Catturare i Panic nelle Richieste
 
-Catch Panic viene utilizzato per catturare i crash che si verificano durante l'elaborazione delle richieste da parte del programma. Per i dettagli sulle API, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
+Catch Panic viene utilizzato per intercettare i crash che si verificano durante l'elaborazione delle richieste da parte del programma in esecuzione. Per le API specifiche, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
 
 > **Nota**: Per utilizzare `CatchPanic`, è necessario abilitare la feature `catch-panic` in `Cargo.toml`:
 > ```toml
@@ -9,9 +9,9 @@ Catch Panic viene utilizzato per catturare i crash che si verificano durante l'e
 
 ## Introduzione al Middleware
 
-`CatchPanic` è un middleware progettato per catturare i panic nei gestori. Quando si verifica un panic durante l'elaborazione di una richiesta, questo middleware lo intercetta e restituisce una risposta 500 Internal Server Error, evitando che l'intero server si arresti.
+`CatchPanic` è un middleware progettato per catturare i panic negli handler. Quando si verifica un panic durante l'elaborazione di una richiesta, questo middleware lo intercetta e scrive un errore 500 Internal Server Error nella risposta, evitando il crash completo del server.
 
-**Importante**: Questo middleware dovrebbe essere utilizzato come primo middleware per garantire che possa catturare i panic provenienti da altri middleware o gestori.
+**Nota importante**: Questo middleware dovrebbe essere utilizzato come primo middleware per garantire la cattura dei panic provenienti da altri middleware o handler.
 
 ## Utilizzo Base
 
@@ -21,7 +21,7 @@ use salvo_extra::catch_panic::CatchPanic;
 
 #[handler]
 async fn hello() {
-    panic!("errore di panic!");
+    panic!("panic error!");
 }
 
 #[tokio::main]
@@ -48,7 +48,7 @@ use tower::ServiceBuilder;
 use tower_http::catch_panic::CatchPanicLayer;
 
 async fn panic_handler() -> &'static str {
-    panic!("errore di panic!");
+    panic!("panic error!");
 }
 
 #[tokio::main]
@@ -69,7 +69,7 @@ async fn main() {
 
 ### Gin (Go)
 
-In Go, con il framework Gin, è simile al middleware Recovery:
+Nel framework Gin per Go, simile al middleware Recovery:
 
 ```go
 package main
@@ -82,7 +82,7 @@ func main() {
     r := gin.Default() // Include già il middleware Recovery di default
     
     r.GET("/", func(c *gin.Context) {
-        panic("errore di panic!")
+        panic("panic error!")
     })
     
     r.Run(":8080")
@@ -91,16 +91,16 @@ func main() {
 
 ## Codice di Esempio
 
-import { Tab, Tabs } from 'rspress/theme';
-import CatchPanicCode from '../../../../codes_md/catch-panic/src/main.mdx';
-import CatchPanicCargoCode from '../../../../codes_md/catch-panic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CatchPanicCode/>
+  ```rust file="<root>/codes/catch-panic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CatchPanicCargoCode/>
+  ```toml file="<root>/codes/catch-panic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:216fd74acc010904e48610d9b567866d */}
+{/* 本行由工具自动生成,原文哈希值:ad03110400c39a35184d54e9554276b5 */}

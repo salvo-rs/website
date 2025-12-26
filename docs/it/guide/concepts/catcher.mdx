@@ -1,12 +1,10 @@
 # Catcher
 
-import { Tab, Tabs } from 'rspress/theme';
-import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
-import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Se lo stato della `Response` è un codice di errore e il `Body` della pagina è vuoto, Salvo tenterà di catturare questo errore utilizzando il `Catcher`, mostrando una pagina di errore user-friendly.
+Se lo stato della `Response` è un codice di errore e il `Body` nella pagina è vuoto, Salvo tenterà di utilizzare il `Catcher` per intercettare questo errore e visualizzare una pagina di errore amichevole.
 
-È possibile ottenere un `Catcher` predefinito del sistema chiamando `Catcher::default()`, per poi aggiungerlo al `Service`.
+È possibile ottenere un `Catcher` predefinito del sistema tramite `Catcher::default()`, quindi aggiungerlo al `Service`.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -14,18 +12,20 @@ use salvo::catcher::Catcher;
 Service::new(router).catcher(Catcher::default());
 ```
 
-Il `Catcher` predefinito supporta l'invio della pagina di errore nei formati `XML`, `JSON`, `HTML` e `Text`.
+Il `Catcher` predefinito supporta l'invio di pagine di errore nei formati `XML`, `JSON`, `HTML` e `Text`.
 
-È possibile aggiungere gestori di errore personalizzati al `Catcher` tramite il metodo `hoop`. Questi gestori rimangono comunque di tipo `Handler`.
+È possibile aggiungere gestori di errore personalizzati al `Catcher` tramite il metodo `hoop` su questo `Catcher` predefinito. Questi gestori di errore rimangono comunque `Handler`.
 
-Puoi aggiungere più gestori di errore personalizzati al `Catcher` utilizzando `hoop`. I gestori personalizzati possono saltare i successivi chiamando il metodo `FlowCtrl::skip_next` dopo aver gestito l'errore, ritornando anticipatamente.
+È possibile aggiungere più gestori di errore personalizzati al `Catcher` tramite `hoop`. I gestori di errore personalizzati possono chiamare il metodo `FlowCtrl::skip_next` dopo aver gestito l'errore per saltare i successivi gestori e restituire anticipatamente il risultato.
 
 <Tabs>
   <Tab label="main.rs">
-    <CustomErrorPageCode/>
+  ```rust file="<root>/codes/custom-error-page/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CustomErrorPageCargoCode/>
+  ```toml file="<root>/codes/custom-error-page/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f904ca235acae374d6a236a1bd7a027a */}
+{/* 本行由工具自动生成,原文哈希值:6d187ebda60dfda18718df8cd81080ad */}

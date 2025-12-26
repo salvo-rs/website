@@ -1,36 +1,36 @@
 # Flash
 
-Middleware que fornece a funcionalidade de Mensagens Flash.
+Middleware que fornece funcionalidade de Mensagens Flash.
 
-`FlashStore` oferece operações de armazenamento e recuperação de dados. `CookieStore` armazena os dados em `Cookies`, enquanto `SessionStore` armazena os dados na `Sessão`. O `SessionStore` deve ser usado em conjunto com a funcionalidade de `sessão`.
+`FlashStore` oferece operações de leitura e escrita de dados. `CookieStore` armazena dados em `Cookies`. Já `SessionStore` armazena dados na `Sessão`, e deve ser utilizado em conjunto com a funcionalidade de `session`.
 
 _**Código de Exemplo**_
 
-### Exemplo de Armazenamento em Cookie
+### Exemplo com Armazenamento em Cookie
 
-import { Tab, Tabs } from 'rspress/theme';
-import FlashCookieStoreCode from '../../../../codes_md/flash-cookie-store/src/main.mdx';
-import FlashCookieStoreCargoCode from '../../../../codes_md/flash-cookie-store/Cargo.mdx';
-import FlashSessionStoreCode from '../../../../codes_md/flash-session-store/src/main.mdx';
-import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <FlashCookieStoreCode/>
+  ```rust file="<root>/codes/flash-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <FlashCookieStoreCargoCode/>
+  ```toml file="<root>/codes/flash-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-### Exemplo de Armazenamento em Sessão
+### Exemplo com Armazenamento em Sessão
 
 <Tabs>
   <Tab label="main.rs">
-    <FlashSessionStoreCode/>
+  ```rust file="<root>/codes/flash-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <FlashSessionStoreCargoCode/>
+  ```toml file="<root>/codes/flash-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:65b5daf888b80bc91076aaaee868b95c */}
+{/* 本行由工具自动生成,原文哈希值:1ee7f7b07cbfa41abc73377fd6dca086 */}

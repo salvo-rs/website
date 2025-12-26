@@ -4,32 +4,24 @@ title: Rust Serialisierungs-Framework
 
 # Serde: Rust Serialisierungs- und Deserialisierungs-Framework
 
-import { LinkCard } from '@theme';
-
-<LinkCard
-  href="https://docs.rs/serde/latest/serde/"
-  title="serde"
-  description="serde"
-/>
-
-Serde ist eine zentrale Bibliothek im Rust-Ökosystem, die ein effizientes und universelles Framework für Serialisierung und Deserialisierung bereitstellt. Der Name setzt sich aus "**Ser**ialization" und "**De**serialization" zusammen.
+[Serde](https://docs.rs/serde/latest/serde/) ist eine Kernbibliothek im Rust-Ökosystem, die ein effizientes und universelles Framework für Serialisierung und Deserialisierung bereitstellt. Der Name leitet sich aus der Kombination von "**Ser**ialization" und "**De**serialization" ab.
 
 ## Hauptmerkmale
 
-- **Universalität**: Unterstützt verschiedene Datenformate wie JSON, YAML, TOML, MessagePack etc.
-- **Abstraktion ohne Kosten**: Zur Kompilierzeit generierter Code ist so effizient wie handgeschriebener Code
+- **Universalität**: Unterstützt verschiedene Datenformate wie JSON, YAML, TOML, MessagePack usw.
+- **Nullkosten-Abstraktion**: Zur Kompilierungszeit generierter Code ist genauso effizient wie handgeschriebener Code
 - **Flexibilität**: Anpassbares Serialisierungs- und Deserialisierungsverhalten
-- **Starke Typisierung**: Nutzt Rusts Typsystem zur Gewährleistung der Datenintegrität
-- **Weite Verbreitung**: Standardbibliothek für Datenaustausch im Rust-Ökosystem
+- **Starke Typisierung**: Nutzt Rusts Typsystem zur Sicherstellung der Datenintegrität
+- **Breite Anwendung**: Standardbibliothek für Datenaustausch im Rust-Ökosystem
 
 ## Funktionsweise
 
 Das Herzstück von Serde ist sein Zwischendarstellungs-Design (Intermediate Representation), das den Serialisierungs- und Deserialisierungsprozess in zwei Schritte unterteilt:
 
-1. **Serialisierung**: Rust-Datenstrukturen werden in eine universelle Zwischendarstellung und dann in das Zielformat umgewandelt
-2. **Deserialisierung**: Eingabeformate werden in eine universelle Zwischendarstellung und dann in Rust-Datenstrukturen umgewandelt
+1. **Serialisierung**: Rust-Datenstrukturen werden in eine universelle Zwischendarstellung und dann in das Zielformat konvertiert
+2. **Deserialisierung**: Eingabeformate werden in die universelle Zwischendarstellung und dann in Rust-Datenstrukturen umgewandelt
 
-Dieses Design ermöglicht die Hinzufügung neuer Datenformate ohne Änderungen an den Anwendungen, die Serde nutzen.
+Dieses Design ermöglicht das Hinzufügen neuer Datenformate ohne Änderungen an den Anwendungen, die Serde verwenden.
 
 ## Grundlegende Verwendung
 
@@ -38,12 +30,12 @@ Dieses Design ermöglicht die Hinzufügung neuer Datenformate ohne Änderungen a
 ```toml
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0" # oder andere Formatbibliotheken wie serde_yaml, toml etc.
+serde_json = "1.0" # oder andere Formatbibliotheken wie serde_yaml, toml usw.
 ```
 
 ### Verwendung von Ableitungsmakros
 
-Die gängigste Methode ist die Verwendung von Ableitungsmakros zur automatischen Implementierung der Serialisierungs- und Deserialisierungsmerkmale für Strukturen:
+Die häufigste Verwendung ist die automatische Implementierung von Serialisierungs- und Deserialisierungsmerkmalen für Strukturen mithilfe von Ableitungsmakros:
 
 ```rust
 use serde::{Serialize, Deserialize};
@@ -57,11 +49,11 @@ struct Point {
 fn main() {
     let point = Point { x: 1, y: 2 };
 
-    // Point in einen JSON-String umwandeln
+    // Point in JSON-String konvertieren
     let serialized = serde_json::to_string(&point).unwrap();
     println!("Serialisiertes Ergebnis: {}", serialized); // Ausgabe: {"x":1,"y":2}
 
-    // JSON-String zurück in Point umwandeln
+    // JSON-String zurück in Point konvertieren
     let deserialized: Point = serde_json::from_str(&serialized).unwrap();
     println!("Deserialisiertes Ergebnis: {:?}", deserialized); // Ausgabe: Point { x: 1, y: 2 }
 }
@@ -90,22 +82,22 @@ struct User {
 
 ### Unterstützte Datenformate
 
-Serde ist mit verschiedenen Datenformaten integriert, wobei jedes Format über ein eigenes Crate verfügt:
+Serde ist mit verschiedenen Datenformaten integriert, jedes Format hat ein eigenes Crate:
 
 - **serde_json**: JSON-Format
 - **serde_yaml**: YAML-Format
 - **toml**: TOML-Format
 - **bincode**: Binärformat
-- **postcard**: Platzoptimiertes Binärformat
+- **postcard**: Speicheroptimiertes Binärformat
 - **rmp/rmp-serde**: MessagePack-Format
 - **ciborium**: CBOR-Format
-- ...und weitere Formate
+- ... und weitere Formate
 
 ## Fortgeschrittene Verwendung
 
-### Manuelle Implementierung von Merkmalen
+### Manuelle Merkmalsimplementierung
 
-Für spezielle Anforderungen können die `Serialize`- und `Deserialize`-Merkmale manuell implementiert werden:
+Für spezielle Anforderungen können die Merkmale `Serialize` und `Deserialize` manuell implementiert werden:
 
 ```rust
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
@@ -146,14 +138,14 @@ struct DateTimeRef {
 }
 ```
 
-## Lernressourcen
+## Lernen und Ressourcen
 
-Serde ist eine funktionsreiche Bibliothek, und dieser Artikel deckt nur die Grundlagen ab. Um Serde voll auszuschöpfen, wird empfohlen:
+Serde ist eine funktionsreiche Bibliothek, dieser Artikel deckt nur die Grundlagen ab. Um Serde voll auszuschöpfen, wird empfohlen:
 
 1. Die [offizielle Serde-Dokumentation](https://serde.rs/) für detaillierte APIs und Beispiele zu besuchen
-2. Das [GitHub-Repository](https://github.com/serde-rs/serde) für den Quellcode und die neuesten Updates zu konsultieren
+2. Das [GitHub-Repository](https://github.com/serde-rs/serde) für Quellcode und aktuelle Updates zu konsultieren
 
-## Fazit
+## Schlusswort
 
-Als grundlegende Bibliothek im Rust-Ökosystem bietet Serde leistungsstarke und flexible Werkzeuge für den Datenaustausch. Durch die Beherrschung von Serde können Sie mühelos verschiedene Datenformate verarbeiten und Ihre Anwendungen leistungsfähiger und interoperabler gestalten.
-{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}
+Serde ist als Grundlagenbibliothek im Rust-Ökosystem ein leistungsstarkes und flexibles Werkzeug für den Datenaustausch. Durch die Beherrschung von Serde können Sie mühelos verschiedene Formate für Datenaustauschanforderungen verarbeiten und Ihre Anwendungen robuster und interoperabler gestalten.
+{/* 本行由工具自动生成,原文哈希值:02cf744a3fbae09d654887c13e131157 */}

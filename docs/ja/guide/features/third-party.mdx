@@ -1,4 +1,4 @@
-# サードパーティWebSocketプラグイン
+# サードパーティ WebSocket プラグイン
 
 ## salvo-websocket
 
@@ -58,7 +58,7 @@ impl WebSocketHandler for User {
 }
 ```
 
-### 接続処理メソッドの記述
+### 接続処理メソッドの作成
 
 ```rust
 #[tokio::main]
@@ -86,5 +86,5 @@ async fn user_connected(req: &mut Request, res: &mut Response) -> Result<(), Sta
 }
 ```
 
-詳細は直接[サンプルコード](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)をご参照ください
-{/* 本行由工具自动生成,原文哈希值:860920905ee70ff25a056625fc9b22af */}
+詳細については、[サンプルコード](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)を直接ご覧ください
+{/* 本行由工具自动生成,原文哈希值:ba1de026d713e14724d985e19918646a */}

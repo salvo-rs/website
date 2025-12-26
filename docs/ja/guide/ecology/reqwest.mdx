@@ -4,28 +4,20 @@ title: Rust HTTPクライアントライブラリ
 
 # Reqwest: Rust HTTPクライアントライブラリ
 
-import { LinkCard } from '@theme';
+[Reqwest](https://docs.rs/reqwest/latest/reqwest/) は高レベルなHTTPクライアントライブラリで、HTTPリクエストの処理を簡素化し、多くの便利な機能を提供します：
 
-<LinkCard
-  href="https://docs.rs/reqwest/latest/reqwest/"
-  title="reqwest"
-  description="reqwest"
-/>
-
-Reqwestは高レベルなHTTPクライアントライブラリで、HTTPリクエストの処理フローを簡素化し、多くの便利な機能を提供します：
-
-- 非同期および同期APIのサポート
-- 各種リクエストボディの処理：プレーンテキスト、JSON、URLエンコードフォーム、マルチパートフォーム
+- 非同期および同期（ブロッキング）APIのサポート
+- 様々なリクエストボディの処理：プレーンテキスト、JSON、URLエンコードフォーム、マルチパートフォーム
 - カスタマイズ可能なリダイレクトポリシー
 - HTTPプロキシサポート
-- デフォルトでTLS暗号化を使用
+- デフォルトでのTLS暗号化
 - Cookie管理
 
 ## 基本的な使い方
 
 ### GETリクエストの送信
 
-単一のリクエストには`get`ショートカットメソッドが使えます：
+単一のリクエストには、`get` ショートカットメソッドを使用できます：
 
 ```rust
 let body = reqwest::get("https://www.rust-lang.org")
@@ -36,7 +28,7 @@ let body = reqwest::get("https://www.rust-lang.org")
 println!("body = {body:?}");
 ```
 
-> 注意：複数のリクエストを実行する予定がある場合は、`Client`を作成して再利用し、コネクションプーリングの利点を活用するのが良いでしょう。
+> 注意：複数のリクエストを実行する予定がある場合は、`Client` を作成して再利用し、コネクションプールの利点を活かすことをお勧めします。
 
 ```rust
 let client = reqwest::Client::new();
@@ -47,7 +39,7 @@ let res = client.get("https://www.rust-lang.org")
 
 ### POSTリクエストの送信
 
-`body()`メソッドでリクエストボディを設定できます：
+`body()` メソッドを使用してリクエストボディを設定できます：
 
 ```rust
 let client = reqwest::Client::new();
@@ -59,10 +51,10 @@ let res = client.post("http://httpbin.org/post")
 
 ### フォームデータ
 
-フォームデータの送信は一般的な要件で、フォームデータにシリアライズ可能な任意の型が使用できます：
+フォームデータの送信は一般的な要件であり、フォームデータにシリアライズ可能な任意の型を使用できます：
 
 ```rust
-// これは`foo=bar&baz=quux`というボディのPOSTリクエストを送信します
+// これは `foo=bar&baz=quux` というボディを持つPOSTリクエストを送信します
 let params = [("foo", "bar"), ("baz", "quux")];
 let client = reqwest::Client::new();
 let res = client.post("http://httpbin.org/post")
@@ -73,10 +65,10 @@ let res = client.post("http://httpbin.org/post")
 
 ### JSONデータ
 
-`json`メソッドで簡単にJSONデータを送信できます（`json`機能が必要）：
+`json` メソッドを使用すると、簡単にJSONデータを送信できます（`json` 機能が必要です）：
 
 ```rust
-// これは`{"lang":"rust","body":"json"}`というボディのPOSTリクエストを送信します
+// これは `{"lang":"rust","body":"json"}` というボディを持つPOSTリクエストを送信します
 let mut map = HashMap::new();
 map.insert("lang", "rust");
 map.insert("body", "json");
@@ -90,21 +82,21 @@ let res = client.post("http://httpbin.org/post")
 
 ### レスポンスの処理
 
-レスポンスは複数の方法で処理できます：
+レスポンスは様々な方法で処理できます：
 
 ```rust
 let res = client.get("https://www.rust-lang.org").send().await?;
 
-// ステータスコードを取得
+// ステータスコードの取得
 let status = res.status();
 
-// レスポンスヘッダーを取得
+// レスポンスヘッダーの取得
 let content_type = res.headers().get("content-type").unwrap();
 
 // レスポンスボディをテキストとして読み取る
 let body = res.text().await?;
 
-// またはJSONとしてパース
+// またはJSONとしてパースする
 let json: serde_json::Value = res.json().await?;
 ```
 
@@ -112,7 +104,7 @@ let json: serde_json::Value = res.json().await?;
 
 ### リダイレクトポリシー
 
-デフォルトでは、クライアントはHTTPリダイレクトを自動的に処理し、最大10回のリダイレクトに従います。`ClientBuilder`でこの動作をカスタマイズできます：
+デフォルトでは、クライアントは最大10回のリダイレクトを自動的に処理します。`ClientBuilder` を使用してこの動作をカスタマイズできます：
 
 ```rust
 let custom_client = reqwest::Client::builder()
@@ -122,7 +114,7 @@ let custom_client = reqwest::Client::builder()
 
 ### Cookieサポート
 
-`ClientBuilder`でセッションCookieの自動保存と送信を有効化できます：
+`ClientBuilder` を使用して、セッションCookieの自動保存と送信を有効にできます：
 
 ```rust
 let client = reqwest::Client::builder()
@@ -132,11 +124,11 @@ let client = reqwest::Client::builder()
 
 ### プロキシ設定
 
-システムプロキシはデフォルトで有効で、環境変数からHTTPまたはHTTPSプロキシ設定を探します：
+システムプロキシはデフォルトで有効になっており、環境変数からHTTPまたはHTTPSプロキシ設定を検索します：
 
-- `HTTP_PROXY`または`http_proxy`：HTTP接続のプロキシ
-- `HTTPS_PROXY`または`https_proxy`：HTTPS接続のプロキシ
-- `ALL_PROXY`または`all_proxy`：両方の接続のプロキシ
+- `HTTP_PROXY` または `http_proxy`：HTTP接続用のプロキシ
+- `HTTPS_PROXY` または `https_proxy`：HTTPS接続用のプロキシ
+- `ALL_PROXY` または `all_proxy`：両方の接続用のプロキシ
 
 コードで明示的にプロキシを設定することもできます：
 
@@ -182,21 +174,21 @@ let client = reqwest::Client::builder()
 
 ## オプション機能
 
-Reqwestは複数のオプション機能を提供し、Cargoの機能で有効/無効にできます：
+Reqwestは、Cargoの機能を通じて有効または無効にできる様々なオプション機能を提供します：
 
-- `http2`（デフォルト有効）：HTTP/2サポート
-- `default-tls`（デフォルト有効）：HTTPSのTLSサポートを提供
+- `http2`（デフォルトで有効）：HTTP/2のサポート
+- `default-tls`（デフォルトで有効）：HTTPS用のTLSサポートを提供
 - `rustls-tls`：rustlsを使用したTLS機能を提供
-- `blocking`：同期クライアントAPIを提供
-- `json`：JSONのシリアライズ/デシリアライズ機能を提供
+- `blocking`：同期（ブロッキング）クライアントAPIを提供
+- `json`：JSONのシリアライズとデシリアライズ機能を提供
 - `multipart`：マルチパートフォーム機能を提供
 - `cookies`：Cookieセッションサポートを提供
-- `gzip`、`brotli`、`deflate`、`zstd`：各種レスポンスボディの解凍をサポート
+- `gzip`、`brotli`、`deflate`、`zstd`：様々なレスポンスボディの解凍をサポート
 - `socks`：SOCKS5プロキシサポートを提供
 
-## 同期API
+## 同期（ブロッキング）API
 
-非同期操作が必要ない場合、同期APIが使用できます（`blocking`機能が必要）：
+非同期操作が必要ない場合は、同期APIを使用できます（`blocking` 機能が必要です）：
 
 ```rust
 let body = reqwest::blocking::get("https://www.rust-lang.org")?.text()?;
@@ -206,4 +198,4 @@ let res = client.post("http://httpbin.org/post")
     .json(&map)
     .send()?;
 ```
-{/* 本行由工具自动生成,原文哈希值:32a7dacba91cf386fa534ceb5b25de71 */}
+{/* 本行由工具自动生成,原文哈希值:1611fb82ca7d0449dc610129105100bc */}

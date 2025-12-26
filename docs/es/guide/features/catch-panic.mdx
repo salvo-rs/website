@@ -1,17 +1,17 @@
-# Capturar Panic en las Solicitudes
+# Capturar Pánico en las Solicitudes
 
-Catch Panic se utiliza para capturar fallos que ocurren durante el procesamiento de solicitudes en el programa. Para ver la API específica, consulta la [documentación](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
+Catch Panic se utiliza para capturar bloqueos que ocurren durante el procesamiento de solicitudes mientras el programa se ejecuta. Para conocer la API específica, [consulta la documentación](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
 
-> **Nota**: Para usar `CatchPanic`, es necesario habilitar la característica `catch-panic` en `Cargo.toml`:
+> **Nota**: Para usar `CatchPanic`, debes habilitar la característica `catch-panic` en `Cargo.toml`:
 > ```toml
 > salvo= { version = "xxx", features = ["catch-panic"] }
 > ```
 
 ## Introducción al Middleware
 
-`CatchPanic` es un middleware diseñado para capturar panics en los manejadores. Cuando ocurre un panic durante el procesamiento de una solicitud, este middleware lo captura y escribe un error 500 Internal Server Error en la respuesta, evitando que el servidor completo colapse.
+`CatchPanic` es un middleware diseñado para capturar pánicos en los manejadores. Cuando ocurre un pánico durante el procesamiento de una solicitud, este middleware lo captura y escribe un error 500 Internal Server Error en la respuesta, evitando que el servidor completo colapse.
 
-**Importante**: Este middleware debe ser el primero en la cadena para asegurar que pueda capturar panics tanto en otros middlewares como en los manejadores.
+**Importante**: Este middleware debe utilizarse como el primer middleware para garantizar que pueda capturar pánicos provenientes de otros middlewares o manejadores.
 
 ## Uso Básico
 
@@ -69,7 +69,7 @@ async fn main() {
 
 ### Gin (Go)
 
-En el framework Gin de Go, el middleware equivalente es Recovery:
+En el framework Gin de Go, similar al middleware Recovery:
 
 ```go
 package main
@@ -79,7 +79,7 @@ import (
 )
 
 func main() {
-    r := gin.Default() // Incluye Recovery por defecto
+    r := gin.Default() // Incluye el middleware Recovery por defecto
     
     r.GET("/", func(c *gin.Context) {
         panic("panic error!")
@@ -91,16 +91,16 @@ func main() {
 
 ## Código de Ejemplo
 
-import { Tab, Tabs } from 'rspress/theme';
-import CatchPanicCode from '../../../../codes_md/catch-panic/src/main.mdx';
-import CatchPanicCargoCode from '../../../../codes_md/catch-panic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CatchPanicCode/>
+  ```rust file="<root>/codes/catch-panic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CatchPanicCargoCode/>
+  ```toml file="<root>/codes/catch-panic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:216fd74acc010904e48610d9b567866d */}
+{/* 本行由工具自动生成,原文哈希值:ad03110400c39a35184d54e9554276b5 */}

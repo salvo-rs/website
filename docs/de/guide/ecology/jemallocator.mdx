@@ -1,32 +1,24 @@
 ---
-title: Rust-Speicherzuweiser-Alternativen
+title: Rust-Speicherallokator-Alternativen
 ---
 
-# Jemallocator: Rust jemalloc Speicherzuweiser
-
-import { LinkCard } from '@theme';
-
-<LinkCard
-  href="https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/"
-  title="tikv-jemallocator"
-  description="tikv-jemallocator"
-/>
+# Jemallocator: Rust jemalloc Speicherallokator-Alternative
 
 :::tip
-Der Standardzuweiser gibt manchmal Speicher nicht rechtzeitig frei. Die Verwendung von jemallocator wird empfohlen.
+Der Standardallokator gibt manchmal Speicher nicht rechtzeitig frei. Es wird empfohlen, (jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] als globalen Allokator anstelle des Standardallokators zu verwenden.
 :::
 
-jemallocator ist eine Bibliothek, die mit dem jemalloc-Speicherzuweiser verknüpft ist. Sie stellt den `Jemalloc`-Typ bereit, der die Allokator-API implementiert und als `#[global_allocator]` festgelegt werden kann.
+(jemallocator)[https://docs.rs/tikv-jemallocator/latest/tikv_jemallocator/] ist eine Bibliothek, die mit dem jemalloc-Speicherallokator verknüpft ist. Sie stellt den `Jemalloc`-Unit-Typ bereit, der die Allokator-API implementiert und als `#[global_allocator]` festgelegt werden kann.
 
-`tikv-jemallocator` ist das Nachfolgeprojekt von `jemallocator`. Abgesehen vom Namen sind beide Crates identisch. Für neue Projekte wird die `tikv-xxx`-Version empfohlen.
+`tikv-jemallocator` ist der Nachfolger von `jemallocator`. Diese beiden Crates sind identisch, abgesehen von ihren Namen. Für neue Projekte wird die `tikv-xxx`-Version empfohlen.
 
-## jemalloc-Ökosystem
+## Das jemalloc-Ökosystem
 
-Das jemalloc-Ökosystem besteht aus folgenden Crates:
+Das jemalloc-Unterstützungsökosystem besteht aus folgenden Crates:
 
-- **tikv-jemalloc-sys**: Baut und verknüpft jemalloc und stellt die rohen C-Bindungen bereit.
+- **tikv-jemalloc-sys**: Baut jemalloc und verlinkt es, stellt die rohen C-Bindings dafür bereit.
 - **tikv-jemallocator**: Stellt den `Jemalloc`-Typ bereit, der die `GlobalAlloc`- und `Alloc`-Traits implementiert.
-- **tikv-jemalloc-ctl**: Hochwertige Abstraktion der jemalloc-Steuerungs- und Introspections-APIs (die `mallctl*()`-Funktionsfamilie und der `MALLCTL NAMESPACE`).
+- **tikv-jemalloc-ctl**: Eine hochwertige Abstraktion für die jemalloc-Steuerungs- und Introspections-API (die `mallctl*()`-Funktionsfamilie und `MALLCTL NAMESPACE`).
 
 ## Verwendung
 
@@ -43,7 +35,7 @@ tikv-jemallocator = "0.5"
 
 ### Als globalen Allokator festlegen
 
-Um `tikv_jemallocator::Jemalloc` als globalen Allokator festzulegen, fügen Sie folgenden Code zu Ihrem Projekt hinzu:
+Um `tikv_jemallocator::Jemalloc` als globalen Allokator festzulegen, fügen Sie Ihrem Projekt folgenden Code hinzu:
 
 ```rust
 #[cfg(not(target_env = "msvc"))]
@@ -58,18 +50,18 @@ Das war's! Sobald diese statische Variable definiert ist, wird jemalloc für all
 
 ## Vorteile
 
-jemalloc ist eine allgemeine malloc-Implementierung mit Fokus auf:
+jemalloc ist eine allgemeine malloc-Implementierung, die sich auf Folgendes konzentriert:
 
 - Reduzierung von Speicherfragmentierung
-- Skalierbarkeit in hochgradig parallelen Szenarien
+- Skalierbarkeit unter hoher Nebenläufigkeit
 - Bereitstellung umfangreicher Introspections- und Steuerungsmöglichkeiten
 
-Besonders nützlich ist es in folgenden Fällen:
+Besonders nützlich ist es in folgenden Szenarien:
 - Lang laufende Anwendungen
 - Speicherintensive Workloads
-- Hochleistungsdienste mit feingranularer Speicherverwaltung
+- Hochleistungsdienste, die eine feingranulare Speicherverwaltung erfordern
 
-## Kompatibilitätshinweise
+## Hinweise zur Kompatibilität
 
-jemalloc unterstützt die MSVC-Zielumgebung nicht und ist daher unter Windows mit dem MSVC-Toolchain nicht verfügbar. Deshalb wird in den Beispielen die Bedingung `cfg(not(target_env = "msvc"))` verwendet.
-{/* 本行由工具自动生成,原文哈希值:f1e3515e93e417fa34b6776be2e69244 */}
+jemalloc unterstützt die MSVC-Zielumgebung nicht und ist daher unter Windows mit der MSVC-Toolchain nicht verfügbar. Deshalb sind in den Beispielcodes die Bedingungen `cfg(not(target_env = "msvc"))` enthalten.
+{/* 本行由工具自动生成,原文哈希值:97d5bd2f5d44a1facae329972bdc937f */}

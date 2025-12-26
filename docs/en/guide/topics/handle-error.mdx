@@ -2,7 +2,7 @@
 
 ## Common Error Handling Approaches in Rust Applications
 
-Rust's error handling differs from languages like Java—it doesn't have constructs like `try...catch`. The conventional approach is to define a global error handling type at the application level:
+Error handling in Rust differs from languages like Java; it lacks constructs like `try...catch`. The typical approach is to define a global error handling type at the application level:
 
 ```rust
 use thiserror::Error;
@@ -21,21 +21,21 @@ pub enum AppError {
 pub type AppResult<T> = Result<T, AppError>;
 ```
 
-Here, the `thiserror` crate is used, which conveniently helps define custom error types and simplifies code. For brevity, an `AppResult` type is also defined.
+Here, the `thiserror` library is used, which facilitates defining custom error types and simplifies code. For brevity, an `AppResult` type alias is also defined.
 
 ### thiserror vs. anyhow
 
-In Rust's error handling ecosystem, two commonly used crates are `thiserror` and `anyhow`:
+In the Rust error handling ecosystem, two commonly used libraries are `thiserror` and `anyhow`:
 
-- **thiserror**: Suitable for library developers to define clear error types. It uses derive macros to help implement the `std::error::Error` trait for custom error types while allowing customization of error display. When building a library or needing to provide users with well-defined error types, `thiserror` is the better choice.
+- **thiserror**: Suitable for library developers to define clear error types. It uses derive macros to help implement the `std::error::Error` trait for custom error types while allowing you to define error representations. When building a library or providing clear error types to users, `thiserror` is the better choice.
 
-- **anyhow**: Designed for application developers, providing a generic error type `anyhow::Error` that can encapsulate any error implementing the `std::error::Error` trait. It focuses more on error propagation rather than definition, making it ideal for application-layer code. It allows quick conversion of various errors into `anyhow::Error`, reducing boilerplate.
+- **anyhow**: Geared toward application developers, it provides a generic error type `anyhow::Error` that can encapsulate any error implementing the `std::error::Error` trait. It focuses more on error propagation than definition, making it particularly suitable for application-layer code. You can quickly convert various errors into `anyhow::Error`, reducing the need for boilerplate code.
 
-In some scenarios, you might use both crates: `thiserror` for defining error types in libraries and `anyhow` for handling and propagating those errors in applications.
+In some scenarios, you might use both libraries: define error types with `thiserror` in libraries and handle and propagate these errors with `anyhow` in applications.
 
 ## Error Handling in Handlers
 
-In Salvo, `Handler`s often encounter various errors, such as database connection failures, file access issues, or network errors. For these cases, the aforementioned error handling approach can be applied:
+In Salvo, `Handler`s often encounter various errors, such as database connection errors, file access errors, network connection errors, etc. For these types of errors, the aforementioned error handling approach can be applied:
 
 ```rust
 #[handler]
@@ -44,7 +44,7 @@ async fn home() -> AppResult<()> {
 }
 ```
 
-Here, `home` directly returns an `AppResult<()>`. But how should this error be displayed? We need to implement the `Writer` trait for the custom `AppResult` error type, where we can define error presentation:
+Here, `home` directly returns an `AppResult<()>`. But how should this error be displayed? We need to implement the `Writer` trait for the custom error type `AppResult`, where we can decide how to display the error:
 
 ```rust
 #[async_trait]
@@ -55,7 +55,7 @@ impl Writer for AppError {
 }
 ```
 
-In Salvo, a `Handler` can return a `Result` as long as both the `Ok` and `Err` variants implement the `Writer` trait.
+In Salvo, a `Handler` can return a `Result`, provided that both the `Ok` and `Err` types in the `Result` implement the `Writer` trait.
 
 ### Error Handling with anyhow
 
@@ -71,7 +71,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-To use the anyhow feature, enable it in Cargo.toml:
+To use the anyhow feature, enable Salvo's `anyhow` feature in Cargo.toml:
 
 ```toml
 [dependencies]
@@ -89,9 +89,9 @@ async fn home() -> anyhow::Result<impl Writer> {
 }
 ```
 
-Errors often contain sensitive information that shouldn't be exposed to regular users—doing so would be insecure and a privacy breach. However, developers or administrators might prefer seeing raw error details for debugging.
+Errors often contain sensitive information, which generally shouldn't be visible to regular users for security and privacy reasons. However, if you're a developer or site administrator, you might prefer errors to be fully exposed, revealing the most accurate error information.
 
-Since the `write` method provides access to `Request` and `Depot` references, implementing conditional error display becomes straightforward:
+As shown, in the `write` method, we can access references to `Request` and `Depot`, making it convenient to implement the above approach:
 
 ```rust
 #[async_trait]
@@ -109,7 +109,7 @@ impl Writer for AppError {
 
 ## Displaying Error Pages
 
-Salvo's built-in error pages suffice for most cases, rendering Html, Json, or Xml based on the request's data type. However, there may be scenarios where custom error page displays are desired.
+Salvo's built-in error pages meet requirements in most cases, displaying Html, Json, or Xml pages based on the request's data type. However, there are situations where custom error page displays are still desired.
 
 This can be achieved by implementing a custom `Catcher`. For detailed instructions, refer to the [`Catcher`](../concepts/catcher.html) section.
 {/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

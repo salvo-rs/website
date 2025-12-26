@@ -2,7 +2,7 @@
 
 ## Rust 應用中的常規錯誤處理方式
 
-Rust 的錯誤處理不同於 Java 等語言，它沒有 `try...catch` 這種語法，正常的做法是在應用程式層面定義全局的錯誤處理類型：
+Rust 的錯誤處理有別於 Java 等語言，它沒有 `try...catch` 這類語法，常見做法是在應用程式層面定義全域的錯誤處理類型：
 
 ```rust
 use thiserror::Error;
@@ -21,30 +21,30 @@ pub enum AppError {
 pub type AppResult<T> = Result<T, AppError>;
 ```
 
-這裡使用了 `thiserror` 這個函式庫，它可以方便地定義你自己的自訂錯誤類型，簡化程式碼。為了簡化書寫，順便定義一個 `AppResult`。
+此處使用了 `thiserror` 函式庫，它能便捷地定義自訂錯誤類型以簡化程式碼。為書寫簡潔，同時定義了 `AppResult` 型別別名。
 
 ### thiserror 與 anyhow
 
-在 Rust 錯誤處理的生態中，兩個常用的函式庫是 `thiserror` 和 `anyhow`：
+在 Rust 錯誤處理生態中，兩個常用的函式庫是 `thiserror` 和 `anyhow`：
 
-- **thiserror**: 適用於函式庫開發者，用於定義清晰的錯誤類型。它透過派生巨集幫助您為自訂錯誤類型實現 `std::error::Error` trait，同時允許您定義錯誤的表示方式。當您構建一個函式庫或者需要為使用者提供清晰的錯誤類型時，`thiserror` 是更好的選擇。
+- **thiserror**：適用於函式庫開發者，用於定義清晰的錯誤類型。透過派生巨集協助您為自訂錯誤類型實現 `std::error::Error` trait，同時允許定義錯誤的呈現方式。當您建置函式庫或需要為使用者提供明確錯誤類型時，`thiserror` 是較佳選擇。
 
-- **anyhow**: 適用於應用程式開發者，提供了一個通用的錯誤類型 `anyhow::Error`，能夠包含任何實現了 `std::error::Error` trait 的錯誤。它更側重於錯誤的傳播而非定義，尤其適合應用層程式碼，您可以快速將各種錯誤轉換為 `anyhow::Error`，減少編寫樣板程式碼的需要。
+- **anyhow**：適用於應用程式開發者，提供通用錯誤類型 `anyhow::Error`，能容納任何實現 `std::error::Error` trait 的錯誤。它更側重於錯誤傳播而非定義，特別適合應用層程式碼，可快速將各類錯誤轉換為 `anyhow::Error`，減少樣板程式碼的編寫需求。
 
-在某些場景中，您可能會同時使用這兩個函式庫：在函式庫中使用 `thiserror` 定義錯誤類型，在應用程式中使用 `anyhow` 處理和傳播這些錯誤。
+某些場景中，您可能會同時使用這兩個函式庫：在函式庫中使用 `thiserror` 定義錯誤類型，在應用程式中使用 `anyhow` 處理和傳播這些錯誤。
 
 ## Handler 中的錯誤處理
 
-在 Salvo 中，`Handler` 也經常會遇到各式錯誤，比如：資料庫連接錯誤、檔案存取錯誤、網路連接錯誤等等。對於這類型的錯誤，可以採用上述的錯誤處理手法：
+在 Salvo 中，`Handler` 也常會遭遇各種錯誤，例如：資料庫連接錯誤、檔案存取錯誤、網路連接錯誤等。針對這類錯誤，可採用前述的錯誤處理手法：
 
 ```rust
 #[handler]
-async fn home()-> AppResult<()> {
+async fn home() -> AppResult<()> {
 
 }
 ```
 
-這裡的 `home` 就直接返回了一個 `AppResult<()>`。但是，這個錯誤該如何顯示呢？我們需要為 `AppResult` 這個自訂錯誤類型實現 `Writer`，在這個實現中我們可以決定如何顯示錯誤：
+此處的 `home` 直接回傳了 `AppResult<()>`。但這個錯誤該如何顯示呢？我們需要為自訂錯誤類型 `AppResult` 實現 `Writer` trait，在此實現中可決定錯誤的顯示方式：
 
 ```rust
 #[async_trait]
@@ -55,11 +55,11 @@ impl Writer for AppError {
 }
 ```
 
-Salvo 中的 `Handler` 可以返回 `Result`，只需要 `Result` 中的 `Ok` 和 `Err` 的類型都實現 `Writer` trait。
+Salvo 中的 `Handler` 可回傳 `Result`，只需確保 `Result` 中的 `Ok` 與 `Err` 類型皆實現 `Writer` trait。
 
 ### 使用 anyhow 進行錯誤處理
 
-考慮到 anyhow 的使用比較廣泛，Salvo 提供了對 `anyhow::Error` 的內建支援。在開啟 `anyhow` 功能後，`anyhow::Error` 會實現 `Writer` trait，它會被映射為 `InternalServerError`：
+考慮到 anyhow 的廣泛使用，Salvo 提供了對 `anyhow::Error` 的內建支援。啟用 `anyhow` 功能後，`anyhow::Error` 會實現 `Writer` trait，並被映射為 `InternalServerError`：
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -71,7 +71,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-要使用 anyhow 功能，需要在 Cargo.toml 中啟用 Salvo 的 `anyhow` feature：
+要使用 anyhow 功能，需在 Cargo.toml 中啟用 Salvo 的 `anyhow` feature：
 
 ```toml
 [dependencies]
@@ -79,7 +79,7 @@ salvo = { version = "*", features = ["anyhow"] }
 anyhow = "1.0"
 ```
 
-這樣，您的處理函式就可以直接返回 `anyhow::Result<T>`：
+如此一來，您的處理函式就能直接回傳 `anyhow::Result<T>`：
 
 ```rust
 #[handler]
@@ -89,9 +89,9 @@ async fn home() -> anyhow::Result<impl Writer> {
 }
 ```
 
-`Error` 中往往包含一些敏感資訊，一般情況下，並不想被普通使用者看到，那樣也太不安全了，一點點隱私也沒有了。但是，如果你是開發人員或者網站管理員，或許想法就不一樣了，你希望錯誤能把外衣脫得光光的，讓你看到最真實的錯誤資訊。
+`Error` 中常包含敏感資訊，一般情況下不希望被普通使用者看見，否則既不安全也毫無隱私可言。但若您是開發人員或網站管理員，想法可能截然不同——您會希望錯誤能「褪去外衣」，展現最真實的錯誤訊息。
 
-可以看到，`write` 的方法中，我們其實是可以拿到 `Request` 和 `Depot` 的引用的，這就可以很方便地實現上面的操作了：
+可以看到，在 `write` 方法中，我們實際上能取得 `Request` 和 `Depot` 的參考，這讓實現上述特殊操作變得十分便利：
 
 ```rust
 #[async_trait]
@@ -109,7 +109,7 @@ impl Writer for AppError {
 
 ## 錯誤頁面的顯示
 
-Salvo 中自帶的錯誤頁面在絕大部分情況下是滿足需求的，它可以根據請求的資料類型顯示 Html、Json 或者 Xml 頁面。然而，某些情況下，我們依然期望自訂錯誤頁面的顯示。
+Salvo 內建的錯誤頁面在大多數情況下能滿足需求，它會根據請求的資料類型顯示 Html、Json 或 Xml 頁面。然而，某些情境中我們仍希望自訂錯誤頁面的顯示方式。
 
-這個可以透過自訂 `Catcher` 實現。詳細的介紹可以查看 [`Catcher`](../concepts/catcher.html) 部分的講解。
+這可透過自訂 `Catcher` 實現，詳細說明請參閱 [`Catcher`](../concepts/catcher.html) 章節。
 {/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

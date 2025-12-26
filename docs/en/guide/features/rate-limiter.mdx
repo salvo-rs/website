@@ -1,35 +1,33 @@
-# Flow Control
+# Rate Limiting
 
-Middleware that provides flow control functionality.
+Middleware providing rate limiting functionality.
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
-import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
-import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
-import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-## Main Features
+## Key Features
 
-* `RateIssuer` provides an abstraction for identifying visitor identity keys. `RemoteIpIssuer` is an implementation that identifies visitors based on their request IP address. The key does not have to be a string type; any type satisfying the `Hash + Eq + Send + Sync + 'static` constraints can be used as a key.
+* `RateIssuer` provides an abstraction for identifying visitor keys. `RemoteIpIssuer` is one of its implementations, which determines visitors based on their IP addresses. Keys are not necessarily strings; any type satisfying the `Hash + Eq + Send + Sync + 'static` constraints can serve as a key.
 
-* `RateGuard` provides an abstraction for flow control algorithms. It comes with two built-in implementations: fixed window (`FixedGuard`) and sliding window (`SlidingGuard`).
+* `RateGuard` offers an abstraction for rate limiting algorithms. Default implementations include fixed window (`FixedGuard`) and sliding window (`SlidingGuard`).
 
-* `RateStore` provides an abstraction for data storage and retrieval. `MokaStore` is a built-in in-memory cache implementation based on `moka`. You can also define your own custom implementations.
+* `RateStore` provides data storage operations. `MokaStore` is a built-in in-memory cache implementation based on `moka`. You can also define your own implementation.
 
-* `RateLimiter` is a struct that implements `Handler`. It contains a `skipper` field, which can be used to specify requests that should bypass rate limiting. By default, it uses `none_skipper`, which does not skip any requests.
+* `RateLimiter` is a struct implementing `Handler`, which includes a `skipper` field to specify requests that should bypass rate limiting. By default, `none_skipper` is used, meaning no requests are skipped.
 
-* `QuotaGetter` provides an abstraction for retrieving quotas. It can fetch a quota object based on the visitor's `Key`. This means user quota information can be configured in a database, allowing for dynamic changes and retrieval.
+* `QuotaGetter` provides an abstraction for retrieving quotas. It fetches a quota object based on the visitor's `Key`, allowing user quotas and other configurations to be stored in databases and dynamically modified or retrieved.
 
-_**Example Code**_
+_**Example Code**_ 
 
 ### Static Quota Example
 
 <Tabs>
   <Tab label="main.rs">
-    <StaticMainCode/>
+  ```rust file="<root>/codes/rate-limiter-static/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <StaticCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-static/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -37,10 +35,12 @@ _**Example Code**_
 
 <Tabs>
   <Tab label="main.rs">
-    <DynamicMainCode/>
+  ```rust file="<root>/codes/rate-limiter-dynamic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <DynamicCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-dynamic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}
+{/* 本行由工具自动生成,原文哈希值:3d248fa793d9b3aab28760c03d743c7a */}

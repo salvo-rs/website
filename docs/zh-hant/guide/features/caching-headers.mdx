@@ -1,27 +1,27 @@
 # 快取標頭
 
-提供對快取標頭配置支援的中介軟體。
+提供快取標頭配置支援的中介軟體。
 
-快取控制是網路效能優化的重要環節，透過正確設定快取標頭，可以減少不必要的網路請求，提升應用程式效能。[Cache-Control](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Headers/Cache-Control) 是HTTP回應標頭中用於指定瀏覽器快取策略的指令，能控制誰在什麼條件下可以快取回應以及快取多久。
+快取控制是網頁效能最佳化的重要環節，透過正確設定快取標頭，能夠減少不必要的網路請求，提升應用程式效能。[Cache-Control](https://developer.mozilla.org/zh-TW/docs/Web/HTTP/Headers/Cache-Control) 是HTTP回應標頭中用於指定瀏覽器快取策略的指令，可控制「誰在何種條件下能夠快取回應」以及「快取的有效時長」。
 
-實際實作內部包含了 `CachingHeaders`、`Modified`、`ETag` 三個 `Handler` 的實作，`CachingHeaders` 是後兩者的組合。正常情況下建議使用 `CachingHeaders`。
+實作內部包含 `CachingHeaders`、`Modified`、`ETag` 三個 `Handler` 的實現，其中 `CachingHeaders` 是後兩者的組合。一般情況下建議使用 `CachingHeaders`。
 
 - `Modified`：基於資源的最後修改時間提供快取驗證
-- `ETag`：使用實體標籤(Entity Tag)提供更精確的資源驗證機制
-- `CachingHeaders`：結合上述兩種機制，提供完整的快取控制支援
+- `ETag`：使用實體標籤（Entity Tag）提供更精確的資源驗證機制
+- `CachingHeaders`：整合上述兩種機制，提供完整的快取控制支援
 
-_**範例程式碼**_
+_**範例程式碼**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
-import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CachingHeadersCode/>
+  ```rust file="<root>/codes/caching-headers/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CachingHeadersCargoCode/>
+  ```toml file="<root>/codes/caching-headers/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}
+{/* 本行由工具自动生成,原文哈希值:08699e65af0ef5c9fac56f0fb8d73153 */}

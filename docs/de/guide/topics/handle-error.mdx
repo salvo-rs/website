@@ -1,8 +1,8 @@
 # Fehlerbehandlung
 
-## Konventionelle Fehlerbehandlung in Rust-Anwendungen
+## Gängige Fehlerbehandlungsmethoden in Rust-Anwendungen
 
-Die Fehlerbehandlung in Rust unterscheidet sich von Sprachen wie Java – es gibt kein `try...catch`. Üblicherweise definiert man auf Anwendungsebene einen globalen Fehlertyp:
+Die Fehlerbehandlung in Rust unterscheidet sich von Sprachen wie Java. Es gibt kein `try...catch`. Üblicherweise wird auf Anwendungsebene ein globaler Fehlertyp definiert:
 
 ```rust
 use thiserror::Error;
@@ -21,21 +21,21 @@ pub enum AppError {
 pub type AppResult<T> = Result<T, AppError>;
 ```
 
-Hier wird die Bibliothek `thiserror` verwendet, die das Definieren eigener Fehlertypen vereinfacht. Zur besseren Lesbarkeit wird zusätzlich ein `AppResult` definiert.
+Hier wird die Crate `thiserror` verwendet, die das Definieren eigener benutzerdefinierter Fehlertypen erleichtert und Code vereinfacht. Zur besseren Lesbarkeit wird zusätzlich ein `AppResult` definiert.
 
 ### thiserror vs. anyhow
 
-Im Rust-Ökosystem zur Fehlerbehandlung sind zwei Bibliotheken besonders verbreitet: `thiserror` und `anyhow`:
+Im Ökosystem der Rust-Fehlerbehandlung sind zwei häufig verwendete Crates `thiserror` und `anyhow`:
 
-- **thiserror**: Ideal für Bibliotheksentwickler, um klare Fehlertypen zu definieren. Durch abgeleitete Makros hilft es beim Implementieren des `std::error::Error`-Traits für benutzerdefinierte Fehlertypen und ermöglicht die Festlegung der Fehlerdarstellung. Bei der Entwicklung von Bibliotheken oder wenn klare Fehlertypen für Nutzer benötigt werden, ist `thiserror` die bessere Wahl.
+-   **thiserror**: Geeignet für Bibliotheksentwickler, um klare Fehlertypen zu definieren. Es hilft durch ein derive-Makro bei der Implementierung des `std::error::Error`-Traits für benutzerdefinierte Fehlertypen und erlaubt die Definition der Fehlerdarstellung. `thiserror` ist die bessere Wahl, wenn Sie eine Bibliothek erstellen oder Benutzern klare Fehlertypen bereitstellen müssen.
 
-- **anyhow**: Geeignet für Anwendungsentwickler, bietet einen universellen Fehlertyp `anyhow::Error`, der jeden Fehler, der den `std::error::Error`-Trait implementiert, enthalten kann. Der Fokus liegt mehr auf der Fehlerweitergabe als auf der Definition, was es besonders für Anwendungscode geeignet macht. Verschiedene Fehler können schnell in `anyhow::Error` umgewandelt werden, wodurch sich der Bedarf an Boilerplate-Code reduziert.
+-   **anyhow**: Geeignet für Anwendungsentwickler, stellt einen universellen Fehlertyp `anyhow::Error` bereit, der jeden Fehler enthalten kann, der den `std::error::Error`-Trait implementiert. Der Fokus liegt mehr auf der Fehlerweitergabe als auf der Definition, besonders geeignet für Code auf Anwendungsebene. Sie können schnell verschiedene Fehler in `anyhow::Error` umwandeln und so den Bedarf an Boilerplate-Code reduzieren.
 
-In manchen Fällen können beide Bibliotheken kombiniert werden: `thiserror` für Fehlertypen in Bibliotheken und `anyhow` zur Behandlung und Weitergabe dieser Fehler in der Anwendung.
+In manchen Szenarien können beide Crates gleichzeitig verwendet werden: `thiserror` zur Definition von Fehlertypen in der Bibliothek und `anyhow` zur Behandlung und Weitergabe dieser Fehler in der Anwendung.
 
 ## Fehlerbehandlung in Handlern
 
-In Salvo können `Handler` auf verschiedene Fehler stoßen, wie Datenbankverbindungsfehler, Dateizugriffsfehler oder Netzwerkverbindungsprobleme. Für solche Fehler kann der oben beschriebene Ansatz verwendet werden:
+In Salvo stoßen `Handler` ebenfalls häufig auf verschiedene Fehler, z.B.: Datenbankverbindungsfehler, Dateizugriffsfehler, Netzwerkverbindungsfehler usw. Für diese Art von Fehlern kann die oben beschriebene Fehlerbehandlungsmethode angewendet werden:
 
 ```rust
 #[handler]
@@ -44,22 +44,22 @@ async fn home()-> AppResult<()> {
 }
 ```
 
-Hier gibt `home` direkt ein `AppResult<()>` zurück. Doch wie soll dieser Fehler angezeigt werden? Wir müssen für den benutzerdefinierten Fehlertyp `AppResult` das `Writer`-Trait implementieren, um die Fehlerdarstellung festzulegen:
+Hier gibt `home` direkt ein `AppResult<()>` zurück. Aber wie soll dieser Fehler angezeigt werden? Wir müssen für den benutzerdefinierten Fehlertyp `AppResult` den `Writer`-Trait implementieren. In dieser Implementierung können wir entscheiden, wie der Fehler angezeigt wird:
 
 ```rust
 #[async_trait]
 impl Writer for AppError {
     async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
-        res.render(Text::Plain("Ich bin ein Fehler, hahaha!"));
+        res.render(Text::Plain("I'm a error, hahaha!"));
     }
 }
 ```
 
-Handler in Salvo können `Result` zurückgeben, solassen `Ok` und `Err` des `Result` das `Writer`-Trait implementieren.
+Handler in Salvo können `Result` zurückgeben, vorausgesetzt, die Typen `Ok` und `Err` in `Result` implementieren beide den `Writer`-Trait.
 
 ### Fehlerbehandlung mit anyhow
 
-Da `anyhow` weit verbreitet ist, bietet Salvo integrierte Unterstützung für `anyhow::Error`. Wenn das `anyhow`-Feature aktiviert ist, implementiert `anyhow::Error` das `Writer`-Trait und wird als `InternalServerError` abgebildet:
+Da anyhow weit verbreitet ist, bietet Salvo eingebaute Unterstützung für `anyhow::Error`. Wenn das `anyhow`-Feature aktiviert ist, implementiert `anyhow::Error` den `Writer`-Trait und wird auf `InternalServerError` gemappt:
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -71,7 +71,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-Um das `anyhow`-Feature zu nutzen, muss es in der `Cargo.toml` aktiviert werden:
+Um das anyhow-Feature zu verwenden, muss in der Cargo.toml das `anyhow`-Feature von Salvo aktiviert werden:
 
 ```toml
 [dependencies]
@@ -79,19 +79,19 @@ salvo = { version = "*", features = ["anyhow"] }
 anyhow = "1.0"
 ```
 
-Dadurch können Handler direkt `anyhow::Result<T>` zurückgeben:
+Dadurch können Ihre Handler-Funktionen direkt `anyhow::Result<T>` zurückgeben:
 
 ```rust
 #[handler]
 async fn home() -> anyhow::Result<impl Writer> {
-    let data = fetch_data().context("Daten konnten nicht abgerufen werden")?;
+    let data = fetch_data().context("Failed to fetch data")?;
     Ok(Text::Plain(data))
 }
 ```
 
-Fehler enthalten oft sensible Informationen, die normalerweise nicht für Endbenutzer sichtbar sein sollten – das wäre unsicher und würde die Privatsphäre verletzen. Entwickler oder Administratoren möchten jedoch möglicherweise detaillierte Fehlermeldungen sehen.
+Fehler enthalten oft sensible Informationen, die normalerweise nicht für normale Benutzer sichtbar sein sollten – das wäre zu unsicher und böte keinerlei Privatsphäre. Wenn Sie jedoch Entwickler oder Website-Administrator sind, sehen Sie das vielleicht anders: Sie möchten, dass der Fehler alle Details preisgibt, damit Sie die tatsächliche Fehlermeldung sehen können.
 
-Da die `write`-Methode Referenzen auf `Request` und `Depot` erhält, lässt sich dies einfach umsetzen:
+Wie man sieht, können wir in der `write`-Methode Referenzen auf `Request` und `Depot` erhalten, was die Umsetzung der obigen Anforderung sehr einfach macht:
 
 ```rust
 #[async_trait]
@@ -101,7 +101,7 @@ impl Writer for AppError {
         if user.is_admin {
             res.render(Text::Plain(e.to_string()));
         } else {
-            res.render(Text::Plain("Ich bin ein Fehler, hahaha!"));
+            res.render(Text::Plain("I'm a error, hahaha!"));
         }
     }
 }
@@ -109,7 +109,7 @@ impl Writer for AppError {
 
 ## Anzeige von Fehlerseiten
 
-Die in Salvo integrierten Fehlerseiten sind in den meisten Fällen ausreichend. Sie können je nach Anfragetyp HTML, JSON oder XML anzeigen. In einigen Fällen möchten Sie jedoch möglicherweise die Darstellung anpassen.
+Die in Salvo mitgelieferten Fehlerseiten erfüllen in den meisten Fällen die Anforderungen. Sie können je nach angeforderter Datentyp HTML-, Json- oder Xml-Seiten anzeigen. In manchen Fällen möchten wir jedoch weiterhin die Anzeige der Fehlerseite anpassen.
 
-Dies kann durch die Implementierung eines benutzerdefinierten `Catcher` erreicht werden. Weitere Details finden Sie in der Dokumentation zu [`Catcher`](../concepts/catcher.html).
+Dies kann durch eine benutzerdefinierte `Catcher`-Implementierung erreicht werden. Eine detaillierte Erläuterung finden Sie im Abschnitt [`Catcher`](../concepts/catcher.html).
 {/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

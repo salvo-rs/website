@@ -1,18 +1,14 @@
 # Dateien senden
 
-Salvo bietet mehrere Möglichkeiten zum Versenden von Dateien:
+Salvo bietet verschiedene Möglichkeiten, Dateien zu senden:
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ### NamedFile
 
-Salvo stellt `salvo::fs::NamedFile` bereit, um Dateien effizient an Clients zu senden. Dabei werden die Dateien nicht vollständig in den Cache geladen, sondern basierend auf dem `Range`-Header der Anfrage nur teilweise übertragen.
+Salvo stellt `salvo::fs::NamedFile` bereit, um Dateien effizient an Clients zu senden. Es lädt nicht die gesamte Datei in den Cache, sondern überträgt nur Teile basierend auf dem `Range`-Header der Anfrage.
 
-Tatsächlich ist `Response::send_file` nur eine vereinfachte Methode zur Verwendung von `NamedFile`. Für erweiterte Kontrolle über den Dateiversand kann `NamedFileBuilder` genutzt werden.
+Tatsächlich ist `Response::send_file` nur eine vereinfachte Methode zur Verwendung von `NamedFile`. Wenn Sie mehr Kontrolle über den Dateiversand benötigen, können Sie `NamedFileBuilder` verwenden.
 
 Mit `NamedFile::builder` lässt sich ein `NamedFileBuilder` erstellen:
 
@@ -23,7 +19,7 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-Nach Konfiguration kann die Datei gesendet werden:
+Nach einigen Einstellungen kann die Datei gesendet werden:
 
 ```rust
 #[handler]
@@ -34,27 +30,31 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 
 ### Statische Dateien bereitstellen
 
-Middleware zum Bereitstellen statischer oder eingebetteter Dateien.
+Middleware, die statische oder eingebettete Dateien als Dienst bereitstellt.
 
-- `StaticDir` unterstützt statische lokale Verzeichnisse. Es können mehrere Ordnerpfade übergeben werden, z.B.:
+- `StaticDir` unterstützt statische lokale Ordner. Es können mehrere Ordner als Parameter übergeben werden. Beispiel:
 <Tabs>
   <Tab label="main.rs">
-        <StaticDirListCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  Falls eine Datei im ersten Ordner nicht gefunden wird, wird im zweiten gesucht.
+  Wenn die Datei im ersten Ordner nicht gefunden wird, wird im zweiten Ordner gesucht.
 
-- Unterstützung für `rust-embed` ist vorhanden, z.B.:
+- Unterstützung für `rust-embed`, zum Beispiel:
 <Tabs>
   <Tab label="main.rs">
-        <StaticEmbedFilesCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  Mit `with_fallback` kann eine Ersatzdatei für den Fall definiert werden, dass die angeforderte Datei nicht existiert - besonders nützlich für Single-Page-Webanwendungen.
-{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}
+  `with_fallback` ermöglicht es, eine Ersatzdatei festzulegen, falls die ursprüngliche Datei nicht gefunden wird. Dies ist besonders nützlich für Single-Page-Webanwendungen.
+{/* 本行由工具自动生成,原文哈希值:19063883c45fafc63ab4ff3751ac9892 */}

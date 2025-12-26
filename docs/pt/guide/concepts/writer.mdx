@@ -1,6 +1,6 @@
-# Escritor
+# Writer
 
-`Writer` é usado para escrever conteúdo em `Response`:
+O `Writer` é utilizado para escrever conteúdo na `Response`:
 
 ```rust
 #[async_trait]
@@ -9,7 +9,7 @@ pub trait Writer {
 }
 ```
 
-Em comparação com Handler:
+Em comparação com o Handler:
 
 ```rust
 #[async_trait]
@@ -18,13 +18,13 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-As principais diferenças entre eles são:
-- Propósitos diferentes: `Writer` representa a escrita de conteúdo específico em `Response`, implementado por conteúdos concretos como strings, mensagens de erro, etc. Já `Handler` é usado para processar toda a requisição.
-- `Writer` é criado dentro de `Handler` e se consome quando a função `write` é chamada, sendo uma chamada única. Enquanto `Handler` é compartilhado por todas as requisições;
-- `Writer` pode ser usado como conteúdo retornado no `Result` de um `Handler`;
-- `Writer` não possui o parâmetro `FlowCtrl`, não podendo controlar o fluxo de execução da requisição.
+As diferenças diretas entre eles são:
+- A finalidade é diferente. O `Writer` representa a escrita de conteúdo específico na `Response`, implementado por conteúdos concretos, como strings, mensagens de erro, etc. Já o `Handler` é utilizado para processar toda a requisição.
+- O `Writer` é criado dentro do `Handler` e é consumido quando a função `write` é chamada, sendo uma chamada única. Enquanto isso, o `Handler` é compartilhado por todas as requisições.
+- O `Writer` pode ser retornado como conteúdo no `Result` do `Handler`.
+- O `Writer` não possui o parâmetro `FlowCtrl`, portanto não pode controlar o fluxo de execução da requisição.
 
-`Scribe` implementa `Writer`, mas com funcionalidades ainda mais limitadas:
+O `Scribe` implementa o `Writer`, mas com funcionalidades mais limitadas:
 
 ```rust
 pub trait Scribe {
@@ -32,5 +32,5 @@ pub trait Scribe {
 }
 ```
 
-A função de renderização do `Scribe` apenas escreve dados no `Response`, sem capacidade de obter informações do `Request` ou `Depot`.
+A função de renderização do `Scribe` apenas escreve dados na `Response`, e esse processo não pode obter informações do `Request` ou do `Depot`.
 {/* 本行由工具自动生成,原文哈希值:a88019b69f080567caf2af39cb1d17e5 */}

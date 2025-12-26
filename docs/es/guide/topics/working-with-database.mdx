@@ -29,7 +29,7 @@ fn build_pool(database_url: &str, size: u32) -> Result<PgPool, PoolError> {
 
 fn main() {
     DB_POOL
-        .set(build_pool(&DB_URL, 10).expect(&format!("Error conectando a {}", &DB_URL)))
+        .set(build_pool(&DB_URL, 10).expect(&format!("Error connecting to {}", &DB_URL)))
         .ok();
 }
 
@@ -119,27 +119,27 @@ pub async fn get_user(req: &mut Request, res: &mut Response) {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    // información de conexión mysql
+    // mysql connect info
     let mysql_uri = "mysql://root:123456@localhost/test";
     RB.link(MysqlDriver {}, mysql_uri).await.unwrap();
 
-    // enrutador
+    // router
     let router = Router::with_path("users").get(get_user);
 
-    tracing::info!("Escuchando en http://127.0.0.1:5800");
+    tracing::info!("Listening on http://127.0.0.1:5800");
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
 }
 ```
 
 ## [SeaORM](https://www.sea-ql.org/SeaORM/)
 
-SeaORM es un ORM asíncrono y dinámico que ofrece potente soporte para bases de datos relacionales, incluyendo relaciones entre entidades, sistema de migraciones y un constructor de consultas con seguridad de tipos. Ideal para proyectos medianos/grandes que necesiten un ORM completo.
+SeaORM es un ORM asíncrono y dinámico que proporciona un sólido soporte para bases de datos relacionales, incluyendo relaciones entre entidades, un sistema de migraciones y un constructor de consultas con seguridad de tipos. Es adecuado para proyectos medianos y grandes que requieren un ORM con todas las funcionalidades.
 
 ## [Tokio ORM (Toasty)](https://github.com/tokio-rs/toasty)
 
-Toasty es un ORM desarrollado por el equipo de Tokio, actualmente en desarrollo activo, que se enfoca en ofrecer una solución ORM estrechamente integrada con el ecosistema Tokio. Puede ser adecuado para proyectos que dependan de Tokio y estén dispuestos a adoptar tecnologías emergentes.
+Toasty es un ORM desarrollado por el equipo de Tokio, actualmente en desarrollo activo, que se centra en proporcionar una solución ORM estrechamente integrada con el ecosistema de Tokio. Puede ser adecuado para proyectos que dependen de Tokio y están dispuestos a adoptar tecnologías emergentes.
 
 ## [SurrealDB Rust SDK](https://surrealdb.com/docs/sdk/rust)
 
-El SDK Rust de SurrealDB proporciona capacidad de conexión con esta base de datos multimodelo, siendo adecuado para aplicaciones que necesiten manejar datos de grafos, documentos y relaciones. Una buena opción para proyectos que requieran modelos de datos flexibles.
-{/* 本行由工具自动生成,原文哈希值:1e253924948cbedf4d240486568b09f4 */}
+El SDK de Rust de SurrealDB proporciona la capacidad de conectarse con esta base de datos multimodelo, adecuada para aplicaciones que necesitan manejar datos de grafos, documentos y relaciones. Es una buena opción para proyectos que requieren modelos de datos flexibles.
+{/* 本行由工具自动生成,原文哈希值:bc23a03c686915fc88ee2cb8c32dfe63 */}

@@ -16,7 +16,7 @@ async fn main() {
         .push(Router::with_path("login").get(login).post(login))
         .push(Router::with_path("logout").get(logout));
 
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -45,10 +45,10 @@ pub async fn logout(depot: &mut Depot, res: &mut Response) {
 #[handler]
 pub async fn home(depot: &mut Depot, res: &mut Response) {
     let mut content = r#"<a href="login">Login</h1>"#.into();
-    if let Some(session) = depot.session_mut() {
-        if let Some(username) = session.get::<String>("username") {
-            content = format!(r#"Hello, {username}. <br><a href="logout">Logout</h1>"#);
-        }
+    if let Some(session) = depot.session_mut()
+        && let Some(username) = session.get::<String>("username")
+    {
+        content = format!(r#"Hello, {username}. <br><a href="logout">Logout</h1>"#);
     }
     res.render(Text::Html(content));
 }

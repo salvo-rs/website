@@ -1,55 +1,55 @@
 # 如何部署應用
 
-Salvo 專案在編譯後是一個可執行檔案。部署時僅需要將這個可執行檔案和它依賴的靜態資源一起上傳到伺服器即可。
+Salvo 專案在編譯後是一個可執行檔案。部署時僅需要將這個可執行檔案及其依賴的靜態資源一同上傳至伺服器即可。
 
-對於 Rust 類的專案，還有一個非常簡單的部署平台：[shuttle.rs](https://www.shuttle.rs)。shuttle 對 Salvo 類專案提供了支援，具體可以參考[官方文件](https://docs.shuttle.rs/guide/salvo-examples.html)。
+對於 Rust 類型的專案，還有一個非常簡便的部署平台：[shuttle.rs](https://www.shuttle.rs)。shuttle 對 Salvo 類專案提供了支援，詳細資訊可參閱[官方文件](https://docs.shuttle.rs/guide/salvo-examples.html)。
 
 ## Docker 部署
 
-你也可以使用 Docker 來部署 Salvo 應用。以下是一個基礎的 `Dockerfile` 範例，你可以根據自己專案的需求進行調整：
+您也可以使用 Docker 來部署 Salvo 應用。以下是一個基礎的 `Dockerfile` 範例，您可以根據專案需求進行調整：
 
 ```dockerfile
-# 構建階段
+# 建構階段
 FROM rust:slim AS build
 WORKDIR /app
 
-# 複製依賴檔案先構建依賴（利用快取層）
+# 複製依賴檔案先建構依賴（利用快取層）
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
     cargo build --release
 
-# 複製實際原始碼並構建應用
+# 複製實際原始碼並建構應用
 COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# 運行階段使用精簡基礎鏡像
+# 執行階段使用精簡基礎映像
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 建立非root用戶運行應用
+# 建立非 root 使用者執行應用
 RUN useradd -ms /bin/bash appuser
 USER appuser
 WORKDIR /app
 
-# 從構建階段複製二進位檔案
+# 從建構階段複製二進位檔案
 COPY --from=build /app/target/release/your_app_name ./app
 
-# 設定容器啟動命令
+# 設定容器啟動指令
 CMD ["./app"]
 ```
 
 ### 使用說明
 
-1. 將上面的 `Dockerfile` 儲存在你的專案根目錄中
-2. 根據你的專案調整 `your_app_name` 為實際的二進位檔案名
-3. 如果你的應用需要靜態檔案（如模板、CSS、JS等），可以新增相應的 `COPY` 命令
-4. 如果你的應用需要環境變數配置，可以使用 `ENV` 指令
-5. 構建 Docker 鏡像：
+1. 將上述 `Dockerfile` 儲存在您的專案根目錄中
+2. 根據您的專案將 `your_app_name` 調整為實際的二進位檔案名稱
+3. 若您的應用需要靜態檔案（如模板、CSS、JS 等），可新增相應的 `COPY` 指令
+4. 若您的應用需要環境變數設定，可使用 `ENV` 指令
+5. 建構 Docker 映像：
    ```bash
    docker build -t your-app-name .
    ```
@@ -58,5 +58,5 @@ CMD ["./app"]
    docker run -p 5800:5800 your-app-name
    ```
 
-請根據你的應用實際需求調整埠號和其他配置。
+請根據您的應用實際需求調整連接埠號及其他設定。
 {/* 本行由工具自动生成,原文哈希值:cc4f6a8bac2d9ff67911bf45b473c2bd */}

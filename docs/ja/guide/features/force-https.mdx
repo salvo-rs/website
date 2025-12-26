@@ -1,23 +1,23 @@
-# HTTPS強制転送
+# HTTPS強制化
 
-`force-https`ミドルウェアは、すべてのリクエストをHTTPSプロトコル使用へ強制的に転送します。
+`force-https`ミドルウェアは、すべてのリクエストをHTTPSプロトコルに強制的にリダイレクトします。
 
-このミドルウェアを`Router`に適用した場合、ルートが一致した時のみプロトコル転送が強制されます。ページが存在しない場合は転送されません。
+このミドルウェアを`Router`に適用した場合、ルートが一致したときのみプロトコル変換が強制されます。ページが存在しない状況ではリダイレクトされません。
 
-しかしより一般的なニーズは、ルートが一致せず`404`エラーが返される場合も含め、あらゆるリクエストを自動転送することです。その場合はミドルウェアを`Service`に追加します。`Service`に追加されたミドルウェアは、リクエストがルートに正常にマッチしたかどうかに関係なく、常に実行されます。
+しかし、より一般的な要件は、ルートが一致せず`404`エラーが返される場合でも、あらゆるリクエストを自動的にリダイレクトすることです。この場合、ミドルウェアを`Service`に追加します。リクエストがルートに正常に一致したかどうかに関わらず、`Service`に追加されたミドルウェアは常に実行されます。
 
 _**サンプルコード**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import ForceHttpsCode from '../../../../codes_md/force-https/src/main.mdx';
-import ForceHttpsCargoCode from '../../../../codes_md/force-https/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <ForceHttpsCode/>
+  ```rust file="<root>/codes/force-https/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <ForceHttpsCargoCode/>
+  ```toml file="<root>/codes/force-https/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:acf8e135d114ff6c701ad46acd7c2854 */}
+{/* 本行由工具自动生成,原文哈希值:173e195e2060c6dc031e06200cd7106c */}

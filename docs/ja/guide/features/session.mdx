@@ -1,18 +1,16 @@
 # セッション
 
-import { Tab, Tabs } from 'rspress/theme';
-import SessionLoginMainCode from '../../../../codes_md/session-login/src/main.mdx';
-import SessionLoginCargoCode from '../../../../codes_md/session-login/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-`Session`をサポートするミドルウェアを提供します。
+`Session` サポートを提供するミドルウェアです。
 
 ## セッションとは
 
-セッションはサーバー側に保存されるユーザーデータの一時的な領域で、通常ユーザー状態の追跡や一時データの保存に使用されます。Webアプリケーションにおいて、セッションはHTTPプロトコルのステートレス性を解決し、サーバーが同一ユーザーからの複数リクエストを識別できるようにします。
+セッションとは、サーバー側に保存されるユーザーデータの一時的な領域であり、通常はユーザーの状態追跡や一時データの保存に使用されます。Webアプリケーションにおいて、セッションはHTTPプロトコルのステートレス性を解決し、サーバーが同一ユーザーからの複数リクエストを識別できるようにします。
 
 ## Salvoにおけるセッションの利用
 
-Salvoでは、セッションミドルウェアがセッションデータの読み書きを行うシンプルなAPIを提供しています。`SessionDepot`を通じてセッションインスタンスを取得し、`get`、`set`、`remove`などのメソッドでセッションデータを管理できます。
+Salvoでは、セッションミドルウェアがセッションデータの読み書きを行うためのシンプルなAPIを提供します。`SessionDepot`を通じてセッションインスタンスを取得し、`get`、`set`、`remove`などのメソッドでセッションデータを管理できます。
 
 ## 主な用途
 
@@ -23,11 +21,13 @@ Salvoでは、セッションミドルウェアがセッションデータの読
 _**サンプルコード**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SessionLoginMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SessionLoginCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/session-login/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/session-login/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:88af59e67d10a27580b5c0792b125c79 */}
+{/* 本行由工具自动生成,原文哈希值:f8de91b5a58a71598fb1dfee41bb6a6f */}

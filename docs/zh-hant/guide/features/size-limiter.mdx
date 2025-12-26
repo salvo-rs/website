@@ -1,27 +1,27 @@
-# 上傳檔案大小限制 中介軟體
+# 上傳檔案大小限制中介軟體
 
-import { Tab, Tabs } from 'rspress/theme';
-import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
-import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-提供對請求上傳檔案大小限制的中介軟體。
+提供對請求上傳檔案大小限制的中介軟體功能。
 
 ## 應用場景
 
-Size Limiter 主要用於以下場景：
-- 防止使用者上傳過大的檔案佔用伺服器資源
+檔案大小限制器主要適用於以下情境：
+- 防止使用者上傳過大檔案佔用伺服器資源
 - 避免惡意攻擊者透過上傳大量資料導致伺服器記憶體溢位
 - 為不同的 API 端點設定不同的請求大小限制策略
-- 提升伺服器處理請求的效率和穩定性
+- 提升伺服器處理請求的效能與穩定性
 
 _**範例程式碼**_
 
 <Tabs>
-<Tab label="main.rs">
-<SizeLimiterMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SizeLimiterCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/size-limiter/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/size-limiter/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:7bf2c000bd32696677fc70ca8e62af44 */}
+{/* 本行由工具自动生成,原文哈希值:e8fe97542f86e069c6a192945b8303da */}

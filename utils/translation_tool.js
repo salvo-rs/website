@@ -3,14 +3,9 @@ import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, statSy
 import { join, relative, dirname, extname } from 'path';
 import OpenAI from 'openai';
 
-// 创建 OpenAI 客户端实例
-// export const client = new OpenAI({
-//   apiKey: process.env.OPENAI_API_KEY, // 使用环境变量存储API密钥
-// });
-
-//创建 OpenAI 客户端实例
+let apiKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
 export const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // 使用环境变量存储API密钥
+  apiKey,
   baseURL: "https://api.deepseek.com/v1"
 });
 
@@ -22,20 +17,20 @@ export const client = new OpenAI({
  */
 async function translate(text, targetLanguage) {
   console.log(`开始翻译到 ${targetLanguage}...`);
-  
+
   let translatedContent = '';
-  
-  const stream = client.beta.chat.completions
+
+  const stream = client.chat.completions
     .stream({
       model: 'deepseek-chat',
       messages: [
-        { 
-          role: 'system', 
-          content: '你是一位精通多语言翻译的AI助手。请提供准确、自然、符合目标语言习惯的翻译。不用回答我的问题，直接开始翻译，不要有除了翻译以外的文本生成。' 
+        {
+          role: 'system',
+          content: '你是一位精通多语言翻译的AI助手。请提供准确、自然、符合目标语言习惯的翻译。不用回答我的问题，直接开始翻译，不要有除了翻译以外的文本生成。'
         },
-        { 
-          role: 'user', 
-          content: `我在做Salvo框架技术多语言文档,请你信达雅的翻译,Translate the following text to ${targetLanguage}: ${text}` 
+        {
+          role: 'user',
+          content: `我在做Salvo框架技术多语言文档,请你信达雅的翻译,Translate the following text to ${targetLanguage}: ${text}`
         }
       ],
     })
@@ -46,7 +41,7 @@ async function translate(text, targetLanguage) {
 
   await stream.done();
   console.log('\n翻译完成!');
-  
+
   return {
     original_text: text,
     translated_text: translatedContent
@@ -73,7 +68,7 @@ function extractMd5FromFile(filePath) {
     if (!existsSync(filePath)) {
       return null;
     }
-    
+
     const content = readFileSync(filePath, 'utf8');
     const hashMatch = content.match(/\{\/\* 本行由工具自动生成,原文哈希值:(.*?)\*\/\}$/s);
     return hashMatch ? hashMatch[1].trim() : null;
@@ -95,18 +90,18 @@ function writeTranslationWithMd5(sourceFilePath, targetFilePath, translatedConte
   if (!existsSync(targetDir)) {
     mkdirSync(targetDir, { recursive: true });
   }
-  
+
   // 计算源文件的MD5
   const md5 = calculateMd5(sourceFilePath);
-  
+
   // 确保内容以换行符结束
   if (!translatedContent.endsWith('\n')) {
     translatedContent += '\n';
   }
-  
+
   // 添加哈希值注释
   const contentWithHash = `${translatedContent}{/* 本行由工具自动生成,原文哈希值:${md5} */}`;
-  
+
   // 写入目标文件
   writeFileSync(targetFilePath, contentWithHash, 'utf8');
 }
@@ -124,7 +119,7 @@ async function translateFiles(sourcePath, targetPath, targetLang, options = {}) 
     fileExtensions = ['.md', '.mdx'], // 默认只翻译md和mdx文件
     verbose = true,                  // 是否输出详细日志
   } = options;
-  
+
   const stats = {
     total: 0,         // 总文件数
     skipped: 0,       // 跳过的文件数（MD5匹配）
@@ -132,17 +127,17 @@ async function translateFiles(sourcePath, targetPath, targetLang, options = {}) 
     copied: 0,        // 复制的文件数（非翻译文件格式）
     failed: 0         // 失败的文件数
   };
-  
+
   // 递归处理文件夹
   async function processPath(currentSourcePath, currentTargetPath) {
     const isDirectory = statSync(currentSourcePath).isDirectory();
-    
+
     if (isDirectory) {
       // 创建对应的目标文件夹（如果不存在）
       if (!existsSync(currentTargetPath)) {
         mkdirSync(currentTargetPath, { recursive: true });
       }
-      
+
       // 递归处理文件夹中的内容
       const items = readdirSync(currentSourcePath);
       for (const item of items) {
@@ -154,7 +149,7 @@ async function translateFiles(sourcePath, targetPath, targetLang, options = {}) 
       // 处理文件
       const fileExt = extname(currentSourcePath).toLowerCase();
       stats.total++;
-      
+
       // 检查是否包含 LLMs 路径，如果是则直接复制，不翻译
       if (currentSourcePath.includes("LLMs") || !fileExtensions.includes(fileExt)) {
         // LLMs 文件夹下的文件或不是要翻译的文件类型，直接复制
@@ -164,10 +159,10 @@ async function translateFiles(sourcePath, targetPath, targetLang, options = {}) 
           if (!existsSync(targetDir)) {
             mkdirSync(targetDir, { recursive: true });
           }
-          
+
           copyFileSync(currentSourcePath, currentTargetPath);
           stats.copied++;
-          
+
           if (verbose) {
             if (currentSourcePath.includes("LLMs")) {
               console.log(`[复制-LLMs] ${relative(sourcePath, currentSourcePath)}`);
@@ -181,14 +176,14 @@ async function translateFiles(sourcePath, targetPath, targetLang, options = {}) 
         }
         return;
       }
-      
+
       try {
         // 计算源文件的MD5
         const sourceMd5 = calculateMd5(currentSourcePath);
-        
+
         // 检查目标文件是否存在以及MD5是否匹配
         const targetMd5 = extractMd5FromFile(currentTargetPath);
-        
+
         if (targetMd5 === sourceMd5) {
           // MD5匹配，文件未修改，跳过翻译
           if (verbose) {
@@ -197,41 +192,41 @@ async function translateFiles(sourcePath, targetPath, targetLang, options = {}) 
           stats.skipped++;
           return;
         }
-        
+
         // 需要翻译：要么目标文件不存在，要么MD5不匹配
         if (verbose) {
           console.log(`[翻译] ${relative(sourcePath, currentSourcePath)}`);
         }
-        
+
         // 读取源文件内容
         const sourceContent = readFileSync(currentSourcePath, 'utf8');
-        
+
         // 调用翻译函数
         const translationResult = await translate(sourceContent, targetLang);
-        
+
         // 写入翻译结果和MD5
         writeTranslationWithMd5(
-          currentSourcePath, 
-          currentTargetPath, 
+          currentSourcePath,
+          currentTargetPath,
           translationResult.translated_text
         );
-        
+
         stats.translated++;
-        
+
       } catch (error) {
         console.error(`处理文件失败 ${currentSourcePath}:`, error);
         stats.failed++;
       }
     }
   }
-  
+
   // 开始处理
   if (existsSync(sourcePath)) {
     await processPath(sourcePath, targetPath);
   } else {
     console.error(`源路径不存在: ${sourcePath}`);
   }
-  
+
   return stats;
 }
 
@@ -244,20 +239,20 @@ async function translateFiles(sourcePath, targetPath, targetLang, options = {}) 
 async function translateFolder(sourceDir, targetDir, targetLang) {
   console.log(`开始翻译文件夹: ${sourceDir} → ${targetDir} (目标语言: ${targetLang})`);
   console.log('--------------------------------------------------');
-  
+
   const startTime = Date.now();
-  
+
   // 确保目标文件夹存在
   if (!existsSync(targetDir)) {
     mkdirSync(targetDir, { recursive: true });
   }
-  
+
   // 执行翻译
   const stats = await translateFiles(sourceDir, targetDir, targetLang);
-  
+
   // 统计信息
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-  
+
   console.log('--------------------------------------------------');
   console.log(`翻译完成! 耗时: ${duration}秒`);
   console.log(`总文件数: ${stats.total}`);
@@ -271,10 +266,39 @@ await translateFolder(
   'docs/zh-hans',
   'docs/it',
   'Italiano')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/en',
+  'English')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/de',
+  'Deutsch')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/fr',
+  'Français')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/es',
+  'Español')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/ja',
+  '日本語')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/pt',
+  'Português')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/ru',
+  'Русский')
+await translateFolder(
+  'docs/zh-hans',
+  'docs/zh-hant',
+  '繁體中文')
 
-//   中文简体: docs/zh-hans
-// 中文繁体: docs/zh-hant
-// 英语: docs/en
 // 法语: docs/fr
 // 德语: docs/de
 // 西班牙语: docs/es

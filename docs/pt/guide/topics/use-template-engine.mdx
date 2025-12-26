@@ -1,29 +1,29 @@
-# Usando um Motor de Modelos
+# Usando Mecanismos de Modelagem
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/template-askama/src/main.mdx';
-import CargoCode from '../../../../codes_md/template-askama/Cargo.mdx';
-import TemplateCode from '../../../../codes_md/template-askama/templates/hello.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-O Salvo não possui nenhum motor de modelos embutido, afinal, a preferência por um determinado estilo de motor de modelos varia de pessoa para pessoa.
+O Salvo não possui nenhum mecanismo de modelagem embutido, afinal, a preferência por um estilo específico de mecanismo de modelagem varia de pessoa para pessoa.
 
-Em essência, um motor de modelos é: dados + modelo = string.
+Em essência, um mecanismo de modelagem é: dados + modelo = string.
 
-Portanto, desde que seja capaz de renderizar a string final, qualquer motor de modelos pode ser suportado.
+Portanto, desde que seja possível renderizar a string final, qualquer mecanismo de modelagem pode ser suportado.
 
 Por exemplo, o suporte para `askama`:
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/template-askama/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/template-askama/Cargo.toml"
+  ```
   </Tab>
-  <Tab label="template/hello.toml">
-    <TemplateCode/>
+  <Tab label="templates/hello.html">
+  ```html file="<root>/codes/template-askama/templates/hello.html"
+  ```
   </Tab>
 </Tabs>
 
-**Observação**: Para projetos não particularmente complexos, recomendamos fortemente a abordagem de desenvolvimento com separação entre front-end e back-end, utilizando frameworks de UI mais flexíveis e com ecossistema mais robusto (como React, Vue, Svelte, etc.) para construir o front-end, enquanto o Salvo atua como serviço de API back-end. Essa abordagem oferece maior eficiência no desenvolvimento, divisão clara de responsabilidades entre front-end e back-end, e está mais alinhada com as tendências modernas de desenvolvimento de aplicações web.
-{/* 本行由工具自动生成,原文哈希值:d1b05d0e368ca894e309f2bdde8d14a0 */}
+**Nota**: Para projetos não particularmente complexos, recomendamos o uso de uma abordagem de desenvolvimento com separação entre front-end e back-end. Utilize frameworks de UI mais flexíveis e com ecossistema mais robusto (como React, Vue, Svelte, etc.) para construir o front-end, enquanto o Salvo atua como serviço de API no back-end. Essa abordagem aumenta a eficiência de desenvolvimento, define responsabilidades mais claras entre front-end e back-end e está mais alinhada com as tendências modernas de desenvolvimento de aplicações web.
+{/* 本行由工具自动生成,原文哈希值:241763674e531713bf3187516a914e3b */}

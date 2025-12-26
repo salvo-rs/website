@@ -1,30 +1,30 @@
 # アプリケーションのデプロイ方法
 
-Salvoプロジェクトはコンパイル後、単一の実行可能ファイルになります。デプロイ時にはこの実行ファイルと依存する静的リソースをサーバーにアップロードするだけで済みます。
+Salvoプロジェクトはコンパイル後に単一の実行可能ファイルとなります。デプロイ時には、この実行可能ファイルと依存する静的リソースをサーバーにアップロードするだけで完了します。
 
-Rustプロジェクト向けには、非常にシンプルなデプロイプラットフォーム[shuttle.rs](https://www.shuttle.rs)も利用可能です。shuttleはSalvoプロジェクトをサポートしており、詳細は[公式ドキュメント](https://docs.shuttle.rs/guide/salvo-examples.html)をご覧ください。
+Rustプロジェクト向けには、非常にシンプルなデプロイプラットフォーム [shuttle.rs](https://www.shuttle.rs) も利用可能です。shuttleはSalvoプロジェクトをサポートしており、詳細は[公式ドキュメント](https://docs.shuttle.rs/guide/salvo-examples.html)をご参照ください。
 
-## Dockerでのデプロイ
+## Dockerによるデプロイ
 
-SalvoアプリケーションはDockerを使用してデプロイすることも可能です。以下は基本的な`Dockerfile`の例で、プロジェクトの要件に応じて調整してください：
+SalvoアプリケーションのデプロイにはDockerも使用できます。以下は基本的な `Dockerfile` の例です。プロジェクトの要件に応じて調整してください：
 
 ```dockerfile
 # ビルドステージ
 FROM rust:slim AS build
 WORKDIR /app
 
-# 依存関係ファイルをコピーして先にビルド（キャッシュレイヤー活用）
+# 依存ファイルをコピーして依存関係を構築（キャッシュレイヤー活用）
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
     cargo build --release
 
-# 実際のソースコードをコピーしてアプリケーションをビルド
+# 実際のソースコードをコピーしてアプリケーションを構築
 COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# ランタイムステージでは軽量なベースイメージを使用
+# ランタイムステージでは軽量ベースイメージを使用
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
@@ -45,10 +45,10 @@ CMD ["./app"]
 
 ### 使用方法
 
-1. 上記の`Dockerfile`をプロジェクトルートディレクトリに保存
-2. `your_app_name`を実際のバイナリファイル名に変更
-3. アプリケーションで静的ファイル（テンプレート、CSS、JSなど）が必要な場合、適切な`COPY`コマンドを追加
-4. 環境変数設定が必要な場合は`ENV`指令を使用
+1. 上記の `Dockerfile` をプロジェクトルートディレクトリに保存
+2. `your_app_name` を実際のバイナリファイル名に変更
+3. 静的ファイル（テンプレート、CSS、JSなど）が必要な場合は、適切な `COPY` コマンドを追加
+4. 環境変数設定が必要な場合は `ENV` ディレクティブを使用
 5. Dockerイメージをビルド：
    ```bash
    docker build -t your-app-name .
@@ -58,5 +58,5 @@ CMD ["./app"]
    docker run -p 5800:5800 your-app-name
    ```
 
-アプリケーションの実際の要件に応じてポート番号やその他の設定を調整してください。
+アプリケーションの実際の要件に応じて、ポート番号やその他の設定を調整してください。
 {/* 本行由工具自动生成,原文哈希值:cc4f6a8bac2d9ff67911bf45b473c2bd */}

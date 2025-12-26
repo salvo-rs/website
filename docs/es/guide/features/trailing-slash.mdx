@@ -1,33 +1,33 @@
 # Barra Final
 
-Middleware para agregar o eliminar automáticamente la barra final `/`.
+Middleware para agregar o eliminar automáticamente la barra `/` al final.
 
 ## Casos de Uso
 
 El middleware Barra Final es especialmente útil en los siguientes escenarios:
 
-- **Normalización de URLs**: Asegura que todas las URLs sigan un formato consistente (agregando o eliminando uniformemente la barra final), lo que ayuda a mejorar el SEO y evita problemas de contenido duplicado.
-  
-- **Simplificación del manejo de rutas**: Elimina la necesidad de escribir lógica de manejo de rutas separada para casos con y sin barra final, ya que el middleware gestiona automáticamente esta conversión.
+- **Normalización de URL**: Asegura que todas las URL sigan un formato consistente (agregando o eliminando uniformemente la barra final), lo que ayuda a mejorar el SEO y evita problemas de contenido duplicado.
 
-- **Compatibilidad**: Algunos clientes pueden agregar o eliminar automáticamente la barra final de una URL; este middleware garantiza que las solicitudes se enruten correctamente.
+- **Simplificación del manejo de rutas**: Elimina la necesidad de escribir lógica de manejo de rutas por separado para casos con y sin barra final, ya que el middleware maneja automáticamente esta conversión.
 
-- **Gestión de redirecciones**: Puede configurarse para redirigir automáticamente URLs con barra final a URLs sin ella (o viceversa), mejorando la experiencia del usuario.
+- **Compatibilidad**: Algunos clientes pueden agregar o eliminar automáticamente la barra final de la URL; este middleware garantiza que las solicitudes se enruten correctamente.
 
-- **Evitar conflictos de rutas**: En muchos frameworks web, `/ruta` y `/ruta/` pueden tratarse como rutas diferentes; este middleware unifica su manejo.
+- **Gestión de redirecciones**: Puede configurarse para redirigir automáticamente las URL con barra final a versiones sin ella (o viceversa), mejorando la experiencia del usuario.
 
-import { Tab, Tabs } from 'rspress/theme';
-import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
-import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+- **Evitar conflictos de rutas**: En muchos frameworks web, `/ruta` y `/ruta/` pueden tratarse como rutas diferentes; este middleware las unifica.
+
+import { Tab, Tabs } from '@rspress/core/theme';
 
 _**Código de Ejemplo**_
 
 <Tabs>
-<Tab label="main.rs">
-<TrailingMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TrailingCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/trailing-slash/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/trailing-slash/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}
+{/* 本行由工具自动生成,原文哈希值:7bb4e1e210c23aa687c6aa13c130a763 */}

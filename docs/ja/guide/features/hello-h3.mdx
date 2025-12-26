@@ -1,33 +1,33 @@
 # HTTP/3 サポート
 
-SalvoはHTTP/3のサポートを提供しており、`quinn` featureを有効にすることでこの機能を利用できます。HTTP/3はQUICプロトコルを基盤としており、従来のHTTP/1.1やHTTP/2と比較して、特に不安定なネットワーク環境において、より低いレイテンシと優れたパフォーマンスを実現します。
+Salvo は HTTP/3 のサポートを提供しており、`quinn` フィーチャーを有効にすることでこの機能を利用できます。HTTP/3 は QUIC プロトコルを基盤としており、従来の HTTP/1.1 や HTTP/2 と比較して、特に不安定なネットワーク環境において、より低いレイテンシと優れたパフォーマンスを実現します。
 
-## HTTP/3サポートの有効化
+## HTTP/3 サポートの有効化
 
-SalvoでHTTP/3サポートを有効にするには、`Cargo.toml`ファイルで`quinn` featureを有効にする必要があります：
+Salvo で HTTP/3 サポートを有効にするには、`Cargo.toml` ファイルで `quinn` フィーチャーを有効化する必要があります：
 
 ```toml
 salvo = { workspace = true, features = ["quinn"] }
 ```
 
-## HTTP/3の使用シナリオ
+## HTTP/3 の適用シナリオ
 
-HTTP/3は以下のようなシナリオに特に適しています：
+HTTP/3 は特に以下のシナリオに適しています：
 
 - モバイルデバイスや不安定なネットワーク環境でのアプリケーション
-- 低遅延が要求されるリアルタイムアプリケーション
-- 多数の小ファイルを並列でダウンロードするシナリオ
-- 接続マイグレーションが必要なアプリケーション（WiFiから携帯ネットワークへの切り替え時に接続を維持するなど）
+- 低遅延が求められるリアルタイムアプリケーション
+- 多数の小規模ファイルを並行ダウンロードするシナリオ
+- 接続マイグレーションが必要なアプリケーション（例：WiFi から携帯ネットワークへの切り替え時に接続を維持）
 
 ## サンプルコード
 
-以下はHTTP/3（QUIC）とHTTPS（TCP）の両方をサポートするシンプルなHTTP/3サーバーの例です：
+以下は、HTTP/3 (QUIC) と HTTPS (TCP) の両方をサポートするシンプルな HTTP/3 サーバーの例です：
 
 ```rust
 use salvo::conn::rustls::{Keycert, RustlsConfig};
 use salvo::prelude::*;
 
-// ハンドラ関数、"Hello World"を返す
+// ハンドラー関数、"Hello World" を返す
 #[handler]
 async fn hello() -> &'static str {
     "Hello World"
@@ -35,68 +35,68 @@ async fn hello() -> &'static str {
 
 #[tokio::main]
 async fn main() {
-    // ログシステムの初期化
+    // ロギングシステムの初期化
     tracing_subscriber::fmt().init();
 
-    // 埋め込まれたPEMファイルからTLS証明書と秘密鍵を読み込む
+    // 埋め込まれた PEM ファイルから TLS 証明書と秘密鍵を読み込む
     let cert = include_bytes!("../certs/cert.pem").to_vec();
     let key = include_bytes!("../certs/key.pem").to_vec();
 
     // ルーターを作成し、エンドポイントを追加
     let router = Router::new().get(hello);
 
-    // RustlsでTLS設定を構成
+    // Rustls を使用して TLS 設定を構成
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // TLS暗号化付きTCPリスナーを作成、5800ポートで待機
+    // TLS 暗号化付きの TCP リスナーを作成し、ポート 5800 で待機
     let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
-    // QUICリスナーを作成し、TCPリスナーと結合
+    // QUIC リスナーを作成し、TCP リスナーと結合
     let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
         .join(listener)
         .bind()
         .await;
 
-    // HTTP/3(QUIC)とHTTPS(TCP)の両方をサポートするサーバーを起動
+    // HTTP/3 (QUIC) と HTTPS (TCP) の両方をサポートするサーバーを起動
     Server::new(acceptor).serve(router).await;
 }
 ```
 
 ## 主要コードの解説
 
-### TLS設定
+### TLS 設定
 
 ```rust
-// RustlsでTLS設定を構成
+// Rustls を使用して TLS 設定を構成
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 ```
 
-HTTP/3はQUICプロトコルを基盤としており、QUICはTLS 1.3による暗号化が必須です。Salvoでは`RustlsConfig`を使用してTLS証明書と秘密鍵を設定します。
+HTTP/3 は QUIC プロトコルを基盤としており、QUIC は暗号化に TLS 1.3 を必要とするため、TLS 証明書と秘密鍵の設定が必要です。Salvo では、`RustlsConfig` を使用して TLS を設定します。
 
 ### リスナーの結合
 
 ```rust
-// TLS暗号化付きTCPリスナーを作成
+// TLS 暗号化付きの TCP リスナーを作成
 let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
-// QUICリスナーを作成し、TCPリスナーと結合
+// QUIC リスナーを作成し、TCP リスナーと結合
 let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
     .join(listener)
     .bind()
     .await;
 ```
 
-このコードはSalvoにおけるHTTP/3処理の中核部分です。まずTLS対応のTCPリスナー（HTTP/1.1とHTTP/2用）を作成し、次にQUICリスナー（HTTP/3用）を作成します。`join`メソッドでこれら2つのリスナーを結合し、サーバーが異なるプロトコルのリクエストを同時に処理できるようにします。
+このコードは、Salvo で HTTP/3 を処理するための中心的な部分です。まず、TLS をサポートする TCP リスナー（HTTP/1.1 および HTTP/2 用）を作成し、次に QUIC リスナー（HTTP/3 用）を作成します。`join` メソッドを使用してこれら 2 つのリスナーを結合することで、サーバーは異なるプロトコルのリクエストを同時に処理できるようになります。
 
 ## サンプルの実行
 
-このサンプルを実行するには、有効なTLS証明書と秘密鍵が必要です。開発環境では自己署名証明書を使用できます。完全なサンプルコードは[Salvo GitHubリポジトリ](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3)で確認できます。
+このサンプルを実行するには、有効な TLS 証明書と秘密鍵が必要です。開発環境では、自己署名証明書を使用できます。完全なサンプルコードは [Salvo GitHub リポジトリ](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3) で確認できます。
 
-現在、多くのクライアントがHTTP/3を完全にサポートしていないため、このサーバーがHTTP/3とHTTPSの両方をサポートしていることは非常に重要です。
+現在、多くのクライアントが HTTP/3 を完全にはサポートしていないため、このサーバーが HTTP/3 と HTTPS の両方をサポートすることは非常に重要です。
 
 ## 注意事項
 
-1. HTTP/3にはTLS 1.3のサポートが必要なため、有効な証明書と秘密鍵の設定が必須です。
-2. クライアントがHTTP/3プロトコルをサポートしていない場合、HTTP/1.1またはHTTP/2にフォールバックします。
-3. 本番環境では、自己署名証明書ではなく、信頼されたCAから発行された証明書を使用する必要があります。
+1. HTTP/3 は TLS 1.3 のサポートを必要とするため、有効な証明書と秘密鍵の設定が必須です。
+2. クライアントが HTTP/3 プロトコルをサポートしている場合にのみこの機能を利用でき、そうでない場合は HTTP/1.1 または HTTP/2 にフォールバックします。
+3. 本番環境では、自己署名証明書ではなく、信頼された CA が発行した証明書を使用する必要があります。
 {/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

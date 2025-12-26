@@ -1,208 +1,232 @@
-import { Tab, Tabs } from 'rspress/theme';
-import OapiHelloCode from '../../../../codes_md/oapi-hello/src/main.mdx';
-import OapiHelloCargoCode from '../../../../codes_md/oapi-hello/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # Generación de Documentación OpenAPI
 
-OpenAPI es una especificación de código abierto para describir el diseño de interfaces de APIs RESTful. Define en formato JSON o YAML la estructura de solicitudes y respuestas, parámetros, tipos de retorno, códigos de error y otros detalles, haciendo la comunicación entre cliente y servidor más clara y estandarizada.
+OpenAPI es una especificación de código abierto utilizada para describir el diseño de interfaces de APIs RESTful. Define en formato JSON o YAML la estructura de solicitudes y respuestas de la API, parámetros, tipos de retorno, códigos de error y otros detalles, haciendo que la comunicación entre cliente y servidor sea más clara y estandarizada.
 
-Originalmente, OpenAPI era la versión abierta de la especificación Swagger, pero ahora es un proyecto independiente con apoyo de grandes empresas y desarrolladores. Usar OpenAPI mejora la colaboración en equipos de desarrollo, reduce costos de comunicación y aumenta la eficiencia. Además, ofrece herramientas para generar documentación automática, datos simulados (Mock) y casos de prueba, facilitando el desarrollo y las pruebas.
+OpenAPI comenzó como la versión de código abierto de la especificación Swagger, pero ahora es un proyecto independiente que cuenta con el apoyo de muchas grandes empresas y desarrolladores. Utilizar la especificación OpenAPI puede ayudar a los equipos de desarrollo a colaborar mejor, reducir costos de comunicación y mejorar la eficiencia del desarrollo. Además, OpenAPI proporciona a los desarrolladores herramientas para generar automáticamente documentación de API, datos simulados (Mock) y casos de prueba, facilitando el trabajo de desarrollo y pruebas.
 
-Salvo integra OpenAPI (adaptado de [utoipa](https://github.com/juhaku/utoipa)). Aprovechando sus características, Salvo extrae elegantemente información de tipos OpenAPI directamente de los `Handler`. También incluye interfaces populares como SwaggerUI, scalar, rapidoc y redoc.
+Salvo ofrece integración con OpenAPI (modificado desde [utoipa](https://github.com/juhaku/utoipa)). Salvo, aprovechando sus propias características, obtiene de manera muy elegante la información relevante de tipos de datos OpenAPI automáticamente desde el `Handler`. Salvo también integra varias interfaces OpenAPI populares de código abierto como SwaggerUI, scalar, rapidoc y redoc.
 
-Para los nombres largos de tipos en Rust, que pueden no ser ideales para OpenAPI, `salvo-oapi` proporciona el tipo `Namer`, permitiendo personalizar reglas y modificar nombres de tipos en OpenAPI.
+Dado que los nombres de tipos en Rust pueden ser largos y no siempre adecuados para OpenAPI, `salvo-oapi` proporciona el tipo `Namer`, que permite personalizar reglas para modificar los nombres de tipos en OpenAPI según sea necesario.
 
 _**Código de Ejemplo**_
 
 <Tabs>
   <Tab label="main.rs">
-    <OapiHelloCode/>
+  ```rust file="<root>/codes/oapi-hello/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <OapiHelloCargoCode/>
+  ```toml file="<root>/codes/oapi-hello/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-Ingresa `http://localhost:5800/swagger-ui` en tu navegador para ver la interfaz de Swagger UI.
+Ingresando `http://localhost:5800/swagger-ui` en el navegador, podrás ver la página de Swagger UI.
 
-La integración de OpenAPI en Salvo es muy elegante. Para el ejemplo anterior, comparado con un proyecto Salvo común, solo hicimos estos pasos:
+La integración de OpenAPI en Salvo es bastante elegante. Para el ejemplo anterior, en comparación con un proyecto Salvo normal, solo realizamos los siguientes pasos:
 
 - Habilitar la función `oapi` en `Cargo.toml`: `salvo = { workspace = true, features = ["oapi"] }`;
 
-- Reemplazar `#[handler]` con `#[endpoint]`;
+- Cambiar `#[handler]` por `#[endpoint]`;
 
-- Usar `name: QueryParam<String, false>` para obtener valores de cadena de consulta. Al visitar `http://localhost/hello?name=chris`, el parámetro `name` se analiza. `QueryParam<String, false>` indica que el parámetro es opcional; si se omite (ej. `http://localhost/hello`), no habrá error. Con `QueryParam<String, true>`, el parámetro es obligatorio.
+- Usar `name: QueryParam<String, false>` para obtener el valor de la cadena de consulta. Cuando accedes a la URL `http://localhost/hello?name=chris`, esta cadena de consulta `name` será analizada. El `false` en `QueryParam<String, false>` indica que este parámetro es opcional; acceder a `http://localhost/hello` no generará un error. Por el contrario, `QueryParam<String, true>` indica que este parámetro es obligatorio; de lo contrario, se devolverá un error.
 
-- Crear `OpenAPI` y su `Router` correspondiente. `OpenApi::new("test api", "0.0.1").merge_router(&router)` indica que `OpenAPI` obtiene la información necesaria analizando rutas y subrutas. Algunas rutas con `Handler` que no proporcionan datos para la documentación se ignoran (ej. las definidas con `#[handler]` en lugar de `#[endpoint]`). Esto permite implementar OpenAPI gradualmente, cambiando `#[handler]` a `#[endpoint]` y ajustando firmas de funciones.
+- Crear `OpenAPI` y el `Router` correspondiente. `OpenApi::new("test api", "0.0.1").merge_router(&router)`: aquí `merge_router` indica que este `OpenAPI` obtiene la información de documentación necesaria analizando una ruta específica y sus rutas descendientes. Algunos `Handler` de rutas pueden no proporcionar información para generar documentación; estas rutas serán ignoradas, como los `Handler` definidos con la macro `#[handler]` en lugar de `#[endpoint]`. Es decir, en proyectos reales, por razones de progreso en el desarrollo, puedes optar por no generar documentación OpenAPI, o generarla parcialmente. Posteriormente, puedes aumentar gradualmente la cantidad de interfaces OpenAPI generadas, y lo único que necesitas hacer es cambiar `#[handler]` por `#[endpoint]` y modificar la firma de la función.
 
 ## Extractores de Datos
 
-Con `use salvo::oapi::extract::*;` se importan extractores predefinidos. Estos proporcionan información necesaria para que Salvo genere la documentación OpenAPI.
+Importando `use salvo::oapi::extract::*;` puedes importar extractores de datos predefinidos y comunes. Los extractores proporcionan información necesaria a Salvo para que pueda generar la documentación OpenAPI.
 
-- `QueryParam<T, const REQUIRED: bool>`: Extrae datos de la cadena de consulta. `QueryParam<T, false>` indica que el parámetro es opcional; `QueryParam<T, true>`, obligatorio.
+- `QueryParam<T, const REQUIRED: bool>`: Un extractor que obtiene datos de la cadena de consulta. `QueryParam<T, false>` indica que este parámetro no es obligatorio y puede omitirse. `QueryParam<T, true>` indica que es obligatorio y no puede omitirse; si no se proporciona, se devuelve un error.
 
-- `HeaderParam<T, const REQUIRED: bool>`: Extrae datos de cabeceras HTTP. Similar a `QueryParam` en opcionalidad.
+- `HeaderParam<T, const REQUIRED: bool>`: Un extractor que obtiene datos de los encabezados de la solicitud. `HeaderParam<T, false>` indica que este parámetro no es obligatorio y puede omitirse. `HeaderParam<T, true>` indica que es obligatorio y no puede omitirse; si no se proporciona, se devuelve un error.
 
-- `CookieParam<T, const REQUIRED: bool>`: Extrae datos de cookies. Similar en funcionamiento.
+- `CookieParam<T, const REQUIRED: bool>`: Un extractor que obtiene datos de las cookies de la solicitud. `CookieParam<T, false>` indica que este parámetro no es obligatorio y puede omitirse. `CookieParam<T, true>` indica que es obligatorio y no puede omitirse; si no se proporciona, se devuelve un error.
 
-- `PathParam<T>`: Extrae parámetros de la URL. Es obligatorio por definición.
+- `PathParam<T>`: Un extractor que obtiene parámetros de ruta desde la `URL` de la solicitud. Si este parámetro no existe, la coincidencia de ruta no tendrá éxito, por lo que no hay un caso en el que pueda omitirse.
 
-- `FormBody<T>`: Extrae datos de formularios enviados.
+- `FormBody<T>`: Extrae información de un formulario enviado en la solicitud.
 
-- `JsonBody<T>`: Extrae datos de payloads JSON.
+- `JsonBody<T>`: Extrae información de una carga útil en formato JSON enviada en la solicitud.
 
 ## `#[endpoint]`
 
-Para generar documentación OpenAPI, usa `#[endpoint]` en lugar de `#[handler]`. Es una versión mejorada:
+Al generar documentación OpenAPI, es necesario usar la macro `#[endpoint]` en lugar de la macro regular `#[handler]`. En realidad, es una versión mejorada de la macro `#[handler]`.
 
-- Obtiene información necesaria de la firma de la función.
+- Puede obtener la información necesaria para generar OpenAPI a través de la firma de la función.
 
-- Datos no disponibles en la firma se pueden añadir como atributos en `#[endpoint]`, fusionándose o sobrescribiendo la información existente.
+- Para información que no se puede proporcionar convenientemente a través de la firma, se puede agregar directamente como atributos en la macro `#[endpoint]`. La información proporcionada de esta manera se fusionará con la obtenida de la firma de la función; si hay conflictos, la información de los atributos anulará la de la firma.
 
-El atributo `#[deprecated]` de Rust marca Handlers obsoletos. OpenAPI solo soporta el estado de obsoleto, ignorando detalles como razones o versiones.
+Puedes usar el atributo `#[deprecated]` incorporado de Rust para marcar un `Handler` como obsoleto o en desuso. Aunque el atributo `#[deprecated]` admite agregar información como la razón del desuso o la versión, OpenAPI no lo admite, por lo que esta información se ignorará al generar OpenAPI.
 
-Los comentarios de documentación se usan para OpenAPI: la primera línea como _`summary`_ y el resto como _`description`_.
+Los comentarios de documentación en el código se extraerán automáticamente para generar OpenAPI. La primera línea se usará para generar el _`summary`_, y todo el comentario se usará para generar la _`description`_.
 
 ```rust
-/// Resumen de la operación
+/// Este es un resumen de la operación
 ///
-/// Todo el comentario se incluye en la descripción.
+/// Todas las líneas del comentario de documentación se incluirán en la descripción de la operación.
 #[endpoint]
 fn endpoint() {}
 ```
 
 ## ToSchema
 
-Define estructuras de datos con `#[derive(ToSchema)]`:
+Puedes definir estructuras de datos usando `#[derive(ToSchema)]`:
 
 ```rust
 #[derive(ToSchema)]
-struct Mascota {
+struct Pet {
     id: u64,
-    nombre: String,
+    name: String,
 }
 ```
 
-Configuraciones opcionales con `#[salvo(schema(...))]`:
+Puedes definir configuraciones opcionales usando `#[salvo(schema(...))]`:
 
-- `example = ...`: Puede ser `json!(...)`. Ejemplo:
+- `example = ...` puede ser `json!(...)`. `json!(...)` será analizado por `serde_json::json!` como `serde_json::Value`.
 
   ```rust
   #[derive(ToSchema)]
-  #[salvo(schema(example = json!({"nombre": "gato bob", "id": 0})))]
-  struct Mascota {
+  #[salvo(schema(example = json!({"name": "bob the cat", "id": 0})))]
+  struct Pet {
       id: u64,
-      nombre: String,
+      name: String,
   }
   ```
 
-- `xml(...)`: Define atributos para objetos XML:
+- `xml(...)` se puede usar para definir propiedades del objeto Xml:
 
   ```rust
   #[derive(ToSchema)]
-  struct Mascota {
+  struct Pet {
       id: u64,
-      #[salvo(schema(xml(name = "nombre_mascota", prefix = "u")))]
-      nombre: String,
+      #[salvo(schema(xml(name = "pet_name", prefix = "u")))]
+      name: String,
   }
   ```
 
 ## ToParameters
 
-Genera [parámetros de ruta][path_parameters] desde campos de estructuras.
+Genera [parámetros de ruta][path_parameters] a partir de los campos de una estructura.
 
-Implementación `#[derive]` del trait [`ToParameters`][to_parameters].
+Esta es la implementación `#[derive]` del trait [`ToParameters`][to_parameters].
 
-Normalmente, los parámetros de ruta se definen en `#[salvo_oapi::endpoint(...parameters(...))]`. Pero con estructuras, este paso puede omitirse. Para descripciones o configuraciones, aún se necesitan definiciones explícitas con tipos primitivos o tuplas.
+Normalmente, los parámetros de ruta deben definirse en [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters] del `endpoint`. Sin embargo, cuando se usa una [`struct`][struct] para definir los parámetros, este paso puede omitirse. No obstante, si es necesario proporcionar una descripción o cambiar la configuración predeterminada, los parámetros de ruta de tipo [`primitive types`][primitive] y [`String`][std_string] o los parámetros de ruta de estilo [tuple] aún deben definirse en `parameters(...)`.
 
-El atributo `#[deprecated]` marca campos obsoletos en OpenAPI. Los comentarios en campos sirven como descripciones.
+Puedes usar el atributo `#[deprecated]` incorporado de Rust para marcar un campo como obsoleto, lo que se reflejará en la especificación OpenAPI generada.
+
+El atributo `#[deprecated]` admite agregar información adicional, como la razón del desuso o desde qué versión está obsoleto, pero OpenAPI no lo admite. OpenAPI solo admite un valor booleano para determinar si está obsoleto. Aunque es posible declarar un desuso con una razón, como `#[deprecated  = "There is better way to do this"]`, esta razón no aparecerá en la especificación OpenAPI.
+
+Los comentarios de documentación en los campos de la estructura se usarán como descripción del parámetro en la especificación OpenAPI generada.
 
 ```rust
 #[derive(salvo_oapi::ToParameters, serde::Deserialize)]
-struct Consulta {
-    /// Filtra items por nombre.
-    nombre: String
+struct Query {
+    /// Consultar elementos de tareas por nombre.
+    name: String
 }
 ```
 
-### Atributos de Contenedor para `#[salvo(parameters(...))]`
+### Atributos de Contenedor ToParameters para `#[salvo(parameters(...))]`
 
-Atributos aplicables a estructuras derivadas de `ToParameters`:
+Los siguientes atributos se pueden usar en el atributo de contenedor `#[salvo(parameters(…))]` de estructuras que derivan de `ToParameters`:
 
-- `names(...)`: Define nombres para campos sin nombre (solo en estructuras sin nombre).
-- `style = ...`: Estilo de serialización ([`ParameterStyle`][style]).
-- `default_parameter_in = ...`: Ubicación predeterminada ([`parameter::ParameterIn`][in_enum]).
-- `rename_all = ...`: Similar a `serde`.
+- `names(...)` define una lista separada por comas de nombres para los campos sin nombre de una estructura utilizada como parámetros de ruta. Solo se admite en estructuras sin nombre.
+- `style = ...` puede definir el estilo de serialización para todos los parámetros, especificado por [`ParameterStyle`][style]. El valor predeterminado se basa en el atributo _`parameter_in`_.
+- `default_parameter_in = ...` define la ubicación predeterminada utilizada para los parámetros de este campo, cuyo valor proviene de [`parameter::ParameterIn`][in_enum]. Si no se proporciona este atributo, el valor predeterminado es `query`.
+- `rename_all = ...` puede usarse como alternativa a `rename_all` de `serde`. En realidad, proporciona la misma funcionalidad.
 
-Ejemplo con `names`:
+Usar `names` para definir nombres para un solo parámetro sin nombre.
 
 ```rust
+# use salvo_oapi::ToParameters;
+
 #[derive(ToParameters, serde::Deserialize)]
 #[salvo(parameters(names("id")))]
 struct Id(u64);
 ```
 
-### Atributos de Campo para `#[salvo(parameter(...))]`
-
-- `style`, `parameter_in`, `explode`, `allow_reserved`: Controlan serialización.
-- `example`: Sobrescribe ejemplos del tipo subyacente.
-- `value_type = ...`: Anula el tipo predeterminado en OpenAPI.
-- Validaciones: `maximum`, `minimum`, `pattern`, etc.
-- `schema_with`: Permite esquemas personalizados.
-
-Ejemplo con validaciones:
+Usar `names` para definir nombres para múltiples parámetros sin nombre.
 
 ```rust
-#[derive(salvo_oapi::ToParameters, serde::Deserialize)]
-struct Item {
-    #[salvo(parameter(maximum = 10, minimum = 5))]
-    id: i32,
-    #[salvo(parameter(max_length = 10))]
-    valor: String,
-}
-```
+# use salvo_oapi::ToParameters;
 
-### Soporte Parcial para Atributos `#[serde(...)]`
-
-`ToParameters` soporta algunos atributos `serde` que afectan la documentación:
-
-- `rename_all`, `rename`, `default`, etc.
-
-### Ejemplos
-
-_**Uso de `#[salvo(parameters(...))]` con parámetros de ruta:**_
-
-```rust
 #[derive(ToParameters, serde::Deserialize)]
-#[salvo(parameters(default_parameter_in = Query))]
-struct Filtro {
-    #[salvo(parameter(value_type = i64))]
-    id: String,
-}
+#[salvo(parameters(names("id", "name")))]
+struct IdAndName(u64, String);
 ```
 
-_**Manejo de Errores**_
+### Atributos de Campo ToParameters para `#[salvo(parameter(...))]`
 
-Para OpenAPI, implementa `EndpointOutRegister` en el tipo de error global:
+Los siguientes atributos se pueden usar en campos de estructura con `#[salvo(parameter(...))]`:
 
-```rust
-impl EndpointOutRegister for Error {
-    fn register(components: &mut oapi::Components, operation: &mut oapi::Operation) {
-        operation.responses.insert(
-            StatusCode::INTERNAL_SERVER_ERROR.as_str(),
-            oapi::Response::new("Error interno").add_content("application/json", StatusError::to_schema(components)),
-        );
-        // Otros códigos de estado...
-    }
-}
-```
+- `style = ...` define cómo se serializa el parámetro mediante [`ParameterStyle`][style]. El valor predeterminado se basa en el atributo _`parameter_in`_.
 
-Filtra códigos de estado relevantes en endpoints:
+- `parameter_in = ...` define dónde se encuentra este parámetro de campo usando un valor de [`parameter::ParameterIn`][in_enum]. Si no se proporciona este valor, el valor predeterminado es `query`.
 
-```rust
-#[endpoint(status_codes(201, 409))]
-async fn crear_todo(new_todo: JsonBody<Todo>) -> Result<StatusCode, Error> {
-    Ok(StatusCode::CREATED)
-}
-```
-{/* 本行由工具自动生成,原文哈希值:66e3964ffc9d02e6953bdf48a6d2ed87 */}
+- `explode` define si se crea un nuevo par _`parameter=value`_ para cada parámetro en un _`object`_ o _`array`_.
+
+- `allow_reserved` define si se permiten caracteres reservados _`:/?#[]@!$&'()*+,;=`_ en el valor del parámetro.
+
+- `example = ...` puede ser una referencia a un método o _`json!(...)`_. El ejemplo dado anulará cualquier ejemplo del tipo de parámetro subyacente.
+
+- `value_type = ...` se puede usar para anular el tipo predeterminado utilizado para el campo en la especificación OpenAPI. Es útil cuando el tipo predeterminado no corresponde al tipo real, como cuando se usan tipos de terceros no definidos en [`ToSchema`][to_schema] o tipos [`primitive`][primitive]. El valor puede ser cualquier tipo de Rust que normalmente se pueda serializar a JSON, o un tipo personalizado como _`Object`_. _`Object`_ se renderizará como un objeto OpenAPI genérico.
+
+- `inline` si está habilitado, la definición del tipo de este campo debe provenir de [`ToSchema`][to_schema], y esta definición se incluirá en línea.
+
+- `default = ...` puede ser una referencia a un método o _`json!(...)`_.
+
+- `format = ...` puede ser una variante de la enumeración [`KnownFormat`][known_format] o un valor abierto en forma de cadena. Por defecto, el formato se deduce según el tipo de propiedad según la especificación OpenApi.
+
+- `write_only` define que la propiedad solo se usa para operaciones de **escritura** _POST, PUT, PATCH_ y no para _GET_.
+
+- `read_only` define que la propiedad solo se usa para operaciones de **lectura** _GET_ y no para _POST, PUT, PATCH_.
+
+- `nullable` define si la propiedad puede ser `null` (nota: esto es diferente a no ser requerida).
+
+- `required = ...` se usa para forzar que el parámetro sea obligatorio. [Ver reglas](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules).
+
+- `rename = ...` puede usarse como alternativa a `rename` de `serde`. En realidad, proporciona la misma funcionalidad.
+
+- `multiple_of = ...` se usa para definir un múltiplo del valor. Un valor de parámetro se considera válido solo si se divide por el valor de esta palabra clave y el resultado es un número entero. El valor del múltiplo debe ser estrictamente mayor que _`0`_.
+
+- `maximum = ...` se usa para definir un límite superior para el valor, inclusive.
+
+- `minimum = ...` se usa para definir un límite inferior para el valor, inclusive.
+
+- `exclusive_maximum = ...` se usa para definir un límite superior para el valor, exclusivo.
+
+- `exclusive_minimum = ...` se usa para definir un límite inferior para el valor, exclusivo.
+
+- `max_length = ...` se usa para definir la longitud máxima para valores de tipo `string`.
+
+- `min_length = ...` se usa para definir la longitud mínima para valores de tipo `string`.
+
+- `pattern = ...` se usa para definir una expresión regular válida que el valor del campo debe coincidir. La expresión regular sigue la versión _ECMA-262_.
+
+- `max_items = ...` se puede usar para definir el número máximo de elementos permitidos para un campo de tipo `array`. El valor debe ser un entero no negativo.
+
+- `min_items = ...` se puede usar para definir el número mínimo de elementos permitidos para un campo de tipo `array`. El valor debe ser un entero no negativo.
+
+- `with_schema = ...` usa un _`schema`_ creado por una referencia de función en lugar del _`schema`_ predeterminado. La función debe cumplir con la definición `fn() -> Into<RefOr<Schema>>`. No recibe parámetros y debe devolver cualquier valor que se pueda convertir a `RefOr<Schema>`.
+
+- `additional_properties = ...` se usa para definir un tipo de forma libre para `map`, como [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) y [`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html). El tipo de forma libre permite usar tipos arbitrarios en los valores del mapa. Los formatos admitidos son _`additional_properties`_ y _`additional_properties = true`_.
+
+#### Reglas de nulabilidad y requerimiento de campos
+
+Algunas reglas de nulabilidad y requerimiento aplicadas a los atributos de campo de _`ToParameters`_ también se aplican a los atributos de campo de _`ToSchema`_. [Ver reglas](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules).
+
+### Soporte parcial para atributos `#[serde(...)]`
+
+La derivación ToParameters actualmente admite parcialmente [atributos serde][serde attributes]. Estos atributos admitidos se reflejarán en la documentación OpenAPI generada. Actualmente se admiten los siguientes atributos:
+
+- `rename_all = "..."` se admite a nivel de contenedor.
+- `rename = "..."` se admite **solo** a nivel de campo.
+- `default` se admite a nivel de contenedor y campo según los [atributos serde][serde attributes].
+- `skip_serializing_if = "..."` se admite **solo** a nivel de campo.
+- `with = ...` se admite **solo** a nivel de campo.
+- `skip_serializing = "..."` se admite **solo** a nivel de campo o variante.
+- `skip_deserializing = "..."` se admite **solo** a nivel
+{/* 本行由工具自动生成,原文哈希值:0cd338da7f2e4cf2b5d77a3752808958 */}

@@ -1,63 +1,59 @@
-# CSRF Protection  
+# CSRF Protection
 
-## What is CSRF?  
+## What is CSRF?
 
-CSRF (Cross-Site Request Forgery) is a web security vulnerability where attackers trick authenticated users into performing unintended actions without their knowledge. In simple terms, the attacker exploits the user's logged-in status to send malicious requests on their behalf.  
+CSRF (Cross-Site Request Forgery) is a web security vulnerability where attackers trick authenticated users into performing unintended actions without their knowledge. In simple terms, attackers exploit a user's logged-in status to send malicious requests on their behalf.
 
-## How CSRF Attacks Work  
+## How CSRF Attacks Work
 
-The attack typically follows these steps:  
-1. The user logs into the target website A and obtains an authentication cookie.  
-2. The user visits a malicious website B.  
-3. Code on malicious website B automatically sends a request to website A, carrying the user's cookie.  
-4. Website A cannot distinguish whether this is a malicious request or a legitimate action by the user.  
+The typical attack process involves:
+1. The user logs into the target website A and obtains an authentication cookie.
+2. The user visits a malicious website B.
+3. Code on malicious website B automatically sends a request to website A, carrying the user's cookie.
+4. Website A cannot distinguish whether this is a malicious request or a legitimate user action.
 
-## Protection Strategies  
+## Protection Strategies
 
-Salvo provides CSRF middleware to safeguard your application against such attacks:  
+Salvo provides CSRF middleware to protect your applications from such attacks:
 
-- Adding a hidden CSRF token to forms  
-- Verifying that user-submitted requests contain a valid CSRF token  
-- By default, validating POST, PATCH, DELETE, and PUT requests  
+- Add a hidden CSRF token to forms.
+- Verify that user-submitted requests contain a valid CSRF token.
+- By default, validate POST, PATCH, DELETE, and PUT requests.
 
-## CSRF Implementation in Salvo  
+## CSRF Implementation in Salvo
 
-`Csrf` is a struct that implements the `Handler` trait and includes a `skipper` field to specify requests that should skip validation. By default, it validates `Method::POST`, `Method::PATCH`, `Method::DELETE`, and `Method::PUT` requests.  
+`Csrf` is a struct that implements the `Handler` trait and includes an internal `skipper` field to specify requests that should skip validation. By default, it validates `Method::POST`, `Method::PATCH`, `Method::DELETE`, and `Method::PUT` requests.
 
-Salvo supports two CSRF token storage methods:  
+Salvo supports two CSRF token storage methods:
 
-1. **CookieStore**: Stores the token in a cookie and verifies whether the `csrf-token` in the request header or form matches the cookie value.  
-2. **SessionStore**: Stores the token in the session and requires the session middleware to be used together.  
+1. **CookieStore**: Stores the token in a cookie and verifies whether the `csrf-token` in the request headers or form matches the cookie value.
+2. **SessionStore**: Stores the token in the session and requires the use of session middleware.
 
-_**Example Code**_ (cookie store)  
+_**Example Code**_ (cookie store)
 
-```rust
-import { Tab, Tabs } from 'rspress/theme';
-import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
-import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
-import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
-import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfCookieStoreCode/>
+  ```rust file="<root>/codes/csrf-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfCookieStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-```  
 
-_**Example Code**_ (session store)  
+_**Example Code**_ (session store)
 
-```rust
 <Tabs>
   <Tab label="main.rs">
-    <CsrfSessionStoreCode/>
+  ```rust file="<root>/codes/csrf-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfSessionStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-```
-{/* 本行由工具自动生成,原文哈希值:b6e191d0fb6f25b84764f3de28171886 */}
+{/* 本行由工具自动生成,原文哈希值:2eb072bb663695f226b56a34f14cdbb0 */}

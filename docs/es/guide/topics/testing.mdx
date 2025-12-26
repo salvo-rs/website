@@ -1,53 +1,53 @@
-# Escribiendo Pruebas
+# Escribir Pruebas
 
-## La importancia de las pruebas
+## Importancia de las Pruebas
 
-Escribir pruebas es una muestra de responsabilidad como ingeniero y el secreto para dormir tranquilo. Un conjunto completo de pruebas no solo mejora la calidad del código y previene errores de regresión, sino que también te permite descansar plácidamente después del despliegue. Mientras tus colegas reciben alertas de fallos del sistema a medianoche, tu aplicación permanece firme como una roca. Esta es la tranquilidad y confianza que brindan las pruebas.
+Escribir pruebas es una muestra de responsabilidad por parte de los ingenieros y el secreto para dormir tranquilos. Un conjunto completo de pruebas no solo mejora la calidad del código y previene errores de regresión, sino que también te permite dormir profundamente incluso después del despliegue. Cuando tus colegas reciban alertas de fallos del sistema a altas horas de la noche, tu aplicación permanecerá firme como una roca. Esta es la tranquilidad y confianza que brindan las pruebas.
 
-## Herramientas de prueba de Salvo
+## Herramientas de Prueba de Salvo
 
-El módulo `test` proporcionado por Salvo ayuda a probar proyectos basados en Salvo.
+El módulo `test` proporcionado por Salvo puede ayudar a probar proyectos de Salvo.
 
 [Documentación más reciente](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)
 
-**Ejemplo básico:**
+**Ejemplo simple:**
 
 ```rust
 use salvo::prelude::*;
 
 #[handler]
-async fn hola_mundo() -> &'static str {
-    "Hola Mundo"
+async fn hello_world() -> &'static str {
+    "Hello World"
 }
 
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    tracing::info!("Escuchando en http://127.0.0.1:5800");
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(ruta()).await;
+    tracing::info!("Listening on http://127.0.0.1:5800");
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(route()).await;
 }
 
-fn ruta() -> Router {
-    Router::new().get(hola_mundo)
+fn route() -> Router {
+    Router::new().get(hello_world)
 }
 
 #[cfg(test)]
-mod pruebas {
+mod tests {
     use salvo::prelude::*;
     use salvo::test::{ResponseExt, TestClient};
 
     #[tokio::test]
-    async fn prueba_hola_mundo() {
-        let servicio = Service::new(super::ruta());
+    async fn test_hello_world() {
+        let service = Service::new(super::route());
 
-        let contenido = TestClient::get(format!("http://127.0.0.1:5800/"))
-            .send(&servicio)
+        let content = TestClient::get(format!("http://127.0.0.1:5800/"))
+            .send(&service)
             .await
             .take_string()
             .await
             .unwrap();
-        assert_eq!(contenido, "Hola Mundo");
+        assert_eq!(content, "Hello World");
     }
 }
 ```

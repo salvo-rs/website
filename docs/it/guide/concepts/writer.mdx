@@ -1,6 +1,6 @@
-# Writer
+# Scrittore
 
-`Writer` viene utilizzato per scrivere contenuti nella `Response`:
+`Writer` viene utilizzato per scrivere contenuti in `Response`:
 
 ```rust
 #[async_trait]
@@ -9,7 +9,7 @@ pub trait Writer {
 }
 ```
 
-Rispetto a Handler:
+In confronto a Handler:
 
 ```rust
 #[async_trait]
@@ -19,12 +19,12 @@ pub trait Handler: Send + Sync + 'static {
 ```
 
 Le differenze principali sono:
-- Scopo diverso: `Writer` rappresenta la scrittura di contenuti specifici nella `Response`, implementato da contenuti concreti come stringhe, messaggi di errore, ecc. Mentre `Handler` è utilizzato per gestire l'intera richiesta.
-- `Writer` viene creato all'interno di `Handler` e si consuma quando viene chiamata la funzione `write`, essendo un utilizzo monouso. Al contrario, `Handler` è condiviso tra tutte le richieste.
-- `Writer` può essere restituito come contenuto del `Result` di un `Handler`.
-- `Writer` non ha il parametro `FlowCtrl`, quindi non può controllare il flusso di esecuzione della richiesta.
+- Scopo diverso: `Writer` rappresenta la scrittura di contenuti specifici in `Response`, implementato da contenuti concreti come stringhe, messaggi di errore, ecc. Mentre `Handler` è utilizzato per gestire l'intera richiesta.
+- `Writer` viene creato all'interno di `Handler` e si consuma quando viene chiamata la funzione `write`, essendo un'operazione monouso. Al contrario, `Handler` è condiviso tra tutte le richieste.
+- `Writer` può essere restituito come contenuto all'interno del `Result` di `Handler`.
+- `Writer` non include il parametro `FlowCtrl`, quindi non può controllare il flusso di esecuzione della richiesta.
 
-`Scribe` implementa `Writer`, ma con funzionalità ancora più limitate:
+`Scribe` implementa `Writer`, ma con funzionalità più limitate:
 
 ```rust
 pub trait Scribe {
@@ -32,5 +32,5 @@ pub trait Scribe {
 }
 ```
 
-La funzione di rendering di `Scribe` si limita a scrivere dati nella `Response`, senza poter accedere a informazioni da `Request` o `Depot`.
+La funzione di rendering di `Scribe` si limita a scrivere dati in `Response`, senza poter accedere a informazioni da `Request` o `Depot`.
 {/* 本行由工具自动生成,原文哈希值:a88019b69f080567caf2af39cb1d17e5 */}

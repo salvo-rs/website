@@ -3,6 +3,7 @@ name = "example-otel-jaeger"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
+rust-version.workspace = true
 
 [[bin]]
 name = "example-otel-client"
@@ -21,10 +22,13 @@ salvo = { workspace = true, features = ["affix-state", "otel"] }
 tokio = { workspace = true, features = ["macros"] }
 tracing.workspace = true
 tracing-subscriber.workspace = true
-opentelemetry = { workspace = true, features = ["metrics"]  }
+opentelemetry = { workspace = true, features = ["metrics"] }
 reqwest = { workspace = true }
-prometheus = "0.13"
-opentelemetry-prometheus.workspace = true
 opentelemetry-http.workspace = true
 opentelemetry_sdk = { workspace = true, features = ["rt-tokio"] }
-opentelemetry-otlp = { workspace = true, features = ["http-proto", "tonic", "trace", "reqwest"] }
+opentelemetry-otlp = { workspace = true, features = [
+    "http-proto",
+    "tonic",
+    "trace",
+    "reqwest",
+] }

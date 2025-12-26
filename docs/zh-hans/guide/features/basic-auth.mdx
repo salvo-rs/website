@@ -2,9 +2,7 @@
 
 提供对 Basic Auth 的支持的中间件.
 
-import { Tab, Tabs } from 'rspress/theme';
-import BasicAuthCode from '../../../../codes_md/basic-auth/src/main.mdx';
-import BasicAuthCargoCode from '../../../../codes_md/basic-auth/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Basic Auth 简介
 
@@ -39,9 +37,11 @@ Basic Auth 适用于以下场景：
 
 <Tabs>
   <Tab label="main.rs">
-    <BasicAuthCode/>
+  ```rust file="<root>/codes/basic-auth/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <BasicAuthCargoCode/>
+  ```toml file="<root>/codes/basic-auth/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

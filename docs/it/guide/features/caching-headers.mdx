@@ -2,26 +2,26 @@
 
 Middleware che fornisce supporto per la configurazione delle intestazioni di cache.
 
-Il controllo della cache è una parte cruciale dell'ottimizzazione delle prestazioni web. Impostando correttamente le intestazioni di cache, è possibile ridurre richieste di rete non necessarie e migliorare le prestazioni dell'applicazione. [Cache-Control](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Headers/Cache-Control) è un'intestazione di risposta HTTP che specifica le direttive per la strategia di caching del browser, controllando chi può memorizzare la risposta in cache, sotto quali condizioni e per quanto tempo.
+Il controllo della cache è una parte fondamentale dell'ottimizzazione delle prestazioni web. Impostando correttamente le intestazioni di cache, è possibile ridurre richieste di rete non necessarie e migliorare le prestazioni dell'applicazione. [Cache-Control](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Reference/Headers/Cache-Control) è un'intestazione di risposta HTTP che specifica le direttive per la strategia di cache del browser, controllando chi può memorizzare in cache la risposta, in quali condizioni e per quanto tempo.
 
-L'implementazione interna include tre `Handler`: `CachingHeaders`, `Modified` e `ETag`. `CachingHeaders` è una combinazione degli altri due. Normalmente si utilizza `CachingHeaders`.
+L'implementazione interna include tre gestori (`Handler`): `CachingHeaders`, `Modified` e `ETag`. `CachingHeaders` combina gli ultimi due. In condizioni normali, si utilizza `CachingHeaders`.
 
-- `Modified`: Fornisce la validazione della cache basata sull'ultima modifica della risorsa.
-- `ETag`: Utilizza l'Entity Tag per un meccanismo di validazione delle risorse più preciso.
-- `CachingHeaders`: Combina i due meccanismi precedenti, offrendo un supporto completo per il controllo della cache.
+- `Modified`: Fornisce convalida della cache basata sull'ultima data di modifica della risorsa.
+- `ETag`: Utilizza un tag di entità (Entity Tag) per un meccanismo di convalida delle risorse più preciso.
+- `CachingHeaders`: Combina i due meccanismi sopra descritti, fornendo un supporto completo per il controllo della cache.
 
-_**Codice di Esempio**_
+_**Codice di Esempio**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
-import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CachingHeadersCode/>
+  ```rust file="<root>/codes/caching-headers/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CachingHeadersCargoCode/>
+  ```toml file="<root>/codes/caching-headers/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}
+{/* 本行由工具自动生成,原文哈希值:08699e65af0ef5c9fac56f0fb8d73153 */}

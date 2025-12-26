@@ -14,15 +14,15 @@
 
 ## 示例代码
 
-import { Tab, Tabs } from 'rspress/theme';
-import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
-import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CompressionCode/>
+  ```rust file="<root>/codes/compression/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CompressionCargoCode/>
+  ```toml file="<root>/codes/compression/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

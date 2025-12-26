@@ -1,27 +1,27 @@
-# Middleware per il limite di dimensione dei file caricati
+# Middleware per il Limite di Dimensione dei File Caricati
 
-import { Tab, Tabs } from 'rspress/theme';
-import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
-import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Fornisce un middleware per limitare la dimensione dei file caricati nelle richieste.
 
-## Casi d'uso
+## Scenari di Applicazione
 
 Size Limiter è principalmente utilizzato nei seguenti scenari:
-- Prevenire che gli utenti carichino file troppo grandi occupando risorse del server
-- Evitare che attaccanti malintenzionati causino overflow di memoria sul server caricando grandi quantità di dati
-- Impostare strategie diverse di limitazione per diversi endpoint API
+- Impedire agli utenti di caricare file troppo grandi che consumano risorse del server
+- Evitare che attaccanti malintenzionati causino overflow di memoria del server caricando grandi quantità di dati
+- Impostare strategie diverse di limitazione della dimensione delle richieste per diversi endpoint API
 - Migliorare l'efficienza e la stabilità del server nell'elaborazione delle richieste
 
-_**Codice di esempio**_
+_**Codice di Esempio**_
 
 <Tabs>
-<Tab label="main.rs">
-<SizeLimiterMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SizeLimiterCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/size-limiter/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/size-limiter/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:7bf2c000bd32696677fc70ca8e62af44 */}
+{/* 本行由工具自动生成,原文哈希值:e8fe97542f86e069c6a192945b8303da */}

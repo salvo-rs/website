@@ -1,14 +1,14 @@
-# Réponse
+# Response
 
-Dans un `Handler`, la structure [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) est passée en tant que paramètre :
-* La structure `Response` encapsule tous les composants d'une réponse HTTP, fournissant une API complète pour construire et manipuler les réponses HTTP
-* Prend en charge un style d'appel chaîné (comme `res.status_code(200).body("Hello")`), facilitant la construction fluide des réponses
-* Fonctionnalités principales :
-    * Définition des codes d'état et des en-têtes
-    * Manipulation du corps de réponse (prise en charge des chaînes, octets, fichiers et flux de données)
-    * Gestion des cookies
-    * Diverses méthodes de rendu de contenu
-* Cette structure utilise un modèle de référence mutable, renvoyant une référence à elle-même via `&mut self`, permettant aux gestionnaires de construire et personnaliser facilement les réponses HTTP pour répondre à divers besoins de services Web
+Dans un `Handler`, [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) est passée en tant que paramètre :
+* La structure `Response` encapsule tous les composants d'une réponse HTTP et fournit une API complète pour construire et manipuler les réponses HTTP.
+* Elle prend en charge un style d'appel chaîné (par exemple `res.status_code(200).body("Hello")`), facilitant la construction fluide des réponses.
+* Ses fonctionnalités principales incluent :
+    * Définir le code d'état et les en-têtes
+    * Manipuler le corps de la réponse (prise en charge des chaînes de caractères, octets, fichiers et données en flux)
+    * Gérer les Cookies
+    * Plusieurs méthodes de rendu de contenu
+* Cette structure utilise un modèle de référence mutable, renvoyant une référence à elle-même via `&mut self`, permettant ainsi aux gestionnaires de construire et personnaliser facilement les réponses HTTP pour répondre à divers besoins de services Web.
 
 ```rust
 #[handler]
@@ -17,7 +17,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-Après réception d'une requête client par le serveur, tout `Handler` et middleware correspondant peut écrire des données dans `Response`. Dans certains cas, par exemple si un middleware souhaite empêcher l'exécution des middlewares et `Handler` suivants, vous pouvez utiliser `FlowCtrl` :
+Après que le serveur reçoit une requête client, tout `Handler` et middleware correspondant peut écrire des données dans `Response`. Dans certains cas, par exemple si un middleware souhaite empêcher l'exécution des middlewares et `Handler` suivants, vous pouvez utiliser `FlowCtrl` :
 
 ```rust
 #[handler]
@@ -31,7 +31,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
 Écrire des données dans `Response` est très simple :
 
-- Écrire des données texte simples
+- Écrire des données en texte brut
 
     ```rust
     res.render("Hello world!");
@@ -52,8 +52,9 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ```
 
 :::warning
-Si la méthode `render` est appelée plusieurs fois pour écrire des données JSON, ces données ne seront pas fusionnées en un seul objet JSON, mais concaténées comme des fragments de texte indépendants, ce qui peut entraîner un format JSON invalide. Si vous devez renvoyer plusieurs données, combinez-les d'abord en un seul objet avant de les sérialiser en une fois, ou gérez la logique vous-même.
+Si la méthode `render` est appelée plusieurs fois pour écrire des données JSON, ces données ne seront pas fusionnées en un seul objet JSON. Elles seront plutôt concaténées séquentiellement en tant que fragments de texte indépendants, ce qui pourrait entraîner un format JSON invalide. Si vous devez renvoyer plusieurs données, combinez-les d'abord en un seul objet avant de les sérialiser en une fois, ou gérez la logique vous-même.
 :::
+
 
 - Écrire du HTML
     
@@ -63,7 +64,8 @@ Si la méthode `render` est appelée plusieurs fois pour écrire des données JS
 
 ## Écrire une erreur HTTP
 
-- Utilisez `render` pour écrire des informations d'erreur détaillées dans `Response`.
+
+- Utiliser `render` permet d'écrire des informations d'erreur détaillées dans `Response`.
 
     ```rust
     use salvo::http::errors::*;
@@ -78,7 +80,7 @@ Si la méthode `render` est appelée plusieurs fois pour écrire des données JS
     ```
 
 ## Rediriger vers une autre URL
-- Utilisez la méthode `render` pour écrire une réponse de redirection dans `Response`, naviguant vers une nouvelle URL. Lorsque vous appelez la méthode Redirect::found, elle définit le code d'état HTTP à 302 (Found), indiquant une redirection temporaire. 
+- La méthode `render` peut être utilisée pour écrire une réponse de redirection dans `Response`, naviguant vers une nouvelle URL. Lorsque vous appelez la méthode `Redirect::found`, elle définit le code d'état HTTP à 302 (Found), indiquant une redirection temporaire.
     ```rust
     use salvo::prelude::*;
 
@@ -91,5 +93,28 @@ Si la méthode `render` est appelée plusieurs fois pour écrire des données JS
 
 ## ResBody
 
-Le type de Body renvoyé par Response est `ResBody`, une énumération qui est définie sur `ResBody::Error` en cas d'erreur, contenant les informations d'erreur pour un traitement ultérieur. `StatusError` n'implémente pas réellement `Writer`, dans le but de vous permettre de personnaliser votre propre méthode d'affichage dans `Catcher`.
+Le type de Body renvoyé par Response est `ResBody`. C'est une énumération qui est définie sur `ResBody::Error` en cas d'erreur, contenant les informations d'erreur pour un traitement différé. `StatusError` n'implémente pas réellement `Writer`, dans le but de vous permettre de personnaliser votre propre méthode d'affichage dans `Catcher`.
+
+
+
+# Aperçu des méthodes de la structure Response
+
+| Catégorie | Méthode | Description |
+|------|------|------|
+| **Création** | `new()` / `with_cookies()` | Créer une nouvelle réponse |
+| **Code d'état** | `status_code()` | Définir le code d'état |
+| **En-têtes** | `headers()/headers_mut()` | Obtenir les en-têtes |
+| | `set_headers()/add_header()` | Définir/ajouter un en-tête |
+| | `content_type()` | Obtenir le type de contenu |
+| **Version HTTP** | `version()/version_mut()` | Obtenir/modifier la version HTTP |
+| **Corps de la réponse** | `body()/body_mut()` | Définir/obtenir le corps de la réponse |
+| | `replace_body()/take_body()` | Remplacer/extraire le corps de la réponse |
+| | `write_body()` | Écrire des données dans le corps de la réponse |
+| | `stream()/channel()` | Réponse en flux/créer un canal d'envoi |
+| **Gestion des Cookies** | `cookies()/cookie()` | Obtenir les cookies/un cookie spécifique |
+| | `add_cookie()/remove_cookie()` | Ajouter/supprimer un cookie |
+| **Réponse de contenu** | `render()` | Rendre le contenu |
+| | `stuff()` | Définir le code d'état et rendre le contenu |
+| | `send_file()` | Envoyer un fichier |
+| **Requête d'état** | `is_stamped()` | Vérifier si la réponse est prête à être renvoyée |
 {/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

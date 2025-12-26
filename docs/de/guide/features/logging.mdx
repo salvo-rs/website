@@ -1,26 +1,27 @@
 # Logging-Middleware
 
-Die Protokollierung spielt eine entscheidende Rolle in Webanwendungen, da sie folgende Funktionen bietet:
-- Bereitstellung detaillierter Informationen zum Anfrageverarbeitungsprozess, um Entwicklern bei der Nachverfolgung des Anwendungsverhaltens zu helfen
-- Unterstützung bei der Problembehebung und Fehlersuche, insbesondere in Produktionsumgebungen
-- Überwachung der Anwendungsleistung und Ressourcennutzung
-- Aufzeichnung von Benutzerzugriffsmustern und Systemausnahmen
-- Erfüllung von Sicherheitsaudit- und Compliance-Anforderungen
+Die Protokollierung spielt eine entscheidende Rolle in Webanwendungen, da sie:
 
-Salvo bietet eine grundlegende Middleware für Logging-Funktionen. Wenn die Middleware direkt zum `Router` hinzugefügt wird, kann sie keine 404-Fehler erfassen, die zurückgegeben werden, wenn keine Übereinstimmung mit dem `Router` gefunden wird. Es wird empfohlen, sie stattdessen zum `Service` hinzuzufügen.
+- Detaillierte Informationen zum Anfrageverarbeitungsprozess bereitstellt und Entwicklern hilft, das Anwendungsverhalten nachzuvollziehen
+- Bei der Fehlerbehebung und Fehlersuche unterstützt, insbesondere in Produktionsumgebungen
+- Die Anwendungsleistung und Ressourcennutzung überwacht
+- Benutzerzugriffsmuster und Systemausnahmen erfasst
+- Sicherheitsaudits und Compliance-Anforderungen erfüllt
+
+Salvo bietet eine grundlegende Logging-Middleware. Wenn die Middleware direkt zum `Router` hinzugefügt wird, kann sie 404-Fehler nicht erfassen, die zurückgegeben werden, wenn keine Route übereinstimmt. Es wird empfohlen, sie stattdessen zum `Service` hinzuzufügen.
 
 _**Beispielcode**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
-import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <LoggingCode/>
+  ```rust file="<root>/codes/logging/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <LoggingCargoCode/>
+  ```toml file="<root>/codes/logging/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:b378fca9964cf2a34b48e7c0c9f74a2d */}
+{/* 本行由工具自动生成,原文哈希值:4c7986fbfefd00cadca247ef815900e4 */}

@@ -1,25 +1,23 @@
 # Flash
 
-Промежуточное ПО для функциональности Flash Message.
+Промежуточное ПО, предоставляющее функциональность Flash-сообщений.
 
-`FlashStore` предоставляет операции чтения и записи данных. `CookieStore` хранит данные в `Cookie`, тогда как `SessionStore` сохраняет данные в `Session`. Для работы `SessionStore` необходимо использовать вместе с функцией `session`.
+`FlashStore` обеспечивает операции чтения и записи данных. `CookieStore` хранит данные в `Cookie`. В то время как `SessionStore` сохраняет данные в `Session`, и его использование обязательно совместно с функцией `session`.
 
-_**Пример кода**_
+_**Пример кода**_ 
 
 ### Пример хранения в Cookie
 
-import { Tab, Tabs } from 'rspress/theme';
-import FlashCookieStoreCode from '../../../../codes_md/flash-cookie-store/src/main.mdx';
-import FlashCookieStoreCargoCode from '../../../../codes_md/flash-cookie-store/Cargo.mdx';
-import FlashSessionStoreCode from '../../../../codes_md/flash-session-store/src/main.mdx';
-import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <FlashCookieStoreCode/>
+  ```rust file="<root>/codes/flash-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <FlashCookieStoreCargoCode/>
+  ```toml file="<root>/codes/flash-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -27,10 +25,12 @@ import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store
 
 <Tabs>
   <Tab label="main.rs">
-    <FlashSessionStoreCode/>
+  ```rust file="<root>/codes/flash-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <FlashSessionStoreCargoCode/>
+  ```toml file="<root>/codes/flash-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:65b5daf888b80bc91076aaaee868b95c */}
+{/* 本行由工具自动生成,原文哈希值:1ee7f7b07cbfa41abc73377fd6dca086 */}

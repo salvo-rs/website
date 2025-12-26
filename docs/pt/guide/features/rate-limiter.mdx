@@ -2,34 +2,32 @@
 
 Middleware que fornece funcionalidade de controle de tráfego.
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
-import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
-import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
-import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Funcionalidades Principais
 
-* `RateIssuer` fornece uma abstração para identificar chaves de visitantes atribuídas. `RemoteIpIssuer` é uma de suas implementações, capaz de determinar visitantes com base no endereço IP da requisição. A chave não precisa ser necessariamente do tipo string - qualquer tipo que satisfaça as restrições `Hash + Eq + Send + Sync + 'static` pode ser usado como chave.
+* `RateIssuer` fornece uma abstração para atribuir chaves que identificam visitantes. `RemoteIpIssuer` é uma de suas implementações, capaz de determinar o visitante com base no endereço IP da requisição. A chave não precisa ser necessariamente uma string; qualquer tipo que satisfaça as restrições `Hash + Eq + Send + Sync + 'static` pode ser usado como chave.
 
-* `RateGuard` oferece uma abstração para algoritmos de controle de tráfego. Implementações padrão incluem janela fixa (`FixedGuard`) e janela deslizante (`SlidingGuard`).
+* `RateGuard` oferece uma abstração para algoritmos de controle de tráfego. São fornecidas implementações padrão para janela fixa (`FixedGuard`) e janela deslizante (`SlidingGuard`).
 
-* `RateStore` provê operações de armazenamento e recuperação de dados. `MokaStore` é uma implementação embutida de cache em memória baseada em `moka`. Você também pode definir sua própria implementação.
+* `RateStore` fornece operações de armazenamento e recuperação de dados. `MokaStore` é uma implementação interna de cache em memória baseada em `moka`. Você também pode definir sua própria implementação.
 
-* `RateLimiter` é uma estrutura que implementa `Handler`, contendo internamente um campo `skipper` para especificar requisições que podem ser ignoradas pelo cache. Por padrão, utiliza `none_skipper` que não ignora nenhuma requisição.
+* `RateLimiter` é uma estrutura que implementa `Handler`, contendo internamente um campo `skipper` que permite especificar requisições a serem ignoradas (que não precisam de cache). Por padrão, utiliza `none_skipper`, que não ignora nenhuma requisição.
 
-* `QuotaGetter` fornece uma abstração para obtenção de cotas, permitindo adquirir um objeto de cota baseado na `Key` do visitante. Isso significa que podemos configurar informações como cotas de usuário em bancos de dados, permitindo alterações e recuperações dinâmicas.
+* `QuotaGetter` fornece uma abstração para obtenção de cotas, permitindo recuperar um objeto de cota com base na chave (`Key`) do visitante. Isso significa que podemos configurar informações como cotas de usuário em um banco de dados, permitindo alterações dinâmicas e recuperação dinâmica.
 
-_**Código de Exemplo**_
+_**Código de Exemplo**_ 
 
 ### Exemplo de Cota Estática
 
 <Tabs>
   <Tab label="main.rs">
-    <StaticMainCode/>
+  ```rust file="<root>/codes/rate-limiter-static/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <StaticCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-static/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -37,10 +35,12 @@ _**Código de Exemplo**_
 
 <Tabs>
   <Tab label="main.rs">
-    <DynamicMainCode/>
+  ```rust file="<root>/codes/rate-limiter-dynamic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <DynamicCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-dynamic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:bf36a38e5e7b8ae28289c20d09737609 */}
+{/* 本行由工具自动生成,原文哈希值:3d248fa793d9b3aab28760c03d743c7a */}

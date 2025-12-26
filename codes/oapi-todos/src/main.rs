@@ -63,7 +63,7 @@ async fn main() {
                 .into_router("/redoc"),
         );
 
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -76,7 +76,7 @@ pub async fn index() -> Text<&'static str> {
 #[endpoint(
     tags("todos"),
     parameters(
-        ("offset", description = "Offset is an optional query paramter."),
+        ("offset", description = "Offset is an optional query parameter."),
     )
 )]
 pub async fn list_todos(

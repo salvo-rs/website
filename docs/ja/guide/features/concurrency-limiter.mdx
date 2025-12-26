@@ -1,40 +1,37 @@
-```javascript
-import { Tab, Tabs } from 'rspress/theme';
-import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
-import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
-```
+import { Tab, Tabs } from '@rspress/core/theme';
 
-# 同時実行数の制限
+# 同時実行数制限
 
-Concurrency Limiter ミドルウェアは同時並行処理されるリクエスト数を制御できます。詳細なAPIは[ドキュメントを参照](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html)してください。
+Concurrency Limiter ミドルウェアは、同時に処理されるリクエストの数を制御できます。詳細な API については[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html)。
 
 ## 適用シナリオ
 
-以下のケースで並行制限機能が特に有効です：
+以下のような場面で、同時実行制限は特に有効です：
 
-- **高トラフィックサイトの保護**：急増するトラフィック時に同時処理リクエスト数を制限し、サーバーの過負荷を防止
-- **リソース集約型操作の制御**：ファイルアップロードやデータベース書き込みなどリソースを多く消費する操作の並行数を制限
-- **サードパーティAPI呼び出し制限**：レート制限のある外部サービスを呼び出す際の同時リクエスト数を管理
+- **高トラフィックサイトの保護**：トラフィックが急増した際に同時処理リクエスト数を制限し、サーバーの過負荷を防止
+- **リソース集約型操作の制御**：ファイルアップロードやデータベース書き込みなど、リソースを多く消費する操作の同時実行数を制限
+- **サードパーティAPI呼び出しの制限**：レート制限のある外部サービスを呼び出す際に、同時リクエスト数を制御
 
-## 主な機能
+## 主な役割
 
-- **サーバー過負荷防止**：同時リクエスト数を制限することで、トラフィックピーク時のサーバー安定性を維持
-- **システム信頼性向上**：リソース枯渇によるシステムクラッシュを回避
-- **リソース配分の最適化**：重要なサービスが十分なリソースでリクエストを処理できるよう保証
+- **サーバー過負荷の防止**：同時リクエスト数を制限することで、トラフィックピーク時でもサーバーの安定性を維持
+- **システム信頼性の向上**：リソース枯渇によるシステムクラッシュを回避
+- **リソース配分の最適化**：重要なサービスが十分なリソースでリクエストを処理できることを保証
 
 ## 使用方法
 
-ルートに`max_concurrency(n)`ミドルウェアを追加するだけです。`n`は許可する最大同時リクエスト数で、この制限を超えたリクエストには`503 Service Unavailable`レスポンスが返されます。
+ルートに `max_concurrency(n)` ミドルウェアを追加するだけで、`n` は許可される最大同時リクエスト数です。この制限を超えたリクエストには `503 Service Unavailable` レスポンスが返されます。
 
 _**サンプルコード**_
 
 <Tabs>
   <Tab label="main.rs">
-    <ConcurrencyLimiterCode/>
+  ```rust file="<root>/codes/concurrency-limiter/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <ConcurrencyLimiterCargoCode/>
+  ```toml file="<root>/codes/concurrency-limiter/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-```
-{/* 本行由工具自动生成,原文哈希值:764c09662183beca5fb5634badcad7bb */}
+{/* 本行由工具自动生成,原文哈希值:e608fa24b412ca88671cf77efea06bad */}

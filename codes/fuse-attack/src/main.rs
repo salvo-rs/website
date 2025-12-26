@@ -13,11 +13,11 @@ async fn hello_zh() -> Result<&'static str, ()> {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     let router = Router::new()
         .get(hello)
         .push(Router::with_path("你好").get(hello_zh));
-    println!("{:?}", router);
+    println!("{router:?}");
     Server::new(acceptor)
         .fuse_factory(salvo::fuse::flex::FlexFactory::new())
         .serve(router)

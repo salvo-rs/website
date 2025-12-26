@@ -1,32 +1,30 @@
 # Affix State - Gemeinsame Daten in Anfragen
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
-import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Das Affix State Middleware dient dazu, gemeinsame Daten im Depot zu speichern.
-Um die Affix State-Funktionalität zu nutzen, muss das `affix-state` Feature in der Cargo.toml aktiviert werden.
+Das Affix State-Middleware wird verwendet, um gemeinsame Daten zum Depot hinzuzufügen.
+Um die Affix State-Funktionalität zu nutzen, muss das `affix-state`-Feature in der Cargo.toml aktiviert werden.
 
 ## Funktionsanalyse
 Affix State bietet eine einfache Möglichkeit, Daten während der Anfrageverarbeitung gemeinsam zu nutzen. Es ermöglicht Ihnen:
 
-Globale Konfigurationen oder gemeinsame Daten in der Routenkonfigurationsphase einzufügen
-Zugriff auf diese Daten über Depot in jedem Handler
-Unterstützung für jeden klonbaren Typ als Zustandsdaten
+- Globale Konfigurationen oder gemeinsame Daten in der Routing-Konfigurationsphase zu injizieren
+- Zugriff auf diese Daten über das Depot in jedem Handler
+- Unterstützung für jeden klonbaren Typ als Zustandsdaten
 
-## Vergleich mit anderen Frameworks - Konzepte schnell verstehen
+## Konzeptverständnis im Vergleich zu anderen Frameworks
 | Framework | Sprache | Zustandsverwaltung |
 |-----------|---------|-------------------|
 | Salvo (Affix State) | Rust | Speicherung und Zugriff über Depot, unterstützt verschiedene Typen |
 | Axum | Rust | Zustandsspeicherung über Extension, ähnlich aber mit anderer Nutzung |
-| Actix-web | Rust | Verwendung von App Data und Web::Data für gemeinsamen Zustand |
-| Gin | Go | Nutzung von context.Set und context.Get für Datenzugriff |
-| Echo | Go | Verwaltung des gemeinsamen Zustands mit context.Set und context.Get |
-| Spring | Java | Verwaltung von Abhängigkeiten mit ApplicationContext oder @Bean-Annotation |
+| Actix-web | Rust | Nutzung von App Data und Web::Data für gemeinsame Zustände |
+| Gin | Go | Datenzugriff über context.Set und context.Get |
+| Echo | Go | Verwaltung gemeinsamer Zustände mit context.Set und context.Get |
+| Spring | Java | Abhängigkeitsverwaltung mit ApplicationContext oder @Bean-Annotation |
 | Quarkus | Java | Nutzung von CDI und Dependency-Injection-Mechanismen |
-| Express.js | JavaScript | Globale Zustandsspeicherung mit app.locals oder req.app.locals |
-| Nest.js | JavaScript | Verwaltung gemeinsamer Dienste mit Dependency-Injection-System |
-| Koa.js | JavaScript | Speicherung anfragespezifischer Zustände mit ctx.state |
+| Express.js | JavaScript | Globale Zustände in app.locals oder req.app.locals |
+| Nest.js | JavaScript | Verwaltung gemeinsamer Dienste durch Dependency-Injection-System |
+| Koa.js | JavaScript | Speicherung anfragespezifischer Zustände in ctx.state |
 
 ## Häufige Anwendungsfälle
 
@@ -36,15 +34,17 @@ Unterstützung für jeden klonbaren Typ als Zustandsdaten
 - Freigabe von API-Clients
 - Globale Zähler oder Zustandsverfolgung
 
-Der Vorteil von Affix State liegt in seiner Einfachheit und Flexibilität, die es ermöglicht, Daten verschiedenster Typen problemlos zwischen verschiedenen Routen und Handlern zu teilen, ohne umfangreichen Boilerplate-Code.
+Der Vorteil von Affix State liegt in seiner Einfachheit und Flexibilität, die es ermöglicht, Daten beliebigen Typs mühelos zwischen verschiedenen Routen und Handlern zu teilen, ohne umfangreichen Boilerplate-Code zu benötigen.
 _**Beispielcode**_
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/affix-state/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/affix-state/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:983c6e0b4ca9ff5e194da5a41d8d46f7 */}
+{/* 本行由工具自动生成,原文哈希值:5dfff8f8a8238344561f9f829341312c */}

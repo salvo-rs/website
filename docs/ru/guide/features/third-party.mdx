@@ -9,7 +9,7 @@
 salvo-websocket = "0.0.4"
 ```
 
-### Определение query params при подключении WebSocket
+### Определение query-параметров при подключении WebSocket
 
 ```rust
 #[derive(Debug, Clone, Deserialize)]
@@ -41,7 +41,7 @@ impl WebSocketHandler for User {
 
     // Событие получения сообщения
     async fn on_receive_message(&self, msg: Message) {
-        tracing::info!("Получено: {:?}", msg);
+        tracing::info!("{:?} получено", msg);
         let msg = if let Ok(s) = msg.to_str() {
             s
         } else {
@@ -52,13 +52,13 @@ impl WebSocketHandler for User {
     }
 
     async fn on_send_message(&self, msg: Message) -> Result<Message, Error> {
-        tracing::info!("Отправка: {:?}", msg);
+        tracing::info!("{:?} отправляется", msg);
         Ok(msg)
     }
 }
 ```
 
-### Написание обработчика подключения
+### Написание метода обработки подключения
 
 ```rust
 #[tokio::main]
@@ -66,7 +66,7 @@ async fn main() {
     tracing_subscriber::fmt().init();
     let router = Router::new()
         .push(Router::with_path("chat").handle(user_connected));
-    tracing::info!("Сервер запущен на http://127.0.0.1:5800");
+    tracing::info!("Слушаем на http://127.0.0.1:5800");
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
 }
 
@@ -86,5 +86,5 @@ async fn user_connected(req: &mut Request, res: &mut Response) -> Result<(), Sta
 }
 ```
 
-Больше примеров можно найти в [репозитории](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)
-{/* 本行由工具自动生成,原文哈希值:860920905ee70ff25a056625fc9b22af */}
+Больше информации смотрите в [примерах](https://github.com/salvo-rs/salvo/tree/main/examples/ws-chat-with-salvo-websocket)
+{/* 本行由工具自动生成,原文哈希值:ba1de026d713e14724d985e19918646a */}

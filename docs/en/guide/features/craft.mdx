@@ -1,23 +1,23 @@
 ---
-title: Craft Features
+title: Craft Feature
 ---
 
-# Craft Features
+# Craft Feature
 
-Craft allows developers to automatically generate handlers and endpoints using simple annotations, while seamlessly integrating with OpenAPI documentation generation.
+Craft allows developers to automatically generate handler functions and endpoints through simple annotations, while seamlessly integrating with OpenAPI documentation generation.
 
 ## Use Cases
 
 The Craft feature is particularly useful in the following scenarios:
 
-- When you need to quickly create route handlers from struct methods.
-- When you want to reduce the boilerplate code for manually writing parameter extraction and error handling.
-- When you need to automatically generate OpenAPI documentation for your API.
-- When you want to decouple business logic from the web framework.
+- When you need to quickly create route handler functions from struct methods
+- When you want to reduce boilerplate code for manual parameter extraction and error handling
+- When you need to automatically generate OpenAPI documentation for your API
+- When you want to decouple business logic from the web framework
 
 ## Basic Usage
 
-Using the Craft feature requires importing the following modules:
+To use the Craft feature, you need to import the following modules:
 
 ```rust
 use salvo::oapi::extract::*;
@@ -26,7 +26,7 @@ use salvo::prelude::*;
 
 ### Creating a Service Struct
 
-Using the `#[craft]` macro to annotate your `impl` block allows you to convert struct methods into handlers or endpoints.
+Annotate your impl block with the `#[craft]` macro to convert struct methods into handler functions or endpoints.
 
 ```rust
 #[derive(Clone)]
@@ -45,9 +45,9 @@ impl Opts {
 }
 ```
 
-### Creating a Handler
+### Creating Handler Functions
 
-Use `#[craft(handler)]` to convert a method into a handler:
+Use `#[craft(handler)]` to convert a method into a handler function:
 
 ```rust
 #[craft(handler)]
@@ -56,12 +56,12 @@ fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
 }
 ```
 
-This method becomes a handler that:
-- Automatically extracts `left` and `right` values from query parameters.
-- Accesses the `state` within the struct.
-- Returns the calculation result as a string response.
+This method will become a handler function that:
+- Automatically extracts `left` and `right` values from query parameters
+- Accesses the `state` from the struct
+- Returns the calculation result as a string response
 
-### Creating an Endpoint
+### Creating Endpoints
 
 Use `#[craft(endpoint)]` to convert a method into an endpoint:
 
@@ -78,9 +78,9 @@ pub(crate) fn add2(
 
 Endpoints can utilize `Arc` to share state, which is particularly useful when handling concurrent requests.
 
-### Static Endpoint
+### Static Endpoints
 
-You can also create static endpoints that do not depend on instance state:
+You can also create static endpoints that don't depend on instance state:
 
 ```rust
 #[craft(endpoint(responses((status_code = 400, description = "Wrong request parameters."))))]
@@ -89,22 +89,22 @@ pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
 }
 ```
 
-In this example, a description for a custom error response has also been added, which will be reflected in the generated OpenAPI documentation.
+In this example, a custom error response description is added, which will be reflected in the generated OpenAPI documentation.
 
 ## Parameter Extractors
 
-Salvo's `oapi::extract` module provides various parameter extractors, the most common include:
+Salvo's `oapi::extract` module provides various parameter extractors, with the most common including:
 
-- `QueryParam<T>`: Extracts parameters from the query string.
-- `PathParam<T>`: Extracts parameters from the URL path.
-- `FormData<T>`: Extracts parameters from form data.
-- `JsonBody<T>`: Extracts parameters from the JSON request body.
+- `QueryParam<T>`: Extracts parameters from query strings
+- `PathParam<T>`: Extracts parameters from URL paths
+- `FormData<T>`: Extracts parameters from form data
+- `JsonBody<T>`: Extracts parameters from JSON request bodies
 
-These extractors automatically handle parameter parsing and type conversion, greatly simplifying the writing of handlers.
+These extractors automatically handle parameter parsing and type conversion, greatly simplifying the writing of handler functions.
 
-## OpenAPI Integration
+## Integration with OpenAPI
 
-The Craft feature can automatically generate API documentation that conforms to the OpenAPI specification. In the example:
+The Craft feature can automatically generate API documentation compliant with the OpenAPI specification. In the example:
 
 ```rust
 let router = Router::new()
@@ -115,13 +115,13 @@ let router = Router::new()
 // Generate OpenAPI documentation
 let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
 
-// Add routes for OpenAPI documentation and Swagger UI
+// Add OpenAPI documentation and Swagger UI routes
 let router = router
     .push(doc.into_router("/api-doc/openapi.json"))
     .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 ```
 
-With this configuration, the API documentation will be available at the `/api-doc/openapi.json` endpoint, and Swagger UI will be available at the `/swagger-ui` path.
+With this configuration, the API documentation will be available at the `/api-doc/openapi.json` endpoint, and Swagger UI will be accessible at the `/swagger-ui` path.
 
 ## Complete Example
 
@@ -168,7 +168,7 @@ async fn main() {
     // Create shared state with an initial value of 1
     let opts = Arc::new(Opts::new(1));
 
-    // Configure routes for the three endpoints
+    // Configure routes for three endpoints
     let router = Router::new()
         .push(Router::with_path("add1").get(opts.add1()))
         .push(Router::with_path("add2").get(opts.add2()))
@@ -177,7 +177,7 @@ async fn main() {
     // Generate OpenAPI documentation
     let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
     
-    // Add routes for OpenAPI documentation and Swagger UI
+    // Add OpenAPI documentation and Swagger UI routes
     let router = router
         .push(doc.into_router("/api-doc/openapi.json"))
         .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));

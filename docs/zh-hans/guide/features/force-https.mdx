@@ -8,15 +8,15 @@
 
 _**示例代码**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import ForceHttpsCode from '../../../../codes_md/force-https/src/main.mdx';
-import ForceHttpsCargoCode from '../../../../codes_md/force-https/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <ForceHttpsCode/>
+  ```rust file="<root>/codes/force-https/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <ForceHttpsCargoCode/>
+  ```toml file="<root>/codes/force-https/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

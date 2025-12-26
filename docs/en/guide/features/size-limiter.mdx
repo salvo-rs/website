@@ -1,27 +1,27 @@
-# File Size Limit Middleware
+# File Upload Size Limiter Middleware
 
-import { Tab, Tabs } from 'rspress/theme';
-import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
-import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware that provides size limits for uploaded files in requests.
+A middleware for limiting the size of uploaded files in requests.
 
 ## Use Cases
 
 Size Limiter is primarily used in the following scenarios:
-- Preventing users from uploading files that are too large and consuming server resources
-- Avoiding malicious attacks where attackers upload large amounts of data causing server memory overflow
+- Preventing users from uploading excessively large files that consume server resources
+- Avoiding server memory overflow caused by malicious attackers uploading massive amounts of data
 - Setting different request size limit policies for different API endpoints
-- Improving the efficiency and stability of server request processing
+- Improving server request processing efficiency and stability
 
 _**Example Code**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SizeLimiterMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SizeLimiterCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/size-limiter/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/size-limiter/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:7bf2c000bd32696677fc70ca8e62af44 */}
+{/* 本行由工具自动生成,原文哈希值:e8fe97542f86e069c6a192945b8303da */}

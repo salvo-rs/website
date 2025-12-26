@@ -1,30 +1,30 @@
-# Para dominar este arte
+# Para dominar esta técnica
 
-## Por qué crear este framework
+## Por qué escribir este framework
 
-En ese entonces, como principiante, me di cuenta de que era demasiado torpe para aprender a usar frameworks existentes como actix-web o Rocket. Cuando quise reimplementar en Rust un servicio web que había hecho en Go, a primera vista todos los frameworks parecían más complejos que sus equivalentes en Go. Ya de por sí la curva de aprendizaje de Rust es bastante empinada, ¿para qué hacer que los frameworks web sean aún más complicados?
+En ese entonces, como principiante, descubrí que era demasiado torpe para aprender a usar frameworks existentes como actix-web o Rocket. Cuando quise reescribir en Rust un servicio web que antes tenía en Go, a primera vista, cada framework parecía más complejo que los existentes en Go. Ya de por sí la curva de aprendizaje de Rust es bastante empinada, ¿para qué hacer que los frameworks web sean tan complicados?
 
-Cuando Tokio lanzó el framework Axum, me alegré pensando que ya no tendría que mantener mi propio framework web. Sin embargo, la realidad fue que Axum, aunque aparentemente simple, requería demasiada gimnasia con tipos y definiciones genéricas. Solo con un profundo conocimiento de Rust y escribiendo montones de código boilerplate críptico se podía implementar un middleware sencillo.
+Cuando Tokio lanzó el framework Axum, me alegré pensando que ya no tendría que mantener mi propio framework web. Sin embargo, la realidad fue que Axum, aunque aparentemente simple, implicaba demasiada gimnasia de tipos y definiciones genéricas en su uso práctico. Para implementar un middleware sencillo, era necesario tener un conocimiento profundo de Rust y escribir montones de código boilerplate críptico y tedioso.
 
-Así que decidí seguir manteniendo este framework mío, que es bastante especial (cómodo, rico en funciones y adecuado para principiantes).
+Así que decidí seguir manteniendo este framework web mío, que es bastante peculiar (cómodo, rico en funciones y adecuado para principiantes).
 
 ## ¿Es Salvo adecuado para ti?
 
-Aunque simple, Salvo es lo suficientemente completo y potente, básicamente puede considerarse el más fuerte en el ecosistema Rust. Sin embargo, este sistema tan poderoso es en realidad muy fácil de aprender y usar. Definitivamente no te hará sufrir el dolor de "cortarte los genitales".
+Aunque Salvo es simple, es lo suficientemente completo y potente, básicamente puede considerarse el más fuerte en el ecosistema de Rust. Sin embargo, a pesar de ser un sistema tan poderoso, aprenderlo y usarlo es realmente sencillo. Definitivamente no te causará el dolor de "cortarte los genitales con tu propia espada".
 
-- Es ideal para principiantes que están aprendiendo Rust. CRUD es una funcionalidad extremadamente común y frecuente. Si usas Salvo para este tipo de tareas, lo encontrarás tan simple como los frameworks web de otros lenguajes que hayas usado (como Express, Koa, gin, flask...), incluso más abstracto y conciso en algunos aspectos.
+- Es adecuado para principiantes que están empezando a aprender Rust. CRUD es una funcionalidad extremadamente común y de uso frecuente. Si usas Salvo para tareas similares, descubrirás que es tan simple como los frameworks web que has usado en otros lenguajes (por ejemplo: Express, Koa, gin, flask...), e incluso más abstracto y conciso en algunos aspectos.
 
-- Es adecuado para quienes deseen usar Rust en producción, proporcionando servidores robustos y rápidos. Aunque Salvo no ha lanzado la versión 1.0, sus funciones principales han pasado por años de iteraciones, son lo suficientemente estables y los errores se corrigen rápidamente.
+- Es adecuado para quienes desean usar Rust en entornos de producción, proporcionando servidores robustos y rápidos. Aunque Salvo no ha lanzado la versión 1.0, sus funciones principales han pasado por años de iteraciones, son lo suficientemente estables y los problemas se solucionan con prontitud.
 
-- Es perfecto para ti, cuyo cabello ya no es tan abundante pero sigue cayéndose a diario.
+- Es adecuado para ti, cuyo cabello ya no es abundante pero sigue cayéndose a diario.
 
-## Cómo lograr suficiente simplicidad
+## Cómo lograr la suficiente simplicidad
 
-Hyper ya implementa muchas funcionalidades de bajo nivel, por lo que para necesidades generales, basarse en Hyper no está mal. Salvo hace lo mismo. Su funcionalidad central es un sistema de enrutamiento potente y flexible, junto con muchas funciones comunes como Acme, OpenAPI, autenticación JWT, etc.
+Hyper ya ha implementado muchas funcionalidades de bajo nivel, por lo que, para necesidades generales, basarse en Hyper no está mal. Salvo hace lo mismo. Su funcionalidad central es un sistema de enrutamiento potente y flexible, junto con muchas funciones de uso común, como Acme, OpenAPI, autenticación JWT, etc.
 
-En Salvo se unifican los Handlers y los Middlewares. Un Middleware es un Handler. Se añaden al Router mediante el método hoop. En esencia, tanto los Middlewares como los Handlers procesan solicitudes Request y pueden escribir datos en el Response. El Handler recibe tres parámetros: Request, Depot y Response, donde Depot se usa para almacenar datos temporales durante el procesamiento de la solicitud.
+En Salvo, Handler y Middleware están unificados. Middleware es Handler. Se agregan al Router a través del "hoop" del enrutador. En esencia, tanto Middleware como Handler procesan solicitudes Request y pueden escribir datos en Response. Handler recibe tres parámetros: Request, Depot y Response, donde Depot se utiliza para almacenar datos temporales durante el procesamiento de la solicitud.
 
-Para facilitar la escritura, puedes omitir ciertos parámetros cuando no son necesarios, o ignorar el orden de los parámetros.
+Para facilitar la escritura, se pueden omitir ciertos parámetros cuando no son necesarios, y también se puede ignorar el orden de los parámetros.
 
 ```rust
 use salvo::prelude::*;
@@ -39,11 +39,10 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-Además, la API proporcionada por el sistema de enrutamiento es extremadamente simple, pero potente. Para necesidades de uso normales, básicamente solo necesitas enfocarte en el tipo Router.
-Además, si una estructura implementa los traits relevantes, Salvo puede generar automáticamente documentación OpenAPI, extraer parámetros, manejar diferentes errores y devolver mensajes amigables. Esto hace que escribir handlers sea tan simple e intuitivo como escribir funciones normales. En tutoriales posteriores explicaremos estas funciones en detalle. Aquí un ejemplo:
+Además, la API proporcionada por el sistema de enrutamiento es extremadamente simple, pero poderosa. Para necesidades de uso normales, básicamente solo necesitas enfocarte en el tipo Router.
+Además, si una estructura implementa los traits relevantes, Salvo puede generar automáticamente documentación OpenAPI y extraer parámetros, manejar diferentes errores automáticamente y devolver mensajes amigables. Esto hace que escribir handlers sea tan simple e intuitivo como escribir funciones ordinarias. En tutoriales posteriores, explicaremos estas funciones en detalle paso a paso. Aquí hay un ejemplo:
 
 ```rust
-
 #[endpoint(tags("registro de mensajes"))]
 pub async fn create_message_log_handler(
     input: JsonBody<CreateOrUpdateMessageLog>,
@@ -55,11 +54,11 @@ pub async fn create_message_log_handler(
 }
 ```
 
-En este ejemplo, `JsonBody<CreateOrUpdateMessageLog>` automáticamente analizará los datos JSON del cuerpo de la solicitud y los convertirá al tipo `CreateOrUpdateMessageLog` (también admite múltiples fuentes de datos y tipos anidados). Además, la macro `#[endpoint]` generará automáticamente documentación OpenAPI para esta interfaz, simplificando el código para extraer parámetros y manejar errores.
+En este ejemplo, `JsonBody<CreateOrUpdateMessageLog>` analizará automáticamente los datos JSON del cuerpo de la solicitud y los convertirá al tipo `CreateOrUpdateMessageLog` (también admite múltiples fuentes de datos y tipos anidados). Al mismo tiempo, la macro `#[endpoint]` generará automáticamente documentación OpenAPI para esta interfaz y simplificará el código de extracción de parámetros y manejo de errores.
 
 ## Sistema de enrutamiento
 
-Siento que el sistema de enrutamiento es diferente al de otros frameworks. El Router se puede escribir de forma plana o como un árbol. Aquí distinguimos entre el árbol de lógica de negocio y el árbol de directorios de acceso. El árbol de lógica de negocio organiza la estructura del router según los requisitos de la lógica de negocio, formando un árbol de routers que no necesariamente coincide con el árbol de directorios de acceso.
+Siento que el sistema de enrutamiento es diferente al de otros frameworks. Router se puede escribir de forma plana o como un árbol. Aquí se distingue entre el árbol de lógica de negocio y el árbol de directorios de acceso. El árbol de lógica de negocio divide la estructura del router según las necesidades de la lógica de negocio, formando un árbol de routers, que no necesariamente coincide con el árbol de directorios de acceso.
 
 Normalmente escribimos las rutas así:
 
@@ -72,7 +71,7 @@ Router::new()
     .delete(delete_article);
 ```
 
-A menudo, ver artículos y listarlos no requiere que el usuario inicie sesión, pero crear, editar o eliminar artículos sí requiere autenticación. El sistema de enrutamiento anidado de Salvo satisface muy bien esta necesidad. Podemos agrupar las rutas que no requieren autenticación:
+A menudo, ver la lista de artículos y los detalles de un artículo no requiere que el usuario inicie sesión, pero crear, editar o eliminar artículos sí requiere permisos de autenticación de usuario. El sistema de enrutamiento anidado de Salvo puede satisfacer muy bien esta necesidad. Podemos agrupar las rutas que no requieren inicio de sesión:
 
 ```rust
 Router::new()
@@ -81,7 +80,8 @@ Router::new()
     .push(Router::new().path("{id}").get(show_article));
 ```
 
-Y luego agrupar las rutas que requieren autenticación, usando el middleware correspondiente para verificar si el usuario ha iniciado sesión:
+Luego, agrupamos las rutas que requieren inicio de sesión y usamos el middleware correspondiente para verificar si el usuario ha iniciado sesión:
+
 ```rust
 Router::new()
     .path("articles")
@@ -90,7 +90,7 @@ Router::new()
     .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
 ```
 
-Aunque ambas rutas tienen el mismo `path("articles")`, aún pueden añadirse al mismo router padre, por lo que el router final queda así:
+Aunque ambas rutas tienen el mismo `path("articles")`, aún pueden agregarse al mismo router padre, por lo que el router final termina así:
 
 ```rust
 Router::new()
@@ -109,5 +109,5 @@ Router::new()
     );
 ```
 
-`{id}` coincide con un segmento de la ruta. Normalmente, el `id` de un artículo es solo un número, por lo que podemos usar una expresión regular para restringir las reglas de coincidencia: `r"{id:/\d+/}"`.
+`{id}` coincide con un segmento de la ruta. Normalmente, el `id` de un artículo es solo un número. En ese caso, podemos usar una expresión regular para restringir la regla de coincidencia de `id`: `r"{id:/\d+/}"`.
 {/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}

@@ -1,29 +1,29 @@
 # Compressão de Resposta
 
-Middleware para compressão de conteúdo em `Response`.
+Middleware para processamento de compressão de conteúdo em `Response`.
 
-Oferece suporte a três formatos de compressão: `br`, `gzip`, `deflate`. Permite configurar prioridades e outros parâmetros de cada método de compressão conforme necessário.
+Oferece suporte a três formatos de compressão: `br`, `gzip`, `deflate`. É possível configurar prioridades e outros parâmetros para cada método de compressão conforme necessário.
 
-## Compressão de dados no protocolo HTTP
+## Compressão de Dados no Protocolo HTTP
 
-1. Nível de formato de arquivo: tipos específicos de arquivo usam algoritmos de compressão especializados
-2. Nível de protocolo HTTP: compressão de recursos ponta a ponta através de codificação de conteúdo
-3. Nível de conexão: compressão de dados entre nós de conexão HTTP
+1. Nível de formato de arquivo: tipos específicos de arquivos utilizam algoritmos de compressão especializados
+2. Nível de protocolo HTTP: compressão de recursos de ponta a ponta através de codificação de conteúdo
+3. Nível de conexão: compressão de dados entre nós da conexão HTTP
 
 Para mais informações sobre compressão HTTP, consulte a [documentação da Mozilla Developer Network](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Compression).
 
-## Código de exemplo
+## Código de Exemplo
 
-import { Tab, Tabs } from 'rspress/theme';
-import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
-import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CompressionCode/>
+  ```rust file="<root>/codes/compression/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CompressionCargoCode/>
+  ```toml file="<root>/codes/compression/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:677ccdf714de83f86788e88c306cf8e4 */}
+{/* 本行由工具自动生成,原文哈希值:adfd8752c21601fac83a31d329cf6dae */}

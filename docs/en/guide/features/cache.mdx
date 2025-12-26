@@ -1,20 +1,20 @@
 # Cache
 
-Middleware for providing caching functionality.
+Middleware that provides caching functionality.
 
-The Cache middleware can cache the `StatusCode`, `Headers`, and `Body` of a `Response`. For content that has already been cached, when handling subsequent requests, the Cache middleware will directly send the content stored in memory to the client.
+The Cache middleware can cache the `StatusCode`, `Headers`, and `Body` of a `Response`. For content that has already been cached, the Cache middleware will directly send the cached content from memory to the client when processing subsequent requests.
 
-Note that this plugin does not cache `Response` objects where the `Body` is `ResBody::Stream`. If applied to this type of `Response`, the Cache middleware will not process these requests, nor will it cause errors.
+Note: This plugin does not cache `Response` objects whose `Body` is `ResBody::Stream`. If applied to such a `Response`, Cache will not process these requests, and no error will occur.
 
 ## Main Features
 
-- `CacheIssuer` provides an abstraction for generating cache keys. `RequestIssuer` is an implementation that allows defining cache keys based on parts of the request URL and the request `Method`. You can also define your own custom logic for generating cache keys. The cache key does not have to be a string; any type satisfying the `Hash + Eq + Send + Sync + 'static` constraints can be used as a key.
+- `CacheIssuer` provides an abstraction for generating cache keys. `RequestIssuer` is one of its implementations, allowing you to define which parts of the request URL and the request `Method` should be used to generate the cache key. You can also define your own cache key generation logic. The cache key does not necessarily have to be a string; any type that satisfies the `Hash + Eq + Send + Sync + 'static` constraints can be used as a key.
 
-- `CacheStore` provides operations for storing and retrieving data. `MokaStore` is a built-in in-memory cache implementation based on the `moka` crate. You can also define your own storage implementation.
+- `CacheStore` provides operations for storing and retrieving data. `MokaStore` is a built-in memory-based cache implementation based on `moka`. You can also define your own implementation.
 
-- `Cache` is a struct that implements the `Handler` trait. It internally contains a `skipper` field, which can be used to specify requests that should be skipped for caching. By default, `MethodSkipper` is used to skip all requests except those using `Method::GET`.
+- `Cache` is a struct that implements `Handler`. It also contains an internal `skipper` field, which can be used to specify requests that should skip caching. By default, it uses `MethodSkipper` to skip all requests except those with `Method::GET`.
 
-  Internal implementation example code:
+  Example internal implementation code:
 
   ```rust
   impl<S, I> Cache<S, I> {
@@ -31,41 +31,36 @@ Note that this plugin does not cache `Response` objects where the `Body` is `Res
 
 ## Quick Migration from Other Frameworks
 
-If you have previously used caching mechanisms from other frameworks, the following concept mapping will help you adapt more quickly to Salvo's cache implementation:
+If you have used caching mechanisms in other frameworks, the following conceptual mappings will help you adapt to Salvo's caching implementation more quickly:
 
 ### Rust Framework Migration Guide
 
-- **Migrating from Actix-web**: Plugins like `actix-web-cache` in Actix-web usually need to be imported separately, whereas Salvo's cache is part of the core library.
+- **Migrating from Actix-web**: Plugins like `actix-web-cache` in Actix-web typically need to be introduced separately, whereas caching in Salvo is part of the core library.
 
   ```rust
-  // Actix-web Cache Example
+  // Actix-web cache example
   use actix_web_cache::Cache;
   App::new().wrap(Cache::new().ttl(30))
 
-  // Salvo Equivalent Implementation
+  // Corresponding Salvo implementation
   use salvo::prelude::*;
   Router::new().hoop(Cache::new(MokaStore::new(100), RequestIssuer::new()))
   ```
 
-### Other Language Framework Migration Guide
+### Migration Guide for Frameworks in Other Languages
 
-- **Migrating from Go/Gin**: Gin uses a middleware pattern, and Salvo adopts a similar approach:
+- **Migrating from Go/Gin**: Gin uses a middleware pattern, which Salvo also adopts in a similar manner:
 
   ```go
-  // Gin Cache Example
+  // Gin cache example
   store := persist.NewMemoryStore(time.Second * 60)
   router.Use(cache.CachePage(store, time.Second * 30))
   ```
 
   ```rust
-  // Salvo Equivalent Implementation
-  use std::time::Duration;
-  use salvo::prelude::*;
-  use salvo::cache::{Cache, MokaStore, RequestIssuer};
-
+  // Corresponding Salvo implementation
   let store = MokaStore::new(100).with_ttl(Duration::from_secs(30));
-  // Assuming 'router' is a Salvo Router instance
-  // router.hoop(Cache::new(store, RequestIssuer::new())) 
+  router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
 - **Migrating from Spring Boot**: Spring Boot's declarative caching needs to be converted to Salvo's explicit middleware configuration:
@@ -76,14 +71,9 @@ If you have previously used caching mechanisms from other frameworks, the follow
   public Book findBook(ISBN isbn) { ... }
   ```
   ```rust
-  // Salvo Equivalent Implementation - Applying cache at the route level
-  use salvo::prelude::*;
-  use salvo::cache::{Cache, MokaStore, CacheIssuer}; // Import necessary traits/structs
-  // Define YourCustomIssuer implementing CacheIssuer trait
-  // struct YourCustomIssuer { /* ... */ }
-  // impl CacheIssuer for YourCustomIssuer { /* ... */ }
-  // let custom_issuer = YourCustomIssuer::new(); // Implement CacheIssuer trait
-  // Router::with_path("books").hoop(Cache::new(MokaStore::new(100), custom_issuer))
+  // Corresponding Salvo implementation - applying cache at the route level
+  let custom_issuer = YourCustomIssuer::new(); // Implement the CacheIssuer interface
+  Router::with_path("books").hoop(Cache::new(MokaStore::new(100), custom_issuer))
   ```
 
 - **Migrating from Express.js**: Express's caching middleware is conceptually similar to Salvo's, but the syntax differs:
@@ -93,36 +83,31 @@ If you have previously used caching mechanisms from other frameworks, the follow
   const apicache = require('apicache');
   app.use(apicache.middleware('5 minutes'));
 
-  // Salvo Equivalent Implementation
-  use std::time::Duration;
-  use salvo::prelude::*;
-  use salvo::cache::{Cache, MokaStore, RequestIssuer};
-
+  // Corresponding Salvo implementation
   let store = MokaStore::new(100).with_ttl(Duration::from_secs(300));
-  // Assuming 'router' is a Salvo Router instance
-  // router.hoop(Cache::new(store, RequestIssuer::new())) 
+  router.hoop(Cache::new(store, RequestIssuer::new()))
   ```
 
-When migrating from other frameworks, pay attention to several key concepts in Salvo's cache:
+When migrating from other frameworks, pay attention to several key concepts of Salvo's caching:
 
-1.  **Cache Key Generation** - Controlled via the `CacheIssuer` trait
-2.  **Cache Storage** - Implemented via the `CacheStore` trait
-3.  **Cache Skipping Logic** - Customized via the `skipper` mechanism
+1. **Cache Key Generation** - Controlled via the `CacheIssuer` interface.
+2. **Cache Storage** - Implemented via the `CacheStore` interface.
+3. **Cache Skipping Logic** - Customized via the `skipper` mechanism.
 
-By default, Salvo only caches GET requests, which is consistent with the default behavior of most frameworks.
+By default, Salvo only caches GET requests, which aligns with the default behavior of most frameworks.
 
 _**Example Code**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import CacheSimpleCode from '../../../../codes_md/cache-simple/src/main.mdx';
-import CacheSimpleCargoCode from '../../../../codes_md/cache-simple/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CacheSimpleCode />
+  ```rust file="<root>/codes/cache-simple/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CacheSimpleCargoCode />
+  ```toml file="<root>/codes/cache-simple/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:6d2da1026941698375433a39b8d4924c */}
+{/* 本行由工具自动生成,原文哈希值:df2bc60555363c109d61ba033738ce41 */}

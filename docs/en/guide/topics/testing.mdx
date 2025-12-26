@@ -1,55 +1,54 @@
-# Writing Tests  
+# Writing Tests
 
-## The Importance of Testing  
+## The Importance of Testing
 
-Writing tests is a hallmark of responsible engineering and the secret to peaceful sleep. A comprehensive test suite not only enhances code quality and prevents regression errors but also ensures you can rest easy after deployment. While your colleagues might be jolted awake by late-night system crash alerts, your application remains rock-solid—such is the tranquility and confidence that testing brings.  
+Writing tests is a hallmark of responsible engineering and the secret to sleeping soundly. A comprehensive test suite not only improves code quality and prevents regression errors but also ensures you rest easy after deployment. While your colleagues might be jolted awake by late-night system crash alerts, your application remains rock-solid—this is the tranquility and confidence that testing brings.
 
-## Salvo Testing Tools  
+## Salvo Testing Tools
 
-Salvo provides a `test` module to assist in testing Salvo-based projects.  
+The test module provided by Salvo helps you test Salvo-based projects.
 
-[Latest Documentation](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)  
+[Latest Documentation](https://docs.rs/salvo_core/latest/salvo_core/test/index.html)
 
-**Simple Example:**  
+**Simple Example:**
 
-```rust  
-use salvo::prelude::*;  
+```rust
+use salvo::prelude::*;
 
-#[handler]  
-async fn hello_world() -> &'static str {  
-    "Hello World"  
-}  
+#[handler]
+async fn hello_world() -> &'static str {
+    "Hello World"
+}
 
-#[tokio::main]  
-async fn main() {  
-    tracing_subscriber::fmt().init();  
+#[tokio::main]
+async fn main() {
+    tracing_subscriber::fmt().init();
 
-    tracing::info!("Listening on http://127.0.0.1:5800");  
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;  
-    Server::new(acceptor).serve(route()).await;  
-}  
+    tracing::info!("Listening on http://127.0.0.1:5800");
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(route()).await;
+}
 
-fn route() -> Router {  
-    Router::new().get(hello_world)  
-}  
+fn route() -> Router {
+    Router::new().get(hello_world)
+}
 
-#[cfg(test)]  
-mod tests {  
-    use salvo::prelude::*;  
-    use salvo::test::{ResponseExt, TestClient};  
+#[cfg(test)]
+mod tests {
+    use salvo::prelude::*;
+    use salvo::test::{ResponseExt, TestClient};
 
-    #[tokio::test]  
-    async fn test_hello_world() {  
-        let service = Service::new(super::route());  
+    #[tokio::test]
+    async fn test_hello_world() {
+        let service = Service::new(super::route());
 
-        let content = TestClient::get(format!("http://127.0.0.1:5800/"))  
-            .send(&service)  
-            .await  
-            .take_string()  
-            .await  
-            .unwrap();  
-        assert_eq!(content, "Hello World");  
-    }  
-}  
+        let content = TestClient::get(format!("http://127.0.0.1:5800/"))
+            .send(&service)
+            .await
+            .take_string()
+            .await
+            .unwrap();
+        assert_eq!(content, "Hello World");
+    }
+}
 ```
 {/* 本行由工具自动生成,原文哈希值:0a03588b2b7cfbb4bdfe3afb32a9763b */}

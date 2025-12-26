@@ -1,28 +1,14 @@
 ---
-title: Rust エラーハンドリングライブラリ
+title: Rust エラー処理ライブラリ
 ---
 
-# Rust エラーハンドリングライブラリ
+# Rust エラー処理ライブラリ
 
-import { LinkCard } from '@theme';
+- (thiserror)[https://docs.rs/thiserror/latest/thiserror/] はカスタムエラー型のための便利な派生マクロを提供します。
 
-<LinkCard
-  href="https://docs.rs/thiserror/latest/thiserror/"
-  title="thiserror"
-  description="カスタムエラータイプのための便利な派生マクロを提供"
-/>
+- (snafu)[https://docs.rs/snafu/latest/snafu/] はコンテキスト付きのエラー処理とレポートのフレームワークです。
 
-<LinkCard
-  href="https://docs.rs/snafu/latest/snafu/"
-  title="snafu"
-  description="コンテキスト付きのエラーハンドリングとレポーティングフレームワーク"
-/>
-
-<LinkCard
-  href="https://docs.rs/anyhow/latest/anyhow/"
-  title="anyhow"
-  description="柔軟なエラーハンドリングとレポーティングライブラリ"
-/>
+- (anyhow)[https://docs.rs/anyhow/latest/anyhow/] は柔軟なエラー処理とレポートのライブラリです。
 
 ## thiserror vs snafu
 
@@ -31,9 +17,9 @@ import { LinkCard } from '@theme';
 thiserrorは軽量なライブラリで、エラー定義を簡単にする派生マクロを提供します。
 
 特徴：
-- 簡潔な構文、低儀式性
-- エラータイプライブラリやAPIの作成に適している
-- 主に他者が使用するライブラリの作成に用いられる
+- 簡潔な構文、低儀式感
+- エラー型ライブラリやAPIの作成に適している
+- 一般的に他者が使用するライブラリの作成に使用される
 
 ```rust
 use thiserror::Error;
@@ -43,7 +29,7 @@ pub enum DataError {
     #[error("データベースエラー: {0}")]
     DatabaseError(#[from] sqlx::Error),
     
-    #[error("バリデーションエラー: {0}")]
+    #[error("検証エラー: {0}")]
     ValidationError(String),
     
     #[error("レコードが見つかりません")]
@@ -53,10 +39,10 @@ pub enum DataError {
 
 ### snafu
 
-snafuはより包括的なエラーハンドリングフレームワークを提供し、エラーコンテキストとエラーチェーンに重点を置いています。
+snafuはより包括的なエラー処理フレームワークを提供し、エラーコンテキストとエラーチェーンに重点を置いています。
 
 特徴：
-- 「コンテキストセレクター」パターンでより正確なエラーコンテキストの追加を促進
+- 「コンテキストセレクター」パターンを通じて、より正確なエラーコンテキストの追加を促進
 - 「モジュールごとに1つのエラー列挙型」パターンを推奨
 - 構造体スタイルとタプルスタイルのエラーバリアントをサポート
 - 組み込みのバックトレースサポート
@@ -74,11 +60,11 @@ pub enum Error {
     },
     
     // タプルスタイルも使用可能
-    #[snafu(display("IOエラーが発生しました"))]
+    #[snafu(display("IOエラー"))]
     Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
 }
 
-// コンテキストセレクターの使用例
+// コンテキストセレクターの例
 fn read_config(path: &str) -> Result<Config, Error> {
     std::fs::read_to_string(path).context(ReadConfigSnafu { filename: path })?;
     // ...
@@ -87,28 +73,28 @@ fn read_config(path: &str) -> Result<Config, Error> {
 
 ### 比較
 
-| 特徴 | thiserror | snafu |
+| 特性 | thiserror | snafu |
 |------|-----------|-------|
 | 構文の簡潔さ | より簡潔 | やや冗長 |
-| エラーコンテキスト | 基本的なサポート | 豊富なコンテキスト機構 |
+| エラーコンテキスト | 基本的なサポート | 豊富なコンテキストメカニズム |
 | 適応規模 | 小規模から中規模プロジェクト | 中規模から大規模プロジェクト |
-| コード行数 | エラーごとに約2行 | エラーごとに約5行 |
-| エラー組織化 | 通常は単一のエラー列挙型 | モジュールレベルのエラー列挙型を推奨 |
+| コード行数 | エラーあたり約2行 | エラーあたり約5行 |
+| エラー組織 | 通常は単一のエラー列挙型 | モジュールレベルのエラー列挙型を推奨 |
 | バックトレースサポート | 組み込みサポートなし | 組み込みサポートあり |
 
 **選択のアドバイス**:
-- **thiserrorを選ぶ** シンプルで明確なエラータイプが必要な場合、特にライブラリ内で
-- **snafuを選ぶ** より構造化されたエラーハンドリングが必要な場合、特に大規模アプリケーションで
+- **thiserrorを選択** シンプルで明確なエラー型が必要な場合、特にライブラリ内で
+- **snafuを選択** より構造化されたエラー処理が必要な場合、特に大規模アプリケーションで
 
 ## anyhow
 
-anyhowは上記2つとは異なるエラーハンドリングライブラリで、アプリケーションではなくライブラリに焦点を当てています。
+anyhowは上記2つとは異なるエラー処理ライブラリで、ライブラリではなくアプリケーションに焦点を当てています。
 
 特徴：
-- ライブラリではなくアプリケーションのエラーハンドリング向けに設計
-- 動的な`anyhow::Error`型を提供し、`Error`トレイトを実装するあらゆるエラーを含められる
-- 複数のエラータイプにまたがる処理を簡素化
-- カスタムエラータイプの定義が不要
+- ライブラリではなくアプリケーションのエラー処理のために設計
+- 動的な `anyhow::Error` 型を提供し、`Error` トレイトを実装するあらゆるエラーを含むことができる
+- 複数のエラー型にまたがる処理を簡素化
+- カスタムエラー型の定義が不要
 
 ```rust
 use anyhow::{Context, Result};
@@ -118,18 +104,18 @@ fn main() -> Result<()> {
         .context("設定ファイルを読み込めませんでした")?;
         
     let app_config: AppConfig = serde_json::from_str(&config)
-        .context("設定の形式が無効です")?;
+        .context("設定フォーマットが無効です")?;
         
-    // Result<T>をResult<T, anyhow::Error>の型エイリアスとして使用
+    // Result<T> を Result<T, anyhow::Error> の型エイリアスとして使用
     Ok(())
 }
 ```
 
 **anyhow vs thiserror/snafu**:
-- anyhowはアプリケーション開発時の迅速なエラーハンドリングに焦点
-- thiserror/snafuは正確なエラータイプ階層の作成に焦点
+- anyhowはアプリケーションの迅速な開発時のエラー処理に焦点
+- thiserror/snafuは正確なエラー型階層の作成に焦点
 - anyhowは通常アプリケーションコードで使用
 - thiserror/snafuは通常ライブラリコードで使用
 
-実際には、anyhowとthiserrorはよく併用されます：ライブラリはthiserrorで正確なエラータイプを定義し、アプリケーションはanyhowで様々なエラーソースを処理します。
-{/* 本行由工具自动生成,原文哈希值:ac682487abf5cc66b7b4ee2508c7386d */}
+実際には、anyhowとthiserrorはよく併用されます：ライブラリはthiserrorで正確なエラー型を定義し、アプリケーションはanyhowで様々なエラー源を処理します。
+{/* 本行由工具自动生成,原文哈希值:e786d782f2c0d052350def02a332c83f */}

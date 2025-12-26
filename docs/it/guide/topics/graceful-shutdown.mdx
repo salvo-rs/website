@@ -1,6 +1,6 @@
-# Arresto elegante
+# Arresto Elegante
 
-L'arresto elegante si riferisce alla chiusura del server non mediante l'interruzione immediata di tutte le connessioni, ma interrompendo prima l'accettazione di nuove richieste e concedendo il tempo necessario per completare l'elaborazione di quelle già accettate prima di terminare il servizio. Questo approccio evita l'interruzione brusca delle richieste, migliorando l'esperienza utente e l'affidabilità del sistema.
+L'arresto elegante si riferisce alla modalità di chiusura del server in cui non tutte le connessioni vengono terminate immediatamente, ma si interrompe prima l'accettazione di nuove richieste, concedendo alle richieste già accettate il tempo necessario per completare l'elaborazione prima di chiudere il servizio. Questo approccio evita l'interruzione improvvisa delle richieste, migliorando l'esperienza utente e l'affidabilità del sistema.
 
 Salvo offre supporto per l'arresto elegante attraverso il metodo `handle` del `Server`, che restituisce un handle del server, seguito dalla chiamata al metodo `stop_graceful`. Dopo l'invocazione di questo metodo, il server:
 
@@ -8,7 +8,7 @@ Salvo offre supporto per l'arresto elegante attraverso il metodo `handle` del `S
 - Attende il completamento delle richieste in corso
 - Forza la chiusura delle connessioni rimanenti dopo il timeout specificato (se fornito)
 
-Ecco un semplice esempio:
+Ecco un esempio semplice:
 
 ```rust
 use salvo_core::prelude::*;
@@ -31,8 +31,8 @@ async fn main() {
 Nell'esempio sopra:
 
 - `server.handle()` ottiene l'handle del server, utilizzabile per controllarne il ciclo di vita
-- `handle.stop_graceful(None)` avvia il processo di arresto elegante, dove `None` indica l'assenza di timeout, attendendo indefinitamente il completamento di tutte le richieste
-- Per impostare un timeout, è possibile passare `Some(Duration)`, dopo il quale le connessioni residue verranno forzatamente chiuse
+- `handle.stop_graceful(None)` avvia il processo di arresto elegante; `None` indica l'assenza di timeout, attendendo indefinitamente il completamento di tutte le richieste
+- Per impostare un timeout, è possibile passare `Some(Duration)`; allo scadere del timeout, le connessioni residue verranno forzatamente chiuse
 
-Questo metodo è particolarmente adatto per applicazioni distribuite in ambienti containerizzati o su piattaforme cloud, nonché per aggiornamenti a caldo dove è essenziale evitare l'interruzione accidentale delle richieste.
+Questo approccio è particolarmente adatto per applicazioni distribuite in ambienti containerizzati o su piattaforme cloud, nonché per garantire che le richieste non vengano interrotte accidentalmente durante aggiornamenti a caldo.
 {/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

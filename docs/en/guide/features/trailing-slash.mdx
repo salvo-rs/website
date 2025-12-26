@@ -1,33 +1,33 @@
 # Trailing Slash
 
-Middleware to automatically add or remove trailing slashes (`/`).
+A middleware for automatically adding or removing trailing `/`.
 
 ## Use Cases
 
 The Trailing Slash middleware is particularly useful in the following scenarios:
 
-- **URL Normalization**: Ensures all URLs adhere to a consistent format (either always adding or always removing the trailing slash), which helps improve SEO and avoid duplicate content issues.
+- **URL Normalization**: Ensures all URLs follow a consistent format (by uniformly adding or removing trailing slashes), which helps improve SEO and avoid duplicate content issues.
   
-- **Simplified Route Handling**: Eliminates the need to write separate routing logic for paths with and without trailing slashes, as the middleware handles the transformation automatically.
+- **Simplified Route Handling**: Eliminates the need to write separate routing logic for URLs with and without trailing slashes, as the middleware automatically handles this conversion.
 
-- **Compatibility**: Some clients might automatically add or remove trailing slashes from URLs. This middleware ensures that requests are routed correctly regardless.
+- **Compatibility**: Some clients may automatically add or remove trailing slashes from URLs. This middleware ensures that requests are correctly routed.
 
-- **Redirection Management**: Can be configured to automatically redirect URLs with trailing slashes to their non-slashed counterparts (or vice versa), improving the user experience.
+- **Redirect Management**: Can be configured to automatically redirect URLs with trailing slashes to those without (or vice versa), enhancing the user experience.
 
-- **Avoiding Route Conflicts**: In many web frameworks, `/path` and `/path/` might be treated as distinct routes. This middleware unifies their handling.
+- **Avoiding Route Conflicts**: In many web frameworks, `/path` and `/path/` may be treated as different routes. This middleware can handle them uniformly.
 
-import { Tab, Tabs } from 'rspress/theme';
-import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
-import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 _**Example Code**_
 
 <Tabs>
-<Tab label="main.rs">
-<TrailingMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TrailingCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/trailing-slash/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/trailing-slash/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}
+{/* 本行由工具自动生成,原文哈希值:7bb4e1e210c23aa687c6aa13c130a763 */}

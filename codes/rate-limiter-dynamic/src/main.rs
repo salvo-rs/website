@@ -64,7 +64,7 @@ async fn main() {
     let router = Router::new()
         .get(home)
         .push(Router::with_path("limited").hoop(limiter).get(limited));
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -72,7 +72,7 @@ static HOME_HTML: &str = r#"
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Rate Limiter Dynmaic</title>
+        <title>Rate Limiter Dynamic</title>
     </head>
     <body>
         <h2>Rate Limiter Dynamic</h2>

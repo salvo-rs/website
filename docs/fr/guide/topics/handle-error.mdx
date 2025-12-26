@@ -2,18 +2,18 @@
 
 ## Méthodes courantes de gestion des erreurs dans les applications Rust
 
-La gestion des erreurs en Rust diffère de langages comme Java - il n'y a pas de `try...catch`. L'approche habituelle consiste à définir un type d'erreur global au niveau applicatif :
+La gestion des erreurs en Rust diffère de celle de langages comme Java, car elle n'utilise pas de blocs `try...catch`. L'approche habituelle consiste à définir un type d'erreur global au niveau de l'application :
 
 ```rust
 use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum AppError {
-    #[error("io: `{0}`")]
+    #[error("io : `{0}`")]
     Io(#[from] io::Error),
-    #[error("utf8: `{0}`")]
+    #[error("utf8 : `{0}`")]
     FromUtf8(#[from] FromUtf8Error),
-    #[error("diesel: `{0}`")]
+    #[error("diesel : `{0}`")]
     Diesel(#[from] diesel::result::Error),
     ...
 }
@@ -21,30 +21,30 @@ pub enum AppError {
 pub type AppResult<T> = Result<T, AppError>;
 ```
 
-Ici, nous utilisons la crate `thiserror` qui facilite la définition de types d'erreur personnalisés et simplifie le code. Pour plus de concision, nous définissons également un `AppResult`.
+Ici, nous utilisons la bibliothèque `thiserror`, qui permet de définir facilement vos propres types d'erreurs personnalisés et de simplifier le code. Pour une écriture plus concise, nous définissons également un `AppResult`.
 
-### thiserror vs anyhow
+### thiserror et anyhow
 
-Dans l'écosystème Rust, deux crates sont couramment utilisées pour la gestion des erreurs :
+Dans l'écosystème de gestion des erreurs en Rust, deux bibliothèques sont couramment utilisées : `thiserror` et `anyhow` :
 
-- **thiserror** : Destiné aux développeurs de bibliothèques pour définir des types d'erreur clairs. Il implémente automatiquement le trait `std::error::Error` via une macro derive, tout en permettant de personnaliser l'affichage des erreurs. C'est le choix idéal pour les bibliothèques ou quand des types d'erreur explicites sont nécessaires.
+- **thiserror** : Convient aux développeurs de bibliothèques pour définir des types d'erreurs clairs. Grâce à une macro dérivée, elle vous aide à implémenter le trait `std::error::Error` pour vos types d'erreurs personnalisés, tout en vous permettant de définir la représentation des erreurs. Lorsque vous construisez une bibliothèque ou avez besoin de fournir des types d'erreurs explicites aux utilisateurs, `thiserror` est le meilleur choix.
 
-- **anyhow** : Destiné aux applications, fournissant un type d'erreur générique `anyhow::Error` pouvant englober toute erreur implémentant `std::error::Error`. Il se concentre sur la propagation plutôt que la définition des erreurs, réduisant le code passe-partout.
+- **anyhow** : Convient aux développeurs d'applications, en fournissant un type d'erreur générique `anyhow::Error` capable de contenir toute erreur implémentant le trait `std::error::Error`. Elle se concentre davantage sur la propagation des erreurs que sur leur définition, ce qui la rend particulièrement adaptée au code de la couche application. Vous pouvez rapidement convertir diverses erreurs en `anyhow::Error`, réduisant ainsi le besoin d'écrire du code répétitif.
 
-Dans certains cas, les deux crates peuvent être combinées : `thiserror` pour définir les erreurs dans les bibliothèques, et `anyhow` pour les traiter dans l'application.
+Dans certains scénarios, vous pourriez utiliser ces deux bibliothèques simultanément : utiliser `thiserror` pour définir les types d'erreurs dans une bibliothèque, et `anyhow` pour gérer et propager ces erreurs dans l'application.
 
 ## Gestion des erreurs dans les Handlers
 
-Dans Salvo, les `Handler` rencontrent fréquemment divers types d'erreurs (connexion DB, accès fichiers, réseau etc.). Ces erreurs peuvent être gérées comme précédemment :
+Dans Salvo, les `Handler` rencontrent fréquemment diverses erreurs, telles que des erreurs de connexion à la base de données, des erreurs d'accès aux fichiers, des erreurs de connexion réseau, etc. Pour ce type d'erreurs, vous pouvez adopter l'approche de gestion des erreurs décrite ci-dessus :
 
 ```rust
 #[handler]
-async fn home()-> AppResult<()> {
+async fn home() -> AppResult<()> {
 
 }
 ```
 
-Ici, `home` retourne directement un `AppResult<()>`. Mais comment afficher cette erreur ? Nous devons implémenter le trait `Writer` pour notre type d'erreur personnalisé :
+Ici, `home` retourne directement un `AppResult<()>`. Mais comment cette erreur doit-elle être affichée ? Nous devons implémenter le trait `Writer` pour le type d'erreur personnalisé `AppResult`. Dans cette implémentation, nous pouvons décider comment afficher l'erreur :
 
 ```rust
 #[async_trait]
@@ -55,11 +55,11 @@ impl Writer for AppError {
 }
 ```
 
-Les `Handler` de Salvo peuvent retourner un `Result` à condition que les types `Ok` et `Err` implémentent le trait `Writer`.
+Les `Handler` de Salvo peuvent retourner un `Result`, à condition que les types `Ok` et `Err` dans le `Result` implémentent tous deux le trait `Writer`.
 
-### Utilisation d'anyhow
+### Utilisation de anyhow pour la gestion des erreurs
 
-Étant donné la popularité d'anyhow, Salvo fournit un support natif pour `anyhow::Error`. Lorsque la fonctionnalité `anyhow` est activée, `anyhow::Error` implémente `Writer` et est mappé sur `InternalServerError` :
+Étant donné qu'`anyhow` est largement utilisé, Salvo offre une prise en charge intégrée de `anyhow::Error`. Lorsque la fonctionnalité `anyhow` est activée, `anyhow::Error` implémente le trait `Writer` et est mappé sur `InternalServerError` :
 
 ```rust
 #[cfg(feature = "anyhow")]
@@ -71,7 +71,7 @@ impl Writer for ::anyhow::Error {
 }
 ```
 
-Pour l'utiliser, activez la fonctionnalité dans Cargo.toml :
+Pour utiliser la fonctionnalité `anyhow`, vous devez activer la feature `anyhow` de Salvo dans Cargo.toml :
 
 ```toml
 [dependencies]
@@ -79,17 +79,19 @@ salvo = { version = "*", features = ["anyhow"] }
 anyhow = "1.0"
 ```
 
-Vos handlers peuvent alors retourner directement `anyhow::Result<T>` :
+Ainsi, vos fonctions de traitement peuvent directement retourner un `anyhow::Result<T>` :
 
 ```rust
 #[handler]
 async fn home() -> anyhow::Result<impl Writer> {
-    let data = fetch_data().context("Échec de récupération des données")?;
+    let data = fetch_data().context("Échec de la récupération des données")?;
     Ok(Text::Plain(data))
 }
 ```
 
-Les erreurs contiennent souvent des informations sensibles qu'on ne souhaite pas exposer aux utilisateurs normaux. Mais pour les développeurs ou administrateurs, un accès détaillé peut être utile. Grâce aux paramètres de `write()`, nous pouvons implémenter ce comportement :
+Les `Error` contiennent souvent des informations sensibles. En général, vous ne souhaitez pas qu'elles soient visibles par les utilisateurs ordinaires, car cela serait peu sécurisé et manquerait de confidentialité. Cependant, si vous êtes un développeur ou un administrateur du site, votre perspective pourrait être différente : vous pourriez souhaiter que les erreurs soient exposées de manière transparente, révélant les informations d'erreur les plus précises.
+
+Comme vous pouvez le voir, dans la méthode `write`, nous avons accès aux références de `Request` et `Depot`, ce qui permet de mettre en œuvre facilement l'approche décrite ci-dessus :
 
 ```rust
 #[async_trait]
@@ -107,7 +109,7 @@ impl Writer for AppError {
 
 ## Affichage des pages d'erreur
 
-Les pages d'erreur intégrées à Salvo conviennent à la plupart des cas, s'adaptant automatiquement au format (HTML, JSON, XML). Cependant, il est parfois nécessaire de les personnaliser.
+Les pages d'erreur intégrées à Salvo répondent à la plupart des besoins, car elles peuvent afficher des pages Html, Json ou Xml en fonction du type de données de la requête. Cependant, dans certains cas, vous pourriez souhaiter personnaliser l'affichage des pages d'erreur.
 
-Ceci peut être réalisé en implémentant un `Catcher` personnalisé. Voir la section [`Catcher`](../concepts/catcher.html) pour plus de détails.
+Cela peut être réalisé en implémentant un `Catcher` personnalisé. Pour une explication détaillée, veuillez consulter la section [`Catcher`](../concepts/catcher.html).
 {/* 本行由工具自动生成,原文哈希值:ccc3ad5dca846f6b6415dbe84e0c5166 */}

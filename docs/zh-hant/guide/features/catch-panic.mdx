@@ -1,8 +1,8 @@
 # 捕捉請求中的 Panic
 
-Catch Panic 用於捕捉程式在處理請求過程中發生的崩潰。具體 API 請[查閱文件](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html).
+Catch Panic 用於捕捉程式在處理請求時發生的崩潰。詳細 API 請[參閱文件](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html)。
 
-> **注意**: 使用 `CatchPanic` 需要在 `Cargo.toml` 中啟用 `catch-panic` 功能:
+> **注意**: 使用 `CatchPanic` 需要在 `Cargo.toml` 中啟用 `catch-panic` 功能：
 > ```toml
 > salvo= { version = "xxx", features = ["catch-panic"] }
 > ```
@@ -11,7 +11,7 @@ Catch Panic 用於捕捉程式在處理請求過程中發生的崩潰。具體 A
 
 `CatchPanic` 是一個用於捕捉處理程序中 panic 的中介軟體。當處理請求的過程中發生 panic 時，它會捕捉這些 panic 並將 500 Internal Server Error 寫入回應，而不是讓整個伺服器崩潰。
 
-**重要提示**: 該中介軟體應作為第一個中介軟體使用，以確保能捕捉到其他中介軟體或處理程序中的 panic。
+**重要提示**: 此中介軟體應作為第一個中介軟體使用，以確保能捕捉到其他中介軟體或處理程序中的 panic。
 
 ## 基本用法
 
@@ -36,7 +36,7 @@ async fn main() {
 
 ### Axum
 
-類似 Axum 中 `Tower` 的 `catch_panic` 中介軟體:
+類似 Axum 中 `Tower` 的 `catch_panic` 中介軟體：
 
 ```rust
 use axum::{
@@ -69,7 +69,7 @@ async fn main() {
 
 ### Gin (Go)
 
-在 Go 語言的 Gin 框架中，類似於 Recovery 中介軟體:
+在 Go 語言的 Gin 框架中，類似於 Recovery 中介軟體：
 
 ```go
 package main
@@ -91,16 +91,16 @@ func main() {
 
 ## 範例程式碼
 
-import { Tab, Tabs } from 'rspress/theme';
-import CatchPanicCode from '../../../../codes_md/catch-panic/src/main.mdx';
-import CatchPanicCargoCode from '../../../../codes_md/catch-panic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CatchPanicCode/>
+  ```rust file="<root>/codes/catch-panic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CatchPanicCargoCode/>
+  ```toml file="<root>/codes/catch-panic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:216fd74acc010904e48610d9b567866d */}
+{/* 本行由工具自动生成,原文哈希值:ad03110400c39a35184d54e9554276b5 */}

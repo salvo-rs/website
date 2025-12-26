@@ -1,1 +1,9 @@
-["router","request","response","depot","handler","catcher","writer"]
+[
+    "router",
+    "request",
+    "response",
+    "depot",
+    "handler",
+    "catcher",
+    "writer"
+]
