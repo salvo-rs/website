@@ -10,11 +10,6 @@
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Topics",
-    "link": "/guide/topics/",
-    "activeMatch": "/guide/topics/"
-  },
-  {
     "text": "Features",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"

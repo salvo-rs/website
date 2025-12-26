@@ -10,11 +10,6 @@
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "专题探讨",
-    "link": "/guide/topics/",
-    "activeMatch": "/guide/topics/"
-  },
-  {
     "text": "功能大全",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
