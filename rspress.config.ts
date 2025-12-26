@@ -16,10 +16,9 @@ export default defineConfig({
       //   card: 'summary_large_image',
       // },
     }),
-
   ],
   root: 'docs',
-  title: 'Salvo - A perfect web framework written in Rust',
+  // title: 'Salvo - A perfect web framework written in Rust',
   lang: 'en',
   locales: [
     {
