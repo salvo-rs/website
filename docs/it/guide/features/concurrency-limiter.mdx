@@ -2,25 +2,25 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 # Limitazione della Concorrenza
 
-Il middleware Concurrency Limiter consente di controllare il numero di richieste simultanee. Per i dettagli API, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
+Il middleware Limitazione della Concorrenza consente di controllare il numero di richieste simultanee. Per i dettagli specifici delle API, consultare [la documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
 
-## Casi d'Uso
+## Scenari di Applicazione
 
 Il limitatore di concorrenza risulta particolarmente utile nei seguenti scenari:
 
-- **Protezione di siti ad alto traffico**: Limita il numero di richieste elaborate simultaneamente durante picchi di traffico, prevenendo il sovraccarico del server.
-- **Controllo di operazioni ad alta intensità di risorse**: Limita la concorrenza per operazioni come upload di file, scritture su database o altre attività ad alto consumo di risorse.
-- **Limitazione di chiamate API esterne**: Controlla il numero di richieste simultanee quando si interagisce con servizi esterni che impongono limiti di frequenza.
+- **Protezione di Siti Web ad Alto Traffico**: Limita il numero di richieste elaborate contemporaneamente durante picchi di traffico per prevenire il sovraccarico del server.
+- **Controllo di Operazioni ad Alto Consumo di Risorse**: Restringe la concorrenza per operazioni impegnative come caricamenti di file e scritture su database.
+- **Limitazione delle Chiamate ad API di Terze Parti**: Controlla il numero di richieste simultanee quando si utilizzano servizi esterni con limiti di frequenza.
 
 ## Funzioni Principali
 
-- **Prevenire il sovraccarico del server**: Mantiene la stabilità del server durante i picchi di traffico limitando le richieste simultanee.
-- **Migliorare l'affidabilità del sistema**: Evita il collasso del sistema causato dall'esaurimento delle risorse.
-- **Ottimizzare l'allocazione delle risorse**: Garantisce che i servizi critici dispongano di risorse sufficienti per elaborare le richieste.
+- **Prevenire il Sovraccarico del Server**: Mantiene la stabilità del server durante i picchi di traffico limitando le richieste simultanee.
+- **Migliorare l'Affidabilità del Sistema**: Evita il blocco del sistema causato dall'esaurimento delle risorse.
+- **Ottimizzare l'Allocazione delle Risorse**: Garantisce che i servizi critici dispongano di risorse sufficienti per gestire le richieste.
 
-## Modalità d'Uso
+## Utilizzo
 
-È sufficiente aggiungere il middleware `max_concurrency(n)` alla rotta, dove `n` rappresenta il numero massimo di richieste simultanee consentite. Le richieste che superano questo limite riceveranno una risposta `503 Service Unavailable`.
+È sufficiente aggiungere il middleware `max_concurrency(n)` alla propria rotta, dove `n` rappresenta il numero massimo di richieste simultanee consentite. Le richieste che superano questo limite riceveranno una risposta `503 Servizio Non Disponibile`.
 
 _**Codice di Esempio**_
 
@@ -34,4 +34,4 @@ _**Codice di Esempio**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:e608fa24b412ca88671cf77efea06bad */}
+{/* Auto generated, origin file hash:eb0d1d053dfdeefd6150fb9fd7bb825f */}

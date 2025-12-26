@@ -20,11 +20,6 @@
     "activeMatch": "/guide/features/"
   },
   {
-    "text": "Ökosystem",
-    "link": "/guide/ecology/",
-    "activeMatch": "/guide/ecology/"
-  },
-  {
     "text": "API-Dokumentation",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },

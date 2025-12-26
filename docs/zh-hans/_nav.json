@@ -1,6 +1,6 @@
 [
   {
-    "text": "入门指南",
+    "text": "开发指南",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
@@ -18,11 +18,6 @@
     "text": "功能大全",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
-  },
-  {
-    "text": "生态系统",
-    "link": "/guide/ecology/",
-    "activeMatch": "/guide/ecology/"
   },
   {
     "text": "文档参考",

@@ -1,34 +1,33 @@
 # Controllo Cross-Origin
 
-CORS (Cross-Origin Resource Sharing, Condivisione Risorse tra Origini Diverse) è un meccanismo che consente ai browser di effettuare richieste a server di origini diverse, superando così le limitazioni imposte dalla politica della stessa origine (Same-Origin Policy).
+CORS (Cross-Origin Resource Sharing) è un meccanismo che consente ai browser di effettuare richieste a server cross-origin, superando così le restrizioni imposte dalla politica della stessa origine (same-origin policy) del browser.
 
 ## Cos'è la Politica della Stessa Origine?
 
-La politica della stessa origine è una funzionalità di sicurezza del browser che limita come un documento o script caricato da un'origine possa interagire con risorse provenienti da un'altra origine. Per "stessa origine" si intende avere lo stesso protocollo, dominio e numero di porta.
+La politica della stessa origine è una funzionalità di sicurezza dei browser che limita come documenti o script caricati da un'origine possano interagire con risorse provenienti da un'altra origine. "Stessa origine" si riferisce all'avere lo stesso protocollo, dominio e numero di porta.
 
-## Perché è necessario CORS?
+## Perché è Necessario il CORS?
 
-Quando un'applicazione frontend necessita di accedere ad API ospitate su un'origine diversa, è necessario il supporto CORS. Ad esempio:
+Il supporto CORS è necessario quando un'applicazione frontend deve accedere ad API da un'origine diversa. Ad esempio:
 - L'applicazione frontend è distribuita su `https://frontend.com`
 - Il servizio API è distribuito su `https://api.backend.com`
 
-Senza CORS, il browser impedirebbe all'applicazione frontend di accedere al servizio API.
+Senza CORS, il browser impedirà all'applicazione frontend di accedere al servizio API.
 
-## Come Funziona CORS
+## Come Funziona il CORS
 
-CORS implementa il controllo degli accessi cross-origin attraverso una serie di intestazioni HTTP:
-- **Richieste Semplici**: Inviate direttamente, il server controlla se consentirle tramite intestazioni di risposta.
-- **Richieste Preflight**: Il browser invia prima una richiesta OPTIONS per chiedere al server se consente l'accesso cross-origin. Solo dopo aver ricevuto il permesso, invia la richiesta effettiva.
+Il CORS implementa il controllo di accesso cross-origin attraverso una serie di intestazioni HTTP:
+- **Richieste Semplici**: Inviate direttamente, con il server che controlla se l'accesso è consentito tramite intestazioni di risposta.
+- **Richieste Preflight**: Il browser invia prima una richiesta OPTIONS per chiedere al server se l'accesso cross-origin è consentito, e invia la richiesta effettiva solo dopo aver ricevuto il permesso.
 
-Poiché il browser invia richieste preflight `Method::OPTIONS`, è necessario gestire questo tipo di richieste aggiungendo il middleware CORS al `Service`.
+Poiché il browser invia richieste preflight con `Method::OPTIONS`, è necessario gestire tali richieste. Il middleware CORS deve essere aggiunto al `Service`.
 
-## Utilizzare CORS in Salvo
+## Utilizzo del CORS in Salvo
 
-Salvo fornisce un middleware CORS integrato, facile da configurare e utilizzare. Ecco un esempio di codice:
+Salvo fornisce un middleware CORS integrato che può essere facilmente configurato e utilizzato. Ecco un frammento di codice di esempio:
 
 :::warning
-Nota: Il middleware `.hoop(cors)` viene applicato al `Service`, non al `Router`.
-In questo modo le richieste preflight OPTIONS vengono gestite automaticamente.
+Nota: Il middleware `.hoop(cors)` viene applicato al `Service`, non al `Router`. Ciò garantisce la gestione automatica delle richieste preflight OPTIONS.
 ```rust
 let cors = Cors::new()
     .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
@@ -57,16 +56,16 @@ import { Tab, Tabs } from '@rspress/core/theme';
   </Tab>
 </Tabs>
 
-## Opzioni di Configurazione Principali
+## Principali Opzioni di Configurazione
 
-Il middleware CORS offre diverse opzioni di configurazione:
+Il middleware CORS offre varie opzioni di configurazione:
 
 - **Origini Consentite**: Controlla quali domini possono accedere alle risorse.
 - **Metodi Consentiti**: Specifica i metodi HTTP consentiti (GET, POST, ecc.).
 - **Intestazioni Consentite**: Specifica le intestazioni di richiesta consentite.
-- **Intestazioni Esposte**: Specifica quali intestazioni di risposta sono accessibili al client.
-- **Credenziali Consentite**: Indica se le richieste possono includere credenziali come cookie.
-- **Durata Cache Richieste Preflight**: Tempo di memorizzazione nella cache del risultato delle richieste preflight.
+- **Intestazioni Esposte**: Specifica quali intestazioni di risposta possono essere accessibili dal client.
+- **Consenti Credenziali**: Determina se le richieste possono includere credenziali come i cookie.
+- **Tempo di Cache Richieste Preflight**: La durata della cache per i risultati delle richieste preflight.
 
-Configurando opportunamente CORS, è possibile garantire sia la sicurezza che la necessità di accesso cross-origin.
-{/* Auto generated, origin file hash:cf229c3c39be32658130e3590ea819e7 */}
+Configurando opportunamente il CORS, è possibile garantire sia la sicurezza che la capacità di soddisfare i requisiti di accesso cross-origin.
+{/* Auto generated, origin file hash:06a4a7b1ce4049ea7d3c15924bdd7397 */}

@@ -1,12 +1,12 @@
 # Router
 
-## Cos'è il Router
+## Cos'è il Routing
 
-[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) definisce quali middleware e `Handler` elaboreranno una richiesta HTTP. Questa è la funzionalità più fondamentale e centrale in Salvo.
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) definisce quale middleware e quale `Handler` elaboreranno una richiesta HTTP. Questa è la funzionalità più fondamentale e centrale in Salvo.
 
-Internamente, `Router` è composto da una serie di filtri (Filter). Quando arriva una richiesta, il router testa in ordine, dall'alto verso il basso, se se stesso e i suoi discendenti possono corrispondere alla richiesta. Se la corrispondenza ha successo, vengono eseguiti in sequenza i middleware presenti nell'intera catena formata dal router e dai suoi discendenti. Se durante l'elaborazione lo stato della `Response` viene impostato su errore (4XX, 5XX) o reindirizzamento (3XX), i middleware e `Handler` successivi vengono saltati. Puoi anche chiamare manualmente `ctrl.skip_rest()` per saltare i middleware e `Handler` successivi.
+Internamente, un `Router` è essenzialmente composto da una serie di filtri. Quando arriva una richiesta, il router testa se stesso e i suoi discendenti in ordine, dall'alto verso il basso, per vedere se possono corrispondere alla richiesta. Se una corrispondenza ha successo, il middleware sull'intera catena formata dal router e dai suoi router discendenti viene eseguito in sequenza. Se durante l'elaborazione, lo stato della `Response` viene impostato su un errore (4XX, 5XX) o un reindirizzamento (3XX), il middleware successivo e l'`Handler` verranno saltati. Puoi anche chiamare manualmente `ctrl.skip_rest()` per saltare il middleware e l'`Handler` rimanenti.
 
-Durante il processo di corrispondenza, esiste un'informazione sul percorso dell'URL, che può essere considerata un oggetto che deve essere completamente "consumato" dai Filter durante la corrispondenza. Se tutti i Filter in un determinato Router hanno successo nella corrispondenza e questa informazione sul percorso dell'URL è stata completamente consumata, allora si considera che la corrispondenza abbia "successo".
+Durante il processo di corrispondenza, esiste un oggetto informativo del percorso URL, che può essere considerato come un oggetto che deve essere completamente consumato dai filtri durante la corrispondenza. Se tutti i filtri in un determinato Router corrispondono con successo e queste informazioni sul percorso URL sono state completamente consumate, viene considerata una "corrispondenza riuscita".
 
 Ad esempio:
 
@@ -18,31 +18,31 @@ Router::with_path("articles").get(list_articles).post(create_article);
 
 ```rust
 Router::new()
-    // PathFilter può filtrare il percorso della richiesta. La corrispondenza ha successo solo se il percorso della richiesta contiene il segmento "articles",
-    // altrimenti fallisce. Ad esempio: /articles/123 ha successo, mentre /articles_list/123
-    // sebbene contenga "articles", non ha successo perché è seguito da "_list".
+    // PathFilter può filtrare i percorsi delle richieste. Corrisponde con successo solo se il percorso della richiesta contiene il segmento "articles".
+    // Altrimenti, la corrispondenza fallisce. Ad esempio: /articles/123 corrisponde con successo, mentre /articles_list/123
+    // contiene "articles" ma non corrisponde a causa del suffisso "_list".
     .filter(PathFilter::new("articles"))
 
-    // Se il router root ha successo nella corrispondenza e il metodo della richiesta è GET, il router figlio interno può corrispondere con successo,
+    // Se la radice corrisponde con successo e il metodo della richiesta è GET, il router figlio interno può corrispondere con successo,
     // e la richiesta viene gestita da list_articles.
     .push(Router::new().filter(filters::get()).handle(list_articles))
 
-    // Se il router root ha successo nella corrispondenza e il metodo della richiesta è POST, il router figlio interno può corrispondere con successo,
+    // Se la radice corrisponde con successo e il metodo della richiesta è POST, il router figlio interno può corrispondere con successo,
     // e la richiesta viene gestita da create_article.
     .push(Router::new().filter(filters::post()).handle(create_article));
 ```
 
-Se si accede a `GET /articles/`, si considera la corrispondenza riuscita e viene eseguito `list_articles`. Tuttavia, se si accede a `GET /articles/123`, la corrispondenza del router fallisce e viene restituito un errore 404, perché `Router::with_path("articles")` ha consumato solo `/articles` dall'informazione sul percorso dell'URL, lasciando `/123` non consumato, quindi la corrispondenza fallisce. Per far sì che la corrispondenza abbia successo, il router può essere modificato in:
+Se si accede a `GET /articles/`, viene considerata una corrispondenza riuscita e viene eseguito `list_articles`. Tuttavia, se si accede a `GET /articles/123`, la corrispondenza della rotta fallisce e restituisce un errore 404 perché `Router::with_path("articles")` consuma solo la parte `/articles` delle informazioni sul percorso URL, lasciando la parte `/123` non consumata, quindi la corrispondenza viene considerata fallita. Per ottenere una corrispondenza riuscita, la rotta può essere modificata in:
 
 ```rust
 Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
-Qui `{**}` corrisponderà a qualsiasi percorso residuo, quindi potrà corrispondere a `GET /articles/123` ed eseguire `list_articles`.
+Qui, `{**}` corrisponde a qualsiasi percorso rimanente, quindi può corrispondere a `GET /articles/123` ed eseguire `list_articles`.
 
 ## Definizione Piatta
 
-Possiamo definire i router in uno stile piatto:
+Possiamo definire le rotte in uno stile piatto:
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer);
@@ -52,7 +52,7 @@ Router::with_path("writers/{id}/articles").get(list_writer_articles);
 
 ## Definizione ad Albero
 
-Possiamo anche definire i router in una struttura ad albero, che è il modo consigliato:
+Possiamo anche definire le rotte in una struttura ad albero, che è l'approccio consigliato:
 
 ```rust
 Router::with_path("writers")
@@ -66,9 +66,10 @@ Router::with_path("writers")
             .push(Router::with_path("articles").get(list_writer_articles)),
     );
 ```
-Questa forma di definizione, per progetti complessi, rende la definizione dei Router chiara, semplice e gerarchica.
 
-Molti metodi in `Router` restituiscono se stessi (Self) dopo essere stati chiamati, per facilitare la scrittura del codice in stile catena. A volte, è necessario decidere come instradare in base a determinate condizioni. Il sistema di routing fornisce anche la funzione `then`, facile da usare:
+Questa forma di definizione rende le definizioni del Router gerarchiche, chiare e semplici per progetti complessi.
+
+Molti metodi in `Router` restituiscono `Self` dopo essere stati chiamati, facilitando la scrittura di codice concatenato. A volte, è necessario decidere come instradare in base a determinate condizioni. Il sistema di routing fornisce anche la funzione `then`, facile da usare:
 
 ```rust
 Router::new()
@@ -87,11 +88,12 @@ Router::new()
             }),
     );
 ```
-Questo esempio indica che le route per creare, modificare ed eliminare articoli verranno aggiunte solo quando il server è in `admin_mode`.
 
-## Ottenere Parametri dal Router
+Questo esempio significa che le rotte per la creazione, modifica ed eliminazione di articoli vengono aggiunte solo quando il server è in modalità `admin_mode`.
 
-Nel codice sopra, `{id}` definisce un parametro. Possiamo ottenerne il valore tramite l'istanza `Request`:
+## Recupero dei Parametri dalle Rotta
+
+Nel codice sopra, `{id}` definisce un parametro. Possiamo recuperarne il valore attraverso l'istanza `Request`:
 
 ```rust
 #[handler]
@@ -100,28 +102,28 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-`{id}` corrisponde a un segmento nel percorso. Normalmente l'`id` di un articolo è solo un numero, quindi possiamo usare un'espressione regolare per limitare la regola di corrispondenza di `id`, `r"{id|\d+}"`.
+`{id}` corrisponde a un segmento nel percorso. Normalmente, l'`id` di un articolo è solo un numero. In questo caso, possiamo usare un'espressione regolare per limitare la regola di corrispondenza per `id`, come `r"{id|\d+}"`.
 
-Per questo tipo numerico, c'è un metodo più semplice usando `<id:num>`, con le seguenti scritture:
-- `{id:num}`: corrisponde a qualsiasi numero di caratteri numerici;
-- `{id:num[10]}`: corrisponde solo a un numero specifico di caratteri numerici, qui 10 significa che corrisponde esattamente a 10 caratteri numerici;
-- `{id:num(..10)}`: corrisponde da 1 a 9 caratteri numerici;
-- `{id:num(3..10)}`: corrisponde da 3 a 9 caratteri numerici;
-- `{id:num(..=10)}`: corrisponde da 1 a 10 caratteri numerici;
-- `{id:num(3..=10)}`: corrisponde da 3 a 10 caratteri numerici;
-- `{id:num(10..)}`: corrisponde ad almeno 10 caratteri numerici.
+Per i tipi numerici, c'è un metodo ancora più semplice usando `<id:num>`. Le notazioni specifiche sono:
+- `{id:num}` corrisponde a qualsiasi numero di caratteri cifra.
+- `{id:num[10]}` corrisponde esattamente a un numero specifico di caratteri cifra; qui, 10 significa che corrisponde esattamente a 10 cifre.
+- `{id:num(..10)}` corrisponde da 1 a 9 caratteri cifra.
+- `{id:num(3..10)}` corrisponde da 3 a 9 caratteri cifra.
+- `{id:num(..=10)}` corrisponde da 1 a 10 caratteri cifra.
+- `{id:num(3..=10)}` corrisponde da 3 a 10 caratteri cifra.
+- `{id:num(10..)}` corrisponde ad almeno 10 caratteri cifra.
 
-È anche possibile corrispondere a tutti i segmenti di percorso rimanenti tramite `{**}`, `{*+}` o `{*?}`. Per una migliore leggibilità del codice, si può aggiungere un nome appropriato per rendere il percorso più chiaro semanticamente, ad esempio: `{**file_path}`.
+Puoi anche corrispondere a tutti i segmenti di percorso rimanenti usando `{**}`, `{*+}` o `{*?}`. Per una migliore leggibilità del codice, puoi aggiungere nomi appropriati per rendere la semantica del percorso più chiara, ad esempio `{**file_path}`.
 
-- `{**}`: rappresenta una corrispondenza con wildcard che può essere una stringa vuota. Ad esempio, il percorso `/files/{**rest_path}` corrisponderà a `/files`, `/files/abc.txt`, `/files/dir/abc.txt`;
-- `{*+}`: rappresenta una corrispondenza con wildcard che deve esistere, non può corrispondere a una stringa vuota. Ad esempio, il percorso `/files/{*+rest_path}` non corrisponderà a `/files` ma corrisponderà a `/files/abc.txt`, `/files/dir/abc.txt`;
-- `{*?}`: rappresenta una corrispondenza con wildcard che può essere una stringa vuota, ma può contenere solo un segmento di percorso. Ad esempio, il percorso `/files/{*?rest_path}` non corrisponderà a `/files/dir/abc.txt` ma corrisponderà a `/files`, `/files/abc.txt`;
+- `{**}`: Rappresenta una corrispondenza con caratteri jolly dove la parte corrispondente può essere una stringa vuota. Ad esempio, il percorso `/files/{**rest_path}` corrisponde a `/files`, `/files/abc.txt`, `/files/dir/abc.txt`.
+- `{*+}`: Rappresenta una corrispondenza con caratteri jolly dove la parte corrispondente deve esistere e non può essere una stringa vuota. Ad esempio, il percorso `/files/{*+rest_path}` NON corrisponde a `/files` ma corrisponde a `/files/abc.txt`, `/files/dir/abc.txt`.
+- `{*?}`: Rappresenta una corrispondenza con caratteri jolly dove la parte corrispondente può essere una stringa vuota ma può contenere solo un segmento di percorso. Ad esempio, il percorso `/files/{*？rest_path}` NON corrisponde a `/files/dir/abc.txt` ma corrisponde a `/files`, `/files/abc.txt`.
 
-È consentito combinare più espressioni per corrispondere allo stesso segmento di percorso, ad esempio `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+Multiple espressioni possono essere combinate per corrispondere allo stesso segmento di percorso, ad esempio `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
 
-## Aggiungere Middleware
+## Aggiunta di Middleware
 
-È possibile aggiungere middleware tramite la funzione `hoop` sul router:
+Il middleware può essere aggiunto tramite la funzione `hoop` su un router:
 
 ```rust
 Router::new()
@@ -138,9 +140,9 @@ Router::new()
     );
 ```
 
-In questo esempio, il router root utilizza `check_authed` per verificare se l'utente corrente ha effettuato l'accesso. Tutti i router discendenti saranno influenzati da questo middleware.
+In questo esempio, il router radice utilizza `check_authed` per verificare se l'utente corrente ha effettuato l'accesso. Tutti i router discendenti sono influenzati da questo middleware.
 
-Se gli utenti vogliono solo visualizzare le informazioni sugli `writer` e gli articoli, preferiamo che possano farlo senza effettuare l'accesso. Possiamo definire il router in questo modo:
+Se gli utenti stanno solo navigando tra le informazioni degli `writer` e gli articoli, potremmo preferire che possano navigare senza effettuare l'accesso. Possiamo definire le rotte in questo modo:
 
 ```rust
 Router::new()
@@ -160,13 +162,13 @@ Router::new()
     );
 ```
 
-Nonostante due router abbiano la stessa definizione di percorso `path("articles")`, possono comunque essere aggiunti allo stesso router padre.
+Anche se due router hanno la stessa definizione di percorso `path("articles")`, possono comunque essere aggiunti allo stesso router padre.
 
 ## Filtri
 
-Internamente, `Router` determina se una corrispondenza ha successo attraverso i filtri. I filtri supportano operazioni logiche di base utilizzando `or` o `and`. Un router può contenere più filtri; quando tutti i filtri corrispondono con successo, la corrispondenza del router ha successo.
+`Router` utilizza internamente i filtri per determinare se una rotta corrisponde. I filtri supportano operazioni logiche di base utilizzando `or` o `and`. Un router può contenere più filtri; quando tutti i filtri corrispondono con successo, la rotta corrisponde con successo.
 
-La struttura del percorso di un sito web è una struttura ad albero, ma questa struttura ad albero non è equivalente alla struttura ad albero organizzativa dei router. Un percorso del sito web può corrispondere a più nodi router. Ad esempio, alcuni contenuti sotto il percorso `articles/` richiedono l'accesso per essere visualizzati, mentre altri no. Possiamo organizzare i sottopercorsi che richiedono l'accesso sotto un router che contiene il middleware di verifica dell'accesso. Quelli che non richiedono la verifica dell'accesso possono essere organizzati sotto un altro router senza tale verifica:
+Le informazioni sul percorso del sito web sono una struttura ad albero, ma questa struttura ad albero non è equivalente alla struttura ad albero che organizza i router. Un percorso del sito web può corrispondere a più nodi del router. Ad esempio, alcuni contenuti sotto il percorso `articles/` potrebbero richiedere l'accesso per essere visualizzati, mentre altri no. Possiamo organizzare i sottopercorsi che richiedono la verifica dell'accesso sotto un router contenente il middleware di verifica dell'accesso, e quelli che non richiedono la verifica sotto un altro router senza di essa:
 
 ```rust
 Router::new()
@@ -183,26 +185,26 @@ Router::new()
     );
 ```
 
-Il router utilizza i filtri per filtrare le richieste e inviarle ai corrispondenti middleware e `Handler` per l'elaborazione.
+I router utilizzano i filtri per filtrare le richieste e inviarle al middleware e all'`Handler` corrispondenti per l'elaborazione.
 
-`path` e `method` sono due dei filtri più comunemente utilizzati. `path` viene utilizzato per corrispondere alle informazioni sul percorso; `method` viene utilizzato per corrispondere al metodo della richiesta, ad esempio: GET, POST, PATCH, ecc.
+`path` e `method` sono due dei filtri più comunemente usati. `path` viene utilizzato per corrispondere alle informazioni sul percorso; `method` viene utilizzato per corrispondere al Metodo della richiesta, ad esempio GET, POST, PATCH, ecc.
 
-Possiamo utilizzare `and`, `or` per collegare i filtri del router:
+Possiamo collegare i filtri del router utilizzando `and`, `or`:
 
 ```rust
 Router::with_filter(filters::path("hello").and(filters::get()));
 ```
 
-### Filtri di Percorso
+### Filtro Percorso
 
-I filtri basati sul percorso della richiesta sono i più frequentemente utilizzati. Nei filtri di percorso è possibile definire parametri, ad esempio:
+I filtri basati sui percorsi delle richieste sono i più frequentemente utilizzati. I filtri del percorso possono definire parametri, ad esempio:
 
 ```rust
 Router::with_path("articles/{id}").get(show_article);
 Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
-Nel `Handler`, è possibile ottenere i parametri tramite la funzione `get_param` dell'oggetto `Request`:
+In un `Handler`, possono essere recuperati tramite la funzione `get_param` dell'oggetto `Request`:
 
 ```rust
 #[handler]
@@ -216,15 +218,15 @@ pub async fn serve_file(req: &mut Request) {
 }
 ```
 
-### Filtri di Metodo
+### Filtro Metodo
 
-Filtrano le richieste in base al `Method` della richiesta `HTTP`, ad esempio:
+Filtra le richieste in base al `Method` della richiesta HTTP, ad esempio:
 
 ```rust
 Router::new().get(show_article).patch(update_article).delete(delete_article);
 ```
 
-Qui `get`, `patch`, `delete` sono tutti filtri di metodo. Sono effettivamente equivalenti a:
+Qui, `get`, `patch`, `delete` sono tutti filtri di Metodo. Questo è effettivamente equivalente a:
 
 ```rust
 use salvo::routing::filter;
@@ -236,16 +238,16 @@ let delete_router = Router::with_filter(filters::get()).handle(delete_article);
 Router::new().push(show_router).push(update_router).push(delete_router);
 ```
 
-## Wisp Personalizzati
+## Wisp Personalizzato
 
-Per alcune espressioni di corrispondenza che compaiono frequentemente, possiamo assegnare un nome breve tramite `PathFilter::register_wisp_regex` o `PathFilter::register_wisp_builder`. Ad esempio, il formato GUID appare spesso nei percorsi. Normalmente, ogni volta che è necessario effettuare una corrispondenza, si scrive così:
+Per determinate espressioni di corrispondenza che si verificano frequentemente, possiamo assegnare un nome breve tramite `PathFilter::register_wisp_regex` o `PathFilter::register_wisp_builder`. Ad esempio, il formato GUID appare spesso nei percorsi. Il modo normale è scriverlo così ogni volta che è necessaria la corrispondenza:
 
 ```rust
 Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 ```
 
-Scrivere ogni volta questa complessa espressione regolare è soggetto a errori e rende il codice meno leggibile. Si può fare così:
+Scrivere questa espressione regolare complessa ogni volta è soggetto a errori e rende il codice meno leggibile. Puoi invece fare così:
 
 ```rust
 use salvo::routing::filter::PathFilter;
@@ -260,17 +262,17 @@ async fn main() {
 }
 ```
 
-È sufficiente registrarlo una volta, dopodiché è possibile utilizzare la semplice scrittura `{id:guid}` per corrispondere ai GUID, semplificando la scrittura del codice.
+Devi registrarlo solo una volta. Successivamente, puoi utilizzare direttamente una notazione semplice come `{id:guid}` per corrispondere ai GUID, semplificando la scrittura del codice.
 
-## Come Comprendere il Router Provenendo da Framework Web di Tipo Controller?
+## Provenendo da un Web Framework basato su Controller, Come Comprendere il Router?
 
-Le principali differenze tra un framework web basato sulla progettazione del routing (come Salvo) e i framework tradizionali MVC o basati su Controller sono:
+Le principali differenze tra i framework web progettati per il routing (come Salvo) e i framework tradizionali MVC o progettati per i Controller sono:
 
-- **Flessibilità**: La progettazione del routing consente una definizione più flessibile del flusso di elaborazione delle richieste, permettendo un controllo preciso della logica di elaborazione per ogni percorso. Ad esempio, in Salvo puoi definire direttamente la funzione di gestione per un percorso specifico:
+- **Flessibilità**: La progettazione del routing consente una definizione più flessibile dei flussi di elaborazione delle richieste, consentendo un controllo preciso sulla logica per ogni percorso. Ad esempio, in Salvo puoi definire direttamente funzioni handler per percorsi specifici:
   ```rust
   Router::with_path("articles").get(list_articles).post(create_article);
   ```
-  Nella progettazione basata su Controller, di solito è necessario definire prima una classe controller, quindi definire più metodi all'interno della classe per gestire diverse richieste:
+  Nella progettazione dei Controller, in genere è necessario definire prima una classe controller, quindi definire più metodi all'interno della classe per gestire diverse richieste:
   ```java
   @Controller
   public class ArticleController {
@@ -282,25 +284,25 @@ Le principali differenze tra un framework web basato sulla progettazione del rou
   }
   ```
 
-- **Integrazione Middleware**: I framework di routing di solito forniscono modi più semplici per integrare i middleware, applicandoli a route specifiche. I middleware di Salvo possono essere applicati con precisione a route specifiche:
+- **Integrazione del Middleware**: I framework di routing di solito forniscono un modo più conciso per integrare il middleware, consentendo al middleware di essere applicato a rotte specifiche. Il middleware di Salvo può essere applicato con precisione a rotte particolari:
   ```rust
   Router::new()
       .push(
           Router::with_path("admin/articles")
-              .hoop(admin_auth_middleware)  // Applica il middleware di autenticazione solo alle route amministrative
+              .hoop(admin_auth_middleware)  // Applica il middleware di autenticazione solo alle rotte di amministrazione
               .get(list_all_articles)
               .post(create_article),
       )
       .push(
-          Router::with_path("articles")  // Route pubbliche senza autenticazione
+          Router::with_path("articles")  // Le rotte pubbliche non necessitano di autenticazione
               .get(list_public_articles),
       );
   ```
 
-- **Organizzazione del Codice**: La progettazione del routing tende a organizzare il codice in base alla funzionalità o all'endpoint API, piuttosto che secondo la stratificazione modello-vista-controller del MVC.
+- **Organizzazione del Codice**: La progettazione del routing tende a organizzare il codice in base alla funzionalità o agli endpoint API, piuttosto che alla stratificazione Model-View-Controller dell'MVC.
   La progettazione del routing incoraggia l'organizzazione del codice in base alla funzionalità dell'endpoint API:
   ```rust
-  // user_routes.rs - Route e logica di gestione relative agli utenti
+  // user_routes.rs - Rotta e logica di gestione relative agli utenti
   pub fn user_routes() -> Router {
       Router::with_path("users")
           .get(list_users)
@@ -308,10 +310,5 @@ Le principali differenze tra un framework web basato sulla progettazione del rou
           .push(Router::with_path("{id}").get(get_user).delete(delete_user))
   }
   
-  // article_routes.rs - Route e logica di gestione relative agli articoli
-  pub fn article_routes() -> Router {
-      Router::with_path("articles")
-          .get(list_articles)
-          .post(create_article)
- 
-{/* Auto generated, origin file hash:ba0a1eadc077c274134c7a533d887f99 */}
+  // article_routes.rs - Rotta e logica di gest
+{/* Auto generated, origin file hash:cff6ff452b87f5758f518db1f13a198e */}

@@ -1,18 +1,4 @@
 {
-  "gettingStarted": {
-    "en": "Getting Started",
-    "zh-hans": "开始",
-    "zh-hant": "開始",
-    "fr": "Commencer",
-    "de": "Erste Schritte",
-    "es": "Empezando",
-    "it": "Iniziare",
-    "ja": "はじめに",
-    "pt": "Começando",
-    "nl": "Aan de slag",
-    "no": "Komme i gang",
-    "ru": "Начало работы"
-  },
   "Features": {
     "en": "Features",
     "zh-hans": "功能大全",
@@ -28,7 +14,7 @@
     "ru": "Возможности"
   },
   "Concepts": {
-    "en": "Core Concepts",
+    "en": "Concepts",
     "zh-hans": "核心概念",
     "zh-hant": "核心概念",
     "fr": "Concepts Fondamentaux",
@@ -43,8 +29,8 @@
   },
   "Topics": {
     "en": "Topics",
-    "zh-hans": "主题",
-    "zh-hant": "主題",
+    "zh-hans": "专题探讨",
+    "zh-hant": "專題探討",
     "fr": "Sujets",
     "de": "Themen",
     "es": "Temas",
@@ -57,8 +43,8 @@
   },
   "guide": {
     "en": "Guide",
-    "zh-hans": "指南",
-    "zh-hant": "指南",
+    "zh-hans": "开发指南",
+    "zh-hant": "開發指南",
     "fr": "Guide",
     "de": "Anleitung",
     "es": "Guía",
@@ -70,23 +56,23 @@
     "ru": "Руководство"
   },
   "API": {
-    "en": "API",
-    "zh-hans": "文档参考",
-    "zh-hant": "文檔參考",
-    "fr": "Documentation API",
-    "de": "API-Dokumentation",
-    "es": "Documentación API",
-    "it": "Documentazione API",
-    "ja": "APIドキュメント",
-    "pt": "Documentação API",
-    "nl": "API-documentatie",
-    "no": "API-dokumentasjon",
-    "ru": "Документация API"
+    "en": "API-Docs",
+    "zh-hans": "API-Docs",
+    "zh-hant": "API-Docs",
+    "fr": "API-Docs",
+    "de": "API-Docs",
+    "es": "API-Docs",
+    "it": "API-Docs",
+    "ja": "API-Docs",
+    "pt": "API-Docs",
+    "nl": "API-Docs",
+    "no": "API-Docs",
+    "ru": "API-Docs"
   },
   "Ecology": {
     "en": "Ecosystem",
-    "zh-hans": "生态",
-    "zh-hant": "生態",
+    "zh-hans": "生态系统",
+    "zh-hant": "生態系統",
     "fr": "Écosystème",
     "de": "Ökosystem",
     "es": "Ecosistema",
@@ -113,8 +99,8 @@
   },
   "Guide": {
     "en": "Guide",
-    "zh-hans": "指南",
-    "zh-hant": "指南",
+    "zh-hans": "开发指南",
+    "zh-hant": "開發指南",
     "fr": "Guide",
     "de": "Leitfaden",
     "es": "Guía",

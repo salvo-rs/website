@@ -3,11 +3,28 @@ import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, statSy
 import { join, relative, dirname, extname } from 'path';
 import OpenAI from 'openai';
 
-let apiKey = process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY;
-export const client = new OpenAI({
-  apiKey,
-  baseURL: "https://api.deepseek.com/v1"
-});
+let config = {};
+// if (process.env.GEMINI_API_KEY) {
+//   console.log("使用 Gemini API Key 进行翻译");
+//   config = {
+//     apiKey: process.env.GEMINI_API_KEY,
+//     baseURL: "https://api.deepseek.com/v1",
+//   };
+// } else 
+if (process.env.DEEPSEEK_API_KEY) {
+  console.log("使用 DeepSeek API Key 进行翻译");
+  config = {
+    apiKey: process.env.DEEPSEEK_API_KEY,
+    baseURL: "https://api.deepseek.com/v1",
+  };
+} else if (process.env.OPENAI_API_KEY) {
+  console.log("使用 OpenAI API Key 进行翻译");
+  config = {
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: "https://api.openai.com/v1",
+  };
+}
+export const client = new OpenAI(config);
 
 /**
  * 翻译文本到目标语言

@@ -2,20 +2,20 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) viene utilizzato per memorizzare dati temporanei coinvolti in una singola richiesta. I middleware possono inserire i dati temporanei che elaborano nel Depot per l'utilizzo da parte dei programmi successivi.
+[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) viene utilizzato per memorizzare dati temporanei coinvolti in una singola richiesta. Il middleware può inserire i dati temporanei che elabora nel Depot per l'utilizzo da parte dei programmi successivi.
 
-Quando un server riceve una richiesta da un browser client, crea un'istanza di `Depot`. Questa istanza viene distrutta dopo che tutti i middleware e `Handler` hanno completato l'elaborazione della richiesta.
+Quando un server riceve una richiesta dal browser client, crea un'istanza di `Depot`. Questa istanza viene distrutta dopo che tutti i middleware e `Handler` hanno completato l'elaborazione della richiesta.
 
-Ad esempio, possiamo impostare `current_user` in un middleware di login e poi leggere le informazioni dell'utente corrente nei middleware successivi o in `Handler`.
+Ad esempio, possiamo impostare `current_user` in un middleware di login e poi leggere le informazioni dell'utente corrente nei middleware o `Handler` successivi.
 
 ## Comprensione Rapida
 
-`Depot` viene utilizzato per memorizzare e condividere dati durante l'elaborazione delle richieste. Implementa un contenitore di dati type-safe che supporta due principali modalità di utilizzo:
+`Depot` viene utilizzato per memorizzare e condividere dati durante l'elaborazione delle richieste. Implementa un contenitore di dati type-safe che supporta due principali pattern di utilizzo:
 
-1. **Memorizzazione Chiave-Valore**: Accesso ai valori associati a chiavi stringa tramite i metodi `insert`/`get`.
-2. **Iniezione di Tipo**: Memorizzazione e recupero di valori basati sul tipo tramite i metodi `inject`/`obtain`.
+1. **Memorizzazione Chiave-Valore**: Accedi ai valori associati a chiavi stringa tramite i metodi `insert`/`get`.
+2. **Iniezione di Tipo**: Memorizza e recupera valori basati sul tipo tramite i metodi `inject`/`obtain`.
 
-Come mostrato negli esempi, `Depot` è particolarmente utile per passare dati tra middleware e handler. I middleware possono impostare valori in `Depot` (come informazioni utente, stato di autenticazione), e gli handler successivi possono recuperare questi valori senza calcoli o query ridondanti. Il design di `Depot` garantisce la coerenza e l'accessibilità dei dati durante l'intera catena di elaborazione delle richieste, rendendolo uno strumento fondamentale per costruire applicazioni web complesse.
+Come mostrato negli esempi, `Depot` è particolarmente utile per passare dati tra middleware e handler. Il middleware può impostare valori in `Depot` (come informazioni utente, stato di autenticazione), e gli handler successivi possono recuperare questi valori senza calcoli o query ridondanti. Il design di `Depot` garantisce la coerenza e l'accessibilità dei dati durante l'intera catena di elaborazione delle richieste, rendendolo uno strumento fondamentale per costruire applicazioni web complesse.
 
 <Tabs>
   <Tab label="main.rs">
@@ -56,7 +56,7 @@ depot.obtain::<Config>();
 | | `with_capacity(capacità)` | Crea un Depot con la capacità specificata |
 | | `capacity()` | Ottiene la capacità |
 | | `inner()` | Ottiene un riferimento all'HashMap interno |
-| **Iniezione/Recupero per Tipo** | `inject<V>(valore)` | Inietta un valore per tipo |
+| **Iniezione/Recupero di Tipo** | `inject<V>(valore)` | Inietta un valore per tipo |
 | | `obtain<T>()` | Recupera un riferimento al valore iniettato |
 | | `obtain_mut<T>()` | Recupera un riferimento mutabile al valore iniettato |
 | | `contains<T>()` | Verifica se è contenuto un tipo specifico |
@@ -67,5 +67,4 @@ depot.obtain::<Config>();
 | | `contains_key(chiave)` | Verifica se è contenuta una chiave specifica |
 | | `remove<V>(chiave)` | Rimuove la chiave e restituisce il valore |
 | | `delete(chiave)` | Elimina la coppia chiave-valore |
-{/* Auto generato, hash file originale:11bf72b48a504b8ce6ae390caf56080c */}
-{/* Auto generated, origin file hash:993e95da1313ae82d8fca50cdbdbaabf */}
+{/* Auto generated, origin file hash:b95d84ad7fe6f9c1aae94fbe8ca18072 */}

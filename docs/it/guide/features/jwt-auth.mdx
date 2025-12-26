@@ -1,21 +1,21 @@
 # Autenticazione JWT
 
-JWT (JSON Web Token) è uno standard aperto (RFC 7519) utilizzato per trasmettere informazioni in modo sicuro tra le parti. È un metodo compatto e sicuro per URL che rappresenta dichiarazioni sotto forma di oggetto JSON, comunemente impiegato per l'autenticazione e lo scambio di informazioni.
+JWT (JSON Web Token) è uno standard aperto (RFC 7519) per trasmettere informazioni in modo sicuro tra le parti. È un metodo compatto e sicuro per URL di rappresentare le rivendicazioni in formato oggetto JSON, comunemente utilizzato per l'autenticazione e lo scambio di informazioni.
 
-Il JWT è composto da tre parti:
-- **Intestazione (Header)** - Specifica il tipo di token e l'algoritmo di firma utilizzato
-- **Carico utile (Payload)** - Contiene le dichiarazioni (claims), come ID utente, ruoli, data di scadenza, ecc.
-- **Firma (Signature)** - Utilizzata per verificare che il messaggio non sia stato alterato durante la trasmissione
+Un JWT è composto da tre parti:
+- **Intestazione** - Specifica il tipo di token e l'algoritmo di firma utilizzato
+- **Payload** - Contiene le rivendicazioni, come ID utente, ruoli, tempo di scadenza, ecc.
+- **Firma** - Utilizzata per verificare che il messaggio non sia stato alterato durante la trasmissione
 
-Utilizzo tipico del JWT nel flusso di autenticazione:
-1. Dopo il login dell'utente, il server genera un token JWT
-2. Il token viene restituito al client e memorizzato (solitamente in localStorage o cookie)
-3. Nelle richieste successive, il client include il token nell'intestazione Authorization
-4. Il server verifica la validità del token e autorizza l'accesso
+Utilizzo tipico di JWT nel flusso di autenticazione:
+1. Dopo l'accesso dell'utente, il server genera un token JWT
+2. Il token viene restituito al client e memorizzato (tipicamente in localStorage o cookie)
+3. Nelle richieste successive, il client include questo token nell'intestazione Authorization
+4. Il server convalida l'autenticità del token e concede l'accesso
 
-Fornisce un middleware per la verifica dell'autenticazione JWT.
+Fornisce middleware per l'autenticazione JWT Auth.
 
-_**Codice di esempio**_ 
+_**Codice di Esempio**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -29,4 +29,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:44ba61e41e4c4e0937054ac0328a42ab */}
+{/* Auto generated, origin file hash:6ac72db73439017bc946bcdb54b74e13 */}

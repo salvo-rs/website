@@ -4,21 +4,21 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 Middleware che fornisce supporto per `Session`.
 
-## Cos'è una Sessione
+## Cos'è la Sessione
 
-Una sessione è un insieme di dati utente memorizzati lato server, utilizzati tipicamente per tracciare lo stato dell'utente e conservare dati temporanei. Nelle applicazioni web, le sessioni risolvono il problema dell'assenza di stato nel protocollo HTTP, permettendo al server di riconoscere richieste multiple provenienti dallo stesso utente.
+La sessione si riferisce ai dati utente memorizzati sul lato server, tipicamente utilizzati per tracciare lo stato dell'utente e memorizzare dati temporanei. Nelle applicazioni web, la sessione affronta la natura senza stato del protocollo HTTP, consentendo al server di riconoscere più richieste provenienti dallo stesso utente.
 
-## Utilizzo delle Sessioni in Salvo
+## Utilizzo della Sessione in Salvo
 
-In Salvo, il middleware Session fornisce API semplici per leggere e scrivere dati di sessione. Attraverso `SessionDepot` è possibile ottenere un'istanza della sessione, mentre metodi come `get`, `set` e `remove` consentono di gestire i dati della sessione.
+In Salvo, il middleware Session offre un'API semplice per leggere e scrivere i dati della sessione. Il `SessionDepot` può essere utilizzato per ottenere un'istanza della sessione, mentre metodi come `get`, `set` e `remove` consentono di gestire i dati della sessione.
 
-## Utilizzi Comuni
+## Casi d'Uso Comuni
 
 - Autenticazione utente e gestione dello stato di accesso
-- Memorizzazione temporanea di dati di moduli
-- Conservazione delle preferenze dell'utente
+- Memorizzazione temporanea dei dati del modulo
+- Archiviazione delle impostazioni delle preferenze dell'utente
 
-_**Codice di Esempio**_ 
+_**Codice di Esempio**_
 
 <Tabs>
   <Tab label="main.rs">
@@ -30,4 +30,4 @@ _**Codice di Esempio**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:f8de91b5a58a71598fb1dfee41bb6a6f */}
+{/* Auto generated, origin file hash:4c03e5410a4d4c13f01b56ddfd7edd2c */}

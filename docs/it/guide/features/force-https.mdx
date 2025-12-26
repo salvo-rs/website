@@ -2,11 +2,11 @@
 
 Il middleware `force-https` può reindirizzare tutte le richieste per utilizzare il protocollo HTTPS.
 
-Se applicato a un `Router`, questo middleware forzerà il cambio di protocollo solo quando la rotta corrisponde; se la pagina non esiste, non verrà effettuato alcun reindirizzamento.
+Se questo middleware viene applicato a un `Router`, imporrà il reindirizzamento del protocollo solo quando una rotta corrisponde. Se una pagina non esiste, non avverrà alcun reindirizzamento.
 
-Tuttavia, è più comune voler reindirizzare automaticamente qualsiasi richiesta, anche quando la rotta non corrisponde e viene restituito un errore `404`. In questo caso, il middleware può essere aggiunto al `Service`. Indipendentemente dal fatto che la richiesta corrisponda a una rotta, il middleware aggiunto al `Service` verrà sempre eseguito.
+Tuttavia, un requisito più comune è reindirizzare automaticamente qualsiasi richiesta, anche quando la rotta non corrisponde e restituisce un errore `404`. In questi casi, il middleware può essere aggiunto al `Service`. Il middleware aggiunto al `Service` verrà sempre eseguito, indipendentemente dal fatto che la richiesta venga corrisposta con successo da una rotta.
 
-_**Codice di esempio**_ 
+_**Codice di Esempio**_
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
@@ -20,4 +20,4 @@ import { Tab, Tabs } from '@rspress/core/theme';
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:173e195e2060c6dc031e06200cd7106c */}
+{/* Auto generated, origin file hash:b53a7da9c3e5aa9c04fb32a1b8982f0f */}

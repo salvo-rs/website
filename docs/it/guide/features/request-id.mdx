@@ -1,12 +1,12 @@
-# ID Tracciamento Richieste
+# ID Catena Richieste
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Il middleware Request Id è altamente flessibile: il generatore (IdGenerator) viene utilizzato per creare ID ed è possibile definire un proprio generatore implementando il trait `IdGenerator`. Il generatore predefinito fornito è `UlidGenerator`.
+Il middleware Request ID è altamente flessibile. Il generatore di ID (IdGenerator) viene utilizzato per generare gli identificatori, ed è possibile definire un proprio generatore purché implementi il tratto `IdGenerator`. Il generatore predefinito fornito è `UlidGenerator`.
 
-Inoltre, è possibile controllare se sovrascrivere l'`requestid` già esistente. È anche possibile impostare `header_name` e altre opzioni. Per i dettagli, consultare la [documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Inoltre, è possibile controllare se sovrascrivere un `requestid` esistente. È anche possibile impostare `header_name` e altre configurazioni. Per i dettagli, consultare [la documentazione](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
-_**Codice di esempio**_
+_**Codice di Esempio**_
 
 <Tabs>
   <Tab label="main.rs">
@@ -18,4 +18,4 @@ _**Codice di esempio**_
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:b57e0db0c2653d3019a927f03298bf44 */}
+{/* Auto generated, origin file hash:51b78bdfce6d167679115929e4692e13 */}

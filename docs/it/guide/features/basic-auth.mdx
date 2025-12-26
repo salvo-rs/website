@@ -1,39 +1,39 @@
 # Autenticazione di Base
 
-Middleware che fornisce supporto per l'autenticazione Basic Auth.
+Un middleware che fornisce supporto per l'autenticazione di base.
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-## Introduzione a Basic Auth
+## Introduzione all'Autenticazione di Base
 
-Basic Auth è un semplice meccanismo di autenticazione HTTP che trasmette nome utente e password tramite il campo `Authorization` nell'intestazione della richiesta HTTP. Il formato è `Authorization: Basic <base64(username:password)>`. Sebbene semplice, poiché le credenziali sono solo codificate in Base64 e non crittografate, di solito richiede l'uso con HTTPS per garantire la sicurezza.
+L'autenticazione di base è un semplice meccanismo di autenticazione HTTP che trasmette nome utente e password tramite l'intestazione `Authorization` nelle richieste HTTP. Il formato è `Authorization: Basic <base64(nomeutente:password)`. Sebbene semplice, poiché le credenziali sono solo codificate in Base64 anziché crittografate, viene tipicamente utilizzata con HTTPS per garantire la sicurezza.
 
-## Confronto delle implementazioni di Basic Auth nei framework comuni
+## Confronto delle Implementazioni di Autenticazione di Base nei Framework Comuni
 
-| Framework | Linguaggio | Implementazione Basic Auth |
-|-----------|------------|----------------------------|
-| Salvo | Rust | Implementato tramite middleware `BasicAuth` e `BasicAuthValidator` personalizzato |
+| Framework | Linguaggio | Implementazione Autenticazione di Base |
+|-----------|----------|----------------------------|
+| Salvo | Rust | Implementata tramite middleware `BasicAuth` e `BasicAuthValidator` personalizzato |
 | Express | JavaScript | Utilizza il pacchetto middleware `express-basic-auth` |
-| Spring Security | Java | Configurato tramite `httpBasic()` e implementato con `UserDetailsService` |
+| Spring Security | Java | Configurata tramite `httpBasic()` e implementata con `UserDetailsService` |
 | ASP.NET Core | C# | Utilizza `.UseAuthentication()` e `AddAuthentication(AuthenticationSchemes.Basic)` |
-| Gin | Go | Tramite middleware personalizzato o utilizzando il pacchetto `gin-contrib/auth` |
+| Gin | Go | Implementata tramite middleware personalizzato o utilizzando il pacchetto `gin-contrib/auth` |
 
-## Casi d'uso
+## Casi d'Uso
 
-Basic Auth è adatto per i seguenti scenari:
+L'autenticazione di base è adatta per i seguenti scenari:
 
-1. **API e strumenti interni**: strumenti di gestione e API utilizzati internamente all'azienda
-2. **Ambienti di sviluppo e test**: implementazione rapida dell'autenticazione senza bisogno di sistemi di login complessi
-3. **Protezione semplice delle API**: quando non è necessario un sistema complesso di gestione utenti
-4. **In combinazione con altre misure di sicurezza**: come parte di un'architettura di sicurezza multilivello
+1. **API e Strumenti Interni**: Strumenti di gestione e API utilizzati all'interno di un'azienda
+2. **Ambienti di Sviluppo e Testing**: Implementare rapidamente l'autenticazione senza un sistema di login complesso
+3. **Protezione di API Semplici**: Quando non è richiesto un sistema complesso di gestione utenti
+4. **Combinata con Altre Misure di Sicurezza**: Come parte di un'architettura di sicurezza multilivello
 
-In Salvo, il middleware Basic Auth può essere facilmente integrato nelle route, personalizzando la logica di validazione implementando il trait `BasicAuthValidator`, offrendo grande flessibilità.
+In Salvo, il middleware di autenticazione di base può essere facilmente integrato nelle rotte. Implementando il tratto `BasicAuthValidator`, è possibile definire logiche di validazione personalizzate, offrendo grande flessibilità.
 
-## Note importanti
+## Considerazioni
 
 - Utilizzare sempre con HTTPS per proteggere la trasmissione delle credenziali
 - Non adatto per ambienti di produzione che memorizzano informazioni sensibili
-- Considerare l'uso di metodi di autenticazione più sicuri come JWT, OAuth, ecc. per ambienti di produzione
+- Considerare l'uso di metodi di autenticazione più sicuri come JWT o OAuth per ambienti di produzione
 
 <Tabs>
   <Tab label="main.rs">
@@ -45,4 +45,4 @@ In Salvo, il middleware Basic Auth può essere facilmente integrato nelle route,
   ```
   </Tab>
 </Tabs>
-{/* Auto generated, origin file hash:d01ddb1691782cd7ed28227dcc89e19f */}
+{/* Auto generated, origin file hash:221f2dd3a7cc0491c1e80844627d2e2e */}
