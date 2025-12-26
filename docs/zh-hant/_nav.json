@@ -1,6 +1,6 @@
 [
   {
-    "text": "入門指南",
+    "text": "入门指南",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
@@ -10,7 +10,7 @@
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "專題探討",
+    "text": "专题探讨",
     "link": "/guide/topics/",
     "activeMatch": "/guide/topics/"
   },
@@ -20,16 +20,16 @@
     "activeMatch": "/guide/features/"
   },
   {
-    "text": "生態係統",
+    "text": "生态系统",
     "link": "/guide/ecology/",
     "activeMatch": "/guide/ecology/"
   },
   {
-    "text": "文檔參考",
+    "text": "文档参考",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "資助項目",
+    "text": "资助项目",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

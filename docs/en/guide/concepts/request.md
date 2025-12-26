@@ -308,4 +308,3 @@ For instance, here the actual request sends a Form, but the value of a certain f
 | **Special Features** | `cookies()/cookie()` | Cookie operations (requires cookie feature) |
 | | `extensions()/extensions_mut()` | Extension data storage |
 | | `set_secure_max_size()` | Set secure size limit |
-{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}

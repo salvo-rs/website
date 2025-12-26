@@ -2,9 +2,9 @@
 
 import { Tab, Tabs } from '@rspress/core/theme';
 
-Se lo stato della `Response` è un codice di errore e il `Body` nella pagina è vuoto, Salvo tenterà di utilizzare il `Catcher` per intercettare questo errore e visualizzare una pagina di errore amichevole.
+Quando una `Response` restituisce un codice di stato di errore e il `Body` all'interno della pagina è vuoto, Salvo tenterà di intercettare questo errore utilizzando un `Catcher` e visualizzerà una pagina di errore user-friendly.
 
-È possibile ottenere un `Catcher` predefinito del sistema tramite `Catcher::default()`, quindi aggiungerlo al `Service`.
+Puoi ottenere un `Catcher` predefinito di sistema chiamando `Catcher::default()`, e quindi aggiungerlo al `Service`.
 
 ```rust
 use salvo::catcher::Catcher;
@@ -14,9 +14,9 @@ Service::new(router).catcher(Catcher::default());
 
 Il `Catcher` predefinito supporta l'invio di pagine di errore nei formati `XML`, `JSON`, `HTML` e `Text`.
 
-È possibile aggiungere gestori di errore personalizzati al `Catcher` tramite il metodo `hoop` su questo `Catcher` predefinito. Questi gestori di errore rimangono comunque `Handler`.
+Puoi aggiungere gestori di intercettazione errori personalizzati al `Catcher` collegando `hoop` a questo `Catcher` predefinito. Questi gestori di intercettazione errori sono ancora di tipo `Handler`.
 
-È possibile aggiungere più gestori di errore personalizzati al `Catcher` tramite `hoop`. I gestori di errore personalizzati possono chiamare il metodo `FlowCtrl::skip_next` dopo aver gestito l'errore per saltare i successivi gestori e restituire anticipatamente il risultato.
+Puoi aggiungere più gestori di intercettazione errori personalizzati al `Catcher` tramite `hoop`. I gestori di errori personalizzati possono chiamare il metodo `FlowCtrl::skip_next` dopo aver elaborato un errore per saltare i gestori di errori successivi e restituire anticipatamente.
 
 <Tabs>
   <Tab label="main.rs">
@@ -29,3 +29,4 @@ Il `Catcher` predefinito supporta l'invio di pagine di errore nei formati `XML`,
   </Tab>
 </Tabs>
 {/* Auto generated, origin file hash:6d187ebda60dfda18718df8cd81080ad */}
+{/* Auto generated, origin file hash:37bc0b779088458e701ca88e7e268b84 */}
