@@ -45,7 +45,7 @@ export default defineConfig({
     {
       lang: 'zh-hans',
       label: '简体中文',
-      title: 'Salvo - ',
+      title: 'Salvo - 完美的 Rust Web 框架',
       description: 'Salvo - 完美的 Rust Web 框架',
       editLink: {
         docRepoBaseUrl:
@@ -262,6 +262,7 @@ export default defineConfig({
   markdown: {
     mermaid: true,
   },
+  llms: true,
   themePlugins: {
     ga: {
       id: 'G-X828N63WC8',
