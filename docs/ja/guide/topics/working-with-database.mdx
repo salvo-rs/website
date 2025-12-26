@@ -1,4 +1,4 @@
-# データベースの使用
+# データベースの利用
 
 ### [Diesel](https://diesel.rs/)
 
@@ -119,11 +119,11 @@ pub async fn get_user(req: &mut Request, res: &mut Response) {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    // mysql接続情報
+    // mysql connect info
     let mysql_uri = "mysql://root:123456@localhost/test";
     RB.link(MysqlDriver {}, mysql_uri).await.unwrap();
 
-    // ルーター
+    // router
     let router = Router::with_path("users").get(get_user);
 
     tracing::info!("Listening on http://127.0.0.1:5800");
@@ -133,13 +133,13 @@ async fn main() {
 
 ## [SeaORM](https://www.sea-ql.org/SeaORM/)
 
-SeaORMは非同期で動的なORMで、エンティティ関係、マイグレーションシステム、完全な型安全なクエリビルダーなど、強力なリレーショナルデータベースサポートを提供します。フル機能のORMが必要な中規模から大規模プロジェクトに適しています。
+SeaORMは非同期・動的型付けのORMで、エンティティ関係、マイグレーションシステム、完全な型安全クエリビルダーを含む強力なリレーショナルデータベースサポートを提供します。フル機能ORMを必要とする中規模から大規模プロジェクトに適しています。
 
 ## [Tokio ORM (Toasty)](https://github.com/tokio-rs/toasty)
 
-ToastyはTokioチームが開発しているORMで、現在も活発に開発中です。Tokioエコシステムとの緊密な統合を目指しており、Tokioに依存し、新興技術を採用することに抵抗のないプロジェクトに適している可能性があります。
+ToastyはTokioチームによって開発されているORMで、現在も活発に開発が進められており、Tokioエコシステムと緊密に統合されたORMソリューションの提供に注力しています。Tokioに依存し、新興技術を採用する意欲のあるプロジェクトに適している可能性があります。
 
 ## [SurrealDB Rust SDK](https://surrealdb.com/docs/sdk/rust)
 
-SurrealDBのRust SDKは、このマルチモデルデータベースとの接続機能を提供します。グラフデータ、ドキュメントデータ、リレーショナルデータを扱う必要があるアプリケーションに適しています。柔軟なデータモデルが必要なプロジェクトに良い選択肢となるでしょう。
-{/* 本行由工具自动生成,原文哈希值:1e253924948cbedf4d240486568b09f4 */}
+SurrealDBのRust SDKは、このマルチモデルデータベースとの接続機能を提供し、グラフデータ、ドキュメントデータ、リレーショナルデータを扱う必要があるアプリケーションに適しています。柔軟なデータモデルを必要とするプロジェクトにとって優れた選択肢です。
+{/* 本行由工具自动生成,原文哈希值:bc23a03c686915fc88ee2cb8c32dfe63 */}

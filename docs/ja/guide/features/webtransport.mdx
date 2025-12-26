@@ -1,38 +1,38 @@
 # WebTransport
 
-WebTransportはHTTP/3を基盤としたネットワーク転送プロトコルで、クライアントとサーバー間の双方向通信機能を提供し、低遅延・高スループット・セキュリティを兼ね備えています。
+WebTransportはHTTP/3を基盤とするネットワーク転送プロトコルで、クライアントとサーバー間の双方向通信機能を提供し、低遅延、高スループット、セキュリティを兼ね備えています。
 
 ## 適用シナリオ
 
 WebTransportは特に以下のようなシナリオに適しています：
 
-- **リアルタイムアプリケーション**：オンラインゲーム、リアルタイムコラボレーションツール、ビデオ会議など低遅延通信が必要なアプリケーション
-- **大容量ファイル転送**：高スループットのデータ転送をサポートし、メディアストリーミングや大容量ファイルのアップロード/ダウンロードに適しています
-- **多重化通信**：複数の双方向および単方向データストリームを同時に確立可能
-- **データグラム通信**：順序保証や信頼性を必要としないデータグラム通信をサポートし、リアルタイム性が極めて重要なシナリオに適しています
+- **リアルタイムアプリケーション**：オンラインゲーム、リアルタイムコラボレーションツール、ビデオ会議など、低遅延通信を必要とするアプリケーション
+- **大容量ファイル転送**：高スループットのデータ転送をサポートし、メディアストリーミングや大容量ファイルのアップロード・ダウンロードに適しています
+- **多重化通信**：複数の双方向および単方向データストリームを同時に確立できます
+- **データグラム通信**：順序保証や信頼性を保証しないデータグラム通信をサポートし、リアルタイム性が極めて高いシナリオに適しています
 
 WebSocketと比較して、WebTransportはより低い遅延とより柔軟な通信モードを提供し、特に不安定なネットワーク環境で優れたパフォーマンスを発揮します。
 
-## Salvo実装
+## Salvoの実装
 
-SalvoフレームワークはWebTransportのネイティブサポートを提供し、開発者が簡単にWebTransportベースのアプリケーションを構築できるようにします。主な機能は以下の通りです：
+SalvoフレームワークはWebTransportの組み込みサポートを提供し、開発者がWebTransportベースのアプリケーションを簡単に構築できるようにします。主な機能は以下の通りです：
 
-- WebTransportセッションの確立サポート
-- 双方向ストリーム(Bidirectional Streams)通信のサポート
-- 単方向ストリーム(Unidirectional Streams)通信のサポート
-- データグラム(Datagrams)転送のサポート
-- サーバー側から通信ストリームを能動的に開始可能
+- WebTransportセッションの確立をサポート
+- 双方向ストリーム（Bidirectional Streams）通信をサポート
+- 単方向ストリーム（Unidirectional Streams）通信をサポート
+- データグラム（Datagrams）転送をサポート
+- サーバーが能動的に通信ストリームを開始可能
 
-### 簡単なサンプル
+### 簡単な例
 
-以下はSalvoでWebTransportサーバーを実装する簡略化された例です：
+以下はSalvoを使用したWebTransportサーバーの簡略化された例です：
 
 ```rust
 #[handler]
 async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
     let session = req.web_transport_mut().await.unwrap();
     
-    // データグラム処理
+    // データグラムの処理
     if let Ok(Some((_, datagram))) = session.accept_datagram().await {
         // 受信したデータグラムを処理
         let mut resp = BytesMut::from(&b"Response: "[..]);
@@ -40,7 +40,7 @@ async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
         session.send_datagram(resp.freeze())?;
     }
     
-    // 双方向ストリーム処理
+    // 双方向ストリームの処理
     if let Ok(Some(webtransport::server::AcceptedBi::BidiStream(_, stream))) = session.accept_bi().await {
         let (send, recv) = salvo::proto::quic::BidiStream::split(stream);
         // 双方向ストリームデータを処理
@@ -58,27 +58,27 @@ WebTransportをサポートするSalvoアプリケーションを起動するに
 let cert = include_bytes!("../certs/cert.pem").to_vec();
 let key = include_bytes!("../certs/key.pem").to_vec();
 
-// ルーティング設定
+// ルーティングの設定
 let router = Router::new().push(Router::with_path("counter").goal(connect));
 
-// TLS設定
+// TLSの設定
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-// リスナー設定
+// リスナーの設定
 let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 let acceptor = QuinnListener::new(config, ("0.0.0.0", 5800))
     .join(listener)
     .bind()
     .await;
 
-// サーバー起動
+// サーバーの起動
 Server::new(acceptor).serve(router).await;
 ```
 
-## 完全なサンプル
+## 完全な例
 
-SalvoにおけるWebTransportの使用方法についてさらに詳しく知りたい場合は、GitHub上の完全なサンプルを参照してください：
+SalvoにおけるWebTransportの使用方法について詳しく知りたい場合は、GitHub上の完全な例を参照してください：
 [https://github.com/salvo-rs/salvo/blob/main/examples/webtransport](https://github.com/salvo-rs/salvo/blob/main/examples/webtransport)
 
-このサンプルにはサーバーサイドとクライアントサイドの完全な実装が含まれており、様々なタイプのWebTransport通信を処理する方法が示されています。
+この例にはサーバーサイドとクライアントサイドの完全な実装が含まれており、様々なタイプのWebTransport通信の処理方法を示しています。
 {/* 本行由工具自动生成,原文哈希值:56518c15094059054cd812ca62f2a97c */}

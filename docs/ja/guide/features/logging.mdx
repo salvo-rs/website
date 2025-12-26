@@ -1,26 +1,26 @@
-# ログミドルウェア
+# ロギングミドルウェア
 
-ログ記録はWebアプリケーションにおいて極めて重要な役割を果たします。主な利点は以下の通りです：
-- リクエスト処理プロセスの詳細情報を提供し、開発者がアプリケーションの動作を追跡するのに役立つ
-- 特に本番環境での問題調査とデバッグを支援
-- アプリケーションのパフォーマンスとリソース使用状況の監視
-- ユーザーアクセスパターンとシステム例外の記録
-- セキュリティ監査とコンプライアンス要件への対応
+ロギングはWebアプリケーションにおいて極めて重要な役割を果たし、以下のことが可能です：
+- リクエスト処理プロセスの詳細情報を提供し、開発者がアプリケーションの動作を追跡するのに役立ちます
+- 問題の特定とデバッグを支援し、特に本番環境で効果を発揮します
+- アプリケーションのパフォーマンスとリソース使用状況を監視します
+- ユーザーのアクセスパターンとシステム例外を記録します
+- セキュリティ監査とコンプライアンス要件を満たします
 
-Salvoは基本的なログ機能を提供するミドルウェアを備えています。ミドルウェアを直接`Router`に追加した場合、全ての`Router`にマッチしない404エラーをキャッチできませんので、`Service`に追加することを推奨します。
+Salvoは基本的なログ機能を提供するミドルウェアを備えています。ミドルウェアを直接 `Router` に追加した場合、すべての `Router` が一致しない場合に返される404エラーを捕捉できないため、`Service` に追加することを推奨します。
 
 _**サンプルコード**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
-import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <LoggingCode/>
+  ```rust file="<root>/codes/logging/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <LoggingCargoCode/>
+  ```toml file="<root>/codes/logging/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:b378fca9964cf2a34b48e7c0c9f74a2d */}
+{/* 本行由工具自动生成,原文哈希值:4c7986fbfefd00cadca247ef815900e4 */}

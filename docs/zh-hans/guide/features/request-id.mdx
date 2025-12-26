@@ -1,8 +1,6 @@
 # 请求链路Id
 
-import { Tab, Tabs } from 'rspress/theme';
-import RequestIdMainCode from '../../../../codes_md/request-id/src/main.mdx';
-import RequestIdCargoCode from '../../../../codes_md/request-id/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Request Id 中间件是比较灵活的，生成器(IdGenerator) 用于生成 ID, 可以定义自己的 ID 生成器，只要实现 `IdGenerator` 这个 trait. 默认提供生成器是 `UlidGenerator`. 
 
@@ -12,9 +10,11 @@ _**示例代码**_
 
 <Tabs>
   <Tab label="main.rs">
-    <RequestIdMainCode/>
+  ```rust file="<root>/codes/request-id/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <RequestIdCargoCode/>
+  ```toml file="<root>/codes/request-id/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

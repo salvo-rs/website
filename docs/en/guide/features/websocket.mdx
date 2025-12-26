@@ -1,40 +1,40 @@
 # WebSocket
 
-import { Tab, Tabs } from 'rspress/theme';
-import WebsocketMainCode from '../../../../codes_md/websocket/src/main.mdx';
-import WebsocketCargoCode from '../../../../codes_md/websocket/Cargo.mdx';
-import WebsocketChatMainCode from '../../../../codes_md/websocket-chat/src/main.mdx';
-import WebsocketChatCargoCode from '../../../../codes_md/websocket-chat/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware providing `WebSocket` support.
+A middleware that provides support for `WebSocket`.
 
-## WebSocket Introduction
+## Introduction to WebSocket
 
-WebSocket is a protocol that enables full-duplex communication over a single TCP connection. WebSocket simplifies data exchange between clients and servers, allowing servers to proactively push data to clients. In the WebSocket protocol, the browser and server only need to complete a single handshake to establish a persistent connection for bidirectional data transfer.
+WebSocket is a protocol that enables full-duplex communication over a single TCP connection. It simplifies data exchange between clients and servers by allowing the server to actively push data to the client. In the WebSocket protocol, the browser and server only need to perform a handshake once to establish a persistent connection and enable bidirectional data transmission.
 
-Unlike traditional HTTP requests, a WebSocket connection remains open after establishment, avoiding the overhead of frequent connection setups and teardowns and significantly reducing communication costs. This makes WebSocket particularly suitable for real-time application scenarios, such as online games, chat applications, stock tickers, and other applications requiring real-time updates.
+Unlike traditional HTTP requests, a WebSocket connection remains open after being established, avoiding frequent connection setup and teardown, which significantly reduces communication overhead. This makes WebSocket particularly suitable for real-time applications, such as online games, chat applications, stock tickers, and other applications that require real-time updates.
 
 Salvo provides a concise and powerful API through its WebSocket middleware, enabling developers to easily integrate WebSocket functionality into their applications.
 
-_**Example Code**_
+_**Example Code**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<WebsocketMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WebsocketCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/websocket/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/websocket/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
 ### Chat Application Example
 
 <Tabs>
-<Tab label="main.rs">
-<WebsocketChatMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WebsocketChatCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/websocket-chat/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/websocket-chat/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:3fb844d4872fe26a4a4923b5dcb4e68a */}
+{/* 本行由工具自动生成,原文哈希值:48f49024e0e641fc20ac341c7e824a5a */}

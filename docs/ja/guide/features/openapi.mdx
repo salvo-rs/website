@@ -1,79 +1,70 @@
-import { Tab, Tabs } from 'rspress/theme';
-import OapiHelloCode from '../../../../codes_md/oapi-hello/src/main.mdx';
-import OapiHelloCargoCode from '../../../../codes_md/oapi-hello/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-# OpenAPIドキュメント生成
+# OpenAPI ドキュメント生成
 
-OpenAPIはRESTful APIのインターフェース設計を記述するためのオープンソース仕様です。JSONまたはYAML形式でAPIのリクエストとレスポンスの構造、パラメータ、戻り値の型、エラーコードなどの詳細を定義し、クライアントとサーバー間の通信を明確かつ標準化します。
+OpenAPI は、RESTful API のインターフェース設計を記述するためのオープンソース仕様です。JSON または YAML 形式で、API のリクエストとレスポンスの構造、パラメータ、戻り値の型、エラーコードなどの詳細を定義し、クライアントとサーバー間の通信をより明確かつ標準化されたものにします。
 
-OpenAPIはもともとSwagger仕様のオープンソース版でしたが、現在は独立したプロジェクトとなり、多くの大企業や開発者から支持されています。OpenAPI仕様を使用することで、開発チームの協働が改善され、コミュニケーションコストが削減され、開発効率が向上します。また、OpenAPIはAPIドキュメント、モックデータ、テストケースなどを自動生成するツールも提供しており、開発とテスト作業を容易にします。
+OpenAPI は、もともと Swagger 仕様のオープンソース版でしたが、現在では独立したプロジェクトとなり、多くの大企業や開発者から支持されています。OpenAPI 仕様を使用することで、開発チームのコラボレーションが向上し、コミュニケーションコストが削減され、開発効率が向上します。同時に、OpenAPI は開発者に API ドキュメント、モックデータ、テストケースなどを自動生成するツールを提供し、開発とテスト作業を便利にします。
 
-SalvoはOpenAPIの統合を提供しています（[utoipa](https://github.com/juhaku/utoipa)から改変）。Salvoは自身の特徴に基づき、`Handler`から関連するOpenAPIデータ型情報を非常にエレガントに自動取得します。さらに、SalvoはSwaggerUI、scalar、rapidoc、redocなどの人気のあるオープンソースのOpenAPIインターフェースも統合しています。
+Salvo は OpenAPI の統合を提供しています（[utoipa](https://github.com/juhaku/utoipa) をベースに修正）。salvo は自身の特性に基づき、`Handler` から関連する OpenAPI データ型情報を非常にエレガントに自動取得します。salvo はまた、SwaggerUI、scalar、rapidoc、redoc などの人気のあるオープンソースの OpenAPI インターフェースも統合しています。
 
-Rustの型名が長く、OpenAPIでの使用に適さない場合があるため、`salvo-oapi`は`Namer`型を提供しており、必要に応じてルールをカスタマイズし、OpenAPIでの型名を変更できます。
+Rust の型名が長く、OpenAPI での使用に適さない場合があるため、`salvo-oapi` は `Namer` 型を提供し、必要に応じてルールをカスタマイズし、OpenAPI 内の型名を変更することができます。
 
 _**サンプルコード**_
 
 <Tabs>
   <Tab label="main.rs">
-    <OapiHelloCode/>
+  ```rust file="<root>/codes/oapi-hello/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <OapiHelloCargoCode/>
+  ```toml file="<root>/codes/oapi-hello/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-ブラウザで`http://localhost:5800/swagger-ui`を入力すると、Swagger UIのページが表示されます。
+ブラウザで `http://localhost:5800/swagger-ui` を入力すると、Swagger UI のページが表示されます。
 
-SalvoのOpenAPI統合は非常にエレガントです。上記のサンプルでは、通常のSalvoプロジェクトと比べて、以下の手順を実行しただけです：
+Salvo における OpenAPI の統合は非常にエレガントです。上記の例では、通常の Salvo プロジェクトと比較して、以下の手順のみを行っています：
 
-- `Cargo.toml`で`oapi`機能を有効化：`salvo = { workspace = true, features = ["oapi"] }`;
-
-- `#[handler]`を`#[endpoint]`に置換;
-
-- `name: QueryParam<String, false>`を使用してクエリ文字列の値を取得。`http://localhost/hello?name=chris`にアクセスすると、この`name`クエリ文字列が解析されます。`QueryParam<String, false>`の`false`はこのパラメータが省略可能であることを意味します。`http://localhost/hello`にアクセスしてもエラーになりません。逆に、`QueryParam<String, true>`はこのパラメータが必須であることを意味し、提供されない場合はエラーが返されます。
-
-- `OpenAPI`を作成し、対応する`Router`を作成。`OpenApi::new("test api", "0.0.1").merge_router(&router)`の`merge_router`は、この`OpenAPI`が特定のルートを解析して、それとその子ルートから必要なドキュメント情報を取得することを意味します。一部のルートの`Handler`はドキュメント生成情報を提供していない可能性があり、これらのルートは無視されます。例えば、`#[endpoint]`マクロではなく`#[handler]`マクロで定義された`Handler`です。つまり、実際のプロジェクトでは、開発の進捗などの理由で、OpenAPIドキュメントを生成しないか、部分的に生成するかを選択できます。後でOpenAPIインターフェースの数を徐々に増やすことができ、必要な作業は`#[handler]`を`#[endpoint]`に変更し、関数シグネチャを修正するだけです。
+- `Cargo.toml` で `oapi` 機能を有効化: `salvo = { workspace = true, features = ["oapi"] }`;
+- `[handler]` を `[endpoint]` に置き換え;
+- `name: QueryParam<String, false>` を使用してクエリ文字列の値を取得。`http://localhost/hello?name=chris` という URL にアクセスすると、この `name` クエリ文字列が解析されます。`QueryParam<String, false>` の `false` は、このパラメータが省略可能であることを意味します。`http://localhost/hello` にアクセスしてもエラーにはなりません。逆に、`QueryParam<String, true>` はこのパラメータが必須であることを意味し、提供されない場合はエラーが返されます。
+- `OpenAPI` を作成し、対応する `Router` を作成。`OpenApi::new("test api", "0.0.1").merge_router(&router)` の `merge_router` は、この `OpenAPI` が特定のルートを解析して、それ自身とその子孫ルートから必要なドキュメント情報を取得することを意味します。一部のルートの `Handler` はドキュメント生成に必要な情報を提供していない可能性があり、それらのルートは無視されます（例えば、`#[endpoint]` マクロではなく `#[handler]` マクロで定義された `Handler`）。つまり、実際のプロジェクトでは、開発の進捗などの理由により、OpenAPI ドキュメントを生成しないか、部分的に生成するかを選択できます。後で OpenAPI インターフェースの生成数を段階的に増やすことができ、必要な作業は `#[handler]` を `#[endpoint]` に変更し、関数シグネチャを修正するだけです。
 
 ## データ抽出器
 
-`use salvo::oapi::extract::*;`を使用して、事前定義された一般的なデータ抽出器をインポートできます。抽出器はSalvoに必要な情報を提供し、SalvoがOpenAPIドキュメントを生成できるようにします。
+`use salvo::oapi::extract::*;` を使用して、事前定義された一般的なデータ抽出器をインポートできます。抽出器は、Salvo が OpenAPI ドキュメントを生成するために必要な情報を提供します。
 
-- `QueryParam<T, const REQUIRED: bool>`: クエリ文字列からデータを抽出する抽出器。`QueryParam<T, false>`はこのパラメータが必須でないことを意味します。`QueryParam<T, true>`はこのパラメータが必須であることを意味し、提供されない場合はエラーが返されます。
-
-- `HeaderParam<T, const REQUIRED: bool>`: リクエストヘッダーからデータを抽出する抽出器。`HeaderParam<T, false>`はこのパラメータが必須でないことを意味します。`HeaderParam<T, true>`はこのパラメータが必須であることを意味し、提供されない場合はエラーが返されます。
-
-- `CookieParam<T, const REQUIRED: bool>`: リクエストのクッキーからデータを抽出する抽出器。`CookieParam<T, false>`はこのパラメータが必須でないことを意味します。`CookieParam<T, true>`はこのパラメータが必須であることを意味し、提供されない場合はエラーが返されます。
-
-- `PathParam<T>`: リクエストURLからパスパラメータを抽出する抽出器。このパラメータが存在しない場合、ルートマッチングは成功しないため、省略可能な状況はありません。
-
+- `QueryParam<T, const REQUIRED: bool>`: クエリ文字列からデータを抽出する抽出器。`QueryParam<T, false>` はこのパラメータが必須ではなく、省略可能であることを意味します。`QueryParam<T, true>` はこのパラメータが必須であり、省略できないことを意味します。提供されない場合はエラーが返されます。
+- `HeaderParam<T, const REQUIRED: bool>`: リクエストヘッダーからデータを抽出する抽出器。`HeaderParam<T, false>` はこのパラメータが必須ではなく、省略可能であることを意味します。`HeaderParam<T, true>` はこのパラメータが必須であり、省略できないことを意味します。提供されない場合はエラーが返されます。
+- `CookieParam<T, const REQUIRED: bool>`: リクエストの Cookie からデータを抽出する抽出器。`CookieParam<T, false>` はこのパラメータが必須ではなく、省略可能であることを意味します。`CookieParam<T, true>` はこのパラメータが必須であり、省略できないことを意味します。提供されない場合はエラーが返されます。
+- `PathParam<T>`: リクエスト `URL` からパスパラメータを抽出する抽出器。このパラメータが存在しない場合、ルートのマッチングは成功しないため、省略可能な状況は存在しません。
 - `FormBody<T>`: リクエストで送信されたフォームから情報を抽出します。
-
-- `JsonBody<T>`: リクエストで送信されたJSON形式のペイロードから情報を抽出します。
+- `JsonBody<T>`: リクエストで送信された JSON 形式のペイロードから情報を抽出します。
 
 ## `#[endpoint]`
 
-OpenAPIドキュメントを生成する場合、通常の`#[handler]`マクロの代わりに`#[endpoint]`マクロを使用する必要があります。これは実際には強化版の`#[handler]`マクロです。
+OpenAPI ドキュメントを生成する際には、通常の `#[handler]` マクロの代わりに `#[endpoint]` マクロを使用する必要があります。これは実際には強化版の `#[handler]` マクロです。
 
-- 関数シグネチャからOpenAPI生成に必要な情報を取得できます。
+- 関数シグネチャから OpenAPI 生成に必要な情報を取得できます。
+- シグネチャを通じて提供が不便な情報については、`#[endpoint]` マクロに属性を直接追加することで提供できます。この方法で提供された情報は、関数シグネチャから取得された情報とマージされ、競合がある場合は関数シグネチャから提供された情報が上書きされます。
 
-- シグネチャを通じて提供が不便な情報については、直接`#[endpoint]`マクロに属性を追加することで提供できます。この方法で提供された情報は、関数シグネチャから取得した情報とマージされ、競合がある場合は関数シグネチャの情報が上書きされます。
+Rust 組み込みの `#[deprecated]` 属性を使用して、特定の Handler が非推奨であることをマークできます。`#[deprecated]` 属性は非推奨の理由やバージョンなどの情報を追加することをサポートしていますが、OpenAPI はこれらの情報をサポートしていないため、OpenAPI 生成時には無視されます。
 
-Rustの組み込み`#[deprecated]`属性を使用して、特定のHandlerが廃止されたことをマークできます。`#[deprecated]`属性は廃止理由やバージョンなどの情報をサポートしていますが、OpenAPIはこれらの情報をサポートしていないため、OpenAPI生成時には無視されます。
-
-コード内のドキュメントコメントは自動的にOpenAPI生成に使用され、最初の行は_summary_の生成に、コメント全体は_description_の生成に使用されます。
+コード内のドキュメントコメント部分は自動的に抽出され、OpenAPI の生成に使用されます。最初の行は _`summary`_ の生成に使用され、コメント全体は _`description`_ の生成に使用されます。
 
 ```rust
-/// これは操作の要約です
+/// これはオペレーションの概要です
 ///
-/// ドキュメントコメントのすべての行が操作説明に含まれます。
+/// ドキュメントコメントのすべての行がオペレーションの説明に含まれます。
 #[endpoint]
 fn endpoint() {}
 ```
 
 ## ToSchema
 
-`#[derive(ToSchema)]`を使用してデータ構造を定義できます：
+`#[derive(ToSchema)]` を使用してデータ構造を定義できます：
 
 ```rust
 #[derive(ToSchema)]
@@ -83,9 +74,9 @@ struct Pet {
 }
 ```
 
-`#[salvo(schema(...))]`を使用してオプション設定を定義できます：
+`#[salvo(schema(...))]` を使用してオプションの設定を定義できます：
 
-- `example = ...`は`json!(...)`にすることができます。`json!(...)`は`serde_json::json!`によって`serde_json::Value`として解析されます。
+- `example = ...` は `json!(...)` を指定できます。`json!(...)` は `serde_json::json!` によって `serde_json::Value` に解析されます。
 
   ```rust
   #[derive(ToSchema)]
@@ -96,7 +87,7 @@ struct Pet {
   }
   ```
 
-- `xml(...)`はXmlオブジェクト属性を定義するために使用できます：
+- `xml(...)` は Xml オブジェクトの属性を定義するために使用できます：
 
   ```rust
   #[derive(ToSchema)]
@@ -109,36 +100,36 @@ struct Pet {
 
 ## ToParameters
 
-構造体のフィールドから[パスパラメータ][path_parameters]を生成します。
+構造体のフィールドから [パスパラメータ][path_parameters] を生成します。
 
-これは[`ToParameters`][to_parameters]トレイトの`#[derive]`実装です。
+これは [`ToParameters`][to_parameters] トレイトの `#[derive]` 実装です。
 
-通常、パスパラメータは`endpoint`の[`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters]で定義する必要があります。ただし、[`struct`][struct]を使用してパラメータを定義する場合は、この手順を省略できます。それでも、説明を提供したりデフォルト設定を変更する必要がある場合、[`primitive types`][primitive]や[`String`][std_string]のパスパラメータ、または[tuple]スタイルのパスパラメータは`parameters(...)`で定義する必要があります。
+通常、パスパラメータは `endpoint` の [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters] で定義する必要があります。しかし、パラメータを定義するために [`struct`][struct] を使用する場合、この手順を省略できます。それでも、説明を追加したりデフォルト設定を変更したりする必要がある場合は、[`プリミティブ型`][primitive] や [`String`][std_string] のパスパラメータ、または [タプル] スタイルのパスパラメータは `parameters(...)` で定義する必要があります。
 
-Rustの組み込み`#[deprecated]`属性を使用してフィールドを非推奨としてマークでき、生成されるOpenAPI仕様に反映されます。
+Rust 組み込みの `#[deprecated]` 属性を使用してフィールドを非推奨としてマークでき、これは生成される OpenAPI 仕様に反映されます。
 
-`#[deprecated]`属性は非推奨理由やバージョンなどの追加情報をサポートしていますが、OpenAPIはサポートしていません。OpenAPIは非推奨かどうかを判断するためのブール値のみをサポートしています。`#[deprecated = "There is better way to do this"]`のように理由付きで非推奨を宣言することは完全に可能ですが、この理由はOpenAPI仕様には表示されません。
+`#[deprecated]` 属性は、非推奨の理由やどのバージョンから非推奨になったかなどの追加情報をサポートしていますが、OpenAPI はサポートしていません。OpenAPI は非推奨かどうかを決定するブール値のみをサポートしています。`#[deprecated = "There is better way to do this"]` のように理由付きで非推奨を宣言することは完全に可能ですが、この理由は OpenAPI 仕様には表示されません。
 
-構造体フィールドのドキュメントコメントは、生成されるOpenAPI仕様のパラメータ説明として使用されます。
+構造体フィールドのドキュメントコメントは、生成される OpenAPI 仕様のパラメータ説明として使用されます。
 
 ```rust
 #[derive(salvo_oapi::ToParameters, serde::Deserialize)]
 struct Query {
-    /// 名前でtodoアイテムをクエリします。
+    /// 名前で Todo アイテムをクエリします。
     name: String
 }
 ```
 
-### `#[salvo(parameters(...))]`のToParametersコンテナ属性
+### `#[salvo(parameters(...))]` の ToParameters コンテナ属性
 
-派生`ToParameters`構造体のコンテナ属性`#[salvo(parameters(...))]`に以下の属性を使用できます：
+以下の属性は、`ToParameters` から派生した構造体のコンテナ属性 `#[salvo(parameters(…))]` で使用できます：
 
-- `names(...)` 無名構造体の未命名フィールドに対して、カンマ区切りの名前リストを定義します。無名構造体でのみサポートされます。
-- `style = ...` すべてのパラメータのシリアライズ方法を[`ParameterStyle`][style]で定義します。デフォルト値は_`parameter_in`_属性に基づきます。
-- `default_parameter_in = ...` このフィールドのパラメータが使用するデフォルトの位置を[`parameter::ParameterIn`][in_enum]から定義します。この属性が提供されていない場合、デフォルトは`query`になります。
-- `rename_all = ...` `serde`の`rename_all`の代替として使用できます。実際には同じ機能を提供します。
+- `names(...)` パスパラメータとして使用される構造体の無名フィールドに対して、カンマ区切りの名前リストを定義します。無名構造体でのみサポートされます。
+- `style = ...` すべてのパラメータのシリアライズ方法を定義でき、[`ParameterStyle`][style] によって指定されます。デフォルト値は _`parameter_in`_ 属性に基づいています。
+- `default_parameter_in = ...` このフィールドのパラメータが使用するデフォルトの位置を定義し、その値は [`parameter::ParameterIn`][in_enum] から取得されます。この属性が提供されない場合、デフォルトは `query` になります。
+- `rename_all = ...` `serde` の `rename_all` の代替として機能します。実際には同じ機能を提供します。
 
-単一の無名パラメータに名前を定義する`names`の使用例：
+`names` を使用して、単一の無名パラメータに名前を定義します。
 
 ```rust
 # use salvo_oapi::ToParameters;
@@ -148,7 +139,7 @@ struct Query {
 struct Id(u64);
 ```
 
-複数の無名パラメータに名前を定義する`names`の使用例：
+`names` を使用して、複数の無名パラメータに名前を定義します。
 
 ```rust
 # use salvo_oapi::ToParameters;
@@ -158,71 +149,34 @@ struct Id(u64);
 struct IdAndName(u64, String);
 ```
 
-### `#[salvo(parameter(...))]`のToParametersフィールド属性
+### `#[salvo(parameter(...))]` の ToParameters フィールド属性
 
-構造体フィールドに`#[salvo(parameter(...))]`を使用して以下の属性を設定できます：
+以下の属性は、構造体フィールドで `#[salvo(parameter(...))]` を使用できます：
 
-- `style = ...` パラメータが[`ParameterStyle`][style]によってどのようにシリアライズされるかを定義します。デフォルト値は_`parameter_in`_属性に基づきます。
-
-- `parameter_in = ...` このフィールドパラメータの位置を[`parameter::ParameterIn`][in_enum]から定義します。この値が提供されていない場合、デフォルトは`query`になります。
-
-- `explode` _`object`_または_`array`_内の各パラメータに対して新しい_`parameter=value`_ペアを作成するかどうかを定義します。
-
-- `allow_reserved` パラメータ値に予約文字_`:/?#[]@!$&'()*+,;=`_を含めることを許可するかどうかを定義します。
-
-- `example = ...` メソッド参照または_`json!(...)`_を指定できます。指定された例は基本パラメータタイプの例を上書きします。
-
-- `value_type = ...` OpenAPI仕様でフィールドに使用されるデフォルトタイプを上書きするために使用できます。デフォルトタイプが実際のタイプと一致しない場合、例えば[`ToSchema`][to_schema]または[`primitive` types][primitive]で定義されていないサードパーティタイプを使用する場合に便利です。値は通常JSONにシリアライズ可能な任意のRustタイプ、または_`Object`_のようなカスタムタイプ（汎用OpenAPIオブジェクトとしてレンダリングされます）にすることができます。
-
-- `inline` 有効にすると、このフィールドタイプの定義は[`ToSchema`][to_schema]から取得する必要があり、この定義はインライン化されます。
-
-- `default = ...` メソッド参照または_`json!(...)`_を指定できます。
-
-- `format = ...` [`KnownFormat`][known_format]列挙型のバリアント、またはオープン値の文字列形式を指定できます。デフォルトでは、フォーマットはOpenApi仕様に従ってプロパティのタイプから推測されます。
-
-- `write_only` プロパティが**書き込み**操作_POST,PUT,PATCH_でのみ使用され、_GET_では使用されないことを定義します。
-
-- `read_only` プロパティが**読み取り**操作_GET_でのみ使用され、_POST,PUT,PATCH_では使用されないことを定義します。
-
-- `nullable` プロパティが`null`可能かどうかを定義します（必須でないこととは異なります）。
-
-- `required = ...` パラメータが必須であることを強制するために使用します。[ルール参照](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)。
-
-- `rename = ...` `serde`の`rename`の代替として使用できます。実際には同じ機能を提供します。
-
-- `multiple_of = ...` 値の倍数を定義するために使用します。このキーワードの値でパラメータ値を除算した結果が整数の場合にのみ、パラメータ値は有効と見なされます。倍数値は_`0`_より厳密に大きくなければなりません。
-
-- `maximum = ...` 値を含む上限値を定義するために使用します。
-
-- `minimum = ...` 値を含む下限値を定義するために使用します。
-
-- `exclusive_maximum = ...` 値を含まない上限値を定義するために使用します。
-
-- `exclusive_minimum = ...` 値を含まない下限値を定義するために使用します。
-
-- `max_length = ...` `string`タイプの値の最大長を定義するために使用します。
-
-- `min_length = ...` `string`タイプの値の最小長を定義するために使用します。
-
-- `pattern = ...` フィールド値が一致する必要がある有効な正規表現を定義するために使用します。正規表現は_ECMA-262_バージョンを使用します。
-
-- `max_items = ...` `array`タイプのフィールドに許可される最大項目数を定義するために使用できます。値は非負の整数でなければなりません。
-
-- `min_items = ...` `array`タイプのフィールドに許可される最小項目数を定義するために使用できます。値は非負の整数でなければなりません。
-
-- `with_schema = ...` デフォルトの_`schema`_の代わりに関数参照によって作成された_`schema`_を使用します。関数は`fn() -> Into<RefOr<Schema>>`を満たす必要があります。引数を受け取らず、`RefOr<Schema>`に変換可能な値を返す必要があります。
-
-- `additional_properties = ...` [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html)や[`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html)などのマップに対して自由形式のタイプを定義するために使用します。自由形式のタイプでは、マップ値で任意のタイプを使用できます。サポートされる形式は_`additional_properties`_と_`additional_properties = true`_です。
-
-#### フィールドのnull許容性と必須ルール
-
-_`ToParameters`_フィールド属性に適用されるnull許容性と必須に関するいくつかのルールは、_`ToSchema`_フィールド属性にも適用されます。[ルール参照](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules)。
-
-### 部分的な`#[serde(...)]`属性のサポート
-
-ToParametersの派生は現在、一部の[serde属性][serde attributes]をサポートしています。これらのサポートされる属性は、生成されるOpenAPIドキュメントに反映されます。現在、以下の属性がサポートされています：
-
-- `rename_all = "..."` コンテナレベルでサポート。
-- `rename = "..."` **のみ**フィールドレベルでサポート。
-- `default` [
-{/* 本行由工具自动生成,原文哈希值:66e3964ffc9d02e6953bdf48a6d2ed87 */}
+- `style = ...` パラメータが [`ParameterStyle`][style] によってどのようにシリアライズされるかを定義します。デフォルト値は _`parameter_in`_ 属性に基づいています。
+- `parameter_in = ...` [`parameter::ParameterIn`][in_enum] からの値を使用して、このフィールドパラメータがどこにあるかを定義します。この値が提供されない場合、デフォルトは `query` になります。
+- `explode` _`object`_ または _`array`_ 内の各パラメータに対して新しい _`parameter=value`_ ペアを作成するかどうかを定義します。
+- `allow_reserved` パラメータ値に予約文字 _`:/?#[]@!$&'()*+,;=`_ を許可するかどうかを定義します。
+- `example = ...` メソッド参照または _`json!(...)`_ を指定できます。指定された例は、基になるパラメータ型の例を上書きします。
+- `value_type = ...` OpenAPI 仕様でフィールドが使用するデフォルトの型をオーバーライドするために使用できます。デフォルトの型が実際の型と一致しない場合、例えば [`ToSchema`][to_schema] または [`プリミティブ`型][primitive] で定義されていないサードパーティの型を使用する場合に便利です。値は、通常 JSON にシリアライズ可能な任意の Rust 型、または _`Object`_ のようなカスタム型にすることができます。_`Object`_ は汎用 OpenAPI オブジェクトとしてレンダリングされます。
+- `inline` 有効にすると、このフィールドの型定義は [`ToSchema`][to_schema] から取得する必要があり、その定義はインライン化されます。
+- `default = ...` メソッド参照または _`json!(...)`_ を指定できます。
+- `format = ...` [`KnownFormat`][known_format] 列挙型のバリアント、または文字列形式のオープンな値にすることができます。デフォルトでは、フォーマットは OpenAPI 仕様に従ってプロパティの型に基づいて推論されます。
+- `write_only` プロパティが **書き込み** 操作 _POST,PUT,PATCH_ のみで使用され、_GET_ では使用されないことを定義します。
+- `read_only` プロパティが **読み取り** 操作 _GET_ のみで使用され、_POST,PUT,PATCH_ では使用されないことを定義します。
+- `nullable` プロパティが `null` になり得るかどうかを定義します（必須ではないこととは異なることに注意）。
+- `required = ...` パラメータを必須にするために使用されます。[ルールを参照](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)。
+- `rename = ...` `serde` の `rename` の代替として機能します。実際には同じ機能を提供します。
+- `multiple_of = ...` 値の倍数を定義するために使用されます。このキーワードの値でパラメータ値を除算した結果が整数である場合にのみ、パラメータ値は有効と見なされます。倍数の値は厳密に _`0`_ より大きくなければなりません。
+- `maximum = ...` 値を含む上限を定義するために使用されます。
+- `minimum = ...` 値を含む下限を定義するために使用されます。
+- `exclusive_maximum = ...` 値を含まない上限を定義するために使用されます。
+- `exclusive_minimum = ...` 値を含まない下限を定義するために使用されます。
+- `max_length = ...` `string` 型の値の最大長を定義するために使用できます。
+- `min_length = ...` `string` 型の値の最小長を定義するために使用できます。
+- `pattern = ...` フィールド値が一致しなければならない有効な正規表現を定義するために使用され、正規表現は _ECMA-262_ バージョンを使用します。
+- `max_items = ...` `array` 型のフィールドで許可される最大項目数を定義するために使用できます。値は非負の整数でなければなりません。
+- `min_items = ...` `array` 型のフィールドで許可される最小項目数を定義するために使用できます。値は非負の整数でなければなりません。
+- `with_schema = ...` デフォルトの _`schema`_ の代わりに関数参照を使用して作成された _`schema`_ を使用します。関数は `fn() -> Into<RefOr<Schema>>` というシグネチャを満たす必要があります。引数を受け取らず、`RefOr<Schema>` に変換可能な値を返さなければなりません。
+- `additional_properties = ...` [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) や [`BTreeMap`](https://doc.rust-lang.org/std/collections
+{/* 本行由工具自动生成,原文哈希值:0cd338da7f2e4cf2b5d77a3752808958 */}

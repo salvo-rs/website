@@ -1,22 +1,22 @@
 # Anwendungsbereitstellung
 
-Ein kompiliertes Salvo-Projekt ist eine ausführbare Datei. Für die Bereitstellung müssen Sie lediglich diese ausführbare Datei zusammen mit den benötigten statischen Ressourcen auf den Server hochladen.
+Ein kompiliertes Salvo-Projekt ist eine ausführbare Datei. Zur Bereitstellung muss lediglich diese ausführbare Datei zusammen mit den benötigten statischen Ressourcen auf den Server hochgeladen werden.
 
-Für Rust-Projekte gibt es auch eine sehr einfache Bereitstellungsplattform: [shuttle.rs](https://www.shuttle.rs). Shuttle bietet Unterstützung für Salvo-Projekte. Weitere Details finden Sie in der [offiziellen Dokumentation](https://docs.shuttle.rs/guide/salvo-examples.html).
+Für Rust-Projekte gibt es auch eine sehr einfache Bereitstellungsplattform: [shuttle.rs](https://www.shuttle.rs). Shuttle bietet Unterstützung für Salvo-Projekte. Details finden Sie in der [offiziellen Dokumentation](https://docs.shuttle.rs/guide/salvo-examples.html).
 
 ## Docker-Bereitstellung
 
-Sie können Salvo-Anwendungen auch mit Docker bereitstellen. Hier ist ein grundlegendes Beispiel für eine `Dockerfile`, die Sie entsprechend Ihren Projektanforderungen anpassen können:
+Sie können Salvo-Anwendungen auch mit Docker bereitstellen. Im Folgenden finden Sie ein grundlegendes Beispiel für eine `Dockerfile`, die Sie an die Anforderungen Ihres Projekts anpassen können:
 
 ```dockerfile
 # Build-Phase
 FROM rust:slim AS build
 WORKDIR /app
 
-# Abhängigkeiten zuerst kopieren (Nutzen der Cache-Schichten)
+# Abhängigkeitsdateien kopieren und zuerst Abhängigkeiten bauen (Cache-Layer nutzen)
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
-    echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
+    echo 'fn main() { println!("Platzhalter"); }' > src/main.rs && \
     cargo build --release
 
 # Eigentlichen Quellcode kopieren und Anwendung bauen
@@ -24,14 +24,14 @@ COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# Runtime-Phase mit schlanker Basis-Image
+# Laufzeitphase mit schlanker Basis-Image
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Nicht-Root-Benutzer für Anwendungsbetrieb erstellen
+# Nicht-Root-Benutzer für Anwendungsausführung erstellen
 RUN useradd -ms /bin/bash appuser
 USER appuser
 WORKDIR /app
@@ -39,24 +39,24 @@ WORKDIR /app
 # Binärdatei aus Build-Phase kopieren
 COPY --from=build /app/target/release/your_app_name ./app
 
-# Container-Startbefehl festlegen
+# Container-Startbefehl setzen
 CMD ["./app"]
 ```
 
 ### Anleitung
 
-1. Speichern Sie die obige `Dockerfile` im Stammverzeichnis Ihres Projekts
-2. Passen Sie `your_app_name` an den tatsächlichen Namen Ihrer Binärdatei an
-3. Falls Ihre Anwendung statische Dateien benötigt (z.B. Templates, CSS, JS), fügen Sie entsprechende `COPY`-Befehle hinzu
-4. Bei Bedarf an Umgebungsvariablen können Sie `ENV`-Anweisungen verwenden
-5. Docker-Image erstellen:
-   ```bash
-   docker build -t your-app-name .
-   ```
-6. Container ausführen:
-   ```bash
-   docker run -p 5800:5800 your-app-name
-   ```
+1.  Speichern Sie die obige `Dockerfile` im Stammverzeichnis Ihres Projekts.
+2.  Passen Sie `your_app_name` an den tatsächlichen Namen Ihrer Binärdatei an.
+3.  Falls Ihre Anwendung statische Dateien benötigt (z.B. Templates, CSS, JS), können Sie entsprechende `COPY`-Befehle hinzufügen.
+4.  Falls Ihre Anwendung Umgebungsvariablen benötigt, können Sie die `ENV`-Direktive verwenden.
+5.  Docker-Image bauen:
+    ```bash
+    docker build -t your-app-name .
+    ```
+6.  Container ausführen:
+    ```bash
+    docker run -p 5800:5800 your-app-name
+    ```
 
-Passen Sie Portnummern und andere Konfigurationen entsprechend den Anforderungen Ihrer Anwendung an.
+Passen Sie Portnummer und andere Konfigurationen bitte an die tatsächlichen Anforderungen Ihrer Anwendung an.
 {/* 本行由工具自动生成,原文哈希值:cc4f6a8bac2d9ff67911bf45b473c2bd */}

@@ -1,6 +1,6 @@
 # WebTransport
 
-WebTransport 是一個基於 HTTP/3 的網路傳輸協定，提供了客戶端和伺服器之間的雙向通訊能力，同時兼顧了低延遲、高吞吐量和安全性。
+WebTransport 是一種基於 HTTP/3 的網路傳輸協定，提供了客戶端與伺服器之間的雙向通訊能力，同時兼顧低延遲、高吞吐量與安全性。
 
 ## 應用場景
 
@@ -8,24 +8,24 @@ WebTransport 特別適合以下場景：
 
 - **即時應用**：線上遊戲、即時協作工具、視訊會議等需要低延遲通訊的應用
 - **大檔案傳輸**：支援高吞吐量的資料傳輸，適合媒體串流和大檔案上傳下載
-- **多工通訊**：可以同時建立多個雙向和單向資料流
+- **多工通訊**：可同時建立多個雙向與單向資料流
 - **資料封包通訊**：支援不保證順序和可靠性的資料封包通訊，適合對即時性要求極高的場景
 
 相比 WebSocket，WebTransport 提供了更低的延遲和更靈活的通訊模式，特別是在不穩定的網路環境中表現更佳。
 
-## Salvo 實現
+## Salvo 實作
 
-Salvo 框架提供了對 WebTransport 的內建支援，允許開發者輕鬆構建基於 WebTransport 的應用。主要特性包括：
+Salvo 框架提供了對 WebTransport 的內建支援，允許開發者輕鬆建構基於 WebTransport 的應用。主要特性包括：
 
 - 支援建立 WebTransport 會話
-- 支援雙向流(Bidirectional Streams)通訊
-- 支援單向流(Unidirectional Streams)通訊
-- 支援資料封包(Datagrams)傳輸
+- 支援雙向流（Bidirectional Streams）通訊
+- 支援單向流（Unidirectional Streams）通訊
+- 支援資料封包（Datagrams）傳輸
 - 伺服器可主動發起通訊流
 
 ### 簡單範例
 
-下面是一個使用 Salvo 實現 WebTransport 伺服器的簡化範例：
+以下是一個使用 Salvo 實作 WebTransport 伺服器的簡化範例：
 
 ```rust
 #[handler]
@@ -80,5 +80,5 @@ Server::new(acceptor).serve(router).await;
 為了了解更多關於 Salvo 中 WebTransport 的使用方法，請查看 GitHub 上的完整範例：
 [https://github.com/salvo-rs/salvo/blob/main/examples/webtransport](https://github.com/salvo-rs/salvo/blob/main/examples/webtransport)
 
-該範例包含了伺服器端和客戶端的完整實現，展示了如何處理各種類型的 WebTransport 通訊。
+該範例包含了伺服器端和客戶端的完整實作，展示了如何處理各種類型的 WebTransport 通訊。
 {/* 本行由工具自动生成,原文哈希值:56518c15094059054cd812ca62f2a97c */}

@@ -2,48 +2,40 @@
 title: Rust 序列化框架
 ---
 
-# Serde: Rust序列化與反序列化框架
+# Serde：Rust 序列化與反序列化框架
 
-import { LinkCard } from '@theme';
+[Serde](https://docs.rs/serde/latest/serde/) 是 Rust 生態系統中的核心函式庫，提供了高效且通用的序列化與反序列化框架。其名稱源自 "**Ser**ialization" 與 "**De**serialization" 的組合。
 
-<LinkCard
-  href="https://docs.rs/serde/latest/serde/"
-  title="serde"
-  description="serde"
-/>
+## 主要特色
 
-Serde 是 Rust 生態系統中的核心庫，提供了高效且通用的序列化和反序列化框架。其名稱來源於"**Ser**ialization"和"**De**serialization"的組合。
+- **通用性**：支援多種資料格式，如 JSON、YAML、TOML、MessagePack 等
+- **零成本抽象**：編譯時產生的程式碼與手寫程式碼同樣高效
+- **靈活性**：可自訂序列化與反序列化行為
+- **強型別**：利用 Rust 的型別系統確保資料完整性
+- **廣泛應用**：已成為 Rust 生態系統中處理資料交換的標準函式庫
 
-## 主要特點
+## 運作原理
 
-- **通用性**：支援多種數據格式，如JSON、YAML、TOML、MessagePack等
-- **零成本抽象**：編譯時生成的代碼與手寫代碼一樣高效
-- **靈活性**：可自定義序列化和反序列化行為
-- **強類型**：利用Rust的類型系統確保數據完整性
-- **廣泛應用**：成為Rust生態系統中處理數據交換的標準庫
+Serde 的核心在於其中間表示（Intermediate Representation）設計，它將序列化與反序列化過程分為兩步：
 
-## 工作原理
+1. **序列化**：將 Rust 資料結構轉換為通用中間表示，再轉換為目標格式
+2. **反序列化**：將輸入格式轉換為通用中間表示，再轉換為 Rust 資料結構
 
-Serde 的核心是其中間表示（Intermediate Representation）設計，它將序列化和反序列化過程分為兩步：
-
-1. **序列化**：將Rust數據結構轉換為通用中間表示，再轉換為目標格式
-2. **反序列化**：將輸入格式轉換為通用中間表示，再轉換為Rust數據結構
-
-這種設計允許添加新的數據格式而不需要修改使用Serde的應用程序。
+這種設計允許新增資料格式，而無需修改使用 Serde 的應用程式。
 
 ## 基本用法
 
-### 設置依賴
+### 設定依賴
 
 ```toml
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0" # 或其他格式庫如 serde_yaml、toml 等
+serde_json = "1.0" # 或其他格式函式庫如 serde_yaml、toml 等
 ```
 
-### 派生宏用法
+### 派生巨集用法
 
-最常見的用法是使用派生宏為結構體自動實現序列化和反序列化特性：
+最常見的用法是使用派生巨集為結構體自動實現序列化與反序列化特性：
 
 ```rust
 use serde::{Serialize, Deserialize};
@@ -57,19 +49,19 @@ struct Point {
 fn main() {
     let point = Point { x: 1, y: 2 };
 
-    // 將Point轉換為JSON字符串
+    // 將 Point 轉換為 JSON 字串
     let serialized = serde_json::to_string(&point).unwrap();
     println!("序列化結果: {}", serialized); // 輸出: {"x":1,"y":2}
 
-    // 將JSON字符串轉換回Point
+    // 將 JSON 字串轉換回 Point
     let deserialized: Point = serde_json::from_str(&serialized).unwrap();
     println!("反序列化結果: {:?}", deserialized); // 輸出: Point { x: 1, y: 2 }
 }
 ```
 
-### 屬性自定義
+### 屬性自訂
 
-Serde 提供了豐富的屬性來自定義序列化行為：
+Serde 提供了豐富的屬性來自訂序列化行為：
 
 ```rust
 #[derive(Serialize, Deserialize, Debug)]
@@ -88,30 +80,30 @@ struct User {
 }
 ```
 
-### 支援的數據格式
+### 支援的資料格式
 
-Serde 與多種數據格式集成，每種格式都有獨立的crate：
+Serde 與多種資料格式整合，每種格式都有獨立的 crate：
 
-- **serde_json**: JSON格式
-- **serde_yaml**: YAML格式
-- **toml**: TOML格式
-- **bincode**: 二進制格式
-- **postcard**: 空間優化的二進制格式
-- **rmp/rmp-serde**: MessagePack格式
-- **ciborium**: CBOR格式
+- **serde_json**：JSON 格式
+- **serde_yaml**：YAML 格式
+- **toml**：TOML 格式
+- **bincode**：二進位格式
+- **postcard**：空間最佳化的二進位格式
+- **rmp/rmp-serde**：MessagePack 格式
+- **ciborium**：CBOR 格式
 - ...等其他格式
 
-## 高級用法
+## 進階用法
 
 ### 手動實現特性
 
-對於特殊需求，可以手動實現`Serialize`和`Deserialize`特性：
+對於特殊需求，可以手動實現 `Serialize` 和 `Deserialize` 特性：
 
 ```rust
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
 
 struct MyType {
-    // 字段...
+    // 欄位...
 }
 
 impl Serialize for MyType {
@@ -119,7 +111,7 @@ impl Serialize for MyType {
     where
         S: Serializer,
     {
-        // 自定義序列化邏輯
+        // 自訂序列化邏輯
     }
 }
 
@@ -128,14 +120,14 @@ impl<'de> Deserialize<'de> for MyType {
     where
         D: Deserializer<'de>,
     {
-        // 自定義反序列化邏輯
+        // 自訂反序列化邏輯
     }
 }
 ```
 
-### 類型映射
+### 型別對映
 
-可以在不同數據表示之間創建映射：
+可以在不同資料表示之間建立對映：
 
 ```rust
 #[derive(Serialize, Deserialize)]
@@ -146,14 +138,14 @@ struct DateTimeRef {
 }
 ```
 
-## 學習和資源
+## 學習與資源
 
-Serde 是一個功能豐富的庫，本文只涵蓋了基礎知識。要充分利用Serde，建議讀者：
+Serde 是一個功能豐富的函式庫，本文僅涵蓋基礎知識。若要充分利用 Serde，建議讀者：
 
-1. 訪問[Serde官方文檔](https://serde.rs/)了解詳細API和示例
-2. 查看[GitHub倉庫](https://github.com/serde-rs/serde)獲取源碼和最新更新
+1. 造訪 [Serde 官方文件](https://serde.rs/) 了解詳細 API 與範例
+2. 查看 [GitHub 儲存庫](https://github.com/serde-rs/serde) 取得原始碼與最新更新
 
 ## 結語
 
-Serde 作為Rust生態系統中的基礎庫，為數據交換提供了強大而靈活的工具。通過掌握Serde，您可以輕鬆處理各種格式的數據交換需求，使應用程序更加強大和可互操作。
-{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}
+Serde 作為 Rust 生態系統中的基礎函式庫，為資料交換提供了強大而靈活的工具。透過掌握 Serde，您可以輕鬆處理各種格式的資料交換需求，使應用程式更加強大且具備互通性。
+{/* 本行由工具自动生成,原文哈希值:02cf744a3fbae09d654887c13e131157 */}

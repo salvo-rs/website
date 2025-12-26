@@ -4,32 +4,24 @@ title: Rust Serialization Framework
 
 # Serde: Rust Serialization and Deserialization Framework
 
-import { LinkCard } from '@theme';
-
-<LinkCard
-  href="https://docs.rs/serde/latest/serde/"
-  title="serde"
-  description="serde"
-/>
-
-Serde is a core library in the Rust ecosystem, providing an efficient and versatile framework for serialization and deserialization. Its name is derived from the combination of "**Ser**ialization" and "**De**serialization."
+[Serde](https://docs.rs/serde/latest/serde/) is a core library in the Rust ecosystem, providing an efficient and versatile framework for serialization and deserialization. Its name is derived from the combination of "**Ser**ialization" and "**De**serialization."
 
 ## Key Features
 
-- **Versatility**: Supports multiple data formats such as JSON, YAML, TOML, MessagePack, and more
-- **Zero-Cost Abstraction**: Compile-time generated code is as efficient as handwritten implementations
-- **Flexibility**: Customizable serialization and deserialization behavior
-- **Strong Typing**: Leverages Rust's type system to ensure data integrity
-- **Wide Adoption**: The de facto standard library for data exchange in the Rust ecosystem
+- **Versatility**: Supports multiple data formats such as JSON, YAML, TOML, MessagePack, and more.
+- **Zero-Cost Abstraction**: Code generated at compile time is as efficient as handwritten code.
+- **Flexibility**: Allows customization of serialization and deserialization behavior.
+- **Strong Typing**: Leverages Rust's type system to ensure data integrity.
+- **Wide Adoption**: Serves as the standard library for data exchange in the Rust ecosystem.
 
 ## How It Works
 
-At the heart of Serde is its Intermediate Representation (IR) design, which divides the serialization and deserialization process into two steps:
+The core of Serde lies in its Intermediate Representation (IR) design, which divides the serialization and deserialization processes into two steps:
 
-1. **Serialization**: Converts Rust data structures into a universal intermediate representation, then into the target format
-2. **Deserialization**: Converts input formats into the universal intermediate representation, then into Rust data structures
+1. **Serialization**: Converts Rust data structures into a generic intermediate representation, then into the target format.
+2. **Deserialization**: Converts input formats into the generic intermediate representation, then into Rust data structures.
 
-This design allows adding new data formats without modifying applications that use Serde.
+This design enables the addition of new data formats without modifying applications that use Serde.
 
 ## Basic Usage
 
@@ -43,7 +35,7 @@ serde_json = "1.0" # Or other format libraries like serde_yaml, toml, etc.
 
 ### Using Derive Macros
 
-The most common approach is to use derive macros to automatically implement serialization and deserialization traits for structs:
+The most common usage involves using derive macros to automatically implement serialization and deserialization traits for structs:
 
 ```rust
 use serde::{Serialize, Deserialize};
@@ -61,15 +53,15 @@ fn main() {
     let serialized = serde_json::to_string(&point).unwrap();
     println!("Serialized result: {}", serialized); // Output: {"x":1,"y":2}
 
-    // Convert the JSON string back to a Point
+    // Convert the JSON string back to Point
     let deserialized: Point = serde_json::from_str(&serialized).unwrap();
     println!("Deserialized result: {:?}", deserialized); // Output: Point { x: 1, y: 2 }
 }
 ```
 
-### Customizing with Attributes
+### Attribute Customization
 
-Serde provides extensive attributes to customize serialization behavior:
+Serde provides a rich set of attributes to customize serialization behavior:
 
 ```rust
 #[derive(Serialize, Deserialize, Debug)]
@@ -96,16 +88,16 @@ Serde integrates with various data formats, each with its own crate:
 - **serde_yaml**: YAML format
 - **toml**: TOML format
 - **bincode**: Binary format
-- **postcard**: Space-efficient binary format
+- **postcard**: Space-optimized binary format
 - **rmp/rmp-serde**: MessagePack format
 - **ciborium**: CBOR format
-- ...and many others
+- ...and other formats
 
 ## Advanced Usage
 
 ### Manual Trait Implementation
 
-For specialized needs, you can manually implement the `Serialize` and `Deserialize` traits:
+For special requirements, you can manually implement the `Serialize` and `Deserialize` traits:
 
 ```rust
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
@@ -146,14 +138,14 @@ struct DateTimeRef {
 }
 ```
 
-## Learning Resources
+## Learning and Resources
 
-Serde is a feature-rich library, and this document only covers the basics. To fully utilize Serde, we recommend:
+Serde is a feature-rich library, and this article only covers the basics. To fully leverage Serde, it is recommended to:
 
-1. Visiting the [Serde official documentation](https://serde.rs/) for detailed APIs and examples
-2. Checking the [GitHub repository](https://github.com/serde-rs/serde) for source code and latest updates
+1. Visit the [Serde official documentation](https://serde.rs/) for detailed APIs and examples.
+2. Check the [GitHub repository](https://github.com/serde-rs/serde) for source code and the latest updates.
 
 ## Conclusion
 
-As a foundational library in the Rust ecosystem, Serde provides powerful and flexible tools for data exchange. By mastering Serde, you can effortlessly handle various data format requirements, making your applications more robust and interoperable.
-{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}
+As a foundational library in the Rust ecosystem, Serde provides powerful and flexible tools for data exchange. By mastering Serde, you can effortlessly handle various data exchange requirements, making your applications more robust and interoperable.
+{/* 本行由工具自动生成,原文哈希值:02cf744a3fbae09d654887c13e131157 */}

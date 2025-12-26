@@ -3,12 +3,17 @@ name = "example-webtransport-acme-http01"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
-
+rust-version.workspace = true
 
 [dependencies]
 anyhow.workspace = true
 futures-util.workspace = true
-salvo = { workspace = true, features = ["acme", "quinn", "anyhow", "serve-static"] }
+salvo = { workspace = true, features = [
+    "acme",
+    "quinn",
+    "anyhow",
+    "serve-static",
+] }
 tokio = { workspace = true, features = ["macros"] }
 tracing.workspace = true
 tracing-subscriber.workspace = true

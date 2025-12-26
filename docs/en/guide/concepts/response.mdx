@@ -1,14 +1,14 @@
 # Response
 
 In a `Handler`, the [`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) is passed as a parameter:
-* The `Response` struct encapsulates all components of an HTTP response, providing a comprehensive API to construct and manipulate HTTP responses
-* Supports fluent chaining style (e.g., `res.status_code(200).body("Hello")`) for streamlined response building
-* Core features include:
+* The `Response` struct encapsulates all components of an HTTP response, providing a comprehensive API for constructing and manipulating HTTP responses.
+* It supports a fluent, chainable style (e.g., `res.status_code(200).body("Hello")`), facilitating the smooth construction of responses.
+* Core functionalities include:
     * Setting status codes and headers
-    * Manipulating response bodies (supports strings, bytes, files, and streaming data)
-    * Managing cookies
+    * Manipulating the response body (supporting strings, bytes, files, and streaming data)
+    * Managing Cookies
     * Multiple content rendering methods
-* The struct follows a mutable reference pattern, returning self-references via `&mut self`, enabling handlers to conveniently construct and customize HTTP responses to meet various web service requirements
+* This struct employs a mutable reference pattern, returning a reference to itself via `&mut self`, allowing handlers to conveniently build and customize HTTP responses to meet various web service requirements.
 
 ```rust
 #[handler]
@@ -17,7 +17,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-After the server receives a client request, any matched `Handler` or middleware can write data to the `Response`. In certain cases, such as when middleware wants to prevent subsequent middleware and `Handler` execution, you can use `FlowCtrl`:
+After the server receives a client request, any matched `Handler` or middleware can write data into the `Response`. In certain scenarios, such as when a middleware wishes to prevent the execution of subsequent middleware and `Handler`s, you can use `FlowCtrl`:
 
 ```rust
 #[handler]
@@ -29,7 +29,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
 ## Writing Content
 
-Writing data to `Response` is straightforward:
+Writing data to a `Response` is straightforward:
 
 - Writing plain text data
 
@@ -52,25 +52,25 @@ Writing data to `Response` is straightforward:
     ```
 
 :::warning
-If the `render` method is called multiple times to write JSON data, these data fragments will not be merged into a single JSON object. Instead, they will be concatenated as independent text segments, potentially resulting in invalid JSON format. If multiple data items need to be returned, they should be combined into a single object before serialization, or handled through custom logic.
+If the `render` method is called multiple times to write JSON data, these pieces of data will not be merged into a single JSON object. Instead, they will be concatenated sequentially as independent text fragments, potentially resulting in invalid JSON format. If multiple data items need to be returned, they should be combined into a single object before serialization, or the logic should be handled manually.
 :::
 
 - Writing HTML
-    
+
     ```rust
     res.render(Text::Html("<html><body>hello</body></html>"));
     ```
 
 ## Writing HTTP Errors
 
-- Use `render` to write detailed error information to `Response`.
+- Using `render` allows writing detailed error information to the `Response`.
 
     ```rust
     use salvo::http::errors::*;
     res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
     ```
 
-- If custom error messages are unnecessary, you can directly call `set_http_code`.
+- If custom error information is not needed, you can directly call `set_http_code`.
 
     ```rust
     use salvo::http::StatusCode;
@@ -78,7 +78,7 @@ If the `render` method is called multiple times to write JSON data, these data f
     ```
 
 ## Redirecting to Another URL
-- The `render` method can write a redirect response to `Response`, navigating to a new URL. When calling `Redirect::found`, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
+- Using the `render` method, you can write a redirect response to the `Response`, navigating to a new URL. When you call `Redirect::found`, it sets the HTTP status code to 302 (Found), indicating a temporary redirect.
     ```rust
     use salvo::prelude::*;
 
@@ -90,26 +90,26 @@ If the `render` method is called multiple times to write JSON data, these data f
 
 ## ResBody
 
-The body type returned by Response is `ResBody`, an enum that is set to `ResBody::Error` in case of errors. This contains error information for deferred error handling. Note that `StatusError` does not implement `Writer`, allowing you to customize display methods in `Catcher`.
+The Body type returned by Response is `ResBody`, which is an enum. In case of an error, it is set to `ResBody::Error`, containing error information for deferred error handling. Notably, `StatusError` does not implement `Writer`; this design allows you to customize its display in the `Catcher`.
 
-# Response Struct Method Overview
+# Overview of Response Struct Methods
 
 | Category | Method | Description |
-|------|------|------|
-| **Creation** | `new()` / `with_cookies()` | Create new response |
-| **Status Code** | `status_code()` | Set status code |
+|----------|--------|-------------|
+| **Creation** | `new()` / `with_cookies()` | Create a new response |
+| **Status Code** | `status_code()` | Set the status code |
 | **Headers** | `headers()/headers_mut()` | Get headers |
-| | `set_headers()/add_header()` | Set/add headers |
+| | `set_headers()/add_header()` | Set/Add headers |
 | | `content_type()` | Get content type |
-| **HTTP Version** | `version()/version_mut()` | Get/modify HTTP version |
-| **Response Body** | `body()/body_mut()` | Set/get response body |
-| | `replace_body()/take_body()` | Replace/extract response body |
-| | `write_body()` | Write data to response body |
-| | `stream()/channel()` | Streaming response/create send channel |
-| **Cookie Handling** | `cookies()/cookie()` | Get cookies/specific cookie |
-| | `add_cookie()/remove_cookie()` | Add/remove cookie |
+| **HTTP Version** | `version()/version_mut()` | Get/Modify HTTP version |
+| **Response Body** | `body()/body_mut()` | Set/Get the response body |
+| | `replace_body()/take_body()` | Replace/Extract the response body |
+| | `write_body()` | Write data to the response body |
+| | `stream()/channel()` | Stream response / Create a sending channel |
+| **Cookie Handling** | `cookies()/cookie()` | Get cookies / Get a specific cookie |
+| | `add_cookie()/remove_cookie()` | Add/Remove a cookie |
 | **Content Response** | `render()` | Render content |
 | | `stuff()` | Set status code and render content |
-| | `send_file()` | Send file |
-| **Status Check** | `is_stamped()` | Check if response is ready to be written back |
+| | `send_file()` | Send a file |
+| **Status Query** | `is_stamped()` | Check if the response is ready to be written back |
 {/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

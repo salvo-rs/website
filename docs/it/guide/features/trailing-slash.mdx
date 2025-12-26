@@ -1,33 +1,33 @@
 # Barra Finale
 
-Middleware per aggiungere o rimuovere automaticamente la barra `/` finale.
+Middleware per l'aggiunta o rimozione automatica della barra `/` finale.
 
-## Casi d'uso
+## Casi d'Uso
 
-Il middleware Trailing Slash è particolarmente utile in questi scenari:
+Il middleware Barra Finale risulta particolarmente utile nelle seguenti situazioni:
 
-- **Normalizzazione URL**: Garantisce che tutti gli URL seguano un formato coerente (aggiungendo o rimuovendo uniformemente la barra finale), migliorando il SEO ed evitando problemi di contenuti duplicati.
-  
-- **Semplificazione della gestione delle rotte**: Elimina la necessità di scrivere logiche separate per gestire URL con e senza barra finale, poiché il middleware gestisce automaticamente questa conversione.
+- **Normalizzazione URL**: garantisce che tutti gli URL seguano un formato coerente (aggiungendo o rimuovendo uniformemente la barra finale), contribuendo a migliorare la SEO ed evitare problemi di contenuti duplicati.
 
-- **Compatibilità**: Alcuni client potrebbero aggiungere o rimuovere automaticamente la barra finale dagli URL; questo middleware assicura che le richieste vengano instradate correttamente.
+- **Semplificazione della gestione delle rotte**: elimina la necessità di scrivere logiche di gestione separate per URL con e senza barra finale, poiché il middleware gestisce automaticamente questa conversione.
 
-- **Gestione dei reindirizzamenti**: Può essere configurato per reindirizzare automaticamente gli URL con barra finale a quelli senza (o viceversa), migliorando l'esperienza utente.
+- **Compatibilità**: alcuni client potrebbero aggiungere o rimuovere automaticamente la barra finale negli URL; questo middleware assicura che le richieste vengano instradate correttamente.
 
-- **Prevenzione di conflitti nelle rotte**: In molti framework web, `/percorso` e `/percorso/` potrebbero essere considerati rotte diverse; questo middleware permette di gestirle in modo uniforme.
+- **Gestione dei reindirizzamenti**: può essere configurato per reindirizzare automaticamente gli URL con barra finale verso quelli senza (o viceversa), migliorando l'esperienza utente.
 
-import { Tab, Tabs } from 'rspress/theme';
-import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
-import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+- **Prevenzione conflitti di rotte**: in molti framework web, `/percorso` e `/percorso/` potrebbero essere considerati rotte diverse; questo middleware consente di gestirle in modo uniforme.
 
-_**Codice di esempio**_
+import { Tab, Tabs } from '@rspress/core/theme';
+
+_**Codice di Esempio**_
 
 <Tabs>
-<Tab label="main.rs">
-<TrailingMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TrailingCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/trailing-slash/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/trailing-slash/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}
+{/* 本行由工具自动生成,原文哈希值:7bb4e1e210c23aa687c6aa13c130a763 */}

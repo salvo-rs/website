@@ -1,20 +1,16 @@
-# Invio di file
+# Invio di File
 
-Salvo offre diversi metodi per inviare file:
+Salvo consente l'invio di file attraverso diverse modalità:
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ### NamedFile
 
-Salvo fornisce `salvo::fs::NamedFile` per inviare file ai client in modo efficiente. Invece di caricare l'intero file in memoria, legge solo le porzioni richieste in base all'intestazione `Range` della richiesta.
+Salvo mette a disposizione `salvo::fs::NamedFile`, che permette di inviare file al client in modo efficiente. Non carica l'intero file in memoria, ma trasmette solo le porzioni di contenuto richieste in base all'intestazione `Range` della richiesta.
 
-In pratica, `Response::send_file` è una versione semplificata di `NamedFile`. Per un controllo più granulare, è possibile utilizzare `NamedFileBuilder`.
+In pratica, l'utilizzo di `Response::send_file` rappresenta una forma semplificata di `NamedFile`. Per un controllo più granulare sull'invio dei file, è possibile utilizzare `NamedFileBuilder`.
 
-Si crea un `NamedFileBuilder` con `NamedFile::builder`:
+È possibile creare un `NamedFileBuilder` tramite `NamedFile::builder`:
 
 ```rust
 #[handler]
@@ -23,7 +19,7 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-Dopo aver configurato le opzioni, si può inviare il file:
+Dopo aver configurato le impostazioni desiderate, il file può essere inviato:
 
 ```rust
 #[handler]
@@ -32,29 +28,33 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 }
 ```
 
-### Servire contenuti statici
+### Servizio Statico
 
-Middleware per servire file statici o incorporati.
+Middleware che fornisce file statici o incorporati come servizio.
 
-- `StaticDir` supporta cartelle locali. Accetta una lista di percorsi:
+- `StaticDir` offre supporto per cartelle locali statiche. Accetta come parametro un elenco di più directory. Ad esempio:
 <Tabs>
   <Tab label="main.rs">
-        <StaticDirListCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  Se il file non è trovato nella prima cartella, viene cercato nella successiva.
+  Se il file non viene trovato nella prima cartella, la ricerca prosegue nella seconda.
 
-- Supporto integrato per `rust-embed`:
+- Include supporto per `rust-embed`, ad esempio:
 <Tabs>
   <Tab label="main.rs">
-        <StaticEmbedFilesCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  `with_fallback` specifica un file alternativo quando il richiesto non esiste, utile per applicazioni single-page.
-{/* 本行由工具自动生成,原文哈希值:6e08403a892ee438a1a246a4af6c54d0 */}
+  `with_fallback` consente di specificare un file alternativo da utilizzare quando il file richiesto non è disponibile, funzionalità utile per applicazioni web single-page.
+{/* 本行由工具自动生成,原文哈希值:19063883c45fafc63ab4ff3751ac9892 */}

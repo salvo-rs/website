@@ -1,21 +1,21 @@
-# Anfrageketten-ID
+# Request-ID
 
-import { Tab, Tabs } from 'rspress/theme';
-import RequestIdMainCode from '../../../../codes_md/request-id/src/main.mdx';
-import RequestIdCargoCode from '../../../../codes_md/request-id/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Die Request-ID-Middleware ist sehr flexibel. Der Generator (IdGenerator) wird zur Erzeugung der ID verwendet, und Sie können Ihren eigenen ID-Generator definieren, solange Sie das `IdGenerator`-Trait implementieren. Standardmäßig wird der `UlidGenerator` bereitgestellt.
+Die Request-ID-Middleware ist flexibel einsetzbar. Der Generator (IdGenerator) dient zur Erzeugung von IDs – Sie können Ihren eigenen ID-Generator definieren, solange das Trait `IdGenerator` implementiert wird. Standardmäßig wird der `UlidGenerator` bereitgestellt.
 
-Zusätzlich können Sie steuern, ob bereits vorhandene `requestid` überschrieben werden sollen. Sie können auch `header_name` und weitere Einstellungen vornehmen. Details finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Zudem können Sie steuern, ob bereits vorhandene `requestid` überschrieben werden sollen. Einstellungen wie `header_name` sind ebenfalls möglich. Details finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
 _**Beispielcode**_
 
 <Tabs>
   <Tab label="main.rs">
-    <RequestIdMainCode/>
+  ```rust file="<root>/codes/request-id/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <RequestIdCargoCode/>
+  ```toml file="<root>/codes/request-id/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:c4254b7ef23c0b7cd5e4b30f6fc58cc8 */}
+{/* 本行由工具自动生成,原文哈希值:b57e0db0c2653d3019a927f03298bf44 */}

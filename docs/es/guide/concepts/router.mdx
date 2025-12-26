@@ -1,12 +1,12 @@
-# Enrutador
+# Router
 
 ## ¿Qué es el enrutamiento?
 
 [`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) define qué middleware y `Handler` procesarán una solicitud HTTP. Esta es la funcionalidad más básica y central en Salvo.
 
-Internamente, `Router` está compuesto por una serie de filtros (Filter). Cuando llega una solicitud, el enrutador prueba secuencialmente, de arriba hacia abajo, si puede coincidir con la solicitud junto con sus descendientes. Si hay coincidencia, ejecuta los middlewares en toda la cadena formada por el enrutador y sus descendientes. Si durante el procesamiento el estado de `Response` se establece como error (4XX, 5XX) o redirección (3XX), los middlewares y `Handler` posteriores se omitirán. También puedes llamar manualmente a `ctrl.skip_rest()` para omitir los middlewares y `Handler` posteriores.
+Internamente, un `Router` está compuesto por una serie de filtros (Filter). Cuando llega una solicitud, el enrutador prueba secuencialmente, de arriba hacia abajo, si él mismo y sus descendientes pueden coincidir con la solicitud. Si la coincidencia es exitosa, ejecuta secuencialmente los middleware de toda la cadena formada por el enrutador y sus descendientes. Si durante el procesamiento el estado de la `Response` se establece como error (4XX, 5XX) o redirección (3XX), se omitirán los middleware y `Handler` posteriores. También puedes llamar manualmente a `ctrl.skip_rest()` para omitir los middleware y `Handler` posteriores.
 
-Durante el proceso de coincidencia, existe información de ruta URL que puede considerarse como un objeto que debe ser completamente consumido por el Filter. Si todos los Filters en un Router coinciden con éxito y la información de ruta URL se ha consumido por completo, se considera una "coincidencia exitosa".
+Durante el proceso de coincidencia, existe una información de ruta URL, que puede considerarse como un objeto que debe ser completamente consumido por los filtros durante la coincidencia. Si todos los filtros en un Router coinciden con éxito y esta información de ruta URL ha sido completamente consumida, se considerará una "coincidencia exitosa".
 
 Por ejemplo:
 
@@ -14,31 +14,31 @@ Por ejemplo:
 Router::with_path("articles").get(list_articles).post(create_article);
 ```
 
-Es equivalente a:
+Es funcionalmente equivalente a:
 
 ```rust
 Router::new()
-    // PathFilter puede filtrar rutas de solicitud, solo coincide si la ruta contiene el segmento 'articles',
-    // de lo contrario falla. Por ejemplo: /articles/123 coincide, pero /articles_list/123
-    // aunque contiene 'articles', no coincide debido a '_list' que sigue.
+    // PathFilter puede filtrar la ruta de la solicitud. Solo coincidirá si el segmento de la ruta contiene 'articles'.
+    // De lo contrario, la coincidencia fallará. Ej: /articles/123 coincide, mientras que /articles_list/123
+    // contiene 'articles' pero no coincide debido al '_list' posterior.
     .filter(PathFilter::new("articles"))
 
-    // Si la raíz coincide y el método de solicitud es GET, el subenrutador interno coincide
-    // y list_articles procesa la solicitud.
+    // Si la raíz coincide y el método de la solicitud es GET, la subruta interna coincidirá
+    // y la solicitud será manejada por list_articles.
     .push(Router::new().filter(filters::get()).handle(list_articles))
 
-    // Si la raíz coincide y el método de solicitud es POST, el subenrutador interno coincide
-    // y create_article procesa la solicitud.
+    // Si la raíz coincide y el método de la solicitud es POST, la subruta interna coincidirá
+    // y la solicitud será manejada por create_article.
     .push(Router::new().filter(filters::post()).handle(create_article));
 ```
 
-Si se accede a `GET /articles/`, se considera una coincidencia exitosa y se ejecuta `list_articles`. Pero si se accede a `GET /articles/123`, la coincidencia falla y devuelve un error 404, porque `Router::with_path("articles")` solo consume `/articles` en la ruta URL, dejando `/123` sin consumir, por lo que se considera un fallo. Para que coincida, el enrutador puede modificarse así:
+Si se accede a `GET /articles/`, se considera una coincidencia exitosa y se ejecuta `list_articles`. Sin embargo, si se accede a `GET /articles/123`, la coincidencia falla y se devuelve un error 404, porque `Router::with_path("articles")` solo consumió `/articles` de la información de ruta URL, dejando `/123` sin consumir, por lo que se considera un fallo. Para que coincida, la ruta puede modificarse así:
 
 ```rust
 Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
-Aquí, `{**}` coincide con cualquier ruta adicional, por lo que puede coincidir con `GET /articles/123` y ejecutar `list_articles`.
+Aquí, `{**}` coincidirá con cualquier ruta sobrante, permitiendo que `GET /articles/123` ejecute `list_articles`.
 
 ## Definición plana
 
@@ -52,7 +52,7 @@ Router::with_path("writers/{id}/articles").get(list_writer_articles);
 
 ## Definición en árbol
 
-También podemos definir rutas en forma de árbol, lo cual es el método recomendado:
+También podemos definir rutas en forma de árbol, que es el método recomendado:
 
 ```rust
 Router::with_path("writers")
@@ -67,9 +67,9 @@ Router::with_path("writers")
     );
 ```
 
-Esta forma de definición facilita la claridad y simplicidad en proyectos complejos.
+Esta forma de definición hace que la estructura del Router sea clara y sencilla, especialmente para proyectos complejos.
 
-Muchos métodos en `Router` devuelven `Self` para permitir encadenamiento. A veces, necesitas decidir cómo enrutar según ciertas condiciones. El sistema de enrutamiento también proporciona la función `then`, fácil de usar:
+Muchos métodos en `Router` devuelven `Self` para permitir encadenamiento. A veces, necesitas decidir el enrutamiento basado en ciertas condiciones. El sistema también proporciona la función `then`, fácil de usar:
 
 ```rust
 Router::new()
@@ -89,11 +89,11 @@ Router::new()
     );
 ```
 
-Este ejemplo muestra que solo cuando el servidor está en `admin_mode`, se agregarán rutas para crear, editar y eliminar artículos.
+Este ejemplo agrega rutas para crear, editar y eliminar artículos solo cuando el servidor está en `admin_mode`.
 
-## Obtener parámetros de la ruta
+## Obtención de parámetros desde la ruta
 
-En el código anterior, `{id}` define un parámetro. Podemos obtener su valor a través de una instancia de `Request`:
+En el código anterior, `{id}` define un parámetro. Podemos obtener su valor a través de la instancia `Request`:
 
 ```rust
 #[handler]
@@ -102,28 +102,28 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-`{id}` coincide con un segmento de la ruta. Normalmente, el `id` de un artículo es solo un número, por lo que podemos usar expresiones regulares para restringir la coincidencia, como `r"{id|\d+}"`.
+`{id}` coincide con un segmento de la ruta. Normalmente, el `id` de un artículo es solo un número. Podemos usar expresiones regulares para restringir la coincidencia, como `r"{id|\d+}"`.
 
-Para tipos numéricos, hay una forma más simple usando `<id:num>`:
-- `{id:num}`: coincide con cualquier cantidad de dígitos;
-- `{id:num[10]}`: coincide exactamente con 10 dígitos;
-- `{id:num(..10)}`: coincide con 1 a 9 dígitos;
-- `{id:num(3..10)}`: coincide con 3 a 9 dígitos;
-- `{id:num(..=10)}`: coincide con 1 a 10 dígitos;
-- `{id:num(3..=10)}`: coincide con 3 a 10 dígitos;
+Para tipos numéricos, hay un método más simple usando `<id:num>`, con las siguientes variantes:
+- `{id:num}`: coincide con cualquier cantidad de dígitos.
+- `{id:num[10]}`: coincide exactamente con 10 dígitos.
+- `{id:num(..10)}`: coincide con 1 a 9 dígitos.
+- `{id:num(3..10)}`: coincide con 3 a 9 dígitos.
+- `{id:num(..=10)}`: coincide con 1 a 10 dígitos.
+- `{id:num(3..=10)}`: coincide con 3 a 10 dígitos.
 - `{id:num(10..)}`: coincide con al menos 10 dígitos.
 
-También puedes usar `{**}`, `{*+}` o `{*?}` para coincidir con segmentos restantes de la ruta. Para mejorar la legibilidad, puedes agregar nombres descriptivos, como `{**file_path}`.
+También se puede usar `{**}`, `{*+}` o `{*?}` para coincidir con todos los segmentos restantes de la ruta. Para mejorar la legibilidad, se puede agregar un nombre, como `{**file_path}`.
 
-- `{**}`: coincide incluso con cadenas vacías, como `/files/{**rest_path}` que coincide con `/files`, `/files/abc.txt`, `/files/dir/abc.txt`;
-- `{*+}`: requiere que el segmento no esté vacío, como `/files/{*+rest_path}` que no coincide con `/files` pero sí con `/files/abc.txt`, `/files/dir/abc.txt`;
-- `{*?}`: coincide con cadenas vacías pero solo con un segmento, como `/files/{*?rest_path}` que no coincide con `/files/dir/abc.txt` pero sí con `/files`, `/files/abc.txt`;
+- `{**}`: Coincide con una cadena vacía o cualquier segmento. Ej: `/files/{**rest_path}` coincide con `/files`, `/files/abc.txt`, `/files/dir/abc.txt`.
+- `{*+}`: Coincide con al menos un segmento (no cadena vacía). Ej: `/files/{*+rest_path}` no coincide con `/files`, pero sí con `/files/abc.txt`, `/files/dir/abc.txt`.
+- `{*?}`: Coincide con cero o un segmento. Ej: `/files/{*?rest_path}` no coincide con `/files/dir/abc.txt`, pero sí con `/files` y `/files/abc.txt`.
 
-Se pueden combinar múltiples expresiones para coincidir con el mismo segmento, como `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+Se pueden combinar múltiples expresiones para un mismo segmento, como `/articles/article_{id:num}/` o `/images/{name}.{ext}`.
 
 ## Agregar middleware
 
-Puedes agregar middleware mediante la función `hoop`:
+Se puede agregar middleware usando la función `hoop` en el enrutador:
 
 ```rust
 Router::new()
@@ -140,9 +140,9 @@ Router::new()
     );
 ```
 
-En este ejemplo, el enrutador raíz usa `check_authed` para verificar si el usuario ha iniciado sesión. Todos los enrutadores descendientes se ven afectados por este middleware.
+En este ejemplo, la ruta raíz usa `check_authed` para verificar si el usuario ha iniciado sesión. Todas las subrutas se ven afectadas por este middleware.
 
-Si los usuarios solo necesitan ver información y artículos de `writer` sin iniciar sesión, podemos definir las rutas así:
+Si los usuarios solo desean ver información de `writer` y artículos, podríamos permitir el acceso sin autenticación. Podemos definir las rutas así:
 
 ```rust
 Router::new()
@@ -166,9 +166,9 @@ Aunque dos rutas tienen la misma definición `path("articles")`, aún pueden agr
 
 ## Filtros
 
-`Router` usa filtros para determinar coincidencias. Los filtros admiten operaciones lógicas básicas como `or` o `and`. Un enrutador puede contener múltiples filtros, y coincide cuando todos los filtros coinciden.
+Un `Router` determina la coincidencia a través de filtros internos. Los filtros admiten operaciones lógicas básicas como `or` y `and`. Un enrutador puede contener múltiples filtros; coincide cuando todos los filtros coinciden con éxito.
 
-La estructura de rutas de un sitio web es jerárquica, pero no necesariamente igual a la estructura de enrutadores. Una ruta puede corresponder a múltiples nodos de enrutamiento. Por ejemplo, algunos contenidos bajo `articles/` requieren inicio de sesión, mientras que otros no. Podemos organizar las subrutas que requieren autenticación bajo un enrutador con middleware de verificación, y las que no bajo otro:
+La estructura de rutas de un sitio web es jerárquica, pero no necesariamente idéntica a la estructura del enrutador. Una ruta del sitio puede corresponder a múltiples nodos de enrutamiento. Por ejemplo, algunos contenidos bajo `articles/` pueden requerir autenticación, mientras que otros no. Podemos organizar las subrutas que requieren autenticación bajo un enrutador con middleware de verificación, y las que no, bajo otro sin él:
 
 ```rust
 Router::new()
@@ -185,11 +185,11 @@ Router::new()
     );
 ```
 
-Los enrutadores usan filtros para dirigir solicitudes a middlewares y `Handler` específicos.
+El enrutamiento utiliza filtros para dirigir solicitudes a los middleware y `Handler` correspondientes.
 
-`path` y `method` son los filtros más comunes. `path` coincide con rutas; `method` coincide con métodos HTTP como GET, POST, PATCH.
+`path` y `method` son dos de los filtros más comunes. `path` coincide con la ruta; `method` coincide con el método HTTP (GET, POST, PATCH, etc.).
 
-Podemos conectar filtros con `and`, `or`:
+Podemos conectar filtros usando `and` y `or`:
 
 ```rust
 Router::with_filter(filters::path("hello").and(filters::get()));
@@ -197,14 +197,14 @@ Router::with_filter(filters::path("hello").and(filters::get()));
 
 ### Filtros de ruta
 
-Los filtros basados en rutas son los más usados. Pueden incluir parámetros:
+Los filtros basados en la ruta de solicitud son los más utilizados. Pueden definir parámetros:
 
 ```rust
 Router::with_path("articles/{id}").get(show_article);
 Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
-En `Handler`, puedes obtener parámetros con `get_param` de `Request`:
+En el `Handler`, se pueden obtener a través de la función `get_param` del objeto `Request`:
 
 ```rust
 #[handler]
@@ -220,13 +220,13 @@ pub async fn serve_file(req: &mut Request) {
 
 ### Filtros de método
 
-Filtran solicitudes por método HTTP:
+Filtran solicitudes según el método HTTP:
 
 ```rust
 Router::new().get(show_article).patch(update_article).delete(delete_article);
 ```
 
-Aquí, `get`, `patch`, `delete` son filtros de método, equivalentes a:
+Aquí, `get`, `patch` y `delete` son filtros de método. Es equivalente a:
 
 ```rust
 use salvo::routing::filter;
@@ -238,16 +238,16 @@ let delete_router = Router::with_filter(filters::get()).handle(delete_article);
 Router::new().push(show_router).push(update_router).push(delete_router);
 ```
 
-## Wisp personalizados
+## Wisp personalizado
 
-Para expresiones comunes, podemos usar `PathFilter::register_wisp_regex` o `PathFilter::register_wisp_builder` para asignar nombres cortos. Por ejemplo, el formato GUID aparece frecuentemente:
+Para expresiones de coincidencia frecuentes, podemos asignar un nombre breve usando `PathFilter::register_wisp_regex` o `PathFilter::register_wisp_builder`. Por ejemplo, el formato GUID aparece a menudo en rutas. Normalmente, se escribiría así cada vez:
 
 ```rust
 Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 ```
 
-Para evitar repetir esta expresión compleja, podemos hacer:
+Escribir esta expresión regular compleja cada vez es propenso a errores y antiestético. En su lugar, podemos hacer:
 
 ```rust
 use salvo::routing::filter::PathFilter;
@@ -262,17 +262,17 @@ async fn main() {
 }
 ```
 
-Solo necesitas registrarlo una vez, luego puedes usar `{id:guid}` para coincidir con GUIDs, simplificando el código.
+Solo necesitas registrarlo una vez; luego, puedes usar `{id:guid}` para coincidir con GUID, simplificando el código.
 
-## ¿Cómo entender Router si vienes de frameworks basados en Controller?
+## ¿Cómo entender Router si vienes de un framework web basado en Controller?
 
-Los frameworks basados en enrutamiento (como Salvo) difieren de los MVC tradicionales en:
+Las principales diferencias entre un framework web basado en enrutamiento (como Salvo) y los diseños tradicionales MVC o basados en Controller son:
 
-- **Flexibilidad**: Permiten definir flujos de procesamiento más precisos. En Salvo, defines directamente funciones para rutas específicas:
+- **Flexibilidad**: El diseño basado en enrutamiento permite definir el flujo de procesamiento de solicitudes de manera más flexible, controlando con precisión la lógica para cada ruta. Por ejemplo, en Salvo puedes definir directamente funciones para rutas específicas:
   ```rust
   Router::with_path("articles").get(list_articles).post(create_article);
   ```
-  En MVC, normalmente defines una clase Controller con métodos:
+  En un diseño Controller, normalmente necesitas definir una clase controladora y luego métodos dentro de ella:
   ```java
   @Controller
   public class ArticleController {
@@ -284,12 +284,12 @@ Los frameworks basados en enrutamiento (como Salvo) difieren de los MVC tradicio
   }
   ```
 
-- **Integración de middleware**: Más sencilla en frameworks de enrutamiento. En Salvo, aplicas middleware a rutas específicas:
+- **Integración de middleware**: Los frameworks de enrutamiento suelen ofrecer una integración más concisa de middleware, aplicable a rutas específicas. En Salvo, el middleware se puede aplicar con precisión:
   ```rust
   Router::new()
       .push(
           Router::with_path("admin/articles")
-              .hoop(admin_auth_middleware)  // Middleware solo para rutas de admin
+              .hoop(admin_auth_middleware)  // Middleware de autenticación solo para rutas de admin
               .get(list_all_articles)
               .post(create_article),
       )
@@ -299,9 +299,10 @@ Los frameworks basados en enrutamiento (como Salvo) difieren de los MVC tradicio
       );
   ```
 
-- **Organización del código**: Basada en funcionalidad o endpoints API, no en capas MVC:
+- **Organización del código**: El diseño basado en enrutamiento tiende a organizar el código por funcionalidad o endpoint de API, en lugar de por capas MVC (modelo-vista-controlador).
+  Fomenta la organización por funcionalidad de endpoints:
   ```rust
-  // user_routes.rs - Rutas y lógica de usuario
+  // user_routes.rs - Rutas y lógica relacionada con usuarios
   pub fn user_routes() -> Router {
       Router::with_path("users")
           .get(list_users)
@@ -309,7 +310,7 @@ Los frameworks basados en enrutamiento (como Salvo) difieren de los MVC tradicio
           .push(Router::with_path("{id}").get(get_user).delete(delete_user))
   }
   
-  // article_routes.rs - Rutas y lógica de artículos
+  // article_routes.rs - Rutas y lógica relacionada con artículos
   pub fn article_routes() -> Router {
       Router::with_path("articles")
           .get(list_articles)
@@ -322,33 +323,23 @@ Los frameworks basados en enrutamiento (como Salvo) difieren de los MVC tradicio
       .push(article_routes());
   ```
 
-- **Ligereza**: Los frameworks de enrutamiento suelen ser más ligeros, con menos conceptos obligatorios.
+- **Ligereza**: Generalmente, el diseño basado en enrutamiento es más ligero, reduciendo conceptos y restricciones impuestos por el framework. Puedes incluir solo los componentes necesarios sin seguir una estructura estricta.
 
-El diseño basado en enrutamiento hace que el desarrollo de APIs sea más intuitivo, ideal para microservicios y APIs RESTful modernas. En Salvo, el enrutamiento refleja directamente la estructura y comportamiento de la API, facilitando el mantenimiento. Los diseños MVC tradicionales requieren más configuración para lograr lo mismo.
+El diseño basado en enrutamiento hace que el desarrollo de APIs sea más intuitivo, especialmente adecuado para microservicios modernos y APIs RESTful. En frameworks como Salvo, el enrutamiento es un concepto central que refleja directamente la estructura y comportamiento de la API, haciendo el código más fácil de entender y mantener. En contraste, los diseños Controller tradicionales a menudo requieren más configuración y convenciones para lograr la misma funcionalidad.
 
-# Resumen de métodos de Router
+# Resumen de métodos de la estructura Router
 
 | Categoría | Método | Descripción |
-|------|------|------|
+|-----------|--------|-------------|
 | **Creación/Acceso** | `new()` | Crea un nuevo enrutador |
-| | `routers()/routers_mut()` | Obtiene referencias a subenrutadores |
-| | `hoops()/hoops_mut()` | Obtiene referencias a middleware |
-| | `filters()/filters_mut()` | Obtiene referencias a filtros |
-| **Organización** | `unshift()` | Inserta subenrutador al inicio |
+| | `routers()/routers_mut()` | Obtiene referencia/referencia mutable a subenrutadores |
+| | `hoops()/hoops_mut()` | Obtiene referencia/referencia mutable a middleware |
+| | `filters()/filters_mut()` | Obtiene referencia/referencia mutable a filtros |
+| **Organización de rutas** | `unshift()` | Inserta subenrutador al principio |
 | | `insert()` | Inserta subenrutador en posición específica |
-| | `push()` | Añade subenrutador |
-| | `append()` | Añade múltiples subenrutadores |
-| | `then()` | Configuración personalizada de cadena |
-| **Middleware** | `with_hoop()/hoop()` | Crea/añade middleware |
-| | `with_hoop_when()/hoop_when()` | Crea/añade middleware condicional |
-| **Filtros de ruta** | `with_path()/path()` | Crea/añade filtro de ruta |
-| | `with_filter()/filter()` | Crea/añade filtro |
-| | `with_filter_fn()/filter_fn()` | Crea/añade filtro funcional |
-| **Filtros de red** | `scheme()` | Añade filtro de protocolo |
-| | `host()/with_host()` | Añade/crea filtro de host |
-| | `port()/with_port()` | Añade/crea filtro de puerto |
-| **Métodos HTTP** | `get()/post()/put()` | Crea rutas para métodos HTTP |
-| | `delete()/patch()/head()/options()` | Crea rutas para métodos HTTP |
-| **Manejadores** | `goal()` | Establece manejador de ruta |
-| **Detección** | `detect()` | Verifica coincidencia de ruta |
-{/* 本行由工具自动生成,原文哈希值:de818471bc28a65be62c204495aada43 */}
+| | `push()` | Agrega subenrutador |
+| | `append()` | Agrega múltiples subenrutadores |
+| | `then()` | Configuración personalizada de cadena de enrutadores |
+| **Middleware** | `with_hoop()/hoop()` | Crea/agrega middleware |
+| | `with_hoop_when()/hoop_when()` | Crea/agrega middleware cond
+{/* 本行由工具自动生成,原文哈希值:ba0a1eadc077c274134c7a533d887f99 */}

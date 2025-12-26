@@ -4,29 +4,29 @@ title: Fonctionnalité Craft
 
 # Fonctionnalité Craft
 
-Craft permet aux développeurs de générer automatiquement des fonctions de traitement et des points de terminaison grâce à de simples annotations, tout en s'intégrant parfaitement à la génération de documentation OpenAPI.
+Craft permet aux développeurs de générer automatiquement des fonctions de traitement et des points de terminaison via des annotations simples, tout en s'intégrant parfaitement à la génération de documentation OpenAPI.
 
 ## Cas d'utilisation
 
-La fonctionnalité Craft est particulièrement utile dans les situations suivantes :
+La fonctionnalité Craft est particulièrement utile dans les scénarios suivants :
 
-- Lorsque vous avez besoin de créer rapidement des fonctions de gestion de routes à partir de méthodes de structure
-- Lorsque vous souhaitez réduire le code passe-partout lié à l'extraction de paramètres et à la gestion d'erreurs
-- Lorsque vous devez générer automatiquement une documentation OpenAPI pour votre API
-- Lorsque vous voulez découpler la logique métier du framework web
+- Lorsque vous avez besoin de créer rapidement des fonctions de traitement de routage à partir de méthodes de structure
+- Lorsque vous souhaitez réduire le code passe-partout lié à l'extraction manuelle des paramètres et à la gestion des erreurs
+- Lorsque vous avez besoin de générer automatiquement une documentation OpenAPI pour votre API
+- Lorsque vous souhaitez découpler la logique métier du framework web
 
 ## Utilisation de base
 
-Pour utiliser la fonctionnalité Craft, vous devez importer les modules suivants :
+Pour utiliser la fonctionnalité Craft, importez les modules suivants :
 
 ```rust
 use salvo::oapi::extract::*;
 use salvo::prelude::*;
 ```
 
-### Création d'une structure de service
+### Créer une structure de service
 
-Annotez votre bloc impl avec la macro `#[craft]` pour convertir les méthodes de structure en fonctions de traitement ou en points de terminaison.
+Utilisez la macro `#[craft]` pour annoter votre bloc `impl`, ce qui permet de convertir les méthodes de structure en fonctions de traitement ou en points de terminaison.
 
 ```rust
 #[derive(Clone)]
@@ -45,7 +45,7 @@ impl Opts {
 }
 ```
 
-### Création d'une fonction de traitement
+### Créer une fonction de traitement
 
 Utilisez `#[craft(handler)]` pour convertir une méthode en fonction de traitement :
 
@@ -59,9 +59,9 @@ fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
 Cette méthode deviendra une fonction de traitement qui :
 - Extrait automatiquement les valeurs `left` et `right` des paramètres de requête
 - Accède à l'état `state` dans la structure
-- Retourne le résultat du calcul sous forme de chaîne de réponse
+- Renvoie le résultat du calcul sous forme de réponse chaîne de caractères
 
-### Création d'un point de terminaison
+### Créer un point de terminaison
 
 Utilisez `#[craft(endpoint)]` pour convertir une méthode en point de terminaison :
 
@@ -76,9 +76,9 @@ pub(crate) fn add2(
 }
 ```
 
-Les points de terminaison peuvent utiliser `Arc` pour partager l'état, ce qui est particulièrement utile pour traiter des requêtes concurrentes.
+Les points de terminaison peuvent utiliser `Arc` pour partager l'état, ce qui est particulièrement utile lors du traitement de requêtes concurrentes.
 
-### Point de terminaison statique
+### Points de terminaison statiques
 
 Vous pouvez également créer des points de terminaison statiques qui ne dépendent pas de l'état d'une instance :
 
@@ -89,22 +89,22 @@ pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
 }
 ```
 
-Dans cet exemple, une description personnalisée de réponse d'erreur est ajoutée, qui sera reflétée dans la documentation OpenAPI générée.
+Dans cet exemple, une description personnalisée de la réponse d'erreur est ajoutée, qui sera reflétée dans la documentation OpenAPI générée.
 
 ## Extracteurs de paramètres
 
 Le module `oapi::extract` de Salvo fournit plusieurs extracteurs de paramètres, les plus courants étant :
 
-- `QueryParam<T>` : Extrait un paramètre de la chaîne de requête
-- `PathParam<T>` : Extrait un paramètre du chemin URL
-- `FormData<T>` : Extrait un paramètre des données de formulaire
-- `JsonBody<T>` : Extrait un paramètre du corps de requête JSON
+- `QueryParam<T>` : Extrait les paramètres de la chaîne de requête
+- `PathParam<T>` : Extrait les paramètres du chemin de l'URL
+- `FormData<T>` : Extrait les paramètres des données de formulaire
+- `JsonBody<T>` : Extrait les paramètres du corps de la requête JSON
 
-Ces extracteurs effectuent automatiquement l'analyse et la conversion des paramètres, simplifiant grandement l'écriture des fonctions de traitement.
+Ces extracteurs effectuent automatiquement l'analyse et la conversion de type des paramètres, simplifiant considérablement l'écriture des fonctions de traitement.
 
 ## Intégration avec OpenAPI
 
-La fonctionnalité Craft peut générer automatiquement une documentation d'API conforme aux spécifications OpenAPI. Dans l'exemple :
+La fonctionnalité Craft peut générer automatiquement une documentation API conforme aux spécifications OpenAPI. Dans l'exemple :
 
 ```rust
 let router = Router::new()
@@ -112,20 +112,20 @@ let router = Router::new()
     .push(Router::with_path("add2").get(opts.add2()))
     .push(Router::with_path("add3").get(Opts::add3()));
 
-// Génère la documentation OpenAPI
+// Générer la documentation OpenAPI
 let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
 
-// Ajoute les routes pour la documentation OpenAPI et l'interface Swagger UI
+// Ajouter les routes de documentation OpenAPI et Swagger UI
 let router = router
     .push(doc.into_router("/api-doc/openapi.json"))
     .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 ```
 
-Avec cette configuration, la documentation de l'API sera disponible à l'adresse `/api-doc/openapi.json`, et l'interface Swagger UI sera accessible via le chemin `/swagger-ui`.
+Après cette configuration, la documentation API sera disponible au point de terminaison `/api-doc/openapi.json`, et Swagger UI sera accessible via le chemin `/swagger-ui`.
 
 ## Exemple complet
 
-Voici un exemple complet illustrant l'utilisation de la fonctionnalité Craft pour créer trois types différents de points de terminaison :
+Voici un exemple complet montrant comment utiliser la fonctionnalité Craft pour créer trois types de points de terminaison différents :
 
 ```rust
 use salvo::oapi::extract::*;
@@ -165,24 +165,24 @@ impl Opts {
 
 #[tokio::main]
 async fn main() {
-    // Crée un état partagé avec une valeur initiale de 1
+    // Créer un état partagé avec une valeur initiale de 1
     let opts = Arc::new(Opts::new(1));
 
-    // Configure les routes pour les trois points de terminaison
+    // Configurer les routes pour les trois points de terminaison
     let router = Router::new()
         .push(Router::with_path("add1").get(opts.add1()))
         .push(Router::with_path("add2").get(opts.add2()))
         .push(Router::with_path("add3").get(Opts::add3()));
 
-    // Génère la documentation OpenAPI
+    // Générer la documentation OpenAPI
     let doc = OpenApi::new("Example API", "0.0.1").merge_router(&router);
     
-    // Ajoute les routes pour la documentation OpenAPI et l'interface Swagger UI
+    // Ajouter les routes de documentation OpenAPI et Swagger UI
     let router = router
         .push(doc.into_router("/api-doc/openapi.json"))
         .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
 
-    // Démarre le serveur sur localhost:5800
+    // Démarrer le serveur sur localhost:5800
     let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
     Server::new(acceptor).serve(router).await;
 }

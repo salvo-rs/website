@@ -1,69 +1,69 @@
 # Depot
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/use-depot/src/main.mdx';
-import CargoCode from '../../../../codes_md/use-depot/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) dient zur Speicherung temporärer Daten, die während einer Anfrage verarbeitet werden. Middleware kann ihre verarbeiteten temporären Daten im Depot ablegen, um sie für nachfolgende Programme verfügbar zu machen.
+[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) dient zur Speicherung temporärer Daten, die während der Verarbeitung einer einzelnen Anfrage anfallen. Middleware kann selbst verarbeitete temporäre Daten in das Depot legen, damit nachfolgende Programme darauf zugreifen können.
 
-Wenn ein Server eine Anfrage von einem Client-Browser empfängt, wird eine Instanz von `Depot` erstellt. Diese Instanz wird nach der Bearbeitung der Anfrage durch alle Middleware und `Handler` zerstört.
+Wenn ein Server eine Anfrage von einem Client-Browser empfängt, wird eine Instanz von `Depot` erstellt. Diese Instanz wird zerstört, nachdem alle Middleware-Komponenten und `Handler` die Anfrage verarbeitet haben.
 
-Zum Beispiel können wir in einer Login-Middleware `current_user` setzen und dann in nachfolgender Middleware oder `Handler` die aktuellen Benutzerinformationen auslesen.
+Beispielsweise kann eine Authentifizierungs-Middleware `current_user` setzen, und nachfolgende Middleware oder `Handler` können dann die Informationen des aktuellen Benutzers auslesen.
 
-## Schnelles Verständnis
+## Schnelle Einführung
 
-`Depot` wird verwendet, um Daten während der Anfrageverarbeitung zu speichern und zu teilen. Es implementiert einen typsicheren Datencontainer, der zwei Hauptnutzungsmodi unterstützt:
+`Depot` wird verwendet, um Daten während der Anfrageverarbeitung zu speichern und zu teilen. Es implementiert einen typsicheren Datencontainer, der zwei Hauptnutzungsmuster unterstützt:
 
-1. **Schlüssel-Wert-Speicher**: Zugriff auf Werte über Zeichenkettenschlüssel mit `insert`/`get`-Methoden
-2. **Typeninjektion**: Speichern und Abrufen von Werten basierend auf ihrem Typ mit `inject`/`obtain`-Methoden
+1. **Schlüssel-Wert-Speicher**: Werte werden über `insert`/`get` Methoden mit einem String-Schlüssel assoziiert gespeichert und abgerufen.
+2. **Typenbasierte Injektion**: Werte werden über `inject`/`obtain` Methoden basierend auf ihrem Typ gespeichert und abgerufen.
 
-Wie im Beispiel gezeigt, eignet sich `Depot` besonders für die Datenweitergabe zwischen Middleware und Handlern. Middleware kann Werte (wie Benutzerinformationen oder Authentifizierungsstatus) im `Depot` setzen, die nachfolgende Handler abrufen können, ohne sie erneut berechnen oder abfragen zu müssen. Das Design von `Depot` gewährleistet Datenkonsistenz und Zugänglichkeit während der gesamten Anfrageverarbeitungskette und ist ein zentrales Werkzeug für den Aufbau komplexer Webanwendungen.
+Wie das Beispiel zeigt, ist `Depot` besonders geeignet, um Daten zwischen Middleware und Handlern zu übergeben. Middleware kann Werte (wie Benutzerinformationen, Authentifizierungsstatus) im `Depot` setzen, die nachfolgende Handler abrufen können, ohne dass wiederholte Berechnungen oder Abfragen nötig sind. Das Design von `Depot` gewährleistet Datenkonsistenz und -zugänglichkeit über die gesamte Anfrageverarbeitungskette hinweg und ist ein zentrales Werkzeug zum Aufbau komplexer Webanwendungen.
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/use-depot/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/use-depot/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
 ## Daten mit `insert` und `get` setzen und abrufen
 
-Wie oben gezeigt, können mit `insert` `key` und `value` in `Depot` eingefügt werden. Für Werte dieses Typs kann direkt mit `get` darauf zugegriffen werden.
+ Wie oben gezeigt, können `key` und `value` mit `insert` in das `Depot` eingefügt werden. Werte dieses Typs können direkt mit `get` abgerufen werden.
 
 ```rust
 depot.insert("a", "b");
 assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 ```
 
-Falls der `key` nicht existiert oder der `key` existiert, aber der Typ nicht übereinstimmt, wird `None` zurückgegeben.
+ Wenn der `key` nicht existiert oder der `key` existiert, aber der Typ nicht übereinstimmt, wird `None` zurückgegeben.
 
 ## Daten mit `inject` und `obtain` setzen und abrufen
 
-Manchmal gibt es Fälle, in denen kein spezifischer `key` benötigt wird und für diesen Typ nur eine einzige Instanz existiert. Hier können `inject` zum Einfügen und `obtain` zum Abrufen der Daten verwendet werden. Diese Methoden erfordern keinen `key`.
+ Manchmal gibt es Fälle, in denen kein konkreter `key` benötigt wird und für einen bestimmten Typ nur eine einzige Instanz existiert. In solchen Fällen kann `inject` zum Einfügen und `obtain` zum Abrufen der Daten verwendet werden. Diese Methoden erfordern keinen `key`.
 
 ```rust
 depot.inject(Config::new());
 depot.obtain::<Config>();
 ```
 
-# Übersicht der Depot-Strukturmethoden
+# Übersicht über die Methoden der Depot-Struktur
 
 | Kategorie | Methode | Beschreibung |
 |------|------|------|
 | **Erstellung/Kapazität** | `new()` | Erstellt ein leeres Depot |
 | | `with_capacity(capacity)` | Erstellt ein Depot mit angegebener Kapazität |
 | | `capacity()` | Ruft die Kapazität ab |
-| | `inner()` | Ruft die Referenz auf die interne HashMap ab |
-| **Typeninjektion/Abruf** | `inject<V>(value)` | Fügt einen Wert nach Typ ein |
-| | `obtain<T>()` | Ruft die Referenz auf den eingefügten Wert ab |
-| | `obtain_mut<T>()` | Ruft die veränderbare Referenz auf den eingefügten Wert ab |
+| | `inner()` | Ruft eine Referenz auf die interne HashMap ab |
+| **Typenbasierte Injektion/Abruf** | `inject<V>(value)` | Injiziert einen Wert basierend auf seinem Typ |
+| | `obtain<T>()` | Ruft eine Referenz auf einen injizierten Wert ab |
+| | `obtain_mut<T>()` | Ruft eine veränderbare Referenz auf einen injizierten Wert ab |
 | | `contains<T>()` | Prüft, ob ein bestimmter Typ enthalten ist |
-| | `scrape<T>()` | Entfernt und gibt den eingefügten Wert zurück |
+| | `scrape<T>()` | Entfernt einen injizierten Wert und gibt ihn zurück |
 | **Schlüssel-Wert-Operationen** | `insert(key, value)` | Fügt ein Schlüssel-Wert-Paar ein |
-| | `get<V>(key)` | Ruft die Referenz auf den Wert zum Schlüssel ab |
-| | `get_mut<V>(key)` | Ruft die veränderbare Referenz auf den Wert zum Schlüssel ab |
+| | `get<V>(key)` | Ruft eine Referenz auf den Wert für einen Schlüssel ab |
+| | `get_mut<V>(key)` | Ruft eine veränderbare Referenz auf den Wert für einen Schlüssel ab |
 | | `contains_key(key)` | Prüft, ob ein bestimmter Schlüssel enthalten ist |
-| | `remove<V>(key)` | Entfernt den Schlüssel und gibt den Wert zurück |
-| | `delete(key)` | Löscht das Schlüssel-Wert-Paar |
-{/* 本行由工具自动生成,原文哈希值:0a5fdeaf8cc44da931db5a32298e6afe */}
+| | `remove<V>(key)` | Entfernt einen Schlüssel und gibt den zugehörigen Wert zurück |
+| | `delete(key)` | Löscht ein Schlüssel-Wert-Paar |
+{/* 本行由工具自动生成,原文哈希值:11bf72b48a504b8ce6ae390caf56080c */}

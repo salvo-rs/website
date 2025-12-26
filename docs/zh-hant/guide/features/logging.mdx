@@ -2,26 +2,25 @@
 
 日誌記錄在Web應用程式中扮演著至關重要的角色，它能夠：
 - 提供請求處理過程的詳細資訊，幫助開發者追蹤應用行為
-- 輔助問題排查與除錯，特別在生產環境中
+- 輔助問題排查與除錯，尤其在生產環境中
 - 監控應用效能和資源使用情況
 - 記錄使用者存取模式和系統異常
 - 滿足安全稽核和合規性要求
 
-Salvo提供基本的Log功能中介軟體。若中介軟體直接加到`Router`上，將無法捕獲所有`Router`都不匹配時返回的404錯誤，建議添加到`Service`上。
+Salvo提供具備基礎日誌功能的中介軟體。若直接將中介軟體新增至 `Router`，將無法擷取所有 `Router` 皆不匹配時返回的404錯誤，建議新增至 `Service` 上。
 
+_**範例程式碼**_ 
 
-_**範例程式碼**_
-
-import { Tab, Tabs } from 'rspress/theme';
-import LoggingCode from '../../../../codes_md/logging/src/main.mdx';
-import LoggingCargoCode from '../../../../codes_md/logging/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <LoggingCode/>
+  ```rust file="<root>/codes/logging/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <LoggingCargoCode/>
+  ```toml file="<root>/codes/logging/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:b378fca9964cf2a34b48e7c0c9f74a2d */}
+{/* 本行由工具自动生成,原文哈希值:4c7986fbfefd00cadca247ef815900e4 */}

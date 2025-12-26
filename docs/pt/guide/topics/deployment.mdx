@@ -1,19 +1,19 @@
-# Como Implantar a Aplicação
+# Como Implantar Aplicações
 
-O projeto Salvo, após compilado, torna-se um arquivo executável. Para implantá-lo, basta enviar esse arquivo executável junto com os recursos estáticos necessários para o servidor.
+Após a compilação, um projeto Salvo é um arquivo executável. Para implantá-lo, basta fazer upload desse executável junto com os recursos estáticos dos quais ele depende para o servidor.
 
-Para projetos em Rust, existe uma plataforma de implantação muito simples: [shuttle.rs](https://www.shuttle.rs). O shuttle oferece suporte para projetos como o Salvo. Para mais detalhes, consulte a [documentação oficial](https://docs.shuttle.rs/guide/salvo-examples.html).
+Para projetos em Rust, existe também uma plataforma de implantação muito simples: [shuttle.rs](https://www.shuttle.rs). O shuttle oferece suporte para projetos do tipo Salvo; para mais detalhes, consulte a [documentação oficial](https://docs.shuttle.rs/guide/salvo-examples.html).
 
 ## Implantação com Docker
 
-Você também pode usar Docker para implantar aplicações Salvo. Abaixo está um exemplo básico de `Dockerfile`, que pode ser ajustado conforme as necessidades do seu projeto:
+Você também pode usar o Docker para implantar aplicações Salvo. Abaixo está um exemplo básico de `Dockerfile`, que pode ser ajustado conforme as necessidades do seu projeto:
 
 ```dockerfile
 # Fase de construção
 FROM rust:slim AS build
 WORKDIR /app
 
-# Copiar arquivos de dependência primeiro para aproveitar o cache
+# Copiar arquivos de dependências primeiro para construir dependências (aproveitando cache de camadas)
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
@@ -24,7 +24,7 @@ COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# Fase de execução usando uma imagem base minimalista
+# Fase de execução usando uma imagem base enxuta
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
@@ -39,21 +39,21 @@ WORKDIR /app
 # Copiar o binário da fase de construção
 COPY --from=build /app/target/release/your_app_name ./app
 
-# Definir o comando de inicialização do container
+# Definir o comando de inicialização do contêiner
 CMD ["./app"]
 ```
 
 ### Instruções de Uso
 
-1. Salve o `Dockerfile` acima na raiz do seu projeto
-2. Substitua `your_app_name` pelo nome real do arquivo binário do seu projeto
-3. Se sua aplicação necessitar de arquivos estáticos (como templates, CSS, JS, etc.), adicione os comandos `COPY` correspondentes
-4. Caso sua aplicação precise de variáveis de ambiente, utilize a instrução `ENV`
+1. Salve o `Dockerfile` acima no diretório raiz do seu projeto.
+2. Ajuste `your_app_name` para o nome real do arquivo binário do seu projeto.
+3. Se sua aplicação precisar de arquivos estáticos (como modelos, CSS, JS, etc.), você pode adicionar comandos `COPY` apropriados.
+4. Se sua aplicação precisar de configuração por variáveis de ambiente, use a instrução `ENV`.
 5. Construa a imagem Docker:
    ```bash
    docker build -t seu-nome-de-app .
    ```
-6. Execute o container:
+6. Execute o contêiner:
    ```bash
    docker run -p 5800:5800 seu-nome-de-app
    ```

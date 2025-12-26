@@ -2,11 +2,7 @@
 
 提供流量控制功能的中间件.
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticMainCode from '../../../../codes_md/rate-limiter-static/src/main.mdx';
-import StaticCargoCode from '../../../../codes_md/rate-limiter-static/Cargo.mdx';
-import DynamicMainCode from '../../../../codes_md/rate-limiter-dynamic/src/main.mdx';
-import DynamicCargoCode from '../../../../codes_md/rate-limiter-dynamic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## 主要功能
 
@@ -26,10 +22,12 @@ _**示例代码**_
 
 <Tabs>
   <Tab label="main.rs">
-    <StaticMainCode/>
+  ```rust file="<root>/codes/rate-limiter-static/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <StaticCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-static/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -37,9 +35,11 @@ _**示例代码**_
 
 <Tabs>
   <Tab label="main.rs">
-    <DynamicMainCode/>
+  ```rust file="<root>/codes/rate-limiter-dynamic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <DynamicCargoCode/>
+  ```toml file="<root>/codes/rate-limiter-dynamic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

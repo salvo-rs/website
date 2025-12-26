@@ -2,16 +2,15 @@
 
 In Salvo können Benutzeranfragedaten über [`Request`](https://docs.rs/salvo_core/latest/salvo_core/http/request/struct.Request.html) abgerufen werden:
 
-### Schnelles Verständnis
+### Schnellverständnis
+Request ist eine Struktur, die eine HTTP-Anfrage repräsentiert und umfassende Anfrageverarbeitungsfunktionen bietet:
 
-Request ist eine Struktur, die eine HTTP-Anfrage darstellt und umfassende Funktionen zur Anfrageverarbeitung bietet:
-
-- Bearbeitung grundlegender Attribute (URI, Methode, Version)
-- Verwaltung von Anfrageheadern und Cookies
-- Analyse verschiedener Parameter (Pfad, Abfrage, Formular)
-- Unterstützung für Anfragekörperverarbeitung und Dateiupload
-- Bereitstellung verschiedener Datenanalysemethoden (JSON, Formular usw.)
-- Einheitliche typsichere Datenextraktion über die extract-Methode
+* Manipulation grundlegender Attribute (URI, Methode, Version)
+* Verarbeitung von Anfrageheadern und Cookies
+* Parsen verschiedener Parameter (Pfad, Abfrage, Formular)
+* Unterstützung für Anfragekörperverarbeitung und Dateiupload
+* Bereitstellung mehrerer Datenparsermethoden (JSON, Formular usw.)
+* Einheitliche typsichere Datenextraktion über die extract-Methode
 
 ```rust
 #[handler]
@@ -22,7 +21,7 @@ async fn hello(req: &mut Request) -> String {
 
 ## Abfrageparameter abrufen
 
-Abfrageparameter können mit `get_query` abgerufen werden:
+Abfrageparameter können über `get_query` abgerufen werden:
 
 ```rust
 req.query::<String>("id");
@@ -30,35 +29,35 @@ req.query::<String>("id");
 
 ## Formulardaten abrufen
 
-Formulardaten können mit `get_form` abgerufen werden, diese Funktion ist asynchron:
+Formulardaten können über `get_form` abgerufen werden, diese Funktion ist asynchron:
 
 ```rust
 req.form::<String>("id").await;
 ```
 
-## JSON-Daten deserialisieren
+## JSON-deserialisierte Daten abrufen
 
 ```rust
 req.parse_json::<User>().await;
 ```
 
-## Daten aus der Anfrage extrahieren
+## Request-Daten extrahieren
 
 `Request` bietet mehrere Methoden, um diese Daten in stark typisierte Strukturen zu parsen.
 
-- `parse_params`: Parst die Router-Parameter der Anfrage in einen bestimmten Datentyp;
-- `parse_queries`: Parst die URL-Abfragen der Anfrage in einen bestimmten Datentyp;
-- `parse_headers`: Parst die HTTP-Header der Anfrage in einen bestimmten Datentyp;
-- `parse_json`: Parst die Daten des HTTP-Body-Teils der Anfrage als JSON in einen bestimmten Typ;
-- `parse_form`: Parst die Daten des HTTP-Body-Teils der Anfrage als Formular in einen bestimmten Typ;
-- `parse_body`: Parst die Daten des HTTP-Body-Teils der Anfrage basierend auf dem `content-type` in einen bestimmten Typ;
-- `extract`: Kann verschiedene Datenquellen kombinieren, um einen bestimmten Typ zu extrahieren.
+* `parse_params`: Parst die Router-Parameter der Anfrage in einen bestimmten Datentyp;
+* `parse_queries`: Parst die URL-Abfragen der Anfrage in einen bestimmten Datentyp;
+* `parse_headers`: Parst die HTTP-Header der Anfrage in einen bestimmten Datentyp;
+* `parse_json`: Parst die Daten des HTTP-Body-Teils der Anfrage als JSON-Format in einen bestimmten Typ;
+* `parse_form`: Parst die Daten des HTTP-Body-Teils der Anfrage als Formular in einen bestimmten Typ;
+* `parse_body`: Parst die Daten des HTTP-Body-Teils der Anfrage basierend auf dem `content-type` in einen bestimmten Typ.
+* `extract`: Kann verschiedene Datenquellen kombinieren, um einen bestimmten Typ zu extrahieren.
 
 ## Parsing-Prinzip
 
-Hier werden Daten wie `HashMap<String, String>` und `HashMap<String, Vec<String>>` mithilfe eines benutzerdefinierten `serde::Deserializer` in bestimmte Datentypen extrahiert.
+Hier werden Daten ähnlich wie `HashMap<String, String>` und `HashMap<String, Vec<String>>` über einen benutzerdefinierten `serde::Deserializer` in bestimmte Datentypen extrahiert.
 
-Zum Beispiel: `URL queries` werden tatsächlich als [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html)-Typ extrahiert, der als ähnlich zu `HashMap<String, Vec<String>>` betrachtet werden kann. Wenn die angeforderte URL `http://localhost/users?id=123&id=234` ist und der Zieltyp:
+Zum Beispiel: `URL queries` werden tatsächlich als [MultiMap](https://docs.rs/multimap/latest/multimap/struct.MultiMap.html)-Typ extrahiert. `MultiMap` kann als eine Datenstruktur ähnlich `HashMap<String, Vec<String>>` betrachtet werden. Wenn die angeforderte URL `http://localhost/users?id=123&id=234` ist und der bereitgestellte Zieltyp:
 
 ```rust
 #[derive(Deserialize)]
@@ -67,14 +66,14 @@ struct User {
 }
 ```
 
-dann wird das erste `id=123` geparst, während `id=234` verworfen wird:
+Dann wird das erste `id=123` geparst, `id=234` wird verworfen:
 
 ```rust
 let user: User = req.parse_queries().unwrap();
 assert_eq!(user.id, 123);
 ```
 
-Wenn der bereitgestellte Typ jedoch:
+Wenn der bereitgestellte Typ:
 
 ```rust
 #[derive(Deserialize)]
@@ -83,7 +82,7 @@ struct Users {
 }
 ```
 
-dann werden sowohl `id=123` als auch `id=234` geparst:
+Dann werden sowohl `id=123` als auch `id=234` geparst:
 
 ```rust
 let users: Users = req.parse_queries().unwrap();
@@ -91,55 +90,48 @@ assert_eq!(user.ids, vec![123, 234]);
 ```
 
 ### Integrierte Extractor
-
-Das Framework bietet integrierte Extraktoren für Anfrageparameter. Diese Extraktoren können den Code zur Verarbeitung von HTTP-Anfragen erheblich vereinfachen.
+Das Framework bietet integrierte Anfrageparameterextraktoren. Diese Extractor können den Code zur Verarbeitung von HTTP-Anfragen erheblich vereinfachen.
 
 :::tip
-Um die Extraktoren zu verwenden, müssen Sie das Feature `"oapi"` in Ihrer `Cargo.toml` hinzufügen:
-
+Um die Extractor zu verwenden, müssen Sie das `"oapi"`-Feature in Ihrer `Cargo.toml` hinzufügen:
 ```rust
 salvo = {version = "*", features = ["oapi"]}
 ```
-
 :::
 
-Dann können Sie die Extraktoren importieren:
-
+Dann können Sie die Extractor importieren:
 ```rust
 use salvo::{oapi::extract::JsonBody, prelude::*};
 ```
 
 #### JsonBody
-
-Extrahiert JSON-Daten aus dem Anfragekörper und deserialisiert sie in einen bestimmten Typ.
+Wird verwendet, um JSON-Daten aus dem Anfragekörper zu extrahieren und in einen angegebenen Typ zu deserialisieren.
 
 ```rust
 #[handler]
 async fn create_user(json: JsonBody<User>) -> String {
     let user = json.into_inner();
-    format!("Benutzer mit ID {} wurde erstellt", user.id)
+    format!("Benutzer mit ID {} erstellt", user.id)
 }
 ```
 
 #### FormBody
-
-Extrahiert Formulardaten aus dem Anfragekörper und deserialisiert sie in einen bestimmten Typ.
+Extrahiert Formulardaten aus dem Anfragekörper und deserialisiert sie in einen angegebenen Typ.
 
 ```rust
 #[handler]
 async fn update_user(form: FormBody<User>) -> String {
     let user = form.into_inner();
-    format!("Benutzer mit ID {} wurde aktualisiert", user.id)
+    format!("Benutzer mit ID {} aktualisiert", user.id)
 }
 ```
 
 #### CookieParam
-
 Extrahiert einen bestimmten Wert aus den Cookies der Anfrage.
 
 ```rust
-// Der zweite Parameter bestimmt, ob into_inner() panic auslöst, wenn der Wert nicht existiert (true),
-// oder ein Option<T> zurückgibt (false).
+// Zweiter Parameter: Wenn true, panic bei fehlendem Wert in into_inner(); wenn false,
+// gibt into_inner() Option<T> zurück.
 #[handler]
 fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
     format!("Benutzer-ID aus Cookie: {}", user_id.into_inner())
@@ -147,8 +139,7 @@ fn get_user_from_cookie(user_id: CookieParam<i64,true>) -> String {
 ```
 
 #### HeaderParam
-
-Extrahiert einen bestimmten Wert aus den Headern der Anfrage.
+Extrahiert einen bestimmten Wert aus den Anfrageheadern.
 
 ```rust
 #[handler]
@@ -158,7 +149,6 @@ fn get_user_from_header(user_id: HeaderParam<i64,true>) -> String {
 ```
 
 #### PathParam
-
 Extrahiert Parameter aus dem URL-Pfad.
 
 ```rust
@@ -169,7 +159,6 @@ fn get_user(id: PathParam<i64>) -> String {
 ```
 
 #### QueryParam
-
 Extrahiert Parameter aus der URL-Abfragezeichenfolge.
 
 ```rust
@@ -180,12 +169,11 @@ fn search_user(id: QueryParam<i64,true>) -> String {
 ```
 
 ### Fortgeschrittene Verwendung
-
-Sie können mehrere Datenquellen kombinieren, um einen bestimmten Typ zu extrahieren. Definieren Sie zunächst einen benutzerdefinierten Typ, z.B.:
+Mehrere Datenquellen können kombiniert werden, um einen bestimmten Typ zu extrahieren. Zuerst kann ein benutzerdefinierter Typ definiert werden, z.B.:
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
-/// Standardmäßig werden Datenfelder aus dem Body abgerufen
+/// Standardmäßig werden Datenfeldwerte aus dem Body abgerufen
 #[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
     /// Die ID wird aus den Pfadparametern der Anfrage abgerufen und automatisch als i64 geparst.
@@ -198,7 +186,7 @@ struct GoodMan<'a> {
 }
 ```
 
-Dann können Sie die Daten im `Handler` wie folgt abrufen:
+Dann können Daten im `Handler` wie folgt abgerufen werden:
 
 ```rust
 #[handler]
@@ -207,7 +195,7 @@ async fn edit(req: &mut Request) {
 }
 ```
 
-Oder Sie können den Typ direkt als Parameter an die Funktion übergeben:
+Oder der Typ kann sogar direkt als Parameter an die Funktion übergeben werden, wie hier:
 
 ```rust
 #[handler]
@@ -216,10 +204,9 @@ async fn edit<'a>(good_man: GoodMan<'a>) {
 }
 ```
 
-Die Definition von Datentypen ist sehr flexibel und kann sogar verschachtelte Strukturen parsen:
+Die Definition von Datentypen ist sehr flexibel und kann sogar nach Bedarf in verschachtelte Strukturen geparst werden:
 
 ```rust
-{`
 #[derive(Serialize, Deserialize, Extractible, Debug)]
 #[salvo(extract(default_source(from = "body")))]
 struct GoodMan<'a> {
@@ -230,7 +217,7 @@ struct GoodMan<'a> {
     first_name: String,
     last_name: String,
     lovers: Vec<String>,
-    /// Dieses verschachtelte Feld wird vollständig aus der Anfrage geparst.
+    /// Dieses nested-Feld wird vollständig neu aus der Request geparst.
     #[salvo(extract(flatten))]
     nested: Nested<'a>,
 }
@@ -248,16 +235,17 @@ struct Nested<'a> {
     #[serde(default)]
     pets: Vec<String>,
 }
-`}
 ```
 
 Ein konkretes Beispiel finden Sie unter: [extract-nested](https://github.com/salvo-rs/salvo/blob/main/examples/extract-nested/src/main.rs).
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
-Wenn im obigen Beispiel Nested<'a> keine Felder hat, die mit den übergeordneten Feldern übereinstimmen, können Sie `#[serde(flatten)]` verwenden, andernfalls müssen Sie `#[salvo(extract(flatten))]` verwenden.
+
+Wenn im obigen Beispiel Nested<'a> keine Felder hat, die mit den übergeordneten Feldern übereinstimmen, kann `#[serde(flatten)]` verwendet werden, andernfalls muss `#[salvo(extract(flatten))]` verwendet werden.
+
 ### `#[salvo(extract(source(parse)))]`
 
-Sie können dem `source` auch einen `parse`-Parameter hinzufügen, um eine bestimmte Parsing-Methode anzugeben. Wenn dieser Parameter nicht angegeben wird, entscheidet das Parsing basierend auf den Informationen der `Request`, ob der `Body`-Teil als `MuiltMap` oder als JSON geparst wird. In den meisten Fällen ist dieser Parameter nicht erforderlich, aber in seltenen Fällen kann er spezielle Funktionen ermöglichen.
+Tatsächlich kann der `source` auch ein `parse`-Parameter hinzugefügt werden, um eine bestimmte Parsing-Methode anzugeben. Wenn dieser Parameter nicht angegeben wird, entscheidet das Parsing basierend auf den Informationen der `Request` über die Parsing-Methode des Body-Teils. Bei Formularen wird es als `MultiMap` geparst, bei JSON-Payloads im JSON-Format. In den meisten Fällen muss dieser Parameter nicht angegeben werden. In Einzelfällen kann durch die Angabe dieses Parameters eine spezielle Funktion implementiert werden.
 
 ```rust
 #[tokio::test]
@@ -289,35 +277,35 @@ async fn test_de_request_with_form_json_str() {
 }
 ```
 
-Hier wird beispielsweise ein Formular gesendet, aber ein Feld enthält einen JSON-Text. Durch Angabe von `parse` kann dieser String als JSON geparst werden.
+Hier kommt beispielsweise tatsächlich ein Formular als Anfrage, aber der Wert eines bestimmten Feldes ist ein JSON-Text. In diesem Fall kann durch Angabe von `parse` dieser String im JSON-Format geparst werden.
 
-## Teilweise API-Übersicht, für die neuesten und detailliertesten Informationen siehe die creates API-Dokumentation
-
+## Teilweise API-Übersicht, für die neuesten und detailliertesten Informationen siehe die Crate-API-Dokumentation
 # Überblick über die Methoden der Request-Struktur
 
-| Kategorie                 | Methode                                | Beschreibung                                  |
-| ------------------------- | -------------------------------------- | --------------------------------------------- |
-| **Anfrageinformation**    | `uri()/uri_mut()/set_uri()`            | URI-Operationen                               |
-|                           | `method()/method_mut()`                | HTTP-Methodenoperationen                      |
-|                           | `version()/version_mut()`              | HTTP-Versionsoperationen                      |
-|                           | `scheme()/scheme_mut()`                | Protokollschemenoperationen                   |
-|                           | `remote_addr()/local_addr()`           | Adressinformationen                           |
-| **Anfrageheader**         | `headers()/headers_mut()`              | Alle Anfrageheader abrufen                    |
-|                           | `header<T>()/try_header<T>()`          | Bestimmten Header abrufen und parsen          |
-|                           | `add_header()`                         | Header hinzufügen                             |
-|                           | `content_type()/accept()`              | Inhaltstyp/Akzeptanztyp abrufen               |
-| **Parameterverarbeitung** | `params()/param<T>()`                  | Pfadparameteroperationen                      |
-|                           | `queries()/query<T>()`                 | Abfrageparameteroperationen                   |
-|                           | `form<T>()/form_or_query<T>()`         | Formulardatenoperationen                      |
-| **Anfragekörper**         | `body()/body_mut()`                    | Anfragekörper abrufen                         |
-|                           | `replace_body()/take_body()`           | Anfragekörper ändern/extrahiere               |
-|                           | `payload()/payload_with_max_size()`    | Rohdaten abrufen                              |
-| **Dateiverarbeitung**     | `file()/files()/all_files()`           | Hochgeladene Dateien abrufen                  |
-|                           | `first_file()`                         | Erste Datei abrufen                           |
-| **Datenanalyse**          | `extract<T>()`                         | Einheitliche Datenextraktion                  |
-|                           | `parse_json<T>()/parse_form<T>()`      | JSON/Formular parsen                          |
-|                           | `parse_body<T>()`                      | Intelligentes Parsen des Anfragekörpers       |
-|                           | `parse_params<T>()/parse_queries<T>()` | Parameter/Abfragen parsen                     |
-| **Spezielle Funktionen**  | `cookies()/cookie()`                   | Cookie-Operationen (erfordert cookie-Feature) |
-|                           | `extensions()/extensions_mut()`        | Erweiterte Datenspeicherung                   |
-|                           | `set_secure_max_size()`                | Sicherheitsgrößenbeschränkung festlegen       |
+| Kategorie | Methode | Beschreibung |
+|------|------|------|
+| **Anfrageinformationen** | `uri()/uri_mut()/set_uri()` | URI-Operationen |
+| | `method()/method_mut()` | HTTP-Methodenoperationen |
+| | `version()/version_mut()` | HTTP-Versionsoperationen |
+| | `scheme()/scheme_mut()` | Protokollschemata-Operationen |
+| | `remote_addr()/local_addr()` | Adressinformationen |
+| **Anfrageheader** | `headers()/headers_mut()` | Alle Anfrageheader abrufen |
+| | `header<T>()/try_header<T>()` | Bestimmten Header abrufen und parsen |
+| | `add_header()` | Anfrageheader hinzufügen |
+| | `content_type()/accept()` | Inhaltstyp/Akzeptanztyp abrufen |
+| **Parameterverarbeitung** | `params()/param<T>()` | Pfadparameteroperationen |
+| | `queries()/query<T>()` | Abfrageparameteroperationen |
+| | `form<T>()/form_or_query<T>()` | Formulardatenoperationen |
+| **Anfragekörper** | `body()/body_mut()` | Anfragekörper abrufen |
+| | `replace_body()/take_body()` | Anfragekörper ändern/extrahieren |
+| | `payload()/payload_with_max_size()` | Rohdaten abrufen |
+| **Dateiverarbeitung** | `file()/files()/all_files()` | Hochgeladene Dateien abrufen |
+| | `first_file()` | Erste Datei abrufen |
+| **Datenparsing** | `extract<T>()` | Einheitliche Datenextraktion |
+| | `parse_json<T>()/parse_form<T>()` | JSON/Formular parsen |
+| | `parse_body<T>()` | Intelligentes Parsing des Anfragekörpers |
+| | `parse_params<T>()/parse_queries<T>()` | Parameter/Abfragen parsen |
+| **Spezielle Funktionen** | `cookies()/cookie()` | Cookie-Operationen (erfordert cookie-Feature) |
+| | `extensions()/extensions_mut()` | Erweiterungsdatenspeicherung |
+| | `set_secure_max_size()` | Sicherheitsgrößenbeschränkung setzen |
+{/* 本行由工具自动生成,原文哈希值:6b654f79df08ba1dc5cc1c070780def0 */}

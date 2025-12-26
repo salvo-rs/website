@@ -1,61 +1,61 @@
-# Handler  
+# Handler
 
-## Quick Overview  
+## Quick Overview
 
-Handler is a core concept in the Salvo framework, which can be simply understood as a request processing unit. It has two main purposes:  
+Handler is a core concept in the Salvo framework, which can be simply understood as a request processing unit. It has two main purposes:
 
-1. **As an Endpoint**: Objects implementing `Handler` can be placed in the routing system as endpoints to handle requests. When using the `#[handler]` macro, functions can directly serve as endpoints. The `#[endpoint]` macro not only allows functions to act as endpoints but also automatically generates OpenAPI documentation (this will be detailed in later documentation).  
+1. **As an Endpoint**: An object implementing `Handler` can be placed into the routing system as the final endpoint to process requests. When using the `#[handler]` macro, a function can be directly used as an endpoint; while using the `#[endpoint]` macro not only allows it to serve as an endpoint but also automatically generates OpenAPI documentation (this will be detailed in subsequent documentation).
 
-2. **As Middleware**: The same `Handler` can also function as middleware, processing requests before or after they reach the final endpoint.  
+2. **As Middleware**: The same `Handler` can also be used as middleware to process requests before or after they reach the final endpoint.
 
-Salvo's request processing flow can be visualized as a "pipeline": requests first pass through a series of middleware (vertical processing) before reaching the matched endpoint (horizontal processing). Both middleware and endpoints are implementations of `Handler`, ensuring system-wide consistency and flexibility.  
+Salvo's request processing flow can be viewed as a "pipeline": a request first passes through a series of middleware (vertical processing) and then reaches the matching endpoint (horizontal processing). Both middleware and endpoints are implementations of `Handler`, which ensures consistency and flexibility throughout the system.
 
-### Handler Flowchart in Salvo  
+### Handler Flowchart in Salvo
 
-```mermaid  
-flowchart TD  
-    Client[Client] -->|Request| Request[HTTP Request]  
-    Request --> M1  
+```mermaid
+flowchart TD
+    Client[Client] -->|Request| Request[HTTP Request]
+    Request --> M1
 
-    subgraph "Handler Implementation"  
-        M1[Logging Middleware] -->|Vertical Processing| M2[Auth Middleware] -->|Vertical Processing| M3[Other Business Middleware]  
-        M3 --> Router[Routing Match]  
+    subgraph "Handler Implementation"
+        M1[Logging Middleware] -->|Vertical Processing| M2[Auth Middleware] -->|Vertical Processing| M3[Other Business Middleware]
+        M3 --> Router[Route Matching]
 
-        Router -->|Horizontal Processing| E1["Endpoint1<br>#[handler]"]  
-        Router -->|Horizontal Processing| E2["Endpoint2<br>#[endpoint]"]  
-        Router -->|Horizontal Processing| E3["Endpoint3<br>Implements Handler Trait"]  
-    end  
+        Router -->|Horizontal Processing| E1["Endpoint 1<br>#[handler]"]
+        Router -->|Horizontal Processing| E2["Endpoint 2<br>#[endpoint]"]
+        Router -->|Horizontal Processing| E3["Endpoint 3<br>Implements Handler Trait"]
+    end
 
-    E1 --> Response[HTTP Response]  
-    E2 --> Response  
-    E3 --> Response  
-    Response --> Client  
+    E1 --> Response[HTTP Response]
+    E2 --> Response
+    E3 --> Response
+    Response --> Client
 
-    classDef middleware fill:#afd,stroke:#4a4,stroke-width:2px;  
-    classDef endpoint fill:#bbf,stroke:#55a,stroke-width:2px;  
+    classDef middleware fill:#afd,stroke:#4a4,stroke-width:2px;
+    classDef endpoint fill:#bbf,stroke:#55a,stroke-width:2px;
 
-    class M1,M2,M3 middleware;  
-    class E1,E2,E3 endpoint;  
-```  
+    class M1,M2,M3 middleware;
+    class E1,E2,E3 endpoint;
+```
 
-### Middleware and the Onion Model  
+### Middleware and the Onion Model
 
-The essence of the onion model lies in the placement of `ctrl.call_next()`, enabling bidirectional processing of requests and responses. This allows each middleware to participate in the complete request-response cycle.  
+The essence of the onion model is that by placing `ctrl.call_next()` before and after specific logic, it implements a bidirectional processing flow for requests and responses, allowing each middleware to participate in the complete request-response cycle.
 
-### Complete Middleware Example Structure  
+### Complete Middleware Example Structure
 
-```rust  
-async fn example_middleware(req: &mut Request, resp: &mut Response, ctrl: &mut FlowCtrl) {  
-    // Pre-processing (Request Phase)  
-    // Place logic to execute when the request enters here  
+```rust
+async fn example_middleware(req: &mut Request, depot: &mut Depot, resp: &mut Response, ctrl: &mut FlowCtrl) {
+    // Pre-processing (Request Phase)
+    // Place logic to execute when the request enters here.
 
-    // Invoke the next handler in the chain  
-    ctrl.call_next(req, resp).await;  
+    // Call the next handler in the chain.
+    ctrl.call_next(req, depot, resp).await;
 
-    // Post-processing (Response Phase)  
-    // Place logic to execute after request processing completes here  
-}  
-```  
+    // Post-processing (Response Phase)
+    // Place logic to execute after the request is processed here.
+}
+```
 
 ```mermaid
 flowchart TB
@@ -65,15 +65,15 @@ flowchart TB
         direction TB
 
         subgraph M1["Middleware 1"]
-            M1A["Pre-processing<br>Log: Request start"] --> M1B["Post-processing<br>Log: Request end"]
+            M1A["Pre-processing<br>Logging: Request Start"] --> M1B["Post-processing<br>Logging: Request End"]
         end
 
         subgraph M2["Middleware 2"]
-            M2A["Pre-processing<br>Record request start time"] --> M2B["Post-processing<br>Calculate processing time"]
+            M2A["Pre-processing<br>Record Request Start Time"] --> M2B["Post-processing<br>Calculate Processing Time"]
         end
 
         subgraph M3["Middleware 3"]
-            M3A["Pre-processing<br>Validate user permissions"] --> M3B["Post-processing<br>"]
+            M3A["Pre-processing<br>Validate User Permissions"] --> M3B["Post-processing<br>"]
         end
 
         subgraph Core["Core Processing Logic"]
@@ -103,147 +103,147 @@ flowchart TB
     class Handler core;
 ```
 
-## What is a Handler  
+## What is a Handler
 
-A Handler is an object responsible for processing Request objects. The Handler itself is a Trait containing an asynchronous `handle` method:  
+A Handler is the concrete object responsible for processing Request objects. Handler itself is a Trait containing an asynchronous `handle` method:
 
-```rust  
-#[async_trait]  
-pub trait Handler: Send + Sync + 'static {  
-    async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response);  
-}  
-```  
-
-The `handle` function's default signature includes four parameters: `&mut Request`, `&mut Depot`, `&mut Response`, and `&mut FlowCtrl`. Depot is temporary storage for request-related data.  
-
-Depending on usage, a Handler can serve as middleware (hoop), processing requests before or after they reach the final Handler—e.g., for authentication, data compression, etc.  
-
-Middleware is added via the `hoop` function of `Router`. Added middleware affects the current `Router` and all its descendant `Router`s.  
-
-A `Handler` can also serve as a goal—participating in routing matching and final execution.  
-
-## `Handler` as Middleware (hoop)  
-
-When a `Handler` acts as middleware, it can be added to three types of middleware-supporting objects:  
-
-- `Service`: All requests pass through middleware defined in `Service`.  
-- `Router`: Only successfully matched requests pass through middleware defined in `Service` and all middleware collected along the matched path.  
-- `Catcher`: When an error occurs and no custom error message is written, requests pass through middleware in `Catcher`.  
-- `Handler`: A `Handler` itself supports adding middleware wrappers for pre- or post-processing logic.  
-
-## Using the `#[handler]` Macro  
-
-The `#[handler]` macro significantly simplifies code and enhances flexibility.  
-
-It can be applied to a function to implement `Handler`:  
-
-```rust  
-#[handler]  
-async fn hello() -> &'static str {  
-    "hello world!"  
-}  
-```  
-
-This is equivalent to:  
-
-```rust  
-struct hello;  
-
-#[async_trait]  
-impl Handler for hello {  
-    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {  
-        res.render(Text::Plain("hello world!"));  
-    }  
-}  
-```  
-
-As shown, using `#[handler]` makes the code much simpler:  
-
-- Manual `#[async_trait]` is no longer needed.  
-- Unnecessary parameters can be omitted, and required parameters can be arranged in any order.  
-- Objects implementing the `Writer` or `Scribe` traits can be directly returned. Here, `&'static str` implements `Scribe`, so it can be returned directly.  
-
-The `#[handler]` macro can also be applied to a `struct`'s `impl` block to implement `Handler`. In this case, the `handle` function in the `impl` block is recognized as the concrete implementation of `Handler`'s `handle`:  
-
-```rust  
-struct Hello;  
-
-#[handler]  
-impl Hello {  
-    async fn handle(&self, res: &mut Response) {  
-        res.render(Text::Plain("hello world!"));  
-    }  
-}  
-```  
-
-## Handling Errors  
-
-In Salvo, a `Handler` can return `Result`, provided the `Ok` and `Err` types both implement the `Writer` trait.  
-Given the widespread use of `anyhow`, when the `anyhow` feature is enabled, `anyhow::Error` implements the `Writer` trait and is mapped to `InternalServerError`.  
-
-```rust  
-#[cfg(feature = "anyhow")]  
-#[async_trait]  
-impl Writer for ::anyhow::Error {  
-    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {  
-        res.render(StatusError::internal_server_error());  
-    }  
-}  
-```  
-
-For custom error types, you can render different error pages as needed:  
-
-```rust  
-use salvo::anyhow;  
-use salvo::prelude::*;  
-
-struct CustomError;  
-#[async_trait]  
-impl Writer for CustomError {  
-    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {  
-        res.status_code(StatusCode::INTERNAL_SERVER_ERROR);  
-        res.render("custom error");  
-    }  
-}  
-
-#[handler]  
-async fn handle_anyhow() -> Result<(), anyhow::Error> {  
-    Err(anyhow::anyhow!("anyhow error"))  
-}  
-#[handler]  
-async fn handle_custom() -> Result<(), CustomError> {  
-    Err(CustomError)  
-}  
-
-#[tokio::main]  
-async fn main() {  
-    let router = Router::new()  
-        .push(Router::new().path("anyhow").get(handle_anyhow))  
-        .push(Router::new().path("custom").get(handle_custom));  
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;  
-    Server::new(acceptor).serve(router).await;  
-}  
-```  
-
-## Directly Implementing the Handler Trait  
-
-```rust  
-use salvo_core::prelude::*;  
-use crate::salvo_core::http::Body;  
-
-pub struct MaxSizeHandler(u64);  
-#[async_trait]  
-impl Handler for MaxSizeHandler {  
-    async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl) {  
-        if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {  
-            if upper > self.0 {  
-                res.render(StatusError::payload_too_large());  
-                ctrl.skip_rest();  
-            } else {  
-                ctrl.call_next(req, depot, res).await;  
-            }  
-        }  
-    }  
-}  
+```rust
+#[async_trait]
+pub trait Handler: Send + Sync + 'static {
+    async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response);
+}
 ```
-{/* 本行由工具自动生成,原文哈希值:6e138bcee73660fa82c5418d286d59cc */}
+
+The default signature of the `handle` function includes four parameters, in order: `&mut Request, &mut Depot, &mut Response, &mut FlowCtrl`. Depot is temporary storage that can hold data related to the current request.
+
+Depending on how it's used, it can serve as middleware (hoop), which can perform processing before or after the request reaches the formal request-processing `Handler`, such as: login verification, data compression, etc.
+
+Middleware is added via the `hoop` function of a `Router`. The added middleware affects the current `Router` and all its descendant `Router`s.
+
+A `Handler` can also be used as a `Handler` that participates in route matching and is ultimately executed, known as a `goal`.
+
+## `Handler` as Middleware (hoop)
+
+When a `Handler` acts as middleware, it can be added to the following three types of objects that support middleware:
+
+- `Service`: Any request will pass through the middleware in the `Service`.
+- `Router`: Only when route matching succeeds will the request pass through the middleware defined in the `Service` and all middleware collected along the matching path.
+- `Catcher`: When an error occurs and no custom error information has been written, the request will pass through the middleware in the `Catcher`.
+- `Handler`: The `Handler` itself supports adding middleware wrappers to execute some pre- or post-logic.
+
+## Using the `#[handler]` Macro
+
+The `#[handler]` macro can greatly simplify code writing and improve code flexibility.
+
+It can be applied to a function to make it implement `Handler`:
+
+```rust
+#[handler]
+async fn hello() -> &'static str {
+    "hello world!"
+}
+```
+
+This is equivalent to:
+
+```rust
+struct hello;
+
+#[async_trait]
+impl Handler for hello {
+    async fn handle(&self, _req: &mut Request, _depot: &mut Depot, res: &mut Response, _ctrl: &mut FlowCtrl) {
+        res.render(Text::Plain("hello world!"));
+    }
+}
+```
+
+As you can see, with `#[handler]`, the code becomes much simpler:
+
+- No need to manually add `#[async_trait]`.
+- Unnecessary parameters in the function are omitted, and the required parameters can be arranged in any order.
+- For objects implementing the `Writer` or `Scribe` abstractions, they can be directly returned as the function's return value. Here, `&'static str` implements `Scribe`, so it can be directly returned.
+
+`#[handler]` can not only be applied to functions but also to the `impl` block of a `struct` to make the `struct` implement `Handler`. In this case, the `handle` function within the `impl` block is recognized as the concrete implementation of the `handle` method in `Handler`:
+
+```rust
+struct Hello;
+
+#[handler]
+impl Hello {
+    async fn handle(&self, res: &mut Response) {
+        res.render(Text::Plain("hello world!"));
+    }
+}
+```
+
+## Handling Errors
+
+In Salvo, a `Handler` can return a `Result`, provided that both the `Ok` and `Err` types within the `Result` implement the `Writer` trait.
+Considering the widespread use of anyhow, when the `anyhow` feature is enabled, `anyhow::Error` will implement the `Writer` trait. `anyhow::Error` will be mapped to `InternalServerError`.
+
+```rust
+#[cfg(feature = "anyhow")]
+#[async_trait]
+impl Writer for ::anyhow::Error {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.render(StatusError::internal_server_error());
+    }
+}
+```
+
+For custom error types, you can output different error pages as needed.
+
+```rust
+use salvo::anyhow;
+use salvo::prelude::*;
+
+struct CustomError;
+#[async_trait]
+impl Writer for CustomError {
+    async fn write(mut self, _req: &mut Request, _depot: &mut Depot, res: &mut Response) {
+        res.status_code(StatusCode::INTERNAL_SERVER_ERROR);
+        res.render("custom error");
+    }
+}
+
+#[handler]
+async fn handle_anyhow() -> Result<(), anyhow::Error> {
+    Err(anyhow::anyhow!("anyhow error"))
+}
+#[handler]
+async fn handle_custom() -> Result<(), CustomError> {
+    Err(CustomError)
+}
+
+#[tokio::main]
+async fn main() {
+    let router = Router::new()
+        .push(Router::new().path("anyhow").get(handle_anyhow))
+        .push(Router::new().path("custom").get(handle_custom));
+    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await;
+    Server::new(acceptor).serve(router).await;
+}
+```
+
+## Directly Implementing the Handler Trait
+
+```rust
+use salvo_core::prelude::*;
+use crate::salvo_core::http::Body;
+
+pub struct MaxSizeHandler(u64);
+#[async_trait]
+impl Handler for MaxSizeHandler {
+    async fn handle(&self, req: &mut Request, depot: &mut Depot, res: &mut Response, ctrl: &mut FlowCtrl) {
+        if let Some(upper) = req.body().and_then(|body| body.size_hint().upper()) {
+            if upper > self.0 {
+                res.render(StatusError::payload_too_large());
+                ctrl.skip_rest();
+            } else {
+                ctrl.call_next(req, depot, res).await;
+            }
+        }
+    }
+}
+```
+{/* 本行由工具自动生成,原文哈希值:aba76a058ee7c27a6a982876209eae78 */}

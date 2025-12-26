@@ -1,12 +1,12 @@
-# Roteador
+# Router
 
 ## O que é Roteamento
 
-[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) define quais middlewares e `Handlers` processarão uma requisição HTTP. Esta é a funcionalidade mais básica e central do Salvo.
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) define quais middlewares e `Handler`s processarão uma requisição HTTP. Esta é a funcionalidade mais fundamental e central no Salvo.
 
-Internamente, o `Router` consiste em uma série de filtros (Filters). Quando uma requisição chega, o roteador testa sequencialmente, de cima para baixo, se ele mesmo e seus descendentes podem corresponder à requisição. Se houver correspondência, os middlewares ao longo de toda a cadeia formada pelo roteador e seus descendentes são executados em ordem. Se durante o processamento o status da `Response` for definido como erro (4XX, 5XX) ou redirecionamento (3XX), os middlewares e `Handlers` subsequentes serão ignorados. Você também pode chamar manualmente `ctrl.skip_rest()` para pular os middlewares e `Handlers` seguintes.
+Internamente, um `Router` é composto por uma série de filtros (Filters). Quando uma requisição chega, o roteador testa, na ordem de adição, de cima para baixo, se ele mesmo e seus descendentes podem corresponder à requisição. Se a correspondência for bem-sucedida, os middlewares em toda a cadeia formada pelo roteador e seus descendentes são executados sequencialmente. Se durante o processamento o status do `Response` for definido como erro (4XX, 5XX) ou redirecionamento (3XX), os middlewares e `Handler`s subsequentes serão ignorados. Você também pode chamar manualmente `ctrl.skip_rest()` para ignorar os middlewares e `Handler`s seguintes.
 
-Durante o processo de correspondência, existe uma informação de caminho URL que pode ser considerada como um objeto que precisa ser completamente consumido pelos Filters. Se todos os Filters em um Router corresponderem com sucesso e essa informação de caminho URL tiver sido completamente consumida, considera-se que houve "correspondência bem-sucedida".
+Durante o processo de correspondência, existe uma informação de caminho da URL, que pode ser vista como um objeto que precisa ser completamente consumido pelos Filtros durante a correspondência. Se todos os Filtros em um determinado Router corresponderem com sucesso e essa informação de caminho da URL tiver sido completamente consumida, considera-se uma "correspondência bem-sucedida".
 
 Por exemplo:
 
@@ -14,35 +14,35 @@ Por exemplo:
 Router::with_path("articles").get(list_articles).post(create_article);
 ```
 
-É equivalente a:
+É funcionalmente equivalente a:
 
 ```rust
 Router::new()
-    // O PathFilter pode filtrar o caminho da requisição, só corresponderá se o caminho contiver o segmento 'articles',
-    // caso contrário, falhará. Por exemplo: /articles/123 corresponde, mas /articles_list/123
-    // embora contenha 'articles', não corresponde devido ao '_list' seguinte.
+    // O PathFilter pode filtrar o caminho da requisição. Só corresponde com sucesso se o caminho contiver o segmento "articles",
+    // caso contrário, a correspondência falha. Ex: /articles/123 tem correspondência bem-sucedida, enquanto /articles_list/123
+    // contém "articles", mas como há _list depois, a correspondência falha.
     .filter(PathFilter::new("articles"))
 
-    // Se o root corresponder e o método da requisição for GET, o roteador interno corresponderá
-    // e a requisição será processada por list_articles.
+    // Se o root corresponder com sucesso e o método da requisição for GET, o roteador filho interno corresponderá com sucesso,
+    // e a requisição será tratada por list_articles.
     .push(Router::new().filter(filters::get()).handle(list_articles))
 
-    // Se o root corresponder e o método da requisição for POST, o roteador interno corresponderá
-    // e a requisição será processada por create_article.
+    // Se o root corresponder com sucesso e o método da requisição for POST, o roteador filho interno corresponderá com sucesso,
+    // e a requisição será tratada por create_article.
     .push(Router::new().filter(filters::post()).handle(create_article));
 ```
 
-Se acessar `GET /articles/`, considera-se correspondência bem-sucedida e executa `list_articles`. Mas se acessar `GET /articles/123`, a correspondência falhará e retornará erro 404, porque `Router::with_path("articles")` só consumiu `/articles` do caminho URL, restando `/123` não consumido, portanto a correspondência falha. Para que corresponda, o roteador pode ser alterado para:
+Se acessar `GET /articles/`, considera-se correspondência bem-sucedida e executa `list_articles`. No entanto, se acessar `GET /articles/123`, a correspondência do roteador falha e retorna um erro 404, porque `Router::with_path("articles")` consumiu apenas `/articles` da informação do caminho da URL, restando `/123` não consumido, portanto a correspondência falha. Para conseguir corresponder com sucesso, o roteador pode ser alterado para:
 
 ```rust
 Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
-Aqui, `{**}` corresponderá a qualquer caminho adicional, permitindo que `GET /articles/123` execute `list_articles`.
+Aqui, `{**}` corresponderá a qualquer caminho excedente, permitindo que `GET /articles/123` corresponda e execute `list_articles`.
 
 ## Definição Plana
 
-Podemos definir rotas em estilo plano:
+Podemos definir rotas em um estilo plano:
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer);
@@ -52,7 +52,7 @@ Router::with_path("writers/{id}/articles").get(list_writer_articles);
 
 ## Definição em Árvore
 
-Também podemos definir rotas em forma de árvore, o que é recomendado:
+Também podemos definir rotas em uma estrutura de árvore, que é a forma recomendada:
 
 ```rust
 Router::with_path("writers")
@@ -66,10 +66,9 @@ Router::with_path("writers")
             .push(Router::with_path("articles").get(list_writer_articles)),
     );
 ```
+Esta forma de definição, para projetos complexos, torna a definição do Router clara, hierárquica e simples.
 
-Esta forma de definição torna a organização do Router clara e simples para projetos complexos.
-
-Muitos métodos no `Router` retornam a si mesmos (Self), permitindo encadeamento. Às vezes, você precisa decidir como rotear com base em certas condições. O sistema de roteamento também fornece a função `then`, fácil de usar:
+Muitos métodos em `Router` retornam a si mesmos (Self) após serem chamados, facilitando a escrita de código em cadeia. Às vezes, você precisa decidir como rotear com base em certas condições. O sistema de roteamento também fornece a função `then`, que é fácil de usar:
 
 ```rust
 Router::new()
@@ -88,10 +87,9 @@ Router::new()
             }),
     );
 ```
+Este exemplo significa que as rotas para criar, editar e excluir artigos só serão adicionadas quando o servidor estiver em `admin_mode`.
 
-Este exemplo mostra que apenas quando o servidor está em `admin_mode`, as rotas para criar, editar e excluir artigos são adicionadas.
-
-## Obtendo Parâmetros das Rotas
+## Obtendo Parâmetros da Rota
 
 No código acima, `{id}` define um parâmetro. Podemos obter seu valor através da instância `Request`:
 
@@ -102,28 +100,28 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-`{id}` corresponde a um segmento do caminho. Normalmente, o `id` de um artigo é apenas um número, então podemos usar expressões regulares para restringir a correspondência, como `r"{id|\d+}"`.
+`{id}` corresponde a um segmento no caminho. Normalmente, o `id` de um artigo é apenas um número. Nesse caso, podemos usar uma expressão regular para restringir a regra de correspondência de `id`, como `r"{id|\d+}"`.
 
-Para tipos numéricos, há uma maneira mais simples usando `<id:num>`:
-- `{id:num}`: corresponde a qualquer número de dígitos;
-- `{id:num[10]}`: corresponde exatamente a 10 dígitos;
-- `{id:num(..10)}`: corresponde de 1 a 9 dígitos;
-- `{id:num(3..10)}`: corresponde de 3 a 9 dígitos;
-- `{id:num(..=10)}`: corresponde de 1 a 10 dígitos;
-- `{id:num(3..=10)}`: corresponde de 3 a 10 dígitos;
-- `{id:num(10..)}`: corresponde a pelo menos 10 dígitos.
+Para este tipo numérico, há um método mais simples usando `<id:num>`, com as seguintes formas específicas:
+- `{id:num}`: corresponde a qualquer número de caracteres numéricos;
+- `{id:num[10]}`: corresponde apenas a uma quantidade específica fixa de caracteres numéricos, onde 10 significa que corresponde exatamente a 10 caracteres numéricos;
+- `{id:num(..10)}`: corresponde de 1 a 9 caracteres numéricos;
+- `{id:num(3..10)}`: corresponde de 3 a 9 caracteres numéricos;
+- `{id:num(..=10)}`: corresponde de 1 a 10 caracteres numéricos;
+- `{id:num(3..=10)}`: corresponde de 3 a 10 caracteres numéricos;
+- `{id:num(10..)}`: corresponde a pelo menos 10 caracteres numéricos.
 
-Também é possível usar `{**}`, `{*+}` ou `{*?}` para corresponder a todos os segmentos restantes do caminho. Para melhor legibilidade, pode-se adicionar nomes descritivos, como `{**file_path}`.
+Também é possível corresponder a todos os segmentos de caminho restantes através de `{**}`, `{*+}` ou `{*?}`. Para melhor legibilidade do código, também podemos adicionar nomes apropriados para tornar a semântica do caminho mais clara, por exemplo: `{**file_path}`.
 
-- `{**}`: corresponde a strings vazias, como `/files`, `/files/abc.txt`, `/files/dir/abc.txt`;
-- `{*+}`: exige que o segmento não seja vazio, como `/files/abc.txt`, mas não `/files`;
-- `{*?}`: permite strings vazias, mas apenas um segmento, como `/files`, `/files/abc.txt`, mas não `/files/dir/abc.txt`.
+- `{**}`: significa que a parte correspondente ao curinga pode ser uma string vazia. Por exemplo, o caminho `/files/{**rest_path}` corresponderá a `/files`, `/files/abc.txt`, `/files/dir/abc.txt`;
+- `{*+}`: significa que a parte correspondente ao curinga deve existir e não pode corresponder a uma string vazia. Por exemplo, o caminho `/files/{*+rest_path}` não corresponderá a `/files`, mas corresponderá a `/files/abc.txt`, `/files/dir/abc.txt`;
+- `{*?}`: significa que a parte correspondente ao curinga pode ser uma string vazia, mas só pode conter um segmento de caminho. Por exemplo, o caminho `/files/{*？rest_path}` não corresponderá a `/files/dir/abc.txt`, mas corresponderá a `/files`, `/files/abc.txt`;
 
-É possível combinar múltiplas expressões para corresponder ao mesmo segmento, como `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+É permitido combinar várias expressões para corresponder ao mesmo segmento de caminho, por exemplo `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
 
-## Adicionando Middlewares
+## Adicionando Middleware
 
-Middlewares podem ser adicionados através da função `hoop`:
+Podemos adicionar middleware através da função `hoop` no roteador:
 
 ```rust
 Router::new()
@@ -140,9 +138,9 @@ Router::new()
     );
 ```
 
-Neste exemplo, o roteador raiz usa `check_authed` para verificar se o usuário está logado. Todos os roteadores descendentes são afetados por este middleware.
+Neste exemplo, o roteador raiz usa `check_authed` para verificar se o usuário atual já fez login. Todos os roteadores descendentes serão afetados por este middleware.
 
-Se os usuários podem apenas visualizar informações de `writer` e artigos sem login, podemos definir as rotas assim:
+Se os usuários apenas desejam visualizar informações e artigos do `writer`, preferimos que possam navegar sem fazer login. Podemos definir as rotas assim:
 
 ```rust
 Router::new()
@@ -162,13 +160,13 @@ Router::new()
     );
 ```
 
-Mesmo com duas rotas definindo o mesmo caminho `path("articles")`, elas ainda podem ser adicionadas ao mesmo roteador pai.
+Embora duas rotas tenham a mesma definição de caminho `path("articles")`, elas ainda podem ser adicionadas ao mesmo roteador pai.
 
 ## Filtros
 
-O `Router` usa filtros internamente para determinar a correspondência. Filtros suportam operações lógicas básicas como `or` e `and`. Um roteador pode conter múltiplos filtros, e só corresponde se todos os filtros corresponderem.
+Internamente, o `Router` determina se uma rota corresponde através de filtros. Os filtros suportam operações lógicas básicas usando `or` ou `and`. Uma rota pode conter vários filtros; quando todos os filtros correspondem com sucesso, a rota corresponde com sucesso.
 
-A estrutura de caminhos de um site é hierárquica, mas não necessariamente igual à estrutura do roteador. Um caminho pode corresponder a múltiplos nós do roteador. Por exemplo, alguns conteúdos em `articles/` podem requerer login, enquanto outros não. Podemos organizar os subcaminhos que requerem login em um roteador com middleware de autenticação, e os que não requerem em outro:
+A informação de caminho de um site é uma estrutura em árvore, mas essa estrutura não é equivalente à estrutura em árvore usada para organizar as rotas. Um caminho do site pode corresponder a vários nós de rota. Por exemplo, sob o caminho `articles/`, alguns conteúdos exigem login para visualização, enquanto outros não. Podemos organizar os subcaminhos que exigem login em um roteador que inclui middleware de verificação de login. Os que não exigem verificação de login podem ser organizados em outro roteador sem essa verificação:
 
 ```rust
 Router::new()
@@ -185,26 +183,26 @@ Router::new()
     );
 ```
 
-O roteador usa filtros para direcionar requisições aos middlewares e `Handlers` apropriados.
+O roteamento usa filtros para filtrar requisições e enviá-las para os middlewares e `Handler`s correspondentes para processamento.
 
-`path` e `method` são dois filtros comuns. `path` corresponde ao caminho; `method` corresponde ao método HTTP, como GET, POST, PATCH, etc.
+`path` e `method` são dois dos filtros mais comuns. `path` é usado para corresponder à informação do caminho; `method` é usado para corresponder ao Método da requisição, como: GET, POST, PATCH, etc.
 
-Podemos conectar filtros com `and` e `or`:
+Podemos usar `and`, `or` para conectar filtros do roteador:
 
 ```rust
 Router::with_filter(filters::path("hello").and(filters::get()));
 ```
 
-### Filtros de Caminho
+### Filtro de Caminho
 
-Filtros baseados em caminho são os mais usados. Podem incluir parâmetros:
+Filtros baseados no caminho da requisição são os mais usados. Filtros de caminho podem definir parâmetros, por exemplo:
 
 ```rust
 Router::with_path("articles/{id}").get(show_article);
 Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
-No `Handler`, os parâmetros podem ser obtidos através do objeto `Request`:
+No `Handler`, podemos obter através da função `get_param` do objeto `Request`:
 
 ```rust
 #[handler]
@@ -218,15 +216,15 @@ pub async fn serve_file(req: &mut Request) {
 }
 ```
 
-### Filtros de Método
+### Filtro de Método
 
-Filtram requisições pelo método HTTP:
+Filtra requisições com base no `Method` da requisição `HTTP`, por exemplo:
 
 ```rust
 Router::new().get(show_article).patch(update_article).delete(delete_article);
 ```
 
-Aqui, `get`, `patch`, `delete` são filtros de método, equivalentes a:
+Aqui, `get`, `patch`, `delete` são todos filtros de Método. É funcionalmente equivalente a:
 
 ```rust
 use salvo::routing::filter;
@@ -240,14 +238,14 @@ Router::new().push(show_router).push(update_router).push(delete_router);
 
 ## Wisp Personalizado
 
-Para expressões de correspondência frequentes, podemos usar `PathFilter::register_wisp_regex` ou `PathFilter::register_wisp_builder` para definir um nome curto. Por exemplo, o formato GUID aparece frequentemente em caminhos. Normalmente, seria necessário escrever:
+Para certas expressões de correspondência que aparecem frequentemente, podemos nomear uma forma abreviada através de `PathFilter::register_wisp_regex` ou `PathFilter::register_wisp_builder`. Por exemplo, o formato GUID aparece frequentemente em caminhos. A forma normal seria escrever assim sempre que precisar corresponder:
 
 ```rust
 Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 ```
 
-Escrever essa expressão regular complexa repetidamente é propenso a erros. Em vez disso, podemos fazer:
+Escrever essa expressão regular complexa toda vez é propenso a erros e o código fica menos legível. Podemos fazer assim:
 
 ```rust
 use salvo::routing::filter::PathFilter;
@@ -262,17 +260,16 @@ async fn main() {
 }
 ```
 
-Após registrar uma vez, podemos usar `{id:guid}` para corresponder a GUIDs, simplificando o código.
+Basta registrar uma vez, e depois podemos usar diretamente a forma simples `{id:guid}` para corresponder a GUIDs, simplificando a escrita do código.
 
-## Como Entender o Router se Você Aprendeu Frameworks Web Baseados em Controller?
+## Como entender o Router vindo de frameworks web baseados em Controller?
+As principais diferenças entre frameworks web baseados em roteamento (como Salvo) e frameworks tradicionais baseados em MVC ou Controller são:
 
-As principais diferenças entre frameworks baseados em roteamento (como Salvo) e os baseados em MVC ou Controller são:
-
-- **Flexibilidade**: O roteamento permite definir o fluxo de processamento de requisições com mais precisão. Por exemplo, no Salvo você pode definir diretamente:
+- **Flexibilidade**: O design baseado em roteamento permite definir o fluxo de processamento da requisição de forma mais flexível, podendo controlar com precisão a lógica de processamento de cada caminho. Por exemplo, no Salvo você pode definir diretamente a função de processamento para um caminho específico:
   ```rust
   Router::with_path("articles").get(list_articles).post(create_article);
   ```
-  Enquanto em um Controller, você precisaria definir uma classe e métodos:
+  Enquanto no design baseado em Controller, geralmente é necessário primeiro definir uma classe controladora e, dentro dela, definir vários métodos para lidar com diferentes requisições:
   ```java
   @Controller
   public class ArticleController {
@@ -284,24 +281,25 @@ As principais diferenças entre frameworks baseados em roteamento (como Salvo) e
   }
   ```
 
-- **Integração de Middleware**: Frameworks de roteamento oferecem integração mais simples de middlewares, aplicáveis a rotas específicas:
+- **Integração de Middleware**: Frameworks de roteamento geralmente fornecem formas mais concisas de integrar middleware, podendo aplicar middleware a rotas específicas. O middleware do Salvo pode ser aplicado com precisão a rotas específicas:
   ```rust
   Router::new()
       .push(
           Router::with_path("admin/articles")
-              .hoop(admin_auth_middleware)  // Middleware apenas para rotas de admin
+              .hoop(admin_auth_middleware)  // Aplica middleware de autenticação apenas à rota de admin
               .get(list_all_articles)
               .post(create_article),
       )
       .push(
-          Router::with_path("articles")  // Rotas públicas sem autenticação
+          Router::with_path("articles")  // Rota pública não requer autenticação
               .get(list_public_articles),
       );
   ```
 
-- **Organização do Código**: O roteamento organiza o código por funcionalidade ou endpoints de API, em vez de seguir a divisão MVC:
+- **Organização do Código**: O design baseado em roteamento tende a organizar o código com base na funcionalidade ou no endpoint da API, em vez de seguir a divisão em camadas Model-View-Controller do MVC.
+  O design baseado em roteamento incentiva a organização do código de acordo com a funcionalidade do endpoint da API:
   ```rust
-  // user_routes.rs - Rotas e lógica relacionada a usuários
+  // user_routes.rs - Rotas e lógica de processamento relacionadas ao usuário
   pub fn user_routes() -> Router {
       Router::with_path("users")
           .get(list_users)
@@ -309,7 +307,7 @@ As principais diferenças entre frameworks baseados em roteamento (como Salvo) e
           .push(Router::with_path("{id}").get(get_user).delete(delete_user))
   }
   
-  // article_routes.rs - Rotas e lógica relacionada a artigos
+  // article_routes.rs - Rotas e lógica de processamento relacionadas a artigos
   pub fn article_routes() -> Router {
       Router::with_path("articles")
           .get(list_articles)
@@ -322,30 +320,5 @@ As principais diferenças entre frameworks baseados em roteamento (como Salvo) e
       .push(article_routes());
   ```
 
-- **Leveza**: O roteamento geralmente é mais leve, com menos conceitos e restrições impostos pelo framework. Você pode incluir apenas o necessário, sem seguir estruturas rígidas.
-
-O roteamento torna o desenvolvimento de APIs mais intuitivo, especialmente para microsserviços e APIs RESTful modernas. Em frameworks como Salvo, o roteamento é o conceito central, refletindo diretamente a estrutura e comportamento da API, tornando o código mais fácil de entender e manter. Em contraste, designs baseados em Controller geralmente requerem mais configuração e convenções para alcançar a mesma funcionalidade.
-
-# Visão Geral dos Métodos da Estrutura Router
-
-| Categoria | Método | Descrição |
-|-----------|--------|-----------|
-| **Criação/Acesso** | `new()` | Cria novo roteador |
-| | `routers()/routers_mut()` | Obtém referência/referência mutável aos roteadores filhos |
-| | `hoops()/hoops_mut()` | Obtém referência/referência mutável aos middlewares |
-| | `filters()/filters_mut()` | Obtém referência/referência mutável aos filtros |
-| **Organização de Rotas** | `unshift()` | Insere roteador filho no início |
-| | `insert()` | Insere roteador filho em posição específica |
-| | `push()` | Adiciona roteador filho |
-| | `append()` | Adiciona múltiplos roteadores filhos |
-| | `then()` | Configuração personalizada da cadeia de roteadores |
-| **Middleware** | `with_hoop()/hoop()` | Cria/adiciona middleware |
-| | `with_hoop_when()/hoop_when()` | Cria/adiciona middleware condicional |
-| **Filtros de Caminho** | `with_path()/path()` | Cria/adiciona filtro de caminho |
-| | `with_filter()/filter()` | Cria/adiciona filtro |
-| | `with_filter_fn()/filter_fn()` | Cria/adiciona filtro de função |
-| **Filtros de Rede** | `scheme()` | Adiciona filtro de protocolo |
-| | `host()/with_host()` | Adiciona/cria filtro de host |
-| | `port()/with_port()` | Adiciona/cria filtro de porta |
-| **Métodos HTTP** | `get()/post()/put()` | Cria rota para método
-{/* 本行由工具自动生成,原文哈希值:de818471bc28a65be62c204495aada43 */}
+- **Leveza**: Geralmente, o design baseado em roteamento é mais leve, reduzindo conceitos e restrições impostos pelo framework. Você pode introduzir apenas os componentes
+{/* 本行由工具自动生成,原文哈希值:ba0a1eadc077c274134c7a533d887f99 */}

@@ -1,21 +1,10 @@
-import { Tab, Tabs } from 'rspress/theme';
-import CargoCode from '../../../codes_md/hello/Cargo.mdx';
-import HelloCode from '../../../codes_md/hello/src/main.mdx';
-import HelloH3CargoCode from '../../../codes_md/hello-h3/Cargo.mdx';
-import HelloH3Code from '../../../codes_md/hello-h3/src/main.mdx';
-import { LinkCard } from '@theme';
-import { Steps } from '@theme';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # 快速开始
 
 ## 安装 Rust
-如果你还没有安装 Rust, 你可以使用官方提供的 `rustup` 安装 Rust. 
+如果你还没有安装 Rust, 你可以使用官方提供的 (`rustup`)[https://doc.rust-lang.org/book/ch01-01-installation.html] 安装 Rust. 
 
-<LinkCard
-  href="https://doc.rust-lang.org/book/ch01-01-installation.html"
-  title="Rust 官方教程"
-  description="详细介绍如何安装 Rust"
-/>
 :::tip
 当前 Salvo 支持的最低 Rust 版本为 1.85. 运行 `rustup update` 确认您已经安装了符合要求的 Rust.
 :::
@@ -30,11 +19,13 @@ cargo new hello --bin
 
 添加依赖项到 `Cargo.toml`
 
-<CargoCode/>
+```toml file="<root>/codes/hello/Cargo.toml"
+```
 
 在 `main.rs` 中创建一个简单的函数句柄, 命名为 `hello`, 这个函数只是简单地打印文本 `"Hello world"`.
 
-<HelloCode/>
+```rust file="<root>/codes/hello/src/main.rs"
+```
 
 恭喜你, 你的一个 Salvo 程序已经完成. 只需要在命令行下运行 `cargo run`, 然后在浏览器里打开 `http://127.0.0.1:5800` 即可.
 
@@ -85,10 +76,12 @@ cargo new hello --bin
 首先在 `Cargo.toml` 中启用 HTTP3 功能, 然后把 `main.rs` 改成这样：
 <Tabs>
   <Tab label="main.rs">
-  <HelloH3Code/>
+  ```rust file="<root>/codes/hello-h3/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-  <HelloH3CargoCode/>
+  ```toml file="<root>/codes/hello-h3/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -98,23 +91,21 @@ cargo new hello --bin
 
 如果您有改进 CLI 的想法，或者发现了一些需要解决的问题，请不要犹豫！提交一个 issue，我们欢迎您的见解。
 
-<Steps>
-  ### 第 1 步
+### 第 1 步
 
-  安装CLI工具：
-  
-  ```bash
-  cargo install salvo-cli
-  ```
+安装CLI工具：
 
-  ### 第 2 步
+```bash
+cargo install salvo-cli
+```
 
-  > 创建一个新的 Salvo 项目，使用 `new` 命令后面跟上您的项目名称：
-  >
-  > ```bash
-  > salvo new project_name
-  > ```
-</Steps>
+### 第 2 步
+
+> 创建一个新的 Salvo 项目，使用 `new` 命令后面跟上您的项目名称：
+>
+> ```bash
+> salvo new project_name
+> ```
 
 您可以通过这个简单的 CLI 工具快速启动 Salvo 项目，专注于实现您的业务逻辑，而不是项目结构搭建。 ✨
 

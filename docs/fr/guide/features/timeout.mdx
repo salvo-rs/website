@@ -1,8 +1,4 @@
-```javascript
-import { Tab, Tabs } from 'rspress/theme';
-import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
-import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
-```
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # Middleware de Timeout
 
@@ -10,18 +6,20 @@ Fournit un middleware prenant en charge les délais d'expiration.
 
 ## Cas d'utilisation
 
-Dans les services Web, certaines requêtes peuvent prendre trop de temps à traiter pour diverses raisons (comme des requêtes de base de données lentes, des réponses externes retardées, etc.). Pour éviter que ces requêtes à long terme n'occupent les ressources du serveur et n'affectent le traitement des autres requêtes, vous pouvez utiliser le middleware de timeout pour définir une durée maximale de traitement. Si cette durée est dépassée, la requête sera automatiquement interrompue et une erreur de timeout sera renvoyée.
+Dans les services Web, certaines requêtes peuvent prendre trop de temps à traiter pour diverses raisons (comme des requêtes de base de données lentes, des réponses lentes de services externes, etc.). Pour éviter que ces requêtes à longue durée d'exécution n'occupent les ressources du serveur et n'affectent le traitement des autres requêtes, vous pouvez utiliser le middleware de timeout pour définir une limite de temps maximale de traitement pour les requêtes. Si cette limite est dépassée, la requête sera automatiquement interrompue et une erreur de timeout sera renvoyée.
 
-_**Exemple de code**_ 
+_**Exemple de code**_
 
 <Tabs>
-<Tab label="main.rs">
-<TimeoutMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TimeoutCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/timeout/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/timeout/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
-Dans l'exemple ci-dessus, nous avons créé deux fonctions de traitement : une fonction `fast` qui répond rapidement et une fonction `slow` qui répond avec un délai de 6 secondes. En utilisant `Timeout::new(Duration::from_secs(5))`, nous avons défini une limite de timeout de 5 secondes pour toutes les requêtes. Lors de l'accès au chemin `/slow`, comme le temps de traitement dépasse la limite de 5 secondes, la requête expirera ; tandis que l'accès au chemin `/fast` permettra un traitement normal et un retour de résultat.
-{/* 本行由工具自动生成,原文哈希值:91c35a9e679382fc5ad89433063fa043 */}
+Dans l'exemple ci-dessus, nous avons créé deux fonctions de traitement : une fonction `fast` qui répond rapidement et une fonction `slow` qui répond avec un délai de 6 secondes. En utilisant `Timeout::new(Duration::from_secs(5))`, nous avons défini une limite de timeout de 5 secondes pour toutes les requêtes. Lors de l'accès au chemin `/slow`, la requête expirera car le temps de traitement dépasse la limite de 5 secondes ; tandis que pour le chemin `/fast`, la requête sera traitée normalement et un résultat sera renvoyé.
+{/* 本行由工具自动生成,原文哈希值:f830ce34e2005274bbd246ff55e7c47e */}

@@ -1,12 +1,10 @@
 # キャッチャー
 
-import { Tab, Tabs } from 'rspress/theme';
-import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
-import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-`Response`のステータスコードがエラーで、ページ内の`Body`が空の場合、salvoは`Catcher`を使用してこのエラーを捕捉し、ユーザーフレンドリーなエラーページを表示しようとします。
+`Response`のステータスコードがエラーで、ページ内の`Body`が空の場合、Salvoは`Catcher`を使用してこのエラーをキャッチし、ユーザーフレンドリーなエラーページを表示しようとします。
 
-`Catcher::default()`を使用すると、システムデフォルトの`Catcher`を取得でき、それを`Service`に追加できます。
+`Catcher::default()`を使用してシステムデフォルトの`Catcher`を返し、それを`Service`に追加することができます。
 
 ```rust
 use salvo::catcher::Catcher;
@@ -16,16 +14,18 @@ Service::new(router).catcher(Catcher::default());
 
 デフォルトの`Catcher`は、`XML`、`JSON`、`HTML`、`Text`形式でエラーページを送信することをサポートしています。
 
-このデフォルトの`Catcher`に`hoop`を追加することで、カスタムエラーハンドラを`Catcher`に追加できます。このエラーハンドラも依然として`Handler`です。
+このデフォルトの`Catcher`に`hoop`を追加することで、カスタムエラーキャッチプログラムを`Catcher`に追加できます。このエラーキャッチプログラムも依然として`Handler`です。
 
-`hoop`を使用して`Catcher`に複数のカスタムエラーハンドラを追加できます。カスタムエラーハンドラはエラー処理後に`FlowCtrl::skip_next`メソッドを呼び出して後続のエラーハンドラをスキップし、早期リターンすることが可能です。
+`hoop`を使用して`Catcher`に複数のカスタムエラーキャッチプログラムを追加できます。カスタムエラーハンドラーは、エラー処理後に`FlowCtrl::skip_next`メソッドを呼び出して後続のエラープログラムをスキップし、早期に戻ることができます。
 
 <Tabs>
   <Tab label="main.rs">
-    <CustomErrorPageCode/>
+  ```rust file="<root>/codes/custom-error-page/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CustomErrorPageCargoCode/>
+  ```toml file="<root>/codes/custom-error-page/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f904ca235acae374d6a236a1bd7a027a */}
+{/* 本行由工具自动生成,原文哈希值:6d187ebda60dfda18718df8cd81080ad */}

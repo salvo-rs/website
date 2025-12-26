@@ -1,35 +1,27 @@
 ---
-title: Estrutura de Serialização Rust
+title: Framework de Serialização Rust
 ---
 
-# Serde: Estrutura de Serialização e Desserialização em Rust
+# Serde: Framework de Serialização e Desserialização Rust
 
-import { LinkCard } from '@theme';
-
-<LinkCard
-  href="https://docs.rs/serde/latest/serde/"
-  title="serde"
-  description="serde"
-/>
-
-Serde é uma biblioteca central no ecossistema Rust, fornecendo uma estrutura eficiente e genérica para serialização e desserialização. Seu nome é uma combinação de "**Ser**ialization" e "**De**serialization".
+[Serde](https://docs.rs/serde/latest/serde/) é uma biblioteca central no ecossistema Rust, fornecendo um framework de serialização e desserialização eficiente e genérico. Seu nome deriva da combinação de "**Ser**ialization" e "**De**serialization".
 
 ## Principais Características
 
-- **Versatilidade**: Suporta múltiplos formatos de dados como JSON, YAML, TOML, MessagePack, etc.
-- **Abstração de custo zero**: Código gerado em tempo de compilação com eficiência equivalente ao escrito manualmente
-- **Flexibilidade**: Permite personalizar comportamentos de serialização e desserialização
-- **Tipagem forte**: Utiliza o sistema de tipos do Rust para garantir integridade dos dados
-- **Ampla adoção**: Tornou-se a biblioteca padrão para troca de dados no ecossistema Rust
+- **Generalidade**: Suporta múltiplos formatos de dados, como JSON, YAML, TOML, MessagePack, etc.
+- **Abstração de Custo Zero**: O código gerado em tempo de compilação é tão eficiente quanto código escrito manualmente.
+- **Flexibilidade**: Permite personalizar comportamentos de serialização e desserialização.
+- **Tipagem Forte**: Utiliza o sistema de tipos do Rust para garantir integridade dos dados.
+- **Ampla Adoção**: Tornou-se a biblioteca padrão para troca de dados no ecossistema Rust.
 
-## Funcionamento
+## Como Funciona
 
-O núcleo do Serde é seu design de Representação Intermediária (Intermediate Representation), que divide o processo em duas etapas:
+O núcleo do Serde é seu design de Representação Intermediária (Intermediate Representation), que divide o processo de serialização e desserialização em duas etapas:
 
-1. **Serialização**: Converte estruturas Rust para representação intermediária, depois para o formato alvo
-2. **Desserialização**: Transforma o formato de entrada em representação intermediária, depois em estruturas Rust
+1. **Serialização**: Converte estruturas de dados Rust para uma representação intermediária genérica, depois para o formato alvo.
+2. **Desserialização**: Converte o formato de entrada para a representação intermediária genérica, depois para estruturas de dados Rust.
 
-Esta abordagem permite adicionar novos formatos sem modificar aplicações que utilizam Serde.
+Este design permite adicionar novos formatos de dados sem modificar aplicações que utilizam o Serde.
 
 ## Uso Básico
 
@@ -38,104 +30,104 @@ Esta abordagem permite adicionar novos formatos sem modificar aplicações que u
 ```toml
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0" # Ou outras bibliotecas como serde_yaml, toml, etc.
+serde_json = "1.0" # ou outra biblioteca de formato como serde_yaml, toml, etc.
 ```
 
 ### Uso de Macros Derivadas
 
-O método mais comum é usar macros derivadas para implementar automaticamente traits de serialização:
+O uso mais comum é empregar macros derivadas para implementar automaticamente os traits de serialização e desserialização para structs:
 
 ```rust
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-struct Ponto {
+struct Point {
     x: i32,
     y: i32,
 }
 
 fn main() {
-    let ponto = Ponto { x: 1, y: 2 };
+    let point = Point { x: 1, y: 2 };
 
-    // Convertendo Ponto para string JSON
-    let serializado = serde_json::to_string(&ponto).unwrap();
-    println!("Resultado serializado: {}", serializado); // Saída: {"x":1,"y":2}
+    // Convertendo Point para uma string JSON
+    let serialized = serde_json::to_string(&point).unwrap();
+    println!("Resultado serializado: {}", serialized); // Saída: {"x":1,"y":2}
 
-    // Convertendo string JSON de volta para Ponto
-    let desserializado: Ponto = serde_json::from_str(&serializado).unwrap();
-    println!("Resultado desserializado: {:?}", desserializado); // Saída: Ponto { x: 1, y: 2 }
+    // Convertendo a string JSON de volta para Point
+    let deserialized: Point = serde_json::from_str(&serialized).unwrap();
+    println!("Resultado desserializado: {:?}", deserialized); // Saída: Point { x: 1, y: 2 }
 }
 ```
 
 ### Personalização com Atributos
 
-Serde oferece diversos atributos para customização:
+O Serde oferece uma rica variedade de atributos para personalizar o comportamento de serialização:
 
 ```rust
 #[derive(Serialize, Deserialize, Debug)]
-struct Usuario {
+struct User {
     #[serde(rename = "user_id")]
     id: u64,
     
     #[serde(default)]
-    nome: String,
+    name: String,
     
     #[serde(skip_serializing_if = "Option::is_none")]
     email: Option<String>,
     
     #[serde(skip)]
-    dados_temporarios: usize,
+    temporary_data: usize,
 }
 ```
 
-### Formatos Suportados
+### Formatos de Dados Suportados
 
-Serde integra-se com múltiplos formatos, cada um em seu próprio crate:
+O Serde integra-se com múltiplos formatos de dados, cada um com seu próprio crate:
 
 - **serde_json**: Formato JSON
 - **serde_yaml**: Formato YAML
 - **toml**: Formato TOML
 - **bincode**: Formato binário
-- **postcard**: Formato binário otimizado
+- **postcard**: Formato binário otimizado para espaço
 - **rmp/rmp-serde**: Formato MessagePack
 - **ciborium**: Formato CBOR
-- ... e outros
+- ...e outros formatos
 
 ## Uso Avançado
 
 ### Implementação Manual de Traits
 
-Para necessidades específicas, implemente manualmente as traits:
+Para necessidades específicas, os traits `Serialize` e `Deserialize` podem ser implementados manualmente:
 
 ```rust
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
 
-struct MeuTipo {
+struct MyType {
     // campos...
 }
 
-impl Serialize for MeuTipo {
+impl Serialize for MyType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        // Lógica customizada de serialização
+        // Lógica de serialização personalizada
     }
 }
 
-impl<'de> Deserialize<'de> for MeuTipo {
+impl<'de> Deserialize<'de> for MyType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        // Lógica customizada de desserialização
+        // Lógica de desserialização personalizada
     }
 }
 ```
 
 ### Mapeamento de Tipos
 
-Crie mapeamentos entre diferentes representações:
+É possível criar mapeamentos entre diferentes representações de dados:
 
 ```rust
 #[derive(Serialize, Deserialize)]
@@ -148,12 +140,12 @@ struct DateTimeRef {
 
 ## Aprendizado e Recursos
 
-Serde é uma biblioteca rica em funcionalidades. Para aproveitá-la plenamente:
+O Serde é uma biblioteca rica em funcionalidades; este documento cobre apenas o básico. Para aproveitar ao máximo o Serde, recomenda-se:
 
-1. Consulte a [documentação oficial](https://serde.rs/) para APIs detalhadas
-2. Acesse o [repositório no GitHub](https://github.com/serde-rs/serde) para código-fonte e atualizações
+1. Visitar a [Documentação Oficial do Serde](https://serde.rs/) para detalhes da API e exemplos.
+2. Consultar o [Repositório no GitHub](https://github.com/serde-rs/serde) para código-fonte e atualizações mais recentes.
 
 ## Conclusão
 
-Como biblioteca fundamental do ecossistema Rust, Serde oferece ferramentas poderosas para troca de dados. Dominando Serde, você pode lidar com diversos formatos, tornando suas aplicações mais robustas e interoperáveis.
-{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}
+Como uma biblioteca fundamental no ecossistema Rust, o Serde fornece ferramentas poderosas e flexíveis para troca de dados. Ao dominar o Serde, você pode lidar facilmente com diversas necessidades de intercâmbio de dados, tornando suas aplicações mais robustas e interoperáveis.
+{/* 本行由工具自动生成,原文哈希值:02cf744a3fbae09d654887c13e131157 */}

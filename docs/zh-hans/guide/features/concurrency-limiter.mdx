@@ -1,6 +1,4 @@
-import { Tab, Tabs } from 'rspress/theme';
-import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
-import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # 限制并发数
 
@@ -24,13 +22,15 @@ Concurrency Limiter 中间件可以控制同时并发的请求数量。具体 AP
 
 只需在路由上添加 `max_concurrency(n)` 中间件，其中 `n` 是允许的最大并发请求数。超过此限制的请求将收到 `503 Service Unavailable` 响应。
 
-_**示例代码**_ 
+_**示例代码**_
 
 <Tabs>
   <Tab label="main.rs">
-    <ConcurrencyLimiterCode/>
+  ```rust file="<root>/codes/concurrency-limiter/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <ConcurrencyLimiterCargoCode/>
+  ```toml file="<root>/codes/concurrency-limiter/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

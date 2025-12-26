@@ -1,15 +1,11 @@
 # 靜態伺服器
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-將靜態檔案或內嵌檔案作為服務提供的中介軟體。具體 API 請[查看文件](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
+將靜態檔案或內嵌的檔案作為服務提供的中介軟體。具體 API 請[查看文件](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html)。
 
 ## 應用場景
-靜態檔案服務在 web 應用中有廣泛的應用場景：
+靜態檔案服務在網頁應用中有廣泛的應用場景：
 - 提供網站的靜態資源如 CSS、JavaScript、圖片等檔案
 - 託管單頁應用(SPA)
 - 分發文件、媒體檔案、下載內容等
@@ -17,43 +13,47 @@ import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/C
 
 ## 主要功能
 
-- `StaticDir` 提供了對靜態本地資料夾的支援。可以將多個資料夾的列表作為參數。比如：
+- `StaticDir` 提供了對靜態本地資料夾的支援。可以將多個資料夾的列表作為參數。例如：
 
 <Tabs>
   <Tab label="main.rs">
-<StaticDirListMainCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
   如果在第一個資料夾中找不到對應的檔案，則會到第二個資料夾中尋找。
 
-`StaticDir` 支援在存在壓縮檔案的情況下，優先發送壓縮檔案。比如存在 `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br` 這幾個檔案，則 `index.html.gz`, `index.html.zst`, `index.html.br` 被認為是 `index.html` 的預壓縮版本，會根據請求資訊，發送對應的壓縮檔案。
+`StaticDir` 支援在存在壓縮檔案的情況下，優先發送壓縮檔案。例如存在 `index.html`、`index.html.gz`、`index.html.zst`、`index.html.br` 這幾個檔案，則 `index.html.gz`、`index.html.zst`、`index.html.br` 被視為 `index.html` 的預壓縮版本，會根據請求資訊，發送對應的壓縮檔案。
 
-- 提供了對 `rust-embed` 的支援，比如：
+- 提供了對 `rust-embed` 的支援，例如：
 
 ## rust-embed 的優缺點
 
 **優點：**
-- 將靜態檔案編譯進二進位檔案中，簡化部署流程
+- 將靜態檔案編譯進二進制檔案中，簡化部署流程
 - 無需在生產環境中單獨管理靜態檔案
 - 可能獲得更好的效能（記憶體存取 vs 磁碟 I/O）
 - 更安全，檔案不會被意外修改
 
 **缺點：**
-- 增加應用二進位檔案的大小
+- 增加應用二進制檔案的大小
 - 更新靜態內容需要重新編譯和部署整個應用
 - 不適合頻繁變更的大型靜態內容
 
 <Tabs>
   <Tab label="main.rs">
-<StaticEmbedFilesMainCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-可以通過 default 設定預設顯示頁面。`with_fallback` 和 `fallback` 可以設定在檔案找不到時，用這裡設定的檔案代替，這個對某些單頁網站應用來說還是有用的。
-{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}
+可以透過 default 設定預設顯示頁面。`with_fallback` 和 `fallback` 可以設定在檔案找不到時，用這裡設定的檔案代替，這對某些單頁網站應用來說還是有用的。
+{/* 本行由工具自动生成,原文哈希值:42f7ce7c0dec48cc37b3300fbc400bb8 */}

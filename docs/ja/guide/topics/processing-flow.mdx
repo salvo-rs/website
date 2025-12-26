@@ -1,67 +1,67 @@
 # 処理フロー
 
-`Service`はまずリクエストをsalvoの`Response`に変換し、その後ルーティングマッチング段階に入ります。
+`Service` はまずリクエストをSalvoの `Response` に変換し、その後ルーティングマッチング段階に入ります。
 
 ## ルーティングマッチング段階
 
-ルーティングマッチングは追加順序に従い、外から内へ、上から下へ順にフィルターを実行します。いずれかのフィルターが失敗すると、マッチング失敗と見なされます。
+ルーティングマッチングは、追加された順序に従い、外側から内側へ、上から下へと順番にフィルターを実行します。いずれかのフィルターが失敗すると、マッチング失敗と見なされます。
 
-マッチング過程では、リクエストのパス情報が存在します。マッチングが進むにつれ、パスフィルターがマッチングに成功すると、そのマッチしたパス部分が消費されます。全てのパスが消費され、かつマッチングチェーン上でフィルターのマッチング失敗がなく、現在のチェーンの最後の`Router`に`goal`の`Handler`が存在する場合、マッチング成功となり、マッチング段階が終了します。マッチングチェーン上の全ての`Handler`を収集し、実行段階に進みます。
+マッチングプロセスでは、リクエストのパス情報が存在します。マッチングが進むにつれて、パスフィルターが一度マッチングに成功すると、そのマッチングしたパス部分が消費されます。すべてのパスが消費され、マッチングチェーン上のフィルターが失敗せず、現在のチェーンの最後の `Router` に `goal` `Handler` が存在する場合、マッチング成功となり、マッチング段階が終了します。マッチングしたすべてのチェーン上の `Handler` を収集し、実行段階へ進みます。
 
-パスが消費し尽くされていない状態で、チェーン上のフィルターがエラーを起こさず、かつ続けてマッチング可能な子ルートがなくなった場合、現在のチェーンはマッチング失敗と見なし、次のルートマッチングに進みます。
+パスが完全に消費されず、チェーン上のフィルターがエラーを起こさないが、さらにマッチングを続けるサブルートが存在しない場合、現在のチェーンのマッチングは失敗と見なされ、次のルートマッチングへ進みます。
 
-全てのルートのマッチングが終了し、成功しなかった場合、エラーキャプチャ段階に入ります。
+すべてのルートのマッチングが完了し、成功しなかった場合、エラーキャプチャ段階へ進みます。
 
-## Handler実行段階
+## Handler 実行段階
 
-マッチング段階で収集された`Handler`リストに従い、順次`Handler`を実行します。実行過程で、前段のミドルウェアは`ctrl::call_next()`を呼び出して後続のミドルウェアを先に実行させ、その後自身のロジックを実行できます。実行過程でステータスコードエラーやリダイレクトが発生した場合、後続の`Handler`は実行されません。この時、ステータスコードがエラーかつ`Response`の`Body`が未設定または`ResBody::Error`の場合、エラーキャプチャ段階に入ります。そうでない場合はキャプチャ段階をスキップします。
+マッチング段階で収集された `Handler` リストに従い、順番に `Handler` を実行します。実行プロセスでは、前のミドルウェアが `ctrl::call_next()` を呼び出すことで、後続のミドルウェアを先に実行し、その後自身のロジックを実行できます。実行中にステータスコードエラーやリダイレクトが発生した場合、後続の `Handler` は実行されません。この時、ステータスコードがエラーであり、かつ `Response` の `Body` が設定されていないか `ResBody::Error` である場合、エラーキャプチャ段階へ進みます。それ以外の場合はキャプチャ段階をスキップします。
 
 ## エラーキャプチャ段階
 
-`Catcher`はエラー処理を行うための型で、ミドルウェア(hoops)を追加することもできます。エラーは`Catcher`内の全ての`Handler`を順次通過します。ある`Handler`がエラーを処理し、後続の`Handler`の実行を継続したくない場合、`ctrl.skip_rest()`を呼び出して後続の`Handler`をスキップし、直接キャプチャ段階を終了させることができます。
+`Catcher` はエラーを処理するための型であり、ミドルウェア(hoops)を追加することもできます。エラーは `Catcher` 内のすべての `Handler` を順番に通過します。ある `Handler` がエラーを処理し、後続の `Handler` の実行を続けたくない場合は、 `ctrl.skip_rest()` を呼び出して後続の `Handler` をスキップし、直接キャプチャ段階を終了できます。
 
-`Catcher`はデフォルトで、デフォルトエラー処理として機能する1つの`Handler`を含む必要があります。デフォルトは`DeaultGoal`ですが、完全に独自の`Handler`をエラー処理のデフォルト実装としてカスタマイズすることも可能です。これはリクエストヘッダーで要求される`content-type`に応じて対応する形式のエラーメッセージを表示し、`json`、`xml`、`text`、`html`の4つの表示形式をサポートしています。`DeaultGoal`はまたいくつかの表示設定を提供しており、例えばデフォルトではhtml形式表示時にsalvo関連リンクを表示しますが、`DefaultGoal::footer`または`DefaultGoal::with_footer`を呼び出して独自のカスタムフッターに設定することもできます。
+`Catcher` はデフォルトで、デフォルトのエラー処理として機能する1つの `Handler` を含んでいる必要があります。デフォルトは `DefaultGoal` です。エラー処理のデフォルト実装として、完全に独自の `Handler` をカスタマイズすることもできます。これはリクエストヘッダーで要求される `content-type` に応じて対応する形式のエラーメッセージを表示し、`json`、`xml`、`text`、`html` の4つの表示形式をサポートしています。 `DefaultGoal` はまた、いくつかの表示設定を提供しています。例えば、デフォルトではHTML形式を表示する際にSalvo関連のリンクを表示しますが、 `DefaultGoal::footer` または `DefaultGoal::with_footer` を呼び出して、独自に希望するカスタムフッターに設定することもできます。
 
-`Service`はsalvoの`Response`をhyperの`Response`型に変換し、最終的にブラウザなどのクライアントに返されます。
+`Service` はSalvoの `Response` をhyperの `Response` 型に変換し、最終的にブラウザなどのクライアントに返します。
 
-## Salvoリクエストライフサイクル
-これはSalvo WebフレームワークがHTTPリクエストを処理するライフサイクルの視覚的表現と説明です。
+## Salvo リクエストライフサイクル
+これは、Salvo WebフレームワークがHTTPリクエストを処理するライフサイクルの視覚的表現と説明です。
 
 ```mermaid
 flowchart TD
-    subgraph MainGraph[Salvoフレームワークリクエストライフサイクル]
+    subgraph MainGraph[Salvoフレームワーク リクエストライフサイクル]
         Start[クライアントリクエスト] --> Convert[ServiceがHTTPリクエストをsalvoのResponseに変換]
         
         %% ルーティングマッチング段階
         subgraph RoutingPhase[1. ルーティングマッチング段階]
-            Convert --> Routing[追加順序、外から内、上から下にルートをマッチング]
-            Routing --> FilterCheck{フィルターは全て通過?}
-            FilterCheck -->|いいえ| NextRoute[次のルートを試す]
-            FilterCheck -->|はい| PathConsume[マッチしたパス部分を消費]
-            PathConsume --> PathCheck{パスは完全消費かつgoal Handlerあり?}
-            PathCheck -->|いいえ| SubRouteCheck{続けてマッチ可能な子ルートあり?}
+            Convert --> Routing[追加順序、外から内、上から下でルートをマッチング]
+            Routing --> FilterCheck{フィルターはすべて通過?}
+            FilterCheck -->|いいえ| NextRoute[次のルートを試行]
+            FilterCheck -->|はい| PathConsume[マッチングしたパス部分を消費]
+            PathConsume --> PathCheck{パスは完全に消費され、goal Handlerがある?}
+            PathCheck -->|いいえ| SubRouteCheck{マッチングを続けるサブルートがある?}
             SubRouteCheck -->|はい| Routing
             SubRouteCheck -->|いいえ| NextRoute
-            NextRoute --> RouteLeft{他にルートあり?}
+            NextRoute --> RouteLeft{他にルートは残っている?}
             RouteLeft -->|はい| Routing
-            RouteLeft -->|いいえ| NoMatchRoute[ルートマッチング失敗]
-            PathCheck -->|はい| MatchSuccess[ルートマッチング成功]
-            MatchSuccess --> CollectHandlers[マッチングチェーン上の全Handlerを収集]
+            RouteLeft -->|いいえ| NoMatchRoute[ルーティングマッチング失敗]
+            PathCheck -->|はい| MatchSuccess[ルーティングマッチング成功]
+            MatchSuccess --> CollectHandlers[マッチングチェーン上のすべてのHandlerを収集]
         end
         
         %% Handler実行段階
         subgraph HandlerPhase[2. Handler実行段階]
-            CollectHandlers --> ExecHandlers[順次Handlerを実行]
-            ExecHandlers --> ErrorCheck{実行中にエラーまたはリダイレクト発生?}
-            ErrorCheck -->|いいえ| FinishHandlers[全Handler実行完了]
-            ErrorCheck -->|はい| StatusCheck{ステータスコードはエラーかつBody未設定またはError?}
+            CollectHandlers --> ExecHandlers[順番にHandlerを実行]
+            ExecHandlers --> ErrorCheck{実行中にエラーまたはリダイレクトが発生?}
+            ErrorCheck -->|いいえ| FinishHandlers[すべてのHandler実行完了]
+            ErrorCheck -->|はい| StatusCheck{ステータスコードはエラーで、Bodyが未設定またはError?}
             StatusCheck -->|はい| EnterCatcher[エラーキャプチャ段階へ]
-            StatusCheck -->|いいえ| SkipCatcher[キャプチャ段階をスキップ]
+            StatusCheck -->|いいえ| SkipCatcher[エラーキャプチャ段階をスキップ]
         end
         
         %% エラーキャプチャ段階
         subgraph CatcherPhase[3. エラーキャプチャ段階]
-            EnterCatcher --> CatcherHandlers[CatcherのHandlerを順次実行]
+            EnterCatcher --> CatcherHandlers[CatcherのHandlerを順番に実行]
             NoMatchRoute --> CatcherHandlers
             CatcherHandlers --> DefaultHandler[DefaultGoalまたはカスタムエラー処理]
         end

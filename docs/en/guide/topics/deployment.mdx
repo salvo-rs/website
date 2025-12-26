@@ -1,19 +1,19 @@
-# How to Deploy an Application
+# How to Deploy Applications
 
-A Salvo project compiles into an executable file. To deploy, simply upload this executable along with its dependent static resources to your server.
+A Salvo project, after compilation, becomes an executable file. For deployment, you only need to upload this executable along with its dependent static resources to the server.
 
-For Rust-based projects, there is also a very simple deployment platform: [shuttle.rs](https://www.shuttle.rs). Shuttle provides support for Salvo projects. For details, please refer to the [official documentation](https://docs.shuttle.rs/guide/salvo-examples.html).
+For Rust-based projects, there is also a very simple deployment platform: [shuttle.rs](https://www.shuttle.rs). Shuttle provides support for Salvo-like projects. For details, please refer to the [official documentation](https://docs.shuttle.rs/guide/salvo-examples.html).
 
 ## Docker Deployment
 
-You can also deploy Salvo applications using Docker. Below is a basic `Dockerfile` example that you can adjust according to your project's requirements:
+You can also use Docker to deploy Salvo applications. Below is a basic `Dockerfile` example, which you can adjust according to your project's requirements:
 
 ```dockerfile
 # Build stage
 FROM rust:slim AS build
 WORKDIR /app
 
-# Copy dependency files first to build dependencies (utilizing cache layers)
+# Copy dependency files first to build dependencies (leveraging cache layers)
 COPY Cargo.toml Cargo.lock ./
 RUN mkdir src && \
     echo 'fn main() { println!("Placeholder"); }' > src/main.rs && \
@@ -24,7 +24,7 @@ COPY src ./src/
 RUN touch src/main.rs && \
     cargo build --release
 
-# Runtime stage using a minimal base image
+# Use a lightweight base image for the runtime stage
 FROM debian:bookworm-slim
 RUN apt-get update && \
     apt-get install -y --no-install-recommends ca-certificates && \
@@ -36,7 +36,7 @@ RUN useradd -ms /bin/bash appuser
 USER appuser
 WORKDIR /app
 
-# Copy the binary from the build stage
+# Copy the binary file from the build stage
 COPY --from=build /app/target/release/your_app_name ./app
 
 # Set the container startup command
@@ -45,10 +45,10 @@ CMD ["./app"]
 
 ### Usage Instructions
 
-1. Save the above `Dockerfile` in your project's root directory
-2. Adjust `your_app_name` to match your actual binary filename
-3. If your application requires static files (such as templates, CSS, JS, etc.), add the corresponding `COPY` commands
-4. If your application needs environment variable configuration, use the `ENV` directive
+1. Save the above `Dockerfile` in your project's root directory.
+2. Adjust `your_app_name` to the actual binary file name according to your project.
+3. If your application requires static files (such as templates, CSS, JS, etc.), you can add corresponding `COPY` commands.
+4. If your application requires environment variable configuration, you can use the `ENV` instruction.
 5. Build the Docker image:
    ```bash
    docker build -t your-app-name .
@@ -58,5 +58,5 @@ CMD ["./app"]
    docker run -p 5800:5800 your-app-name
    ```
 
-Please adjust the port number and other configurations according to your application's actual requirements.
+Please adjust the port number and other configurations according to your application's actual needs.
 {/* 本行由工具自动生成,原文哈希值:cc4f6a8bac2d9ff67911bf45b473c2bd */}

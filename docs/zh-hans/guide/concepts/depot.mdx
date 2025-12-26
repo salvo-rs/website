@@ -1,8 +1,6 @@
 # Depot
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/use-depot/src/main.mdx';
-import CargoCode from '../../../../codes_md/use-depot/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 [Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) 是用于保存一次请求中涉及到的临时数据. 中间件可以将自己处理的临时数据放入 Depot, 供后续程序使用.
 
@@ -17,14 +15,15 @@ import CargoCode from '../../../../codes_md/use-depot/Cargo.mdx';
 1. **键值存储**：通过 `insert`/`get` 方法存取字符串键关联的值
 2. **类型注入**：通过 `inject`/`obtain` 方法基于类型存取值
 
-
 如示例所示，`Depot` 特别适用于在中间件和处理程序之间传递数据。中间件可以在 `Depot` 中设置值（如用户信息、认证状态），后续处理程序可以获取这些值，无需重复计算或查询。`Depot` 的设计确保了在整个请求处理链中数据的一致性和可访问性，是构建复杂 Web 应用的核心工具。
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/use-depot/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/use-depot/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 

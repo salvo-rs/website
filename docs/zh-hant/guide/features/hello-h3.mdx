@@ -1,23 +1,23 @@
 # HTTP/3 支援
 
-Salvo 提供了對 HTTP/3 的支援，透過啟用 `quinn` 功能即可使用此特性。HTTP/3 基於 QUIC 協定，相較於傳統的 HTTP/1.1 和 HTTP/2，能提供更低的延遲與更佳的性能表現，特別是在不穩定的網路環境中。
+Salvo 提供了對 HTTP/3 的支援，透過啟用 `quinn` 功能即可使用此特性。HTTP/3 基於 QUIC 協定，相較於傳統的 HTTP/1.1 和 HTTP/2，能提供更低的延遲與更佳的效能，特別是在不穩定的網路環境中表現尤為突出。
 
 ## 啟用 HTTP/3 支援
 
-要在 Salvo 中啟用 HTTP/3 支援，您需要在 `Cargo.toml` 檔案中啟用 `quinn` 功能：
+若要在 Salvo 中啟用 HTTP/3 支援，您需要在 `Cargo.toml` 檔案中啟用 `quinn` 功能：
 
 ```toml
 salvo = { workspace = true, features = ["quinn"] }
 ```
 
-## HTTP/3 使用情境
+## HTTP/3 適用場景
 
-HTTP/3 特別適用於以下場景：
+HTTP/3 特別適合以下應用場景：
 
-- 行動裝置與不穩定網路環境下的應用
+- 行動裝置及不穩定網路環境下的應用
 - 需要低延遲的即時應用
-- 大量小檔案平行下載的情境
-- 對連線遷移有需求的應用（例如從 WiFi 切換到行動網路時保持連線不中斷）
+- 大量小檔案並行下載的場景
+- 需要連接遷移功能的應用（例如從 WiFi 切換到行動網路時保持連接不中斷）
 
 ## 範例程式碼
 
@@ -38,17 +38,17 @@ async fn main() {
     // 初始化日誌系統
     tracing_subscriber::fmt().init();
 
-    // 從嵌入的 PEM 檔案載入 TLS 憑證與私鑰
+    // 從內嵌的 PEM 檔案載入 TLS 憑證與私鑰
     let cert = include_bytes!("../certs/cert.pem").to_vec();
     let key = include_bytes!("../certs/key.pem").to_vec();
 
-    // 建立路由，新增一個端點
+    // 建立路由，並加入一個端點
     let router = Router::new().get(hello);
 
     // 使用 Rustls 設定 TLS 配置
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // 建立帶有 TLS 加密的 TCP 監聽器，監聽 5800 連接埠
+    // 建立帶有 TLS 加密的 TCP 監聽器，監聽 5800 埠
     let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
     // 建立 QUIC 監聽器並與 TCP 監聽器組合
@@ -90,13 +90,13 @@ let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.
 
 ## 執行範例
 
-要執行此範例，您需要有可用的 TLS 憑證與私鑰。在開發環境中，可以使用自簽署憑證。完整的範例程式碼可以在 [Salvo GitHub 儲存庫](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3) 中找到。
+要執行此範例，您需要準備有效的 TLS 憑證與私鑰。在開發環境中，可以使用自簽憑證。完整的範例程式碼可以在 [Salvo GitHub 儲存庫](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3) 中找到。
 
-需要注意的是，目前許多用戶端還不完全支援 HTTP/3，因此這個伺服器同時支援 HTTP/3 和 HTTPS 是很有必要的。
+需要注意的是，目前許多客戶端尚未完全支援 HTTP/3，因此讓伺服器同時支援 HTTP/3 和 HTTPS 是很有必要的。
 
 ## 注意事項
 
 1. HTTP/3 需要 TLS 1.3 支援，因此必須配置有效的憑證與私鑰。
-2. 用戶端需要支援 HTTP/3 協定才能利用此功能，否則會退回使用 HTTP/1.1 或 HTTP/2。
-3. 在生產環境中，應該使用憑證授權機構簽發的憑證，而非自簽署憑證。
+2. 客戶端需要支援 HTTP/3 協定才能利用此功能，否則會回退到 HTTP/1.1 或 HTTP/2。
+3. 在生產環境中，應使用由權威 CA 簽發的憑證，而非自簽憑證。
 {/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

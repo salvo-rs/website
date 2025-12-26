@@ -4,25 +4,11 @@ title: Librerie per la gestione degli errori in Rust
 
 # Librerie per la gestione degli errori in Rust
 
-import { LinkCard } from '@theme';
+- (thiserror)[https://docs.rs/thiserror/latest/thiserror/] fornisce macro derivate convenienti per tipi di errore personalizzati.
 
-<LinkCard
-  href="https://docs.rs/thiserror/latest/thiserror/"
-  title="thiserror"
-  description="Fornisce macro derivate per creare tipi di errore personalizzati con facilità"
-/>
+- (snafu)[https://docs.rs/snafu/latest/snafu/] è un framework per la gestione e segnalazione degli errori con contesto.
 
-<LinkCard
-  href="https://docs.rs/snafu/latest/snafu/"
-  title="snafu"
-  description="Framework per la gestione e segnalazione degli errori con contesto"
-/>
-
-<LinkCard
-  href="https://docs.rs/anyhow/latest/anyhow/"
-  title="anyhow"
-  description="Libreria flessibile per la gestione e segnalazione degli errori"
-/>
+- (anyhow)[https://docs.rs/anyhow/latest/anyhow/] è una libreria flessibile per la gestione e segnalazione degli errori.
 
 ## thiserror vs snafu
 
@@ -31,19 +17,19 @@ import { LinkCard } from '@theme';
 thiserror è una libreria leggera che fornisce macro derivate per semplificare la definizione degli errori.
 
 Caratteristiche:
-- Sintassi concisa, con poca cerimonia
-- Ideale per creare librerie di tipi di errore e API
-- Generalmente usato per creare librerie destinate ad altri
+- Sintassi concisa, bassa cerimonialità
+- Adatta per creare librerie di tipi di errore e API
+- Generalmente utilizzata per creare librerie destinate ad altri
 
 ```rust
 use thiserror::Error;
 
 #[derive(Error, Debug)]
 pub enum DataError {
-    #[error("Errore del database: {0}")]
+    #[error("Errore database: {0}")]
     DatabaseError(#[from] sqlx::Error),
     
-    #[error("Errore di validazione: {0}")]
+    #[error("Errore validazione: {0}")]
     ValidationError(String),
     
     #[error("Record non trovato")]
@@ -53,13 +39,13 @@ pub enum DataError {
 
 ### snafu
 
-snafu offre un framework più completo per la gestione degli errori, concentrandosi sul contesto e sulla catena degli errori.
+snafu fornisce un framework di gestione errori più completo, concentrandosi sul contesto degli errori e sulla catena degli errori.
 
 Caratteristiche:
-- Promuove l'aggiunta precisa del contesto degli errori con il modello "selettore di contesto"
-- Raccomanda il modello "un enum di errore per modulo"
+- Promuove l'aggiunta di contesto agli errori in modo più preciso con il pattern "selettore di contesto"
+- Raccomanda il pattern "un'enumerazione di errori per modulo"
 - Supporta varianti di errore in stile struct e tuple
-- Supporto integrato per il backtrace
+- Supporto integrato per backtrace
 
 ```rust
 use snafu::{Snafu, ResultExt, Backtrace};
@@ -73,8 +59,8 @@ pub enum Error {
         backtrace: Backtrace,
     },
     
-    // Anche lo stile a tuple è supportato
-    #[snafu(display("Errore di I/O"))]
+    // È possibile utilizzare anche lo stile tuple
+    #[snafu(display("Errore IO"))]
     Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
 }
 
@@ -88,26 +74,26 @@ fn read_config(path: &str) -> Result<Config, Error> {
 ### Confronto
 
 | Caratteristica | thiserror | snafu |
-|---------------|-----------|-------|
-| Conciseness sintattica | Più conciso | Più verboso |
-| Contesto degli errori | Supporto base | Meccanismi avanzati |
-| Scala adatta | Piccoli/medi progetti | Medi/grandi progetti |
-| Righe di codice | ~2 per errore | ~5 per errore |
-| Organizzazione errori | Di solito un enum singolo | Promuove enum per modulo |
-| Supporto backtrace | Non integrato | Integrato |
+|----------------|-----------|-------|
+| Conciseness sintattica | Più conciso | Più prolisso |
+| Contesto errori | Supporto base | Meccanismi di contesto ricchi |
+| Scala adatta | Progetti piccoli/medi | Progetti medi/grandi |
+| Righe di codice | ~2 righe per errore | ~5 righe per errore |
+| Organizzazione errori | Solitamente un'enumerazione singola | Promuove enumerazioni per modulo |
+| Supporto backtrace | Nessun supporto integrato | Supporto integrato |
 
-**Suggerimenti per la scelta**:
-- **Scegli thiserror** quando hai bisogno di tipi di errore semplici, specialmente nelle librerie
-- **Scegli snafu** quando hai bisogno di una gestione più strutturata, specialmente in applicazioni complesse
+**Consigli di scelta**:
+- **Scegli thiserror** quando hai bisogno di tipi di errore semplici e chiari, specialmente nelle librerie
+- **Scegli snafu** quando hai bisogno di una gestione errori più strutturata, specialmente in applicazioni grandi
 
 ## anyhow
 
-anyhow è una libreria diversa dalle precedenti, focalizzata sulle applicazioni piuttosto che sulle librerie.
+anyhow è una libreria di gestione errori diversa dalle precedenti, focalizzata sulle applicazioni piuttosto che sulle librerie.
 
 Caratteristiche:
-- Progettata per la gestione degli errori nelle applicazioni, non nelle librerie
-- Fornisce un tipo dinamico `anyhow::Error` che può contenere qualsiasi errore che implementa il trait `Error`
-- Semplifica la gestione di errori multipli
+- Progettata per la gestione errori nelle applicazioni, non nelle librerie
+- Fornisce il tipo dinamico `anyhow::Error` che può contenere qualsiasi errore che implementi il trait `Error`
+- Semplifica la gestione attraverso più tipi di errore
 - Non richiede la definizione di tipi di errore personalizzati
 
 ```rust
@@ -118,18 +104,18 @@ fn main() -> Result<()> {
         .context("Impossibile leggere il file di configurazione")?;
         
     let app_config: AppConfig = serde_json::from_str(&config)
-        .context("Formato di configurazione non valido")?;
+        .context("Formato configurazione non valido")?;
         
-    // Usa Result<T> come alias per Result<T, anyhow::Error>
+    // Utilizza Result<T> come alias di tipo per Result<T, anyhow::Error>
     Ok(())
 }
 ```
 
 **anyhow vs thiserror/snafu**:
-- anyhow si concentra sulla gestione rapida degli errori durante lo sviluppo di applicazioni
+- anyhow si concentra sulla gestione errori durante lo sviluppo rapido di applicazioni
 - thiserror/snafu si concentrano sulla creazione di gerarchie precise di tipi di errore
-- anyhow è tipicamente usato nel codice applicativo
-- thiserror/snafu sono tipicamente usati nel codice delle librerie
+- anyhow è tipicamente utilizzato nel codice applicativo
+- thiserror/snafu sono tipicamente utilizzati nel codice di libreria
 
-Nella pratica, anyhow e thiserror sono spesso usati insieme: le librerie usano thiserror per definire tipi di errore precisi, mentre le applicazioni usano anyhow per gestire errori provenienti da varie fonti.
-{/* 本行由工具自动生成,原文哈希值:ac682487abf5cc66b7b4ee2508c7386d */}
+Nella pratica, anyhow e thiserror sono spesso usati insieme: le librerie utilizzano thiserror per definire tipi di errore precisi, mentre le applicazioni utilizzano anyhow per gestire errori provenienti da varie fonti.
+{/* 本行由工具自动生成,原文哈希值:e786d782f2c0d052350def02a332c83f */}

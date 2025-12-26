@@ -1,50 +1,50 @@
-# アフィックスステート リクエスト間でのデータ共有
+# Affix State リクエスト間でのデータ共有
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
-import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-アフィックスステートミドルウェアは、Depotに共有データを追加するために使用されます。
-この機能を使用するには、Cargo.tomlで`affix-state` featureを有効にする必要があります。
+Affix State ミドルウェアは、Depot に共有データを追加するために使用されます。
+Affix State 機能を使用するには、Cargo.toml で `affix-state` フィーチャーを有効にする必要があります。
 
-## 機能解説
-アフィックスステートは、リクエスト処理プロセスでデータを共有するシンプルな方法を提供します。これにより以下のことが可能になります:
+## 機能の解説
+Affix State は、リクエスト処理プロセス中にデータを共有するためのシンプルな方法を提供します。これにより以下が可能になります：
 
 - ルート設定段階でグローバル設定や共有データを注入
-- 任意のハンドラでDepotを通じてこれらのデータにアクセス
-- クローン可能なあらゆる型をステートデータとしてサポート
+- 任意のハンドラ内で Depot を通じてこれらのデータにアクセス
+- クローン可能な任意の型を状態データとしてサポート
 
-## 他フレームワークとの比較 概念の速習
+## 他のフレームワークとの比較による概念の迅速な理解
 | フレームワーク | 言語 | 状態管理方法 |
 |------|------|-------------|
-| Salvo (アフィックスステート) | Rust | Depotによる保存・アクセス、複数型対応 |
-| Axum | Rust | Extensionによる状態保存、類似だが使用方法が異なる |
-| Actix-web | Rust | App DataとWeb::Dataで状態共有 |
-| Gin | Go | context.Setとcontext.Getでデータ存取 |
-| Echo | Go | context.Setとcontext.Getで共有状態管理 |
-| Spring | Java | ApplicationContextまたは@Beanアノテーションで依存関係管理 |
-| Quarkus | Java | CDIと依存性注入メカニズム |
-| Express.js | JavaScript | app.localsまたはreq.app.localsでグローバル状態保存 |
-| Nest.js | JavaScript | 依存性注入システムで共有サービス管理 |
-| Koa.js | JavaScript | ctx.stateでリクエストレベルの状態保存 |
+| Salvo (Affix State) | Rust | Depot による保存とアクセス、複数の型をサポート |
+| Axum | Rust | Extension による状態保存、類似しているが使用方法が異なる |
+| Actix-web | Rust | App Data と Web::Data による状態共有 |
+| Gin | Go | context.Set と context.Get によるデータの保存・取得 |
+| Echo | Go | context.Set と context.Get による共有状態の管理 |
+| Spring | Java | ApplicationContext または @Bean アノテーションによる依存関係管理 |
+| Quarkus | Java | CDI と依存性注入メカニズム |
+| Express.js | JavaScript | app.locals または req.app.locals によるグローバル状態の保存 |
+| Nest.js | JavaScript | 依存性注入システムによる共有サービスの管理 |
+| Koa.js | JavaScript | ctx.state によるリクエストレベルの状態保存 |
 
 ## 一般的な使用シナリオ
 
 - データベース接続プールの共有
 - アプリケーション設定の共有
 - キャッシュインスタンスの共有
-- APIクライアントの共有
+- API クライアントの共有
 - グローバルカウンターや状態追跡
 
-アフィックスステートの利点は、その簡潔さと柔軟性にあり、様々な型のデータを異なるルートやハンドラ間で簡単に共有でき、大量のボイラープレートコードを必要としません。
+Affix State の利点は、その簡潔さと柔軟性にあります。大量の定型コードを必要とせず、異なるルートやハンドラ間で任意の型のデータを簡単に共有できます。
 _**サンプルコード**_
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/affix-state/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/affix-state/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:983c6e0b4ca9ff5e194da5a41d8d46f7 */}
+{/* 本行由工具自动生成,原文哈希值:5dfff8f8a8238344561f9f829341312c */}

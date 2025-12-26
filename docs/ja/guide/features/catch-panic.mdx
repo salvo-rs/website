@@ -1,17 +1,17 @@
-# リクエスト中のPanicをキャッチ
+# リクエスト中のパニックをキャッチ
 
-Catch Panicは、リクエスト処理中に発生するクラッシュをキャッチするために使用されます。詳細なAPIについては[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html)。
+Catch Panicは、プログラムがリクエストを処理する過程で発生するクラッシュをキャッチするために使用されます。具体的なAPIについては[ドキュメントを参照してください](https://docs.rs/salvo_extra/latest/salvo_extra/catch_panic/index.html)。
 
-> **注意**: `CatchPanic`を使用するには、`Cargo.toml`で`catch-panic` featureを有効にする必要があります:
+> **注意**: `CatchPanic`を使用するには、`Cargo.toml`で`catch-panic` featureを有効にする必要があります：
 > ```toml
 > salvo= { version = "xxx", features = ["catch-panic"] }
 > ```
 
 ## ミドルウェアの紹介
 
-`CatchPanic`は、ハンドラ内で発生したpanicをキャッチするミドルウェアです。リクエスト処理中にpanicが発生すると、サーバー全体がクラッシュする代わりに、これらのpanicをキャッチし、500 Internal Server Errorをレスポンスに書き込みます。
+`CatchPanic`は、ハンドラー内で発生するパニックをキャッチするためのミドルウェアです。リクエスト処理中にパニックが発生した場合、サーバー全体をクラッシュさせる代わりに、これらのパニックをキャッチし、500 Internal Server Errorをレスポンスに書き込みます。
 
-**重要**: このミドルウェアは、他のミドルウェアやハンドラ内のpanicを確実にキャッチするために、最初のミドルウェアとして使用する必要があります。
+**重要**: このミドルウェアは、他のミドルウェアやハンドラー内のパニックを確実にキャッチできるように、最初のミドルウェアとして使用する必要があります。
 
 ## 基本的な使い方
 
@@ -32,11 +32,11 @@ async fn main() {
 }
 ```
 
-## 他のフレームワークとの比較 概念の簡単な理解
+## 他のフレームワークとの比較 概念を素早く理解
 
 ### Axum
 
-Axumでは、`Tower`の`catch_panic`ミドルウェアに相当します:
+Axumにおける`Tower`の`catch_panic`ミドルウェアに相当：
 
 ```rust
 use axum::{
@@ -69,7 +69,7 @@ async fn main() {
 
 ### Gin (Go)
 
-Go言語のGinフレームワークでは、Recoveryミドルウェアが類似の機能を提供します:
+Go言語のGinフレームワークでは、Recoveryミドルウェアに類似：
 
 ```go
 package main
@@ -91,16 +91,16 @@ func main() {
 
 ## サンプルコード
 
-import { Tab, Tabs } from 'rspress/theme';
-import CatchPanicCode from '../../../../codes_md/catch-panic/src/main.mdx';
-import CatchPanicCargoCode from '../../../../codes_md/catch-panic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CatchPanicCode/>
+  ```rust file="<root>/codes/catch-panic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CatchPanicCargoCode/>
+  ```toml file="<root>/codes/catch-panic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:216fd74acc010904e48610d9b567866d */}
+{/* 本行由工具自动生成,原文哈希值:ad03110400c39a35184d54e9554276b5 */}

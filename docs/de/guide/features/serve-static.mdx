@@ -1,59 +1,59 @@
 # Statischer Server
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware, das statische Dateien oder eingebettete Dateien als Dienst bereitstellt. Detaillierte API finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
+Ein Middleware, der statische Dateien oder eingebettete Dateien als Dienst bereitstellt. Detaillierte API finden Sie in der [Dokumentation](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
 ## Anwendungsszenarien
-Statische Dateiserver haben vielfältige Anwendungsmöglichkeiten in Webanwendungen:
-- Bereitstellung statischer Ressourcen wie CSS, JavaScript, Bilder etc.
+Statische Dateidienste haben vielfältige Anwendungsmöglichkeiten in Webanwendungen:
+- Bereitstellung statischer Ressourcen wie CSS, JavaScript, Bilder usw. für Websites
 - Hosting von Single-Page-Anwendungen (SPA)
-- Verteilung von Dokumenten, Mediendateien, Download-Inhalten
+- Verteilung von Dokumenten, Mediendateien, Download-Inhalten usw.
 - Komplette Hosting-Lösung für einfache Websites
 
 ## Hauptfunktionen
 
-- `StaticDir` bietet Unterstützung für statische lokale Verzeichnisse. Es können mehrere Verzeichnisse als Parameter übergeben werden. Beispiel:
+- `StaticDir` bietet Unterstützung für statische lokale Ordner. Eine Liste mehrerer Ordner kann als Parameter übergeben werden. Zum Beispiel:
 
 <Tabs>
   <Tab label="main.rs">
-<StaticDirListMainCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-  Wenn die entsprechende Datei im ersten Verzeichnis nicht gefunden wird, wird im zweiten Verzeichnis gesucht.
+  Wenn die entsprechende Datei im ersten Ordner nicht gefunden wird, wird im zweiten Ordner gesucht.
 
-`StaticDir` unterstützt die bevorzugte Auslieferung komprimierter Dateien, falls vorhanden. Bei Vorhandensein von `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br` werden letztere als vorab komprimierte Versionen betrachtet und entsprechend der Anfrageinformationen ausgeliefert.
+`StaticDir` unterstützt die bevorzugte Auslieferung komprimierter Dateien, falls vorhanden. Wenn beispielsweise die Dateien `index.html`, `index.html.gz`, `index.html.zst`, `index.html.br` existieren, werden `index.html.gz`, `index.html.zst`, `index.html.br` als vorab komprimierte Versionen von `index.html` betrachtet und je nach Anfrageinformationen die entsprechende komprimierte Datei gesendet.
 
-- Unterstützung für `rust-embed`, zum Beispiel:
+- Bietet Unterstützung für `rust-embed`, zum Beispiel:
 
 ## Vor- und Nachteile von rust-embed
 
 **Vorteile:**
-- Statische Dateien werden in die Binärdatei kompiliert, was die Bereitstellung vereinfacht
-- Keine separate Verwaltung statischer Dateien in der Produktionsumgebung nötig
-- Potenziell bessere Leistung (Speicherzugriff vs. Festplatten-I/O)
-- Höhere Sicherheit, da Dateien nicht versehentlich geändert werden können
+- Kompiliert statische Dateien in die Binärdatei und vereinfacht den Bereitstellungsprozess
+- Keine separate Verwaltung statischer Dateien in der Produktionsumgebung erforderlich
+- Mögliche Leistungsverbesserung (Speicherzugriff vs. Festplatten-I/O)
+- Höhere Sicherheit, da Dateien nicht versehentlich modifiziert werden können
 
 **Nachteile:**
-- Vergrößert die Binärdatei der Anwendung
-- Aktualisierungen statischer Inhalte erfordern Neukompilierung und erneute Bereitstellung
-- Nicht geeignet für häufig ändernde, umfangreiche statische Inhalte
+- Erhöht die Größe der Anwendungsbinärdatei
+- Aktualisierung statischer Inhalte erfordert Neukompilierung und erneute Bereitstellung der gesamten Anwendung
+- Ungeeignet für häufig ändernde, umfangreiche statische Inhalte
 
 <Tabs>
   <Tab label="main.rs">
-<StaticEmbedFilesMainCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-Mit `default` kann eine Standardseite festgelegt werden. `with_fallback` und `fallback` ermöglichen die Angabe einer Ersatzdatei bei nicht gefundenen Dateien, was insbesondere für bestimmte Single-Page-Anwendungen nützlich sein kann.
-{/* 本行由工具自动生成,原文哈希值:c537c9f69842cc0c3f4781c8c5580f00 */}
+Über default kann eine Standardseite festgelegt werden. `with_fallback` und `fallback` können so konfiguriert werden, dass bei nicht gefundenen Dateien die hier festgelegte Datei verwendet wird, was für bestimmte Single-Page-Webanwendungen nützlich sein kann.
+{/* 本行由工具自动生成,原文哈希值:42f7ce7c0dec48cc37b3300fbc400bb8 */}

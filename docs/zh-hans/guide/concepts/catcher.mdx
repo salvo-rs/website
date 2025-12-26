@@ -1,8 +1,6 @@
 # Catcher
 
-import { Tab, Tabs } from 'rspress/theme';
-import CustomErrorPageCode from '../../../../codes_md/custom-error-page/src/main.mdx';
-import CustomErrorPageCargoCode from '../../../../codes_md/custom-error-page/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 如果 `Response` 的状态码是错误, 而页面里面的 `Body` 是空, 这时 salvo 会试图使用 `Catcher` 捕获这个错误, 显示一个友好的错误页面.
 
@@ -22,9 +20,11 @@ Service::new(router).catcher(Catcher::default());
 
 <Tabs>
   <Tab label="main.rs">
-    <CustomErrorPageCode/>
+  ```rust file="<root>/codes/custom-error-page/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CustomErrorPageCargoCode/>
+  ```toml file="<root>/codes/custom-error-page/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

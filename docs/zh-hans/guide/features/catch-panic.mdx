@@ -91,15 +91,15 @@ func main() {
 
 ## 示例代码
 
-import { Tab, Tabs } from 'rspress/theme';
-import CatchPanicCode from '../../../../codes_md/catch-panic/src/main.mdx';
-import CatchPanicCargoCode from '../../../../codes_md/catch-panic/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CatchPanicCode/>
+  ```rust file="<root>/codes/catch-panic/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CatchPanicCargoCode/>
+  ```toml file="<root>/codes/catch-panic/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

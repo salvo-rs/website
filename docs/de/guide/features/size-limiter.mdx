@@ -1,27 +1,27 @@
-# Upload-Dateigrößenbeschränkung Middleware
+# Middleware zur Begrenzung der Upload-Dateigröße
 
-import { Tab, Tabs } from 'rspress/theme';
-import SizeLimiterMainCode from '../../../../codes_md/size-limiter/src/main.mdx';
-import SizeLimiterCargoCode from '../../../../codes_md/size-limiter/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Middleware zur Begrenzung der Größe hochgeladener Dateien in Anfragen.
 
 ## Anwendungsszenarien
 
-Der Size Limiter wird hauptsächlich in folgenden Situationen eingesetzt:
+Der Size Limiter wird hauptsächlich in folgenden Szenarien eingesetzt:
 - Verhindern, dass Benutzer zu große Dateien hochladen und Serverressourcen belegen
 - Vermeiden von Server-Speicherüberläufen durch böswillige Angreifer, die große Datenmengen hochladen
-- Festlegen unterschiedlicher Größenbeschränkungsstrategien für verschiedene API-Endpunkte
+- Festlegen unterschiedlicher Anfragegrößenbeschränkungen für verschiedene API-Endpunkte
 - Verbesserung der Effizienz und Stabilität der Serveranfrageverarbeitung
 
-_**Beispielcode**_
+_**Beispielcode**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SizeLimiterMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SizeLimiterCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/size-limiter/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/size-limiter/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:7bf2c000bd32696677fc70ca8e62af44 */}
+{/* 本行由工具自动生成,原文哈希值:e8fe97542f86e069c6a192945b8303da */}

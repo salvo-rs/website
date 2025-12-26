@@ -1,42 +1,42 @@
 # SSE (Server-Sent Events)
 
-import { Tab, Tabs } from 'rspress/theme';
-import SseMainCode from '../../../../codes_md/sse/src/main.mdx';
-import SseCargoCode from '../../../../codes_md/sse/Cargo.mdx';
-import SseChatMainCode from '../../../../codes_md/sse-chat/src/main.mdx';
-import SseChatCargoCode from '../../../../codes_md/sse-chat/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## ¿Qué es SSE?
 
-Server-Sent Events (SSE) es una tecnología web que permite al servidor enviar datos al cliente de forma automática. A diferencia de WebSocket, SSE es unidireccional: solo transmite datos del servidor al cliente, ideal para escenarios donde se requiere que el servidor envíe datos en tiempo real sin necesidad de que el cliente los solicite frecuentemente. SSE se basa en el protocolo HTTP, es sencillo de implementar y cuenta con mecanismos de reconexión automática.
+Server-Sent Events (SSE) es una tecnología web que permite al servidor enviar datos al cliente de forma automática. A diferencia de WebSocket, SSE es una comunicación unidireccional: solo transmite datos del servidor al cliente, lo que lo hace ideal para escenarios donde el servidor necesita enviar datos en tiempo real sin que el cliente tenga que enviar información con frecuencia. SSE se basa en el protocolo HTTP, es sencillo de implementar y cuenta con un mecanismo de reconexión automática en caso de interrupción.
 
-Middleware que proporciona soporte para `SSE`.
+Proporciona un middleware con soporte para `SSE`.
 
-_**Código de ejemplo**_
-
-<Tabs>
-<Tab label="main.rs">
-<SseMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SseCargoCode/>
-</Tab>
-</Tabs>
-
-## Ejemplo de aplicación de chat
+_**Código de ejemplo**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SseChatMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SseChatCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/sse/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/sse/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
-## Integración con modelos de lenguaje avanzados
+## Ejemplo de programa de chat
 
-Al utilizar SDKs de OpenAI u otros SDKs de modelos de lenguaje avanzado para integrar IA, la devolución de resultados en flujo continuo (Stream) es un escenario común. SSE ofrece una solución perfecta, permitiendo enviar el contenido generado por la IA al frontend en tiempo real, mejorando así la experiencia del usuario.
+<Tabs>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/sse-chat/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/sse-chat/Cargo.toml"
+  ```
+  </Tab>
+</Tabs>
 
-Por ejemplo, al integrar la API de Chat Completion de OpenAI con respuestas en flujo continuo, se puede aprovechar la funcionalidad SSE de Salvo para enviar progresivamente el contenido generado por la IA al cliente, evitando que el usuario perciba demoras mientras espera la respuesta completa.
-{/* 本行由工具自动生成,原文哈希值:c23a2cf16be4c8144514b22523991634 */}
+## Integración con modelos de lenguaje grandes
+
+Al integrar IA mediante SDKs como OpenAI u otros SDKs de modelos de lenguaje grandes, la devolución de resultados en flujo continuo (Stream) es un escenario de uso común. SSE ofrece una solución perfecta, permitiendo enviar contenido generado por la IA al frontend en tiempo real, mejorando así la experiencia del usuario.
+
+Por ejemplo, al utilizar la API de Chat Completion de OpenAI con respuesta en flujo continuo, se puede aprovechar la funcionalidad SSE de Salvo para enviar progresivamente el contenido generado por la IA al cliente, evitando la sensación de demora que produce esperar la respuesta completa.
+{/* 本行由工具自动生成,原文哈希值:a6de063d6b9d92c4c8245bfb4028820b */}

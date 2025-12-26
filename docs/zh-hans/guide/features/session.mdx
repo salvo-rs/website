@@ -1,8 +1,6 @@
 # Session
 
-import { Tab, Tabs } from 'rspress/theme';
-import SessionLoginMainCode from '../../../../codes_md/session-login/src/main.mdx';
-import SessionLoginCargoCode from '../../../../codes_md/session-login/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 提供对 `Session` 支持的中间件.
 
@@ -23,10 +21,12 @@ Session是在服务器端存储的一段用户数据，通常用于跟踪用户�
 _**示例代码**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SessionLoginMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SessionLoginCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/session-login/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/session-login/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>

@@ -4,36 +4,22 @@ title: Rust Error Handling Libraries
 
 # Rust Error Handling Libraries
 
-import { LinkCard } from '@theme';
+- [thiserror](https://docs.rs/thiserror/latest/thiserror/) provides convenient derive macros for custom error types.
 
-<LinkCard
-  href="https://docs.rs/thiserror/latest/thiserror/"
-  title="thiserror"
-  description="Convenient derive macros for custom error types"
-/>
+- [snafu](https://docs.rs/snafu/latest/snafu/) is an error handling and reporting framework with context.
 
-<LinkCard
-  href="https://docs.rs/snafu/latest/snafu/"
-  title="snafu"
-  description="Error handling and reporting framework with context"
-/>
-
-<LinkCard
-  href="https://docs.rs/anyhow/latest/anyhow/"
-  title="anyhow"
-  description="Flexible error handling and reporting library"
-/>
+- [anyhow](https://docs.rs/anyhow/latest/anyhow/) is a flexible error handling and reporting library.
 
 ## thiserror vs snafu
 
 ### thiserror
 
-thiserror is a lightweight library that provides derive macros to simplify error definition.
+thiserror is a lightweight library that provides derive macros to simplify error definitions.
 
 Features:
 - Concise syntax with low ceremony
-- Ideal for creating error type libraries and APIs
-- Typically used for creating libraries meant for others
+- Suitable for creating error type libraries and APIs
+- Typically used for creating libraries intended for others
 
 ```rust
 use thiserror::Error;
@@ -53,11 +39,11 @@ pub enum DataError {
 
 ### snafu
 
-snafu offers a more comprehensive error handling framework with emphasis on error context and chaining.
+snafu provides a more comprehensive error handling framework with a focus on error context and error chaining.
 
 Features:
-- Encourages precise error context through "context selector" pattern
-- Promotes "one error enum per module" approach
+- Encourages more precise error context addition through the "context selector" pattern
+- Promotes the "one error enum per module" pattern
 - Supports both struct and tuple-style error variants
 - Built-in backtrace support
 
@@ -73,7 +59,7 @@ pub enum Error {
         backtrace: Backtrace,
     },
     
-    // Tuple-style also supported
+    // Tuple style is also supported
     #[snafu(display("IO error"))]
     Io(#[snafu(source)] std::io::Error, #[snafu(backtrace)] Backtrace),
 }
@@ -88,25 +74,25 @@ fn read_config(path: &str) -> Result<Config, Error> {
 ### Comparison
 
 | Feature | thiserror | snafu |
-|------|-----------|-------|
-| Syntax simplicity | More concise | More verbose |
-| Error context | Basic support | Rich context mechanism |
-| Project scale | Small to medium | Medium to large |
-| Code lines | ~2 per error | ~5 per error |
-| Error organization | Typically single enum | Encourages module-level enums |
-| Backtrace support | No built-in | Built-in |
+|---------|-----------|-------|
+| Syntax conciseness | More concise | More verbose |
+| Error context | Basic support | Rich context mechanisms |
+| Suitable scale | Small to medium projects | Medium to large projects |
+| Lines per error | ~2 lines per error | ~5 lines per error |
+| Error organization | Usually single error enum | Encourages module-level error enums |
+| Backtrace support | No built-in support | Built-in support |
 
-**Recommendations**:
-- **Choose thiserror** when you need straightforward error types, especially in libraries
+**Selection advice**:
+- **Choose thiserror** when you need simple and clear error types, especially in libraries
 - **Choose snafu** when you need more structured error handling, particularly in large applications
 
 ## anyhow
 
-anyhow takes a different approach from the above libraries, focusing on applications rather than libraries.
+anyhow is a different error handling library from the above two, focusing on applications rather than libraries.
 
 Features:
-- Designed for application error handling, not libraries
-- Provides dynamic `anyhow::Error` type that can wrap any error implementing `Error` trait
+- Designed for error handling in applications, not libraries
+- Provides a dynamic `anyhow::Error` type that can contain any error implementing the `Error` trait
 - Simplifies handling across multiple error types
 - No need to define custom error types
 
@@ -120,16 +106,16 @@ fn main() -> Result<()> {
     let app_config: AppConfig = serde_json::from_str(&config)
         .context("Invalid config format")?;
         
-    // Using Result<T> as type alias for Result<T, anyhow::Error>
+    // Using Result<T> as a type alias for Result<T, anyhow::Error>
     Ok(())
 }
 ```
 
 **anyhow vs thiserror/snafu**:
-- anyhow focuses on rapid error handling during application development
+- anyhow focuses on error handling during rapid application development
 - thiserror/snafu focus on creating precise error type hierarchies
 - anyhow is typically used in application code
 - thiserror/snafu are typically used in library code
 
-In practice, anyhow and thiserror are often used together: libraries define precise error types with thiserror, while applications use anyhow to handle various error sources.
-{/* 本行由工具自动生成,原文哈希值:ac682487abf5cc66b7b4ee2508c7386d */}
+In practice, anyhow and thiserror are often used together: libraries use thiserror to define precise error types, while applications use anyhow to handle errors from various sources.
+{/* 本行由工具自动生成,原文哈希值:e786d782f2c0d052350def02a332c83f */}

@@ -25,7 +25,7 @@ async fn main() {
     let router = Router::new()
         .goal(index)
         .push(Router::with_path("chat").goal(user_connected));
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     Server::new(acceptor).serve(router).await;
 }
 
@@ -73,9 +73,7 @@ async fn handle_socket(ws: WebSocket) {
     tokio::task::spawn(fut);
 }
 async fn user_message(my_id: usize, msg: Message) {
-    let msg = if let Ok(s) = msg.as_str() {
-        s
-    } else {
+    let Ok(msg) = msg.as_str() else {
         return;
     };
 
@@ -83,12 +81,13 @@ async fn user_message(my_id: usize, msg: Message) {
 
     // New message from this user, send it to everyone else (except same uid)...
     for (&uid, tx) in ONLINE_USERS.read().await.iter() {
-        if my_id != uid {
-            if let Err(_disconnected) = tx.send(Ok(Message::text(new_msg.clone()))) {
-                // The tx is disconnected, our `user_disconnected` code
-                // should be happening in another task, nothing more to
-                // do here.
-            }
+        if my_id != uid
+            && let Err(_disconnected) = tx.send(Ok(Message::text(new_msg.clone())))
+        {
+            // The tx is disconnected, our `user_disconnected` code
+            // should be happening in another task, nothing more to
+            // do here.
+            tracing::info!("the tx is disconnected, uid={uid}");
         }
     }
 }

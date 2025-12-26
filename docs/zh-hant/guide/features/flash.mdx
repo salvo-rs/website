@@ -2,24 +2,22 @@
 
 提供快閃訊息功能的 middleware。
 
-`FlashStore` 提供資料存取操作。`CookieStore` 會將資料儲存在 `Cookie` 中。而 `SessionStore` 則將資料儲存在 `Session` 裡，`SessionStore` 必須與 `session` 功能搭配使用。
+`FlashStore` 提供資料的存取操作。`CookieStore` 會將資料儲存在 `Cookie` 中。而 `SessionStore` 則將資料儲存在 `Session` 中，`SessionStore` 必須與 `session` 功能搭配使用。
 
-_**範例程式碼**_
+_**程式碼範例**_
 
 ### Cookie 儲存範例
 
-import { Tab, Tabs } from 'rspress/theme';
-import FlashCookieStoreCode from '../../../../codes_md/flash-cookie-store/src/main.mdx';
-import FlashCookieStoreCargoCode from '../../../../codes_md/flash-cookie-store/Cargo.mdx';
-import FlashSessionStoreCode from '../../../../codes_md/flash-session-store/src/main.mdx';
-import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <FlashCookieStoreCode/>
+  ```rust file="<root>/codes/flash-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <FlashCookieStoreCargoCode/>
+  ```toml file="<root>/codes/flash-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -27,10 +25,12 @@ import FlashSessionStoreCargoCode from '../../../../codes_md/flash-session-store
 
 <Tabs>
   <Tab label="main.rs">
-    <FlashSessionStoreCode/>
+  ```rust file="<root>/codes/flash-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <FlashSessionStoreCargoCode/>
+  ```toml file="<root>/codes/flash-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:65b5daf888b80bc91076aaaee868b95c */}
+{/* 本行由工具自动生成,原文哈希值:1ee7f7b07cbfa41abc73377fd6dca086 */}

@@ -1,14 +1,14 @@
-# レスポンス
+# Response
 
-`Handler` 内では、[`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) が引数として渡されます:
-* `Response` 構造体は HTTP レスポンスの全要素をカプセル化し、HTTP レスポンスを構築・操作するための完全な API を提供します
-* メソッドチェーンスタイル（例: `res.status_code(200).body("Hello")`）をサポートし、レスポンスを流暢に構築できます
-* 主な機能:
+`Handler` 内では、[`Response`](https://docs.rs/salvo_core/latest/salvo_core/http/response/struct.Response.html) が引数として渡されます：
+* `Response` 構造体は HTTP レスポンスの全要素をカプセル化し、HTTP レスポンスを構築・操作するための完全な API を提供します。
+* チェーンメソッド呼び出しスタイル（例：`res.status_code(200).body("Hello")`）をサポートし、レスポンスを流暢に構築できます。
+* 主な機能：
     * ステータスコードとヘッダーの設定
-    * レスポンスボディの操作（文字列、バイト、ファイル、ストリームデータに対応）
+    * レスポンスボディの操作（文字列、バイト、ファイル、ストリーミングデータをサポート）
     * Cookie の管理
-    * 様々なコンテンツレンダリング方法
-* この構造体は可変参照モードを採用し、`&mut self` で自身の参照を返すため、ハンドラが HTTP レスポンスを簡単に構築・カスタマイズでき、様々な Web サービス要件を満たせます
+    * 多様なコンテンツレンダリング方法
+* この構造体は可変参照モードを採用し、`&mut self` を通じて自身の参照を返すため、ハンドラは HTTP レスポンスを簡単に構築・カスタマイズし、様々な Web サービス要件を満たすことができます。
 
 ```rust
 #[handler]
@@ -17,7 +17,7 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-サーバ゙ーがクライアントからのリクエストを受信した後、マッチした任意の `Handler` とミドルウェアは `Response` にデータを書き込むことができます。特定の場合、例えばあるミドルウェアが後続のミドルウェアと `Handler` の実行を阻止したい場合、`FlowCtrl` を使用できます:
+サーバーがクライアントリクエストを受信した後、`Response` には、一致したすべての `Handler` とミドルウェアがデータを書き込むことができます。特定の状況では、例えばあるミドルウェアが後続のミドルウェアや `Handler` の実行を阻止したい場合、`FlowCtrl` を使用できます：
 
 ```rust
 #[handler]
@@ -29,15 +29,15 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
 ## コンテンツの書き込み
 
-`Response` にデータを書き込むのは非常に簡単です:
+`Response` にデータを書き込むことは非常に簡単です：
 
-- プレーンテキストデータの書き込み
+- プレーンテキストデータの書き込み
 
     ```rust
     res.render("Hello world!");
     ```
 
-- JSON シリアライズデータの書き込み
+- JSON シリアライズデータの書き込み
 
     ```rust
     use serde::Serialize;
@@ -52,7 +52,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ```
 
 :::warning
-`render` メソッドを複数回呼び出して JSON データを書き込む場合、これらのデータは 1 つの JSON オブジェクトにマージされず、独立したテキストフラグメントとして順番に連結されるため、無効な JSON フォーマットになる可能性があります。複数のデータを返す必要がある場合は、それらを 1 つのオブジェクトに組み合わせてから一度にシリアライズするか、ロジックを自行処理してください。
+`render` メソッドを複数回呼び出して JSON データを書き込む場合、これらのデータは単一の JSON オブジェクトにマージされず、独立したテキストフラグメントとして順番に連結されるため、無効な JSON フォーマットになる可能性があります。複数のデータを返す必要がある場合は、それらを一つのオブジェクトに組み合わせてから一度にシリアライズするか、ロジックを自身で処理する必要があります。
 :::
 
 
@@ -65,22 +65,22 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 ## HTTP エラーの書き込み
 
 
-- `render` を使用すると、`Response` に詳細なエラー情報を書き込めます。
+- `render` を使用して、`Response` に詳細なエラー情報を書き込むことができます。
 
     ```rust
     use salvo::http::errors::*;
     res.render(StatusError::internal_server_error().brief("error when serialize object to json"))
     ```
 
-- カスタムエラー情報が不要な場合は、直接 `set_http_code` を呼び出せます。
+- カスタムエラーメッセージが不要な場合は、直接 `set_http_code` を呼び出すことができます。
 
     ```rust
     use salvo::http::StatusCode;
     res.status_code(StatusCode::BAD_REQUEST);
     ```
 
-## 他のURLへのリダイレクト
-- `render` メソッドを使用すると、`Response` にリダイレクトレスポンスを書き込み、新しいURLにナビゲートできます。Redirect::found メソッドを呼び出すと、HTTP ステータスコードが 302（Found）に設定され、一時的なリダイレクトを意味します。 
+## 他の URL へのリダイレクト
+- `render` メソッドを使用して、`Response` にリダイレクトレスポンスを書き込み、新しい URL にナビゲートすることができます。`Redirect::found` メソッドを呼び出すと、HTTP ステータスコードが 302（Found）に設定され、一時的なリダイレクトを意味します。
     ```rust
     use salvo::prelude::*;
 
@@ -93,5 +93,28 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
 
 ## ResBody
 
-Response が返す Body タイプは `ResBody` です。これは列挙型で、エラーが発生した場合に `ResBody::Error` に設定されます。ここにはエラー情報が含まれており、エラー処理を遅延させるために使用されます。`StatusError` は実際には `Writer` を実装していないため、`Catcher` で独自の表示方法をカスタマイズできます。
+Response が返す Body の型は `ResBody` です。これは列挙型であり、エラー発生時には `ResBody::Error` に設定されます。ここにはエラー情報が含まれており、エラーの遅延処理に使用されます。`StatusError` は実際には `Writer` を実装しておらず、`Catcher` で独自の表示方法をカスタマイズできるようにすることを目的としています。
+
+
+
+# Response 構造体メソッド概要
+
+| カテゴリ | メソッド | 説明 |
+|------|------|------|
+| **作成** | `new()` / `with_cookies()` | 新しいレスポンスを作成 |
+| **ステータスコード** | `status_code()` | ステータスコードを設定 |
+| **リクエストヘッダー** | `headers()/headers_mut()` | ヘッダーを取得 |
+| | `set_headers()/add_header()` | ヘッダーを設定/追加 |
+| | `content_type()` | コンテンツタイプを取得 |
+| **HTTP バージョン** | `version()/version_mut()` | HTTP バージョンを取得/変更 |
+| **レスポンスボディ** | `body()/body_mut()` | レスポンスボディを設定/取得 |
+| | `replace_body()/take_body()` | レスポンスボディを置換/抽出 |
+| | `write_body()` | レスポンスボディにデータを書き込み |
+| | `stream()/channel()` | ストリーミングレスポンス/送信チャネルを作成 |
+| **Cookie 処理** | `cookies()/cookie()` | cookies/指定した cookie を取得 |
+| | `add_cookie()/remove_cookie()` | cookie を追加/削除 |
+| **コンテンツレスポンス** | `render()` | コンテンツをレンダリング |
+| | `stuff()` | ステータスコードを設定し、コンテンツをレンダリング |
+| | `send_file()` | ファイルを送信 |
+| **状態確認** | `is_stamped()` | レスポンスが書き戻し準備完了かどうかを確認 |
 {/* 本行由工具自动生成,原文哈希值:44c6af44c98679e79e0828f210a61cd0 */}

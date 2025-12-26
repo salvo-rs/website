@@ -1,14 +1,14 @@
 # Apagado elegante
 
-El apagado elegante se refiere a que, cuando un servidor se cierra, no termina todas las conexiones de inmediato, sino que primero deja de aceptar nuevas solicitudes y permite que las solicitudes ya aceptadas tengan tiempo suficiente para completar su procesamiento antes de cerrar el servicio. Este enfoque evita la interrupción abrupta de solicitudes, mejorando la experiencia del usuario y la confiabilidad del sistema.
+El apagado elegante se refiere a que, al cerrar un servidor, no se terminen inmediatamente todas las conexiones, sino que primero se deje de aceptar nuevas solicitudes, permitiendo que las solicitudes ya aceptadas tengan tiempo suficiente para completar su procesamiento antes de cerrar el servicio. Este método evita que las solicitudes se interrumpan abruptamente, mejorando la experiencia del usuario y la confiabilidad del sistema.
 
-Salvo ofrece soporte para el apagado elegante a través del método `handle` del `Server`, que obtiene un manejador del servidor, seguido de la llamada al método `stop_graceful`. Después de invocar este método, el servidor:
+Salvo proporciona soporte para el apagado elegante a través del método `handle` del `Server`, que obtiene un manejador del servidor, y luego se llama al método `stop_graceful` para implementarlo. Después de llamar a este método, el servidor:
 
-- Deja de aceptar nuevas conexiones
-- Espera a que las solicitudes existentes terminen de procesarse
-- Si se proporciona un tiempo de espera, fuerza el cierre de las conexiones restantes una vez transcurrido dicho tiempo
+- Deja de aceptar nuevas solicitudes de conexión
+- Espera a que se completen las solicitudes existentes
+- Cierra forzosamente las conexiones restantes después de un tiempo de espera especificado (si se proporciona)
 
-Aquí tienes un ejemplo sencillo:
+Aquí hay un ejemplo simple:
 
 ```rust
 use salvo_core::prelude::*;
@@ -19,7 +19,7 @@ async fn main() {
     let server = Server::new(acceptor);
     let handle = server.handle();
 
-    // Cierre elegante del servidor
+    // Apagar el servidor de manera elegante
     tokio::spawn(async move {
         tokio::time::sleep(std::time::Duration::from_secs(60)).await;
         handle.stop_graceful(None);
@@ -31,8 +31,8 @@ async fn main() {
 En el ejemplo anterior:
 
 - `server.handle()` obtiene un manejador del servidor, que puede usarse para controlar su ciclo de vida
-- `handle.stop_graceful(None)` inicia el proceso de apagado elegante; `None` indica que no hay tiempo de espera definido, por lo que esperará indefinidamente a que todas las solicitudes finalicen
-- Si deseas establecer un tiempo de espera, puedes pasar `Some(Duration)`; una vez transcurrido este tiempo, se forzará el cierre de las conexiones restantes
+- `handle.stop_graceful(None)` inicia el proceso de apagado elegante; `None` significa que no se establece un tiempo de espera, por lo que esperará indefinidamente a que se completen todas las solicitudes
+- Si se desea establecer un tiempo de espera, se puede pasar `Some(Duration)`; después del tiempo de espera, las conexiones restantes se cerrarán forzosamente
 
-Este método es especialmente útil para aplicaciones desplegadas en entornos de contenedores o plataformas en la nube, así como para actualizaciones en caliente donde es crucial evitar la interrupción inesperada de solicitudes.
+Este método es especialmente útil para aplicaciones que se implementan en entornos de contenedores o plataformas en la nube, así como para garantizar que las solicitudes no se interrumpan accidentalmente durante actualizaciones en caliente.
 {/* 本行由工具自动生成,原文哈希值:37a3d8a11c033b0d07dca20cf5f3b96b */}

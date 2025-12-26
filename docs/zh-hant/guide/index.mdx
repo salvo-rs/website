@@ -2,29 +2,27 @@
 
 ## 為什麼要寫這個框架
 
-當初，作為初學者，我發現自己很笨拙，無法學會使用 actix-web、Rocket 等現有框架。當我想把以前用 Go 寫的 Web 服務改用 Rust 實現時，乍看之下，似乎每個框架都比 Go 的現有框架複雜。Rust 的學習曲線已經夠陡峭了，何必還要把 Web 框架搞得那麼複雜？
+當時，作為初學者，我發現自己實在愚鈍，始終無法掌握 actix-web、Rocket 等現有框架的使用。當我試圖用 Rust 重寫過去用 Go 開發的 Web 服務時，乍看之下，每個框架似乎都比 Go 生態中的現有方案更複雜。Rust 的學習曲線本就陡峭，何苦再把 Web 框架設計得如此艱深？
 
-當 Tokio 推出 Axum 框架時，我開心地以為以後不必再維護自己的 Web 框架了。然而事實是，Axum 看似簡單，實際使用時卻需要大量類型體操和泛型定義，必須對 Rust 語言有深刻理解並寫出大量晦澀難懂的模板代碼，才能完成一個簡單的中間件。
+Tokio 團隊推出 Axum 框架時，我曾欣喜地以為終於不必再維護自己的 Web 框架了。然而現實是，Axum 表面簡潔，實際使用時卻充斥著過度的類型操作與泛型定義。必須對 Rust 語言有深刻理解，並耐著性子寫出大量晦澀難懂的模板代碼，才能實現一個簡單的中間件。
 
-因此我決定繼續維護這個特別（順手、功能豐富且適合初學者）的 Web 框架。
+因此我決定繼續維護這個獨特（順手、功能豐富且適合初學者）的 Web 框架。
 
-## Salvo(賽風) 是否適合你
+## Salvo（賽風）是否適合你
 
-Salvo 雖然簡單，但功能足夠全面強大，基本可以視為 Rust 界最強的框架。然而，如此強大的系統，學習和使用卻非常簡單，絕對不會讓你感到任何「揮刀自宮」的痛苦。
+Salvo 雖簡約，功能卻完備強大，堪稱 Rust 領域的頂尖之作。然而，如此強大的系統，學習與使用門檻卻極低，絕不會讓你經歷「揮刀自宮」般的痛苦。
 
-- 它適合剛開始學習 Rust 的初學者。CRUD 是極其平常且常用的功能，如果用 Salvo 做類似工作，你會發現它和你用過的其他語言 Web 框架一樣簡單（例如：Express、Koa、gin、flask...），甚至在某些方面更抽象簡潔；
-
-- 它適合希望將 Rust 用於生產環境，提供穩健快速伺服器的人。雖然 Salvo 尚未發布 1.0 版本，但其核心功能已經過幾年迭代，足夠穩定且問題修復及時；
-
-- 它適合毛髮已不再茂密但仍每天不停掉髮的你。
+- 適合剛接觸 Rust 的初學者：CRUD 是極其常見且頻繁使用的功能。若用 Salvo 處理類似任務，你會發現它與其他語言的 Web 框架（如 Express、Koa、gin、flask…）同樣簡單直觀，甚至在部分設計上更為抽象簡潔；
+- 適合希望將 Rust 投入生產環境、構建穩健高效服務的開發者。Salvo 雖未發布 1.0 版本，但其核心功能歷經數年迭代，已足夠穩定，且問題修復及時；
+- 適合那位髮量日漸稀疏卻仍每日掉髮的你。
 
 ## 如何做到足夠簡單
 
-許多底層實現 Hyper 都已提供，因此一般需求基於 Hyper 實現應該沒錯。Salvo 也是如此。核心功能是一個強大且靈活的路由系統，以及許多常用功能，如 Acme、OpenAPI、JWT Auth 等。
+許多底層實現已由 Hyper 完成，因此基於 Hyper 構建框架滿足常規需求是合理選擇。Salvo 亦遵循此道，其核心在於強大靈活的路由系統，以及 Acme、OpenAPI、JWT 認證等豐富的常用功能。
 
-Salvo 統一了 Handler 和 Middleware。Middleware 就是 Handler，通過路由的 hoop 添加到 Router 上。本質上，Middleware 和 Handler 都是處理 Request 請求，並可能向 Response 寫入數據。而 Handler 接收的參數是 Request、Depot、Response 三個，其中 Depot 用於儲存請求處理過程中的臨時數據。
+Salvo 統一了處理器（Handler）與中介軟體（Middleware）的概念——中介軟體即是處理器。透過路由的 `hoop` 方法附加至路由器（Router）。本質上，中介軟體與處理器皆負責處理請求（Request），並可向回應（Response）寫入資料。處理器接收三個參數：Request、Depot 與 Response，其中 Depot 用於儲存請求處理過程中的暫存資料。
 
-為方便書寫，用不到時可省略某些參數，也可無視參數傳入順序。
+為提升編寫效率，未使用的參數可省略，參數順序亦可任意調整。
 
 ```rust
 use salvo::prelude::*;
@@ -39,11 +37,11 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-此外，路由系統提供的 API 極其簡單，但功能強大。正常使用需求下，基本上只需關注 Router 一個類型即可。
-另外，如果結構體實現了相關 trait，Salvo 可以自動生成 OpenAPI 文檔及提取參數，自動處理不同錯誤並返回友好提示。這使得編寫 handler 就像編寫普通函數一樣簡單直觀。後續教程會詳細講解這些功能，以下是範例：
+此外，路由系統提供的 API 極簡而強大。常規使用場景下，僅需關注 `Router` 這一類型即可。
+若結構體實現了相關特徵（trait），Salvo 能自動生成 OpenAPI 文檔、提取參數、處理各類錯誤並回傳友好提示。這讓編寫處理器如同編寫普通函數般直觀。後續教程將逐步詳解這些功能，此處先看一例：
 
 ```rust
-#[endpoint(tags("消息日誌"))]
+#[endpoint(tags("訊息日誌"))]
 pub async fn create_message_log_handler(
     input: JsonBody<CreateOrUpdateMessageLog>,
     depot: &mut Depot,
@@ -54,13 +52,13 @@ pub async fn create_message_log_handler(
 }
 ```
 
-此範例中，`JsonBody<CreateOrUpdateMessageLog>` 會自動從請求體解析 JSON 數據並轉換為 `CreateOrUpdateMessageLog` 類型（也支援多數據源、嵌套類型），同時 `#[endpoint]` 宏會自動為此接口生成 OpenAPI 文檔，簡化參數提取和錯誤處理的代碼。
+此例中，`JsonBody<CreateOrUpdateMessageLog>` 會自動從請求主體解析 JSON 資料並轉換為 `CreateOrUpdateMessageLog` 類型（亦支援多資料來源與巢狀類型）。同時，`#[endpoint]` 巨集會自動為此介面生成 OpenAPI 文檔，並簡化參數提取與錯誤處理的程式碼。
 
 ## 路由系統
 
-我認為路由系統與其他框架不同。Router 可以寫成平面，也可以寫成樹狀。這裡區分業務邏輯樹與訪問目錄樹。業務邏輯樹根據業務需求劃分 router 結構，形成 router 樹，它不一定與訪問目錄樹一致。
+我認為 Salvo 的路由系統與眾不同。Router 既可扁平化編寫，亦可組織為樹狀結構。這裡需區分「業務邏輯樹」與「存取目錄樹」：業務邏輯樹依業務需求劃分路由結構，形成路由樹，其未必與存取目錄樹一致。
 
-通常我們這樣寫路由：
+常規的路由寫法如下：
 
 ```rust
 Router::new().path("articles").get(list_articles).post(create_article);
@@ -71,7 +69,7 @@ Router::new()
     .delete(delete_article);
 ```
 
-查看文章和文章列表通常不需用戶登錄，但創建、編輯、刪除文章等需要登錄認證權限。Salvo 支援嵌套路由系統，可很好滿足這種需求。我們可將不需登錄的路由寫在一起：
+通常查看文章列表與單篇文章無需使用者登入，但建立、編輯、刪除文章等操作需通過登入認證與權限檢查。Salvo 的巢狀路由系統能優雅滿足此需求。我們可將無需登入的路由歸為一組：
 
 ```rust
 Router::new()
@@ -80,7 +78,8 @@ Router::new()
     .push(Router::new().path("{id}").get(show_article));
 ```
 
-然後將需要登錄的路由寫在一起，並使用相應中間件驗證用戶是否登錄：
+再將需登入的路歸為另一組，並透過中介軟體驗證使用者登入狀態：
+
 ```rust
 Router::new()
     .path("articles")
@@ -89,7 +88,7 @@ Router::new()
     .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
 ```
 
-雖然這兩個路由都有相同的 `path("articles")`，但它們仍可同時添加到同一個父路由，因此最終路由長這樣：
+儘管兩組路由皆包含 `path("articles")`，它們仍可同時附加至同一個父路由，最終形成如下結構：
 
 ```rust
 Router::new()
@@ -108,5 +107,5 @@ Router::new()
     );
 ```
 
-`{id}` 匹配路徑中的一個片段。通常文章 `id` 只是數字，這時我們可用正則表達式限制 `id` 的匹配規則：`r"{id:/\d+/}"`。
+`{id}` 會匹配路徑中的一個區段。若文章 `id` 僅限數字，可使用正規表達式限制匹配規則：`r"{id:/\d+/}"`。
 {/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}

@@ -31,18 +31,16 @@ Salvo支持两种CSRF令牌存储方式：
 
 _**示例代码**_ (cookie store)
 
-import { Tab, Tabs } from 'rspress/theme';
-import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
-import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
-import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
-import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfCookieStoreCode/>
+  ```rust file="<root>/codes/csrf-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfCookieStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
@@ -50,9 +48,11 @@ _**示例代码**_ (session store)
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfSessionStoreCode/>
+  ```rust file="<root>/codes/csrf-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfSessionStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

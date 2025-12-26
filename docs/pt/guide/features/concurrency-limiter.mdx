@@ -1,37 +1,37 @@
-import { Tab, Tabs } from 'rspress/theme';
-import ConcurrencyLimiterCode from '../../../../codes_md/concurrency-limiter/src/main.mdx';
-import ConcurrencyLimiterCargoCode from '../../../../codes_md/concurrency-limiter/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # Limitação de Concorrência
 
-O middleware Concurrency Limiter permite controlar o número de solicitações simultâneas. Consulte a [documentação](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html) para obter a API específica.
+O middleware Concurrency Limiter permite controlar o número de solicitações simultâneas. Para detalhes da API, consulte a [documentação](https://docs.rs/salvo_extra/latest/salvo_extra/concurrency_limiter/index.html).
 
 ## Cenários de Aplicação
 
 O limitador de concorrência é especialmente útil nos seguintes cenários:
 
-- **Proteção de sites com alto tráfego**: Limita o número de solicitações processadas simultaneamente durante picos de tráfego para evitar sobrecarga do servidor
-- **Controle de operações intensivas em recursos**: Restringe a concorrência em operações como upload de arquivos ou gravações no banco de dados
-- **Limitação de chamadas a APIs de terceiros**: Controla solicitações simultâneas ao consumir serviços externos com limites de taxa
+- **Proteção de sites com alto tráfego**: Limita o número de solicitações processadas simultaneamente durante picos de tráfego, evitando sobrecarga do servidor.
+- **Controle de operações intensivas em recursos**: Restringe a concorrência de operações que consomem muitos recursos, como upload de arquivos ou gravações no banco de dados.
+- **Limitação de chamadas a APIs de terceiros**: Controla o número de solicitações simultâneas ao acessar serviços externos com restrições de taxa.
 
 ## Principais Funções
 
-- **Previne sobrecarga do servidor**: Mantém a estabilidade do servidor durante períodos de alto tráfego
-- **Melhora a confiabilidade do sistema**: Evita falhas causadas por esgotamento de recursos
-- **Otimiza alocação de recursos**: Garante que serviços críticos tenham recursos suficientes
+- **Evitar sobrecarga do servidor**: Mantém a estabilidade do servidor durante períodos de alta demanda, limitando o número de solicitações simultâneas.
+- **Aumentar a confiabilidade do sistema**: Previne falhas causadas pelo esgotamento de recursos.
+- **Otimizar a alocação de recursos**: Garante que serviços críticos tenham recursos suficientes para processar solicitações.
 
 ## Como Usar
 
-Basta adicionar o middleware `max_concurrency(n)` à rota, onde `n` é o número máximo permitido de solicitações simultâneas. Solicitações excedentes receberão a resposta `503 Service Unavailable`.
+Basta adicionar o middleware `max_concurrency(n)` à rota, onde `n` é o número máximo de solicitações simultâneas permitidas. Solicitações que excederem esse limite receberão uma resposta `503 Service Unavailable`.
 
 _**Exemplo de Código**_
 
 <Tabs>
   <Tab label="main.rs">
-    <ConcurrencyLimiterCode/>
+  ```rust file="<root>/codes/concurrency-limiter/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <ConcurrencyLimiterCargoCode/>
+  ```toml file="<root>/codes/concurrency-limiter/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:764c09662183beca5fb5634badcad7bb */}
+{/* 本行由工具自动生成,原文哈希值:e608fa24b412ca88671cf77efea06bad */}

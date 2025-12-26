@@ -1,10 +1,6 @@
 # SSE 服务器推送
 
-import { Tab, Tabs } from 'rspress/theme';
-import SseMainCode from '../../../../codes_md/sse/src/main.mdx';
-import SseCargoCode from '../../../../codes_md/sse/Cargo.mdx';
-import SseChatMainCode from '../../../../codes_md/sse-chat/src/main.mdx';
-import SseChatCargoCode from '../../../../codes_md/sse-chat/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## 什么是 SSE
 
@@ -15,24 +11,27 @@ Server-Sent Events (SSE) 是一种允许服务器向客户端推送数据的 Web
 _**示例代码**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SseMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SseCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/sse/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/sse/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-
 
 ## 聊天程序示例
 
 <Tabs>
-<Tab label="main.rs">
-<SseChatMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SseChatCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/sse-chat/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/sse-chat/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
 ## 与大语言模型集成

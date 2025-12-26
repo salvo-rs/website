@@ -1,8 +1,6 @@
 # Affix State 请求中共享数据
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
-import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 Affix State 中间件用于往 Depot 中添加共享数据.
 要使用 Affix State 功能，需要在 Cargo.toml 中开启 `affix-state` feature
@@ -41,9 +39,11 @@ _**示例代码**_
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/affix-state/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/affix-state/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

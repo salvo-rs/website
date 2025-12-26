@@ -1,27 +1,27 @@
 # Soporte para HTTP/3
 
-Salvo ofrece soporte para HTTP/3, el cual puede habilitarse mediante la característica `quinn`. HTTP/3, basado en el protocolo QUIC, proporciona menor latencia y mejor rendimiento en comparación con HTTP/1.1 y HTTP/2 tradicionales, especialmente en entornos de red inestables.
+Salvo proporciona soporte para HTTP/3, que puede habilitarse mediante la funcionalidad `quinn`. HTTP/3, basado en el protocolo QUIC, ofrece menor latencia y mejor rendimiento en comparación con HTTP/1.1 y HTTP/2 tradicionales, especialmente en entornos de red inestables.
 
 ## Habilitar soporte para HTTP/3
 
-Para activar HTTP/3 en Salvo, debes habilitar la característica `quinn` en el archivo `Cargo.toml`:
+Para habilitar el soporte de HTTP/3 en Salvo, debes activar la funcionalidad `quinn` en el archivo `Cargo.toml`:
 
 ```toml
 salvo = { workspace = true, features = ["quinn"] }
 ```
 
-## Casos de uso para HTTP/3
+## Casos de uso de HTTP/3
 
-HTTP/3 es especialmente útil en los siguientes escenarios:
+HTTP/3 es especialmente adecuado para los siguientes escenarios:
 
-- Aplicaciones en dispositivos móviles y redes inestables
+- Aplicaciones en dispositivos móviles y entornos de red inestables
 - Aplicaciones en tiempo real que requieren baja latencia
-- Descargas paralelas de múltiples archivos pequeños
-- Aplicaciones que necesitan migración de conexión (por ejemplo, cambiar de WiFi a red móvil sin interrupción)
+- Escenarios de descarga paralela de múltiples archivos pequeños
+- Aplicaciones que necesitan migración de conexión (por ejemplo, cambiar de WiFi a red celular sin interrupción)
 
 ## Código de ejemplo
 
-Aquí tienes un ejemplo básico de servidor que soporta tanto HTTP/3 (QUIC) como HTTPS (TCP):
+A continuación se muestra un ejemplo simple de servidor HTTP/3 que soporta tanto HTTP/3 (QUIC) como HTTPS (TCP):
 
 ```rust
 use salvo::conn::rustls::{Keycert, RustlsConfig};
@@ -35,29 +35,29 @@ async fn hello() -> &'static str {
 
 #[tokio::main]
 async fn main() {
-    // Inicializar sistema de logging
+    // Inicializar el sistema de registro
     tracing_subscriber::fmt().init();
 
-    // Cargar certificado y clave desde archivos PEM embebidos
+    // Cargar certificado TLS y clave privada desde archivos PEM embebidos
     let cert = include_bytes!("../certs/cert.pem").to_vec();
     let key = include_bytes!("../certs/key.pem").to_vec();
 
-    // Crear enrutador y añadir endpoint
+    // Crear enrutador y añadir un endpoint
     let router = Router::new().get(hello);
 
-    // Configurar TLS con Rustls
+    // Configurar TLS usando Rustls
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // Crear listener TCP con TLS en puerto 5800
+    // Crear listener TCP con cifrado TLS en el puerto 5800
     let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
-    // Crear listener QUIC y combinarlo con el TCP
+    // Crear listener QUIC y combinarlo con el listener TCP
     let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
         .join(listener)
         .bind()
         .await;
 
-    // Iniciar servidor con soporte para HTTP/3 (QUIC) y HTTPS (TCP)
+    // Iniciar servidor que soporta HTTP/3 (QUIC) y HTTPS (TCP)
     Server::new(acceptor).serve(router).await;
 }
 ```
@@ -67,36 +67,36 @@ async fn main() {
 ### Configuración TLS
 
 ```rust
-// Configurar TLS con Rustls
+// Configurar TLS usando Rustls
 let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 ```
 
-HTTP/3 utiliza QUIC, que requiere TLS 1.3 para cifrado. En Salvo, usamos `RustlsConfig` para configurar el certificado y clave TLS.
+Dado que HTTP/3 se basa en el protocolo QUIC, que requiere TLS 1.3 para cifrado, es necesario configurar certificados y claves TLS. En Salvo, utilizamos `RustlsConfig` para configurar TLS.
 
 ### Combinación de listeners
 
 ```rust
-// Crear listener TCP con TLS
+// Crear listener TCP con cifrado TLS
 let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
 
-// Crear listener QUIC y combinarlo con el TCP
+// Crear listener QUIC y combinarlo con el listener TCP
 let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
     .join(listener)
     .bind()
     .await;
 ```
 
-Este fragmento es clave para el soporte HTTP/3 en Salvo. Crea un listener TCP con TLS (para HTTP/1.1 y HTTP/2) y un listener QUIC (para HTTP/3), combinándolos para manejar solicitudes de diferentes protocolos.
+Este código es la parte central del manejo de HTTP/3 en Salvo. Primero crea un listener TCP con soporte TLS (para HTTP/1.1 y HTTP/2), luego crea un listener QUIC (para HTTP/3). El método `join` combina ambos listeners, permitiendo al servidor manejar solicitudes de diferentes protocolos simultáneamente.
 
 ## Ejecutar el ejemplo
 
-Para ejecutar este ejemplo, necesitas un certificado TLS y una clave válidos. En desarrollo puedes usar certificados autofirmados. El código completo está disponible en el [repositorio de Salvo en GitHub](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
+Para ejecutar este ejemplo, necesitas certificados TLS y claves privadas válidas. En entornos de desarrollo, puedes usar certificados autofirmados. El código completo del ejemplo está disponible en el [repositorio de GitHub de Salvo](https://github.com/salvo-rs/salvo/tree/main/examples/hello-h3).
 
-Ten en cuenta que muchos clientes aún no soportan completamente HTTP/3, por lo que es importante que el servidor mantenga compatibilidad con HTTPS.
+Es importante notar que muchos clientes aún no soportan completamente HTTP/3, por lo que es necesario que este servidor soporte tanto HTTP/3 como HTTPS.
 
 ## Consideraciones importantes
 
-1. HTTP/3 requiere TLS 1.3, por lo que debes configurar un certificado y clave válidos.
-2. Los clientes deben soportar HTTP/3 para aprovechar esta funcionalidad; de lo contrario, usarán HTTP/1.1 o HTTP/2.
-3. En producción, utiliza certificados emitidos por una CA reconocida, no autofirmados.
+1. HTTP/3 requiere soporte para TLS 1.3, por lo que deben configurarse certificados y claves válidos.
+2. Los clientes necesitan soportar el protocolo HTTP/3 para aprovechar esta funcionalidad; de lo contrario, se revertirá a HTTP/1.1 o HTTP/2.
+3. En entornos de producción, deben usarse certificados emitidos por una Autoridad Certificadora reconocida, no certificados autofirmados.
 {/* 本行由工具自动生成,原文哈希值:b4abbc723f2cb070d8584564bf96ce8a */}

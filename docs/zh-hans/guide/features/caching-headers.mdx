@@ -12,15 +12,15 @@
 
 _**示例代码**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
-import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CachingHeadersCode/>
+  ```rust file="<root>/codes/caching-headers/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CachingHeadersCargoCode/>
+  ```toml file="<root>/codes/caching-headers/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

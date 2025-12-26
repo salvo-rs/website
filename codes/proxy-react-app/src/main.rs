@@ -9,8 +9,8 @@ async fn main() {
         vec!["http://localhost:3000"],
         HyperClient::default(),
     ));
-    println!("{:?}", router);
+    println!("{router:?}");
 
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     Server::new(acceptor).serve(router).await;
 }

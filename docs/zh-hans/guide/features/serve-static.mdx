@@ -1,10 +1,6 @@
 # 静态服务器
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListMainCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesMainCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 将静态文件或者内嵌的文件作为服务提供的中间件. 具体 API 请[查看文档](https://docs.rs/salvo_extra/latest/salvo_extra/request_id/index.html).
 
@@ -21,10 +17,12 @@ import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/C
 
 <Tabs>
   <Tab label="main.rs">
-<StaticDirListMainCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
   如果在第一个文件夹中找不到对应的文件, 则会到第二个文件夹中找.
@@ -48,10 +46,12 @@ import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/C
 
 <Tabs>
   <Tab label="main.rs">
-<StaticEmbedFilesMainCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-<StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 

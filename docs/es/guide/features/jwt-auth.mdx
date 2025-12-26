@@ -1,32 +1,32 @@
 # Autenticación JWT
 
-JWT (JSON Web Token) es un estándar abierto (RFC 7519) utilizado para transmitir información de forma segura entre partes. Es un método compacto y seguro para URLs que representa declaraciones en forma de objeto JSON, comúnmente empleado para autenticación e intercambio de información.
+JWT (JSON Web Token) es un estándar abierto (RFC 7519) utilizado para transmitir información de forma segura entre partes. Es un método compacto y seguro para URL que representa declaraciones en forma de objeto JSON, comúnmente empleado para autenticación e intercambio de información.
 
 Un JWT consta de tres partes:
 - **Encabezado (Header)** - Especifica el tipo de token y el algoritmo de firma utilizado
 - **Carga útil (Payload)** - Contiene las declaraciones (claims), como ID de usuario, roles, tiempo de expiración, etc.
 - **Firma (Signature)** - Se utiliza para verificar que el mensaje no ha sido alterado durante la transmisión
 
-Flujo típico de uso de JWT en autenticación:
-1. Tras el inicio de sesión, el servidor genera un token JWT
+Uso típico de JWT en flujos de autenticación:
+1. Tras el inicio de sesión del usuario, el servidor genera un token JWT
 2. El token se devuelve al cliente y se almacena (normalmente en localStorage o cookies)
 3. En solicitudes posteriores, el cliente incluye este token en la cabecera Authorization
-4. El servidor valida la autenticidad del token y autoriza el acceso
+4. El servidor verifica la validez del token y autoriza el acceso
 
-Proporcionamos un middleware para la autenticación JWT.
+Proporciona middleware para la autenticación mediante JWT Auth.
 
 _**Código de ejemplo**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
-import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <JwtAuthCode/>
+  ```rust file="<root>/codes/jwt-auth/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <JwtAuthCargoCode/>
+  ```toml file="<root>/codes/jwt-auth/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:4d9196c8fb1dedaa4b7291d33747b794 */}
+{/* 本行由工具自动生成,原文哈希值:44ba61e41e4c4e0937054ac0328a42ab */}

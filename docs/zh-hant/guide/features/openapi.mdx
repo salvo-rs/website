@@ -1,67 +1,58 @@
-import { Tab, Tabs } from 'rspress/theme';
-import OapiHelloCode from '../../../../codes_md/oapi-hello/src/main.mdx';
-import OapiHelloCargoCode from '../../../../codes_md/oapi-hello/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # OpenAPI 文件生成
 
-OpenAPI 是一套開源的規範，用於描述 RESTful APIs 的介面設計。它以 JSON 或 YAML 格式定義了 API 的請求與回應結構、參數、返回型別、錯誤碼等細節，使客戶端與伺服器端的通訊更加明確且規範化。
+OpenAPI 是一套開源的規範，用於描述 RESTful APIs 的介面設計。它以 JSON 或 YAML 格式定義了 API 的請求與回應結構、參數、回傳型別、錯誤碼等細節，使得客戶端與伺服器端之間的溝通更加明確且規範化。
 
-OpenAPI 最初是 Swagger 規範的開源版本，現已成為獨立專案，並獲得許多大型企業與開發者的支持。使用 OpenAPI 規範可幫助開發團隊更有效率地協作，降低溝通成本，提升開發效率。同時，OpenAPI 還提供自動生成 API 文件、Mock 資料與測試案例等工具，方便開發與測試工作。
+OpenAPI 最初是 Swagger 規範的開源版本，現已成為一個獨立的專案，並獲得許多大型企業與開發者的支援。使用 OpenAPI 規範能協助開發團隊更好地協作，減少溝通成本，提升開發效率。同時，OpenAPI 也為開發者提供了自動生成 API 文件、Mock 資料與測試案例等工具，方便開發與測試工作。
 
-Salvo 提供了 OpenAPI 的整合（修改自 [utoipa](https://github.com/juhaku/utoipa)）。salvo 根據自身特性，能優雅地從 `Handler` 自動獲取相關的 OpenAPI 資料型別資訊。salvo 還整合了 SwaggerUI、scalar、rapidoc、redoc 等幾個開源流行的 OpenAPI 介面。
+Salvo 提供了 OpenAPI 的整合（修改自 [utoipa](https://github.com/juhaku/utoipa)）。Salvo 依據自身特性，非常優雅地從 `Handler` 自動取得相關的 OpenAPI 資料型別資訊。Salvo 還整合了 SwaggerUI、scalar、rapidoc、redoc 等幾個開源且流行的 OpenAPI 介面。
 
-針對 Rust 型別名稱較長，可能不適合直接用於 OpenAPI 的情況，`salvo-oapi` 提供了 `Namer` 型別，可根據需求自訂規則，改變 OpenAPI 中的型別名稱。
+針對 Rust 型別名稱較長，不一定適合 OpenAPI 使用的情況，`salvo-oapi` 提供了 `Namer` 型別，可根據需求自訂規則，改變 OpenAPI 中的型別名稱。
 
 _**範例程式碼**_
 
 <Tabs>
   <Tab label="main.rs">
-    <OapiHelloCode/>
+  ```rust file="<root>/codes/oapi-hello/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <OapiHelloCargoCode/>
+  ```toml file="<root>/codes/oapi-hello/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
 在瀏覽器中輸入 `http://localhost:5800/swagger-ui` 即可看到 Swagger UI 頁面。
 
-Salvo 中的 OpenAPI 整合相當優雅，相較於普通的 Salvo 專案，我們只需進行以下幾步：
+Salvo 中的 OpenAPI 整合相當優雅，對於上述範例，相較於普通的 Salvo 專案，我們僅需執行以下幾步：
 
-- 在 `Cargo.toml` 中啟用 `oapi` 功能：`salvo = { workspace = true, features = ["oapi"] }`;
-
-- 將 `[handler]` 替換為 `[endpoint]`;
-
-- 使用 `name: QueryParam<String, false>` 獲取查詢字串的值。當訪問網址 `http://localhost/hello?name=chris` 時，這個 `name` 的查詢字串會被解析。`QueryParam<String, false>` 中的 `false` 表示此參數可省略，若訪問 `http://localhost/hello` 也不會報錯。相反，若為 `QueryParam<String, true>` 則表示此參數為必填，否則會返回錯誤。
-
-- 建立 `OpenAPI` 並建立對應的 `Router`。`OpenApi::new("test api", "0.0.1").merge_router(&router)` 中的 `merge_router` 表示這個 `OpenAPI` 通過解析某個路由及其子路由來獲取必要的文件資訊。某些路由的 `Handler` 若未提供生成文件的資訊，這些路由將被忽略，例如使用 `#[handler]` 宏而非 `#[endpoint]` 宏定義的 `Handler`。也就是說，在實際專案中，可根據開發進度選擇不生成或部分生成 OpenAPI 文件，後續只需將 `#[handler]` 改為 `#[endpoint]` 並修改函數簽名即可逐步增加 OpenAPI 介面數量。
+- 在 `Cargo.toml` 中啟用 `oapi` 功能：`salvo = { workspace = true, features = ["oapi"] }`；
+- 將 `#[handler]` 替換為 `#[endpoint]`；
+- 使用 `name: QueryParam<String, false>` 取得查詢字串的值。當你訪問網址 `http://localhost/hello?name=chris` 時，這個 `name` 的查詢字串就會被解析。`QueryParam<String, false>` 中的 `false` 代表此參數可省略，若訪問 `http://localhost/hello` 仍不會出錯。相反，若是 `QueryParam<String, true>` 則代表此參數必須提供，否則回傳錯誤。
+- 建立 `OpenAPI` 並建立對應的 `Router`。`OpenApi::new("test api", "0.0.1").merge_router(&router)` 中的 `merge_router` 表示此 `OpenAPI` 透過解析某個路由及其子路由來取得必要的文件資訊。某些路由的 `Handler` 可能未提供生成文件所需的資訊，這些路由將被忽略，例如使用 `#[handler]` 巨集而非 `#[endpoint]` 巨集定義的 `Handler`。也就是說，在實際專案中，基於開發進度等原因，你可以選擇不生成 OpenAPI 文件，或僅部分生成 OpenAPI 文件。後續可逐步增加生成 OpenAPI 介面的數量，而你所需做的僅是將 `#[handler]` 改為 `#[endpoint]`，並修改函式簽章。
 
 ## 資料提取器
 
-通過 `use salvo::oapi::extract::*;` 可導入預置的常用資料提取器。提取器會提供一些必要資訊給 Salvo，以便 Salvo 生成 OpenAPI 文件。
+透過 `use salvo::oapi::extract::*;` 可匯入預設的常用資料提取器。提取器會提供一些必要資訊給 Salvo，以便 Salvo 生成 OpenAPI 文件。
 
-- `QueryParam<T, const REQUIRED: bool>`：從查詢字串提取資料的提取器。`QueryParam<T, false>` 表示此參數非必填，可省略；`QueryParam<T, true>` 表示此參數必填，不可省略，否則返回錯誤；
-
-- `HeaderParam<T, const REQUIRED: bool>`：從請求的標頭資訊中提取資料的提取器。`HeaderParam<T, false>` 表示此參數非必填，可省略；`HeaderParam<T, true>` 表示此參數必填，不可省略，否則返回錯誤；
-
-- `CookieParam<T, const REQUIRED: bool>`：從請求的 Cookie 中提取資料的提取器。`CookieParam<T, false>` 表示此參數非必填，可省略；`CookieParam<T, true>` 表示此參數必填，不可省略，否則返回錯誤；
-
-- `PathParam<T>`：從請求 `URL` 中提取路徑參數的提取器。此參數若不存在，路由匹配即不成功，因此不存在可省略的情況；
-
+- `QueryParam<T, const REQUIRED: bool>`：從查詢字串提取資料的提取器。`QueryParam<T, false>` 代表此參數非必需，可省略。`QueryParam<T, true>` 代表此參數必需，不可省略，若未提供則回傳錯誤；
+- `HeaderParam<T, const REQUIRED: bool>`：從請求的標頭資訊中提取資料的提取器。`HeaderParam<T, false>` 代表此參數非必需，可省略。`HeaderParam<T, true>` 代表此參數必需，不可省略，若未提供則回傳錯誤；
+- `CookieParam<T, const REQUIRED: bool>`：從請求的標頭資訊中提取資料的提取器。`CookieParam<T, false>` 代表此參數非必需，可省略。`CookieParam<T, true>` 代表此參數必需，不可省略，若未提供則回傳錯誤；
+- `PathParam<T>`：從請求 `URL` 中提取路徑參數的提取器。此參數若不存在，路由匹配便不成功，因此不存在可省略的情況；
 - `FormBody<T>`：從請求提交的表單中提取資訊；
-
 - `JsonBody<T>`：從請求提交的 JSON 格式負載中提取資訊；
 
 ## `#[endpoint]`
 
-在生成 OpenAPI 文件時，需使用 `#[endpoint]` 宏代替常規的 `#[handler]` 宏，它實際上是增強版的 `#[handler]` 宏。
+在生成 OpenAPI 文件時，需使用 `#[endpoint]` 巨集代替常規的 `#[handler]` 巨集，它實際上是增強版的 `#[handler]` 巨集。
 
-- 可通過函數簽名獲取生成 OpenAPI 所需的資訊；
+- 可透過函式簽章取得生成 OpenAPI 所需的資訊；
+- 對於不便透過簽章提供的資訊，可直接在 `#[endpoint]` 巨集中以添加屬性的方式提供，透過此方式提供的資訊會與透過函式簽章取得的資訊合併，若存在衝突，則會覆蓋函式簽章提供的資訊。
 
-- 對於不便通過簽名提供的資訊，可直接在 `#[endpoint]` 宏中添加屬性提供，此方式提供的資訊會與函數簽名獲取的資訊合併，若存在衝突則會覆蓋函數簽名提供的資訊。
+你可以使用 Rust 內建的 `#[deprecated]` 屬性標註某個 Handler 已過時並廢棄。雖然 `#[deprecated]` 屬性支援添加如廢棄原因、版本等資訊，但 OpenAPI 並不支援，因此這些資訊在生成 OpenAPI 時將被忽略。
 
-可使用 Rust 自帶的 `#[deprecated]` 屬性標記某個 Handler 已過時廢棄。雖然 `#[deprecated]` 屬性支持添加廢棄原因、版本等資訊，但 OpenAPI 並不支持，這些資訊在生成 OpenAPI 時將被忽略。
-
-程式碼中的文件註釋部分會自動被提取用於生成 OpenAPI，第一行用於生成 _`summary`_，整個註釋部分用於生成 _`description`_。
+程式碼中的文件註解部分會自動被提取用於生成 OpenAPI，第一行用於生成 _`summary`_，整個註解部分用於生成 _`description`_。
 
 ```rust
 /// This is a summary of the operation
@@ -109,17 +100,17 @@ struct Pet {
 
 ## ToParameters
 
-從結構體的欄位生成 [路徑參數][path_parameters]。
+從結構體的欄位生成[路徑參數][path_parameters]。
 
-這是 [`ToParameters`][to_parameters] trait 的 `#[derive]` 實現。
+這是 [`ToParameters`][to_parameters] trait 的 `#[derive]` 實作。
 
-通常情況下，路徑參數需要在 `endpoint` 的 [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters] 中定義。但當使用 [`struct`][struct] 定義參數時，可省略此步驟。不過，若要提供描述或更改預設配置，[`primitive types`][primitive] 和 [`String`][std_string] 路徑參數或 [tuple] 風格的路徑參數仍需在 `parameters(...)` 中定義。
+通常情況下，路徑參數需要在 `endpoint` 的 [`#[salvo_oapi::endpoint(...parameters(...))]`][path_parameters] 中定義。但當使用 [`struct`][struct] 來定義參數時，便可省略上述步驟。儘管如此，若需給出描述或變更預設配置，那麼 [`primitive types`][primitive] 和 [`String`][std_string] 路徑參數或 [tuple] 風格的路徑參數仍需在 `parameters(...)` 中定義。
 
-可使用 Rust 內建的 `#[deprecated]` 屬性標記欄位為已棄用，這會反映到生成的 OpenAPI 規範中。
+你可以使用 Rust 內建的 `#[deprecated]` 屬性標記欄位為已棄用，這將反映到生成的 OpenAPI 規範中。
 
-`#[deprecated]` 屬性支持添加棄用原因或版本等額外資訊，但 OpenAPI 僅支持布林值來確定是否棄用。雖然可聲明帶原因的棄用，如 `#[deprecated = "There is better way to do this"]`，但原因不會呈現在 OpenAPI 規範中。
+`#[deprecated]` 屬性支援添加額外資訊，如棄用原因或從某版本開始棄用，但 OpenAPI 並不支援。OpenAPI 僅支援一個布林值來確定是否棄用。雖然完全可以宣告一個帶原因的棄用，如 `#[deprecated = "There is better way to do this"]`，但此原因不會在 OpenAPI 規範中呈現。
 
-結構體欄位上的註釋文件會用作生成 OpenAPI 規範中的參數描述。
+結構體欄位上的註解文件會用作生成 OpenAPI 規範中的參數描述。
 
 ```rust
 #[derive(salvo_oapi::ToParameters, serde::Deserialize)]
@@ -129,16 +120,16 @@ struct Query {
 }
 ```
 
-### ToParameters Container Attributes for `#[salvo(parameters(...))]`
+### ToParameters 容器屬性 `#[salvo(parameters(...))]`
 
-以下屬性可用於派生自 `ToParameters` 的結構體的容器屬性 `#[salvo(parameters(...))]`：
+以下屬性可用於那些派生自 `ToParameters` 的結構體的容器屬性 `#[salvo(parameters(…))]`：
 
-- `names(...)` 為作為路徑參數使用的結構體的未命名字段定義逗號分隔的名稱列表。僅支持在未命名結構體上使用。
+- `names(...)` 為作為路徑參數使用的結構體的未命名字段定義逗號分隔的名稱清單。僅支援在未命名結構體上使用。
 - `style = ...` 可定義所有參數的序列化方式，由 [`ParameterStyle`][style] 指定。預設值基於 _`parameter_in`_ 屬性。
-- `default_parameter_in = ...` 定義此欄位的參數使用的預設位置，該位置的值來自 [`parameter::ParameterIn`][in_enum]。若未提供此屬性，則預設來自 `query`。
-- `rename_all = ...` 可作為 `serde` 的 `rename_all` 替代方案，實際提供相同功能。
+- `default_parameter_in = ...` 定義此欄位的參數使用的預設位置，該位置的值來自於 [`parameter::ParameterIn`][in_enum]。若未提供此屬性，則預設來自 `query`。
+- `rename_all = ...` 可作為 `serde` 的 `rename_all` 的替代方案。實際上提供了相同的功能。
 
-使用 `names` 為單個未命名參數定義名稱：
+使用 `names` 為單個未命名的參數定義名稱。
 
 ```rust
 # use salvo_oapi::ToParameters;
@@ -148,7 +139,7 @@ struct Query {
 struct Id(u64);
 ```
 
-使用 `names` 為多個未命名參數定義名稱：
+使用 `names` 為多個未命名的參數定義名稱。
 
 ```rust
 # use salvo_oapi::ToParameters;
@@ -158,25 +149,25 @@ struct Id(u64);
 struct IdAndName(u64, String);
 ```
 
-### ToParameters Field Attributes for `#[salvo(parameter(...))]`
+### ToParameters 欄位屬性 `#[salvo(parameter(...))]`
 
-以下屬性可用於結構體欄位的 `#[salvo(parameter(...))]`：
+以下屬性可在結構體欄位上使用 `#[salvo(parameter(...))]`：
 
 - `style = ...` 定義參數如何被 [`ParameterStyle`][style] 序列化。預設值基於 _`parameter_in`_ 屬性。
-- `parameter_in = ...` 使用來自 [`parameter::ParameterIn`][in_enum] 的值定義此欄位參數的位置。若未提供此值，則預設來自 `query`。
-- `explode` 定義是否為 _`object`_ 或 _`array`_ 中的每個參數建立新的 _`parameter=value`_ 對。
+- `parameter_in = ...` 使用來自 [`parameter::ParameterIn`][in_enum] 的值定義這個欄位參數的位置。若未提供此值，則預設來自 `query`。
+- `explode` 定義是否為每個在 _`object`_ 或 _`array`_ 中的參數建立新的 _`parameter=value`_ 對。
 - `allow_reserved` 定義參數值中是否允許出現保留字元 _`:/?#[]@!$&'()*+,;=`_。
-- `example = ...` 可以是方法參考或 _`json!(...)`_。給定的範例會覆蓋底層參數型別的任何範例。
-- `value_type = ...` 可用於覆寫 OpenAPI 規範中欄位使用的預設型別。在預設型別與實際型別不對應時很有用，例如使用非 [`ToSchema`][to_schema] 或 [`primitive` types][primitive] 中定義的第三方型別時。值可以是可序列化為 JSON 的任意 Rust 型別或如 _`Object`_ 的自訂型別，後者會被渲染為通用 OpenAPI 物件。
-- `inline` 若啟用，此欄位型別的定義必須來自 [`ToSchema`][to_schema]，且此定義會被內聯。
+- `example = ...` 可以是方法的參考或 _`json!(...)`_。給定的範例會覆蓋底層參數型別的任何範例。
+- `value_type = ...` 可用於覆寫 OpenAPI 規範中欄位使用的預設型別。在預設型別與實際型別不對應的情況下很有用，例如使用非 [`ToSchema`][to_schema] 或 [`primitive` types][primitive] 中定義的第三方型別時。值可以是正常情況下可被序列化為 JSON 的任意 Rust 型別或如 _`Object`_ 這種會被渲染成通用 OpenAPI 物件的自訂型別。
+- `inline` 若啟用，此欄位型別的定義必須來自 [`ToSchema`][to_schema]，且此定義會被內嵌。
 - `default = ...` 可以是方法參考或 _`json!(...)`_。
-- `format = ...` 可以是 [`KnownFormat`][known_format] 枚舉的變體，或字串形式的開放值。預設情況下，格式根據屬性的型別依 OpenAPI 規範推導而來。
+- `format = ...` 可以是 [`KnownFormat`][known_format] 列舉的變體，或是字串形式的開放值。預設情況下，格式是根據屬性的型別根據 OpenAPI 規範推導而來。
 - `write_only` 定義屬性僅用於**寫**操作 _POST,PUT,PATCH_ 而非 _GET_。
 - `read_only` 定義屬性僅用於**讀**操作 _GET_ 而非 _POST,PUT,PATCH_。
-- `nullable` 定義屬性是否可為 `null`（注意與非必需不同）。
-- `required = ...` 用於強制要求參數必傳。[參見規則](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)。
-- `rename = ...` 可作為 `serde` 的 `rename` 替代方案，實際提供相同功能。
-- `multiple_of = ...` 用於定義值的倍數。只有當用此關鍵字的值去除參數值且結果為整數時，參數值才被視為有效。倍數值必須嚴格大於 _`0`_。
+- `nullable` 定義屬性是否可為 `null`（注意這與非必需不同）。
+- `required = ...` 用於強制要求參數必填。[參見規則](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToParameters.html#field-nullability-and-required-rules)。
+- `rename = ...` 可作為 `serde` 的 `rename` 的替代方案。實際上提供了相同的功能。
+- `multiple_of = ...` 用於定義值的倍數。只有當用此關鍵字的值去除參數值，且結果為一個整數時，參數值才被認為是有效的。倍數值必須嚴格大於 _`0`_。
 - `maximum = ...` 用於定義取值的上限，包含當前取值。
 - `minimum = ...` 用於定義取值的下限，包含當前取值。
 - `exclusive_maximum = ...` 用於定義取值的上限，不包含當前取值。
@@ -184,33 +175,33 @@ struct IdAndName(u64, String);
 - `max_length = ...` 用於定義 `string` 型別取值的最大長度。
 - `min_length = ...` 用於定義 `string` 型別取值的最小長度。
 - `pattern = ...` 用於定義欄位值必須匹配的有效正則表達式，正則表達式採用 _ECMA-262_ 版本。
-- `max_items = ...` 可用於定義 `array` 型別欄位允許的最大項數。值必須為非負整數。
-- `min_items = ...` 可用於定義 `array` 型別欄位允許的最小項數。值必須為非負整數。
-- `with_schema = ...` 使用函數參考建立的 _`schema`_ 而非預設的 _`schema`_。該函數必須滿足定義 `fn() -> Into<RefOr<Schema>>`。它不接收任何參數且必須返回可轉換為 `RefOr<Schema>` 的值。
-- `additional_properties = ...` 用於為 `map` 定義自由形式型別，如 [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) 和 [`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html)。自由形式型別允許在映射值中使用任意型別。支持的格式有 _`additional_properties`_ 和 _`additional_properties = true`_。
+- `max_items = ...` 可用於定義 `array` 型別欄位允許的最大項目數。值必須是非負整數。
+- `min_items = ...` 可用於定義 `array` 型別欄位允許的最小項目數。值必須是非負整數。
+- `with_schema = ...` 使用函式參考建立出的 _`schema`_ 而非預設的 _`schema`_。該函式必須滿足定義 `fn() -> Into<RefOr<Schema>>`。它不接收任何參數且必須回傳任何可轉換為 `RefOr<Schema>` 的值。
+- `additional_properties = ...` 用於為 `map` 定義自由形式型別，例如 [`HashMap`](https://doc.rust-lang.org/std/collections/hash_map/struct.HashMap.html) 和 [`BTreeMap`](https://doc.rust-lang.org/std/collections/struct.BTreeMap.html)。自由形式型別允許在對映值中使用任意型別。支援的格式有 _`additional_properties`_ 和 _`additional_properties = true`_。
 
-#### Field nullability and required rules
+#### 欄位可空性與必需規則
 
-一些應用於 _`ToParameters`_ 欄位屬性的是否可為空和是否必需的規則同樣可用於 _`ToSchema`_ 欄位屬性。[參見規則](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules)。
+一些應用於 _`ToParameters`_ 欄位屬性的可為空和是否必需的規則同樣可用於 _`ToSchema`_ 欄位屬性。[參見規則](https://docs.rs/salvo-oapi/latest/salvo_oapi/derive.ToSchema.html#field-nullability-and-required-rules)。
 
-### Partial `#[serde(...)]` attributes support
+### 部分 `#[serde(...)]` 屬性支援
 
-ToParameters 派生目前支持部分 [serde 屬性][serde attributes]。這些支持的屬性將反映到生成的 OpenAPI 文件中。目前支持以下屬性：
+ToParameters 派生目前支援部分 [serde 屬性][serde attributes]。這些支援的屬性將反映到生成的 OpenAPI 文件中。目前支援以下屬性：
 
-- `rename_all = "..."` 在容器級支持。
-- `rename = "..."` **僅**在欄位級支持。
-- `default` 根據 [serde 屬性][serde attributes] 在容器級和欄位級支持。
-- `skip_serializing_if = "..."` **僅**在欄位級支持。
-- `with = ...` **僅**在欄位級支持。
-- `skip_serializing = "..."` **僅**在欄位級或變體級支持。
-- `skip_deserializing = "..."` **僅**在欄位級或變體級支持。
-- `skip = "..."` **僅**在欄位級支持。
+- `rename_all = "..."` 在容器層級支援。
+- `rename = "..."` **僅**在欄位層級支援。
+- `default` 根據 [serde 屬性][serde attributes] 在容器層級和欄位層級支援。
+- `skip_serializing_if = "..."` **僅**在欄位層級支援。
+- `with = ...` **僅**在欄位層級支援。
+- `skip_serializing = "..."` **僅**在欄位層級或變體層級支援。
+- `skip_deserializing = "..."` **僅**在欄位層級或變體層級支援。
+- `skip = "..."` **僅**在欄位層級支援。
 
-其他 _`serde`_ 屬性會影響序列化，但不會反映在生成的 OpenAPI 文件上。
+其他的 _`serde`_ 屬性將影響序列化，但不會反映在生成的 OpenAPI 文件上。
 
 ### 範例
 
-_**演示使用 `#[salvo(parameters(...))]` 容器屬性結合 [`ToParameters`][to_parameters] 的用法，用在路徑參數上，並內聯一個查詢欄位：**_
+_**演示使用 `#[salvo(parameters(...))]` 容器屬性結合 [`ToParameters`][to_parameters] 的用法，用於路徑參數，並內嵌一個查詢欄位：**_
 
 ```rust
 use serde::Deserialize;
@@ -265,20 +256,5 @@ _**使用 `value_type` 將 `String` 型別覆蓋為 `Object` 型別。在 OpenAP
 # use salvo_oapi::ToParameters;
 
 #[derive(ToParameters, serde::Deserialize)]
-#[salvo(parameters(default_parameter_in = Query))]
-struct Filter {
-    #[salvo(parameter(value_type = Object))]
-    id: String,
-}
-```
-
-_**你也可以用一個泛型來覆蓋欄位的預設型別。**_
-
-```rust
-# use salvo_oapi::ToParameters;
-
-#[derive(ToParameters, serde::Deserialize)]
-#[salvo(parameters(default_parameter_in = Query))]
-struct Filter {
-    #[salvo(parameter
-{/* 本行由工具自动生成,原文哈希值:66e3964ffc9d02e6953bdf48a6d2ed87 */}
+#[salvo(parameters(default_parameter_in = Query
+{/* 本行由工具自动生成,原文哈希值:0cd338da7f2e4cf2b5d77a3752808958 */}

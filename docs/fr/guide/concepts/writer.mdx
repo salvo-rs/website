@@ -19,12 +19,12 @@ pub trait Handler: Send + Sync + 'static {
 ```
 
 Les différences principales sont :
-- Leur utilité diffère : `Writer` représente l'écriture de contenu spécifique dans `Response`, implémenté par des contenus concrets comme des chaînes de caractères, des messages d'erreur, etc. Tandis que `Handler` sert à traiter l'intégralité de la requête.
-- `Writer` est créé dans `Handler` et se consomme lors de l'appel à la fonction `write`, c'est un appel unique. Alors que `Handler` est partagé entre toutes les requêtes.
-- `Writer` peut être retourné comme contenu dans le `Result` d'un `Handler`.
-- `Writer` ne contient pas de paramètre `FlowCtrl` et ne peut donc pas contrôler le déroulement de la requête.
+- Leur utilité diffère : `Writer` représente l'écriture de contenu spécifique dans `Response`, implémentée par des contenus concrets tels que des chaînes de caractères, des messages d'erreur, etc. Alors que `Handler` est utilisé pour traiter l'intégralité de la requête.
+- `Writer` est créé dans `Handler` et se consomme lors de l'appel de la fonction `write`, ce qui en fait un appel unique. En revanche, `Handler` est partagé par toutes les requêtes.
+- `Writer` peut être utilisé comme contenu dans le `Result` retourné par `Handler`.
+- `Writer` ne contient pas de paramètre `FlowCtrl` et ne peut donc pas contrôler le déroulement de l'exécution de la requête.
 
-`Scribe` implémente `Writer`, mais avec des fonctionnalités encore plus limitées :
+`Scribe` implémente `Writer`, mais offre des fonctionnalités plus limitées que `Writer` :
 
 ```rust
 pub trait Scribe {

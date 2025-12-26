@@ -1,30 +1,30 @@
-# Para dominar esta arte
+# Para Dominar Esta Arte
 
-## Por que escrever este framework
+## Por que Escrever Este Framework
 
-Na época, como iniciante, percebi que era muito difícil para mim aprender a usar frameworks existentes como actix-web e Rocket. Quando tentei reimplementar um serviço web que havia feito em Go usando Rust, notei que cada framework parecia mais complexo do que os equivalentes em Go. Já que a curva de aprendizado do Rust é bastante íngreme, por que complicar ainda mais com frameworks web excessivamente complexos?
+Na época, como iniciante, percebi que era muito lento e não conseguia aprender a usar frameworks existentes como actix-web e Rocket. Quando quis reescrever meus serviços web em Go usando Rust, à primeira vista, cada framework parecia mais complexo do que os existentes em Go. Já que a curva de aprendizado do Rust é bastante íngreme, por que tornar o framework web ainda mais complicado?
 
-Quando a Tokio lançou o framework Axum, fiquei feliz pensando que não precisaria mais manter meu próprio framework web. No entanto, na prática, Axum parecia simples, mas exigia tantas ginásticas com tipos e definições genéricas que só era possível usá-lo efetivamente com um conhecimento profundo de Rust e escrevendo grandes quantidades de código boilerplate obscuro apenas para criar um middleware simples.
+Quando o Tokio lançou o framework Axum, fiquei feliz pensando que não precisaria mais manter meu próprio framework web. No entanto, a realidade é que o Axum, apesar de parecer simples, envolve muita ginástica de tipos e definições genéricas durante o uso. É necessário um profundo conhecimento de Rust e a paciência para escrever grandes quantidades de código de template obscuro apenas para implementar um middleware simples.
 
-Por isso, decidi continuar desenvolvendo este framework peculiar (prático, rico em recursos e adequado para iniciantes).
+Por isso, decidi continuar mantendo meu framework web, que é bastante peculiar (prático, rico em recursos e adequado para iniciantes).
 
-## O Salvo (赛风) é para você?
+## O Salvo é Adequado para Você?
 
-Embora simples, o Salvo é poderoso e abrangente, podendo ser considerado um dos mais robustos no ecossistema Rust. Apesar disso, seu aprendizado e uso são extremamente fáceis, sem nenhum daqueles sofrimentos desnecessários.
+Embora o Salvo seja simples, ele é abrangente e poderoso o suficiente, podendo ser considerado basicamente o mais forte no ecossistema Rust. No entanto, mesmo sendo um sistema tão poderoso, aprender e usá-lo é realmente simples. Definitivamente, não causará a dor de ter que "cortar fora partes de si mesmo".
 
-- É ideal para quem está começando com Rust. CRUD é uma funcionalidade comum e essencial, e com o Salvo, você perceberá que é tão simples quanto em outros frameworks web (como Express, Koa, Gin, Flask...), ou até mais abstrato e conciso em alguns aspectos;
+- É adequado para iniciantes que estão aprendendo Rust. CRUD é uma funcionalidade extremamente comum e frequentemente usada. Se você usar o Salvo para tarefas semelhantes, descobrirá que ele é tão simples quanto os frameworks web de outras linguagens que você já usou (por exemplo: Express, Koa, Gin, Flask...), sendo até mais abstrato e conciso em alguns aspectos;
 
-- É adequado para quem deseja usar Rust em produção, oferecendo servidores robustos e rápidos. Embora o Salvo ainda não tenha alcançado a versão 1.0, seus recursos principais passaram por anos de iteração, são estáveis e recebem correções rápidas;
+- É adequado para quem deseja usar Rust em ambientes de produção, fornecendo servidores robustos e rápidos. Embora o Salvo não tenha lançado a versão 1.0, suas funcionalidades principais passaram por anos de iteração, são suficientemente estáveis e os problemas são corrigidos rapidamente;
 
-- É perfeito para você, cujos cabelos já não são tão abundantes e continuam caindo dia após dia.
+- É adequado para você, cujos cabelos já não são mais tão densos, mas continuam caindo todos os dias.
 
-## Como alcançar a simplicidade
+## Como Alcançar a Simplicidade Suficiente
 
-Muitas implementações de baixo nível já são fornecidas pelo Hyper, então, para necessidades comuns, basear-se nele é uma escolha acertada. O Salvo segue essa linha. Seu núcleo é um sistema de roteamento poderoso e flexível, além de recursos essenciais como Acme, OpenAPI e autenticação JWT.
+Muitas implementações de baixo nível já foram realizadas pelo Hyper, então, para necessidades gerais, basear-se no Hyper não está errado. O Salvo segue a mesma linha. Suas funcionalidades principais são um sistema de roteamento poderoso e flexível, além de muitos recursos comuns, como Acme, OpenAPI, autenticação JWT, etc.
 
-No Salvo, Handlers e Middlewares são unificados. Um Middleware é simplesmente um Handler, adicionado a um Router via hoop. Em essência, ambos processam requisições (Request) e podem escrever dados na resposta (Response). Um Handler recebe três parâmetros: Request, Depot (para armazenar dados temporários durante o processamento) e Response.
+No Salvo, Handler e Middleware são unificados. Middleware é Handler. Eles são adicionados ao Router através do hoop do roteador. Em essência, tanto Middleware quanto Handler processam requisições Request e podem escrever dados no Response. O Handler recebe três parâmetros: Request, Depot e Response, onde o Depot é usado para armazenar dados temporários durante o processamento da requisição.
 
-Para facilitar, parâmetros podem ser omitidos quando não necessários, e a ordem deles não é rígida.
+Para facilitar a escrita, é possível omitir certos parâmetros quando não são necessários, e a ordem dos parâmetros pode ser ignorada.
 
 ```rust
 use salvo::prelude::*;
@@ -39,10 +39,12 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-Além disso, a API do sistema de roteamento é extremamente simples, mas poderosa. Na maioria dos casos, você só precisará lidar com o tipo Router. Adicionalmente, se uma struct implementar traits específicas, o Salvo pode gerar automaticamente documentação OpenAPI, extrair parâmetros e tratar erros com mensagens claras. Isso faz com que escrever Handlers seja tão intuitivo quanto funções comuns. Exemplo:
+Além disso, a API fornecida pelo sistema de roteamento é extremamente simples, mas poderosa. Para necessidades de uso normais, basicamente, você só precisa se preocupar com o tipo Router.
+Além disso, se uma estrutura implementar os traits relevantes, o Salvo pode gerar automaticamente a documentação OpenAPI, extrair parâmetros, lidar automaticamente com diferentes erros e retornar mensagens amigáveis. Isso torna a escrita de handlers tão simples e intuitiva quanto escrever funções comuns. Nos tutoriais seguintes, explicaremos essas funcionalidades em detalhes passo a passo. Aqui está um exemplo:
 
 ```rust
-#[endpoint(tags("logs de mensagens"))]
+
+#[endpoint(tags("registros de mensagens"))]
 pub async fn create_message_log_handler(
     input: JsonBody<CreateOrUpdateMessageLog>,
     depot: &mut Depot,
@@ -53,13 +55,13 @@ pub async fn create_message_log_handler(
 }
 ```
 
-Aqui, `JsonBody<CreateOrUpdateMessageLog>` extrai automaticamente JSON do corpo da requisição (suporta múltiplas fontes e tipos aninhados), e a macro `#[endpoint]` gera documentação OpenAPI, simplificando extração de parâmetros e tratamento de erros.
+Neste exemplo, `JsonBody<CreateOrUpdateMessageLog>` analisará automaticamente os dados JSON do corpo da requisição e os converterá para o tipo `CreateOrUpdateMessageLog` (também suporta múltiplas fontes de dados e tipos aninhados). Ao mesmo tempo, a macro `#[endpoint]` gerará automaticamente a documentação OpenAPI para esta interface, simplificando o código de extração de parâmetros e tratamento de erros.
 
-## Sistema de roteamento
+## Sistema de Roteamento
 
-O sistema de roteamento do Salvo é diferente de outros frameworks. Um Router pode ser organizado de forma linear ou hierárquica, separando a árvore de lógica de negócios da estrutura de URLs. A primeira reflete necessidades do sistema, não necessariamente espelhando os caminhos de acesso.
+Sinto que o sistema de roteamento é diferente de outros frameworks. O Router pode ser escrito de forma plana ou em forma de árvore. Aqui, distinguimos entre a árvore de lógica de negócios e a árvore de diretórios de acesso. A árvore de lógica de negócios divide a estrutura do router de acordo com as necessidades da lógica de negócios, formando uma árvore de routers, que não necessariamente coincide com a árvore de diretórios de acesso.
 
-Um exemplo comum:
+Normalmente, escrevemos as rotas assim:
 
 ```rust
 Router::new().path("articles").get(list_articles).post(create_article);
@@ -70,7 +72,7 @@ Router::new()
     .delete(delete_article);
 ```
 
-Geralmente, listar e ver artigos não requer autenticação, mas criar, editar ou deletar sim. O roteamento aninhado do Salvo lida bem com isso:
+Geralmente, visualizar artigos e listar artigos não requer login do usuário, mas criar, editar e excluir artigos exigem autenticação e permissões de login. O sistema de roteamento aninhado do Salvo pode atender bem a essa necessidade. Podemos agrupar as rotas que não requerem login:
 
 ```rust
 Router::new()
@@ -79,17 +81,16 @@ Router::new()
     .push(Router::new().path("{id}").get(show_article));
 ```
 
-Rotas protegidas podem agrupar middlewares de autenticação:
-
+Em seguida, agrupamos as rotas que requerem login e usamos o middleware correspondente para verificar se o usuário está logado:
 ```rust
 Router::new()
     .path("articles")
     .hoop(auth_check)
-    .post(create_article)
+    .post(list_articles)
     .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
 ```
 
-Mesmo com caminhos idênticos (`path("articles")`), ambos os Routers podem coexistir sob um pai:
+Embora ambas as rotas tenham o mesmo `path("articles")`, elas ainda podem ser adicionadas ao mesmo router pai. Portanto, o router final fica assim:
 
 ```rust
 Router::new()
@@ -103,10 +104,10 @@ Router::new()
         Router::new()
             .path("articles")
             .hoop(auth_check)
-            .post(create_article)
+            .post(list_articles)
             .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
 ```
 
-`{id}` captura um segmento da URL. Para restringi-lo a números, use regex: `r"{id:/\d+/}"`.
+`{id}` corresponde a um segmento do caminho. Normalmente, o `id` de um artigo é apenas um número. Nesse caso, podemos usar expressões regulares para restringir as regras de correspondência do `id`, como `r"{id:/\d+/}"`.
 {/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}

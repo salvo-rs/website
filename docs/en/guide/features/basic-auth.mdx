@@ -1,48 +1,48 @@
 # Basic Authentication
 
-Middleware providing support for Basic Auth.
+A middleware that provides support for Basic Auth.
 
-import { Tab, Tabs } from 'rspress/theme';
-import BasicAuthCode from '../../../../codes_md/basic-auth/src/main.mdx';
-import BasicAuthCargoCode from '../../../../codes_md/basic-auth/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ## Introduction to Basic Auth
 
-Basic Auth is a simple HTTP authentication mechanism that transmits username and password by including the `Authorization` field in the HTTP request header. The format is `Authorization: Basic <base64(username:password)>`. Although simple, because the credentials are only Base64 encoded and not encrypted, it typically needs to be used with HTTPS to ensure security.
+Basic Auth is a simple HTTP authentication mechanism that transmits a username and password via the `Authorization` header in HTTP requests. The format is `Authorization: Basic <base64(username:password)>`. While simple, since credentials are only Base64-encoded rather than encrypted, it is typically used with HTTPS to ensure security.
 
 ## Comparison of Basic Auth Implementations in Common Frameworks
 
-| Framework       | Language   | Basic Auth Implementation                                           |
-|-----------------|------------|---------------------------------------------------------------------|
-| Salvo           | Rust       | Implemented via `BasicAuth` middleware and custom `BasicAuthValidator` |
-| Express         | JavaScript | Using the `express-basic-auth` middleware package                 |
-| Spring Security | Java       | Implemented via `httpBasic()` configuration and `UserDetailsService` |
-| ASP.NET Core    | C#         | Using `.UseAuthentication()` and `AddAuthentication(AuthenticationSchemes.Basic)` |
-| Gin             | Go         | Via custom middleware or using the `gin-contrib/auth` package       |
+| Framework | Language | Basic Auth Implementation |
+|-----------|----------|----------------------------|
+| Salvo | Rust | Implemented via the `BasicAuth` middleware and custom `BasicAuthValidator` |
+| Express | JavaScript | Uses the `express-basic-auth` middleware package |
+| Spring Security | Java | Configured via `httpBasic()` and implemented with `UserDetailsService` |
+| ASP.NET Core | C# | Uses `.UseAuthentication()` and `AddAuthentication(AuthenticationSchemes.Basic)` |
+| Gin | Go | Implemented via custom middleware or using the `gin-contrib/auth` package |
 
 ## Use Cases
 
 Basic Auth is suitable for the following scenarios:
 
-1.  **Internal APIs and Tools**: Management tools and APIs used within a company.
-2.  **Development and Testing Environments**: Quickly implement authentication without needing a complex login system.
-3.  **Simple API Protection**: When a complex user management system is not required.
-4.  **In Conjunction with Other Security Measures**: As part of a multi-layered security architecture.
+1. **Internal APIs and Tools**: Management tools and APIs used within a company
+2. **Development and Testing Environments**: Quickly implement authentication without a complex login system
+3. **Simple API Protection**: When a complex user management system is not required
+4. **Combined with Other Security Measures**: As part of a multi-layered security architecture
 
-In Salvo, the Basic Auth middleware can be easily integrated into routes. Custom validation logic can be implemented by implementing the `BasicAuthValidator` trait, offering great flexibility.
+In Salvo, the Basic Auth middleware can be easily integrated into routes. By implementing the `BasicAuthValidator` trait, custom validation logic can be defined, offering great flexibility.
 
-## Important Considerations
+## Considerations
 
-- Always use with HTTPS to protect credential transmission.
-- Not suitable for production environments handling sensitive information.
-- Consider using more secure authentication methods like JWT, OAuth, etc., for production environments.
+- Always use with HTTPS to protect credential transmission
+- Not suitable for production environments storing sensitive information
+- Consider using more secure authentication methods such as JWT or OAuth for production environments
 
 <Tabs>
   <Tab label="main.rs">
-    <BasicAuthCode/>
+  ```rust file="<root>/codes/basic-auth/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <BasicAuthCargoCode/>
+  ```toml file="<root>/codes/basic-auth/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:602232eaaa9e3f904ce93326845595ee */}
+{/* 本行由工具自动生成,原文哈希值:d01ddb1691782cd7ed28227dcc89e19f */}

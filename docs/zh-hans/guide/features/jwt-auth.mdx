@@ -17,15 +17,15 @@ JWT在身份验证流程中的典型使用方式：
 
 _**示例代码**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
-import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <JwtAuthCode/>
+  ```rust file="<root>/codes/jwt-auth/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <JwtAuthCargoCode/>
+  ```toml file="<root>/codes/jwt-auth/Cargo.toml"
+  ```
   </Tab>
 </Tabs>

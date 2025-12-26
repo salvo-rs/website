@@ -1,33 +1,33 @@
 # Session
 
-import { Tab, Tabs } from 'rspress/theme';
-import SessionLoginMainCode from '../../../../codes_md/session-login/src/main.mdx';
-import SessionLoginCargoCode from '../../../../codes_md/session-login/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Middleware that provides `Session` support.
+Middleware providing support for `Session`.
 
-## What is a Session
+## What is Session
 
-A Session is a piece of user data stored on the server-side, typically used to track user status and save temporary data. In web applications, Sessions solve the stateless nature of the HTTP protocol, allowing the server to recognize multiple requests from the same user.
+Session refers to user data stored on the server side, typically used to track user state and store temporary data. In web applications, Session addresses the stateless nature of the HTTP protocol, enabling the server to recognize multiple requests from the same user.
 
-## Using Sessions in Salvo
+## Using Session in Salvo
 
-In Salvo, the Session middleware provides a simple API to read and write session data. You can obtain a session instance via `SessionDepot`, and manage session data using methods like `get`, `set`, and `remove`.
+In Salvo, the Session middleware offers a simple API for reading and writing session data. The `SessionDepot` can be used to obtain a session instance, while methods such as `get`, `set`, and `remove` allow for managing session data.
 
 ## Common Use Cases
 
-- User authentication and login status management
+- User authentication and login state management
 - Temporary storage of form data
-- Storage of user preferences
+- Storage of user preference settings
 
 _**Example Code**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<SessionLoginMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<SessionLoginCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/session-login/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/session-login/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:88af59e67d10a27580b5c0792b125c79 */}
+{/* 本行由工具自动生成,原文哈希值:f8de91b5a58a71598fb1dfee41bb6a6f */}

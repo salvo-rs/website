@@ -2,44 +2,47 @@
 
 ## Was ist Routing?
 
-[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) definiert, welche Middleware und `Handler` eine HTTP-Anfrage verarbeiten. Dies ist die grundlegendste und zentrale Funktionalität in Salvo.
+[`Router`](https://docs.rs/salvo_core/latest/salvo_core/routing/struct.Router.html) definiert, welche Middleware und welcher `Handler` eine HTTP-Anfrage verarbeiten. Dies ist die grundlegendste und zentrale Funktionalität in Salvo.
 
-Intern besteht ein `Router` aus einer Reihe von Filtern. Bei einer eingehenden Anfrage testet der Router der Reihe nach, ob er selbst oder seine Unterrouten die Anfrage matchen. Bei erfolgreichem Match werden die Middleware der gesamten Routenkette ausgeführt. Falls der `Response`-Status auf einen Fehler (4XX, 5XX) oder eine Umleitung (3XX) gesetzt wird, werden nachfolgende Middleware und `Handler` übersprungen. Sie können auch manuell `ctrl.skip_rest()` aufrufen, um die weitere Verarbeitung zu überspringen.
+Intern besteht ein `Router` tatsächlich aus einer Reihe von Filtern (Filters). Wenn eine Anfrage eintrifft, testet der Router der Reihe nach von oben nach unten, ob er selbst und seine Kindelemente die Anfrage abgleichen können. Bei erfolgreicher Übereinstimmung werden die Middleware der gesamten Kette, bestehend aus dem Router und seinen Kindroutern, nacheinander ausgeführt. Wenn während der Verarbeitung der Status der `Response` auf einen Fehler (4XX, 5XX) oder eine Umleitung (3XX) gesetzt wird, werden nachfolgende Middleware und `Handler` übersprungen. Sie können auch manuell `ctrl.skip_rest()` aufrufen, um nachfolgende Middleware und `Handler` zu überspringen.
 
-Beim Matching gibt es einen URL-Pfad, der während des Prozesses vollständig von den Filtern verarbeitet werden muss. Nur wenn alle Filter erfolgreich sind und der gesamte Pfad verarbeitet wurde, gilt der Match als erfolgreich.
+Während des Abgleichvorgangs existiert eine URL-Pfadinformation, die als ein Objekt betrachtet werden kann, das während des Abgleichvorgangs vollständig von den Filtern konsumiert werden muss. Wenn alle Filter in einem bestimmten Router erfolgreich abgleichen und diese URL-Pfadinformation vollständig konsumiert wurde, wird dies als "erfolgreicher Abgleich" betrachtet.
 
-Beispiel:
+Zum Beispiel:
 
 ```rust
 Router::with_path("articles").get(list_articles).post(create_article);
 ```
 
-Entspricht:
+ist tatsächlich gleichbedeutend mit:
 
 ```rust
 Router::new()
-    // PathFilter prüft den Anfragepfad - nur Pfade mit "articles" matchen
-    // Beispiel: /articles/123 matcht, /articles_list/123 nicht
+    // PathFilter kann Anfragepfade filtern. Nur wenn der Anfragepfad das Segment "articles" enthält, ist der Abgleich erfolgreich,
+    // andernfalls schlägt er fehl. Zum Beispiel: /articles/123 ist erfolgreich, während /articles_list/123
+    // zwar "articles" enthält, aber aufgrund des nachfolgenden "_list" nicht erfolgreich abgeglichen wird.
     .filter(PathFilter::new("articles"))
 
-    // Bei erfolgreichem Root-Match: GET-Anfragen werden von list_articles verarbeitet
+    // Wenn der Root-Router erfolgreich abgleicht und die Anfrage-Methode GET ist, kann der interne Kindrouter erfolgreich abgleichen,
+    // und die Anfrage wird von list_articles verarbeitet.
     .push(Router::new().filter(filters::get()).handle(list_articles))
 
-    // Bei erfolgreichem Root-Match: POST-Anfragen werden von create_article verarbeitet
+    // Wenn der Root-Router erfolgreich abgleicht und die Anfrage-Methode POST ist, kann der interne Kindrouter erfolgreich abgleichen,
+    // und die Anfrage wird von create_article verarbeitet.
     .push(Router::new().filter(filters::post()).handle(create_article));
 ```
 
-`GET /articles/` würde erfolgreich matchen und `list_articles` ausführen. `GET /articles/123` würde jedoch fehlschlagen (404), da `Router::with_path("articles")` nur `/articles` verarbeitet, nicht den Rest `/123`. Für solch einen Fall:
+Wenn auf `GET /articles/` zugegriffen wird, gilt der Abgleich als erfolgreich und `list_articles` wird ausgeführt. Wenn jedoch auf `GET /articles/123` zugegriffen wird, schlägt der Routenabgleich fehl und ein 404-Fehler wird zurückgegeben, weil `Router::with_path("articles")` nur den `/articles`-Teil der URL-Pfadinformation konsumiert hat. Der `/123`-Teil bleibt unkonsumiert, daher wird der Abgleich als fehlgeschlagen betrachtet. Um einen erfolgreichen Abgleich zu ermöglichen, kann die Route wie folgt geändert werden:
 
 ```rust
 Router::with_path("articles/{**}").get(list_articles).post(create_article);
 ```
 
-Hier matcht `{**}` beliebige Restpfade, sodass `GET /articles/123` erfolgreich `list_articles` ausführt.
+Hier passt `{**}` auf jeden überschüssigen Pfad, sodass es `GET /articles/123` abgleichen und `list_articles` ausführen kann.
 
 ## Flache Definition
 
-Routen können flach definiert werden:
+Wir können Routen in einem flachen Stil definieren:
 
 ```rust
 Router::with_path("writers").get(list_writers).post(create_writer);
@@ -49,7 +52,7 @@ Router::with_path("writers/{id}/articles").get(list_writer_articles);
 
 ## Baumartige Definition
 
-Empfohlene baumartige Struktur:
+Wir können Routen auch baumartig definieren, was die empfohlene Vorgehensweise ist:
 
 ```rust
 Router::with_path("writers")
@@ -63,10 +66,9 @@ Router::with_path("writers")
             .push(Router::with_path("articles").get(list_writer_articles)),
     );
 ```
+Diese Art der Definition kann für komplexe Projekte die Router-Definition übersichtlicher und einfacher gestalten.
 
-Diese Struktur bleibt bei komplexen Projekten übersichtlich.
-
-Viele `Router`-Methoden geben `Self` zurück für Methodenverkettung. Für bedingtes Routing gibt es `then`:
+Viele Methoden in `Router` geben nach dem Aufruf sich selbst (Self) zurück, um das verkettete Schreiben von Code zu ermöglichen. Manchmal müssen Sie basierend auf bestimmten Bedingungen entscheiden, wie geroutet werden soll. Das Routingsystem bietet auch die `then`-Funktion, die einfach zu verwenden ist:
 
 ```rust
 Router::new()
@@ -85,12 +87,11 @@ Router::new()
             }),
     );
 ```
+Dieses Beispiel zeigt, dass Routen zum Erstellen, Bearbeiten und Löschen von Artikeln nur hinzugefügt werden, wenn sich der Server im `admin_mode` befindet.
 
-Dies fügt nur im `admin_mode` Routen zum Erstellen/Bearbeiten/Löschen von Artikeln hinzu.
+## Parameter aus der Route abrufen
 
-## Parameter aus Routen
-
-`{id}` definiert einen Parameter, der via `Request` ausgelesen werden kann:
+Im obigen Code definiert `{id}` einen Parameter. Wir können seinen Wert über die `Request`-Instanz abrufen:
 
 ```rust
 #[handler]
@@ -99,25 +100,28 @@ async fn show_writer(req: &mut Request) {
 }
 ```
 
-Für numerische IDs kann `{id:num}` mit verschiedenen Formaten verwendet werden:
-- `{id:num}`: Beliebige Ziffernfolge
-- `{id:num[10]}`: Genau 10 Ziffern
-- `{id:num(..10)}`: 1-9 Ziffern
-- `{id:num(3..10)}`: 3-9 Ziffern
-- `{id:num(..=10)}`: 1-10 Ziffern
-- `{id:num(3..=10)}`: 3-10 Ziffern
-- `{id:num(10..)}`: Mindestens 10 Ziffern
+`{id}` gleicht ein Segment im Pfad ab. Normalerweise ist die `id` eines Artikels nur eine Zahl. In diesem Fall können wir einen regulären Ausdruck verwenden, um die Abgleichsregel für `id` einzuschränken: `r"{id|\d+}"`.
 
-Platzhalter:
-- `{**}`: Matcht optionalen Restpfad (auch leer)
-- `{*+}`: Matcht nicht-leeren Restpfad
-- `{*?}`: Matcht optionales einzelnes Pfadsegment
+Für diesen Zahlentyp gibt es eine einfachere Methode mit `<id:num>`. Die spezifische Schreibweise ist:
+- `{id:num}` gleicht eine beliebige Anzahl von Ziffernzeichen ab;
+- `{id:num[10]}` gleicht nur eine feste, bestimmte Anzahl von Ziffernzeichen ab, hier 10, d.h. es gleicht genau 10 Ziffernzeichen ab;
+- `{id:num(..10)}` gleicht 1 bis 9 Ziffernzeichen ab;
+- `{id:num(3..10)}` gleicht 3 bis 9 Ziffernzeichen ab;
+- `{id:num(..=10)}` gleicht 1 bis 10 Ziffernzeichen ab;
+- `{id:num(3..=10)}` gleicht 3 bis 10 Ziffernzeichen ab;
+- `{id:num(10..)}` gleicht mindestens 10 Ziffernzeichen ab.
 
-Kombinationen sind möglich: `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
+Es ist auch möglich, alle verbleibenden Pfadsegmente mit `{**}`, `{*+}` oder `{*?}` abzugleichen. Um die Lesbarkeit des Codes zu verbessern, können auch geeignete Namen hinzugefügt werden, um die Semantik des Pfads klarer zu machen, z.B.: `{**file_path}`.
+
+- `{**}`: Steht für einen Platzhalter, bei dem der abgeglichene Teil eine leere Zeichenkette sein kann, z.B. passt der Pfad `/files/{**rest_path}` auf `/files`, `/files/abc.txt`, `/files/dir/abc.txt`;
+- `{*+}`: Steht für einen Platzhalter, bei dem der abgeglichene Teil existieren muss und nicht auf eine leere Zeichenkette abgleichen kann, z.B. passt der Pfad `/files/{*+rest_path}` nicht auf `/files`, aber auf `/files/abc.txt`, `/files/dir/abc.txt`;
+- `{*?}`: Steht für einen Platzhalter, bei dem der abgeglichene Teil eine leere Zeichenkette sein kann, aber nur ein Pfadsegment enthalten darf, z.B. passt der Pfad `/files/{*?rest_path}` nicht auf `/files/dir/abc.txt`, aber auf `/files`, `/files/abc.txt`;
+
+Die Kombination mehrerer Ausdrücke zum Abgleichen desselben Pfadsegments ist erlaubt, z.B. `/articles/article_{id:num}/`, `/images/{name}.{ext}`.
 
 ## Middleware hinzufügen
 
-Middleware wird via `hoop` hinzugefügt:
+Middleware kann über die `hoop`-Funktion des Routers hinzugefügt werden:
 
 ```rust
 Router::new()
@@ -134,7 +138,9 @@ Router::new()
     );
 ```
 
-Hier gilt `check_authed` für alle Unterrouten. Für selektive Anwendung:
+In diesem Beispiel verwendet der Root-Router `check_authed`, um zu prüfen, ob der aktuelle Benutzer bereits angemeldet ist. Alle Kindrouter sind von dieser Middleware betroffen.
+
+Wenn Benutzer nur die Informationen und Artikel von `writer` durchsuchen, möchten wir, dass sie dies tun können, ohne sich anmelden zu müssen. Wir können die Routen wie folgt definieren:
 
 ```rust
 Router::new()
@@ -154,89 +160,149 @@ Router::new()
     );
 ```
 
+Obwohl zwei Router die gleiche Pfaddefinition `path("articles")` haben, können sie demselben Elternrouter hinzugefügt werden.
+
 ## Filter
 
-Router nutzen Filter für das Matching. Filter können mit `or`/`and` verknüpft werden. Ein Router matcht nur, wenn alle Filter erfolgreich sind.
+Intern bestimmt ein `Router` über Filter, ob eine Route abgleicht. Filter unterstützen grundlegende logische Operationen mit `or` oder `and`. Eine Route kann mehrere Filter enthalten. Wenn alle Filter erfolgreich abgleichen, ist der Routenabgleich erfolgreich.
 
-Pfadfilter sind die häufigsten Filter:
+Die Pfadinformationen einer Website haben eine baumartige Struktur, die nicht identisch mit der baumartigen Struktur der Router-Organisation ist. Ein Pfad einer Website kann mehreren Routing-Knoten entsprechen. Zum Beispiel erfordern einige Inhalte unter dem Pfad `articles/` eine Anmeldung, während andere dies nicht tun. Wir können die Unterpfade, die eine Anmeldung erfordern, unter einem Router mit Authentifizierungs-Middleware organisieren. Diejenigen, die keine Authentifizierung erfordern, können unter einem anderen Router ohne Authentifizierungsprüfung organisiert werden:
+
+```rust
+Router::new()
+    .push(
+        Router::with_path("articles")
+            .get(list_articles)
+            .push(Router::new().path("{id}").get(show_article)),
+    )
+    .push(
+        Router::with_path("articles")
+            .hoop(auth_check)
+            .post(list_articles)
+            .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
+    );
+```
+
+Router verwenden Filter, um Anfragen zu filtern und an die entsprechende Middleware und `Handler` zur Verarbeitung zu senden.
+
+`path` und `method` sind zwei der am häufigsten verwendeten Filter. `path` wird zum Abgleichen von Pfadinformationen verwendet; `method` wird zum Abgleichen der Anfrage-Methode verwendet, z.B.: GET, POST, PATCH usw.
+
+Wir können die Filter eines Routers mit `and`, `or` verbinden:
+
+```rust
+Router::with_filter(filters::path("hello").and(filters::get()));
+```
+
+### Pfadfilter
+
+Auf Anfragepfaden basierende Filter werden am häufigsten verwendet. In Pfadfiltern können Parameter definiert werden, z.B.:
 
 ```rust
 Router::with_path("articles/{id}").get(show_article);
 Router::with_path("files/{**rest_path}").get(serve_file)
 ```
 
-Parameter werden via `Request` ausgelesen:
+Im `Handler` können sie über die `get_param`-Funktion des `Request`-Objekts abgerufen werden:
 
 ```rust
 #[handler]
 pub async fn show_article(req: &mut Request) {
     let article_id = req.param::<i64>("id");
 }
+
+#[handler]
+pub async fn serve_file(req: &mut Request) {
+    let rest_path = req.param::<i64>("rest_path");
+}
 ```
 
-Methodenfilter:
+### Methodenfilter
+
+Filtert Anfragen basierend auf der `HTTP`-Anfrage-`Method`, z.B.:
 
 ```rust
 Router::new().get(show_article).patch(update_article).delete(delete_article);
 ```
 
-Entspricht:
+Hier sind `get`, `patch`, `delete` alles Methodenfilter. Tatsächlich äquivalent zu:
 
 ```rust
-Router::new()
-    .push(Router::with_filter(filters::get()).handle(show_article))
-    .push(Router::with_filter(filters::patch()).handle(update_article))
-    .push(Router::with_filter(filters::delete()).handle(delete_article));
+use salvo::routing::filter;
+
+let mut root_router = Router::new();
+let show_router = Router::with_filter(filters::get()).handle(show_article);
+let update_router = Router::with_filter(filters::patch()).handle(update_article);
+let delete_router = Router::with_filter(filters::get()).handle(delete_article);
+Router::new().push(show_router).push(update_router).push(delete_router);
 ```
 
 ## Benutzerdefinierte Wisp
 
-Für häufig verwendete Muster können Kurzformen registriert werden. Beispiel für GUIDs:
+Für bestimmte häufig auftretende Abgleichsausdrücke können wir über `PathFilter::register_wisp_regex` oder `PathFilter::register_wisp_builder` einen kurzen Namen vergeben. Beispielsweise tritt das GUID-Format häufig in Pfaden auf. Die normale Schreibweise wäre jedes Mal, wenn ein Abgleich erforderlich ist:
 
 ```rust
-let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
-PathFilter::register_wisp_regex("guid", guid);
-Router::new()
-    .push(Router::with_path("/articles/{id:guid}").get(show_article))
-    .push(Router::with_path("/users/{id:guid}").get(show_user));
+Router::with_path("/articles/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
+Router::with_path("/users/<id:/[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}/>");
 ```
 
-Danach kann einfach `{id:guid}` verwendet werden.
+Dieses komplexe reguläre Ausdruck jedes Mal zu schreiben, ist fehleranfällig und der Code ist nicht ästhetisch. Stattdessen kann man folgendes tun:
 
-## Vergleich mit Controller-basierten Frameworks
+```rust
+use salvo::routing::filter::PathFilter;
 
-Routing-basierte Frameworks wie Salvo bieten gegenüber MVC/Controller-Ansätzen:
+#[tokio::main]
+async fn main() {
+    let guid = regex::Regex::new("[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}").unwrap();
+    PathFilter::register_wisp_regex("guid", guid);
+    Router::new()
+        .push(Router::with_path("/articles/{id:guid}").get(show_article))
+        .push(Router::with_path("/users/{id:guid}").get(show_user));
+}
+```
 
-- **Flexibilität**: Direkte Definition von Pfad-Handlern ohne Controller-Klassen
-- **Middleware-Integration**: Präzise Middleware-Anwendung auf bestimmte Routen
-- **Code-Organisation**: Funktionsorientiert statt schichtenbasiert
-- **Leichtgewichtigkeit**: Weniger Framework-Zwänge
+Es muss nur einmal registriert werden. Danach kann direkt mit einer einfachen Schreibweise wie `{id:guid}` auf GUIDs abgeglichen werden, was das Schreiben von Code vereinfacht.
 
-Routing bildet die API-Struktur direkt ab und eignet sich besonders für moderne Microservices und REST-APIs.
+## Wie versteht man Router, wenn man zuvor Controller-basierte Web-Frameworks gelernt hat?
+Die Hauptunterschiede zwischen Web-Frameworks mit Routing-Design (wie Salvo) und traditionellen MVC- oder Controller-Design-Frameworks sind:
 
-# Router-Methodenübersicht
+- **Flexibilität**: Das Routing-Design ermöglicht eine flexiblere Definition des Anfrageverarbeitungsablaufs und eine präzisere Kontrolle der Verarbeitungslogik für jeden Pfad. In Salvo können Sie beispielsweise direkt die Verarbeitungsfunktion für einen bestimmten Pfad definieren:
+  ```rust
+  Router::with_path("articles").get(list_articles).post(create_article);
+  ```
+  Beim Controller-Design muss normalerweise zuerst eine Controller-Klasse definiert werden, in der dann mehrere Methoden zur Verarbeitung verschiedener Anfragen definiert werden:
+  ```java
+  @Controller
+  public class ArticleController {
+      @GetMapping("/articles")
+      public List<Article> listArticles() { /* ... */ }
+      
+      @PostMapping("/articles")
+      public Article createArticle(@RequestBody Article article) { /* ... */ }
+  }
+  ```
 
-| Kategorie | Methode | Beschreibung |
-|-----------|---------|--------------|
-| **Erstellung/Zugriff** | `new()` | Neuen Router erstellen |
-| | `routers()/routers_mut()` | Unterrouter abrufen |
-| | `hoops()/hoops_mut()` | Middleware abrufen |
-| | `filters()/filters_mut()` | Filter abrufen |
-| **Routenorganisation** | `unshift()` | Router am Anfang einfügen |
-| | `insert()` | An Position einfügen |
-| | `push()` | Router anhängen |
-| | `append()` | Mehrere Router anhängen |
-| | `then()` | Bedingte Konfiguration |
-| **Middleware** | `with_hoop()/hoop()` | Middleware hinzufügen |
-| | `with_hoop_when()/hoop_when()` | Bedingte Middleware |
-| **Pfadfilter** | `with_path()/path()` | Pfadfilter hinzufügen |
-| | `with_filter()/filter()` | Filter hinzufügen |
-| | `with_filter_fn()/filter_fn()` | Funktionsfilter |
-| **Netzwerkfilter** | `scheme()` | Protokollfilter |
-| | `host()/with_host()` | Hostfilter |
-| | `port()/with_port()` | Portfilter |
-| **HTTP-Methoden** | `get()/post()/put()` | HTTP-Methodenrouten |
-| | `delete()/patch()/head()/options()` | HTTP-Methodenrouten |
-| **Handler** | `goal()` | Handler setzen |
-| **Matching** | `detect()` | Routenmatch prüfen |
-{/* 本行由工具自动生成,原文哈希值:de818471bc28a65be62c204495aada43 */}
+- **Middleware-Integration**: Routing-Frameworks bieten normalerweise eine einfachere Möglichkeit zur Middleware-Integration, wobei Middleware auf bestimmte Routen angewendet werden kann. Die Middleware von Salvo kann präzise auf bestimmte Routen angewendet werden:
+  ```rust
+  Router::new()
+      .push(
+          Router::with_path("admin/articles")
+              .hoop(admin_auth_middleware)  // Authentifizierungs-Middleware nur für Admin-Routen
+              .get(list_all_articles)
+              .post(create_article),
+      )
+      .push(
+          Router::with_path("articles")  // Öffentliche Routen benötigen keine Authentifizierung
+              .get(list_public_articles),
+      );
+  ```
+
+- **Code-Organisation**: Das Routing-Design tendiert dazu, Code basierend auf Funktion oder API-Endpunkten zu organisieren, anstatt nach dem MVC-Modell in Model-View-Controller-Schichten.
+  Das Routing-Design fördert die Organisation von Code nach API-Endpunkt-Funktionalität:
+  ```rust
+  // user_routes.rs - Benutzerbezogene Routen und Verarbeitungslogik
+  pub fn user_routes() -> Router {
+      Router::with_path("users")
+          .get(list_users)
+          .post(create_user)
+          .push(Router::with_path
+{/* 本行由工具自动生成,原文哈希值:ba0a1eadc077c274134c7a533d887f99 */}

@@ -1,27 +1,27 @@
-# Encabezados de caché
+# Encabezados de Caché
 
 Middleware que proporciona soporte para la configuración de encabezados de caché.
 
-El control de caché es una parte fundamental de la optimización del rendimiento web. Al configurar correctamente los encabezados de caché, se pueden reducir solicitudes de red innecesarias y mejorar el rendimiento de la aplicación. [Cache-Control](https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control) es un encabezado de respuesta HTTP que especifica directivas para las políticas de caché del navegador, controlando quién puede almacenar en caché la respuesta, bajo qué condiciones y por cuánto tiempo.
+El control de caché es una parte fundamental de la optimización del rendimiento web. Al configurar correctamente los encabezados de caché, se pueden reducir solicitudes de red innecesarias y mejorar el rendimiento de la aplicación. [Cache-Control](https://developer.mozilla.org/es/docs/Web/HTTP/Headers/Cache-Control) es una directiva en los encabezados de respuesta HTTP que especifica la política de caché del navegador, controlando quién puede almacenar en caché la respuesta, bajo qué condiciones y por cuánto tiempo.
 
-Internamente, la implementación incluye tres manejadores (`Handler`): `CachingHeaders`, `Modified` y `ETag`. `CachingHeaders` es una combinación de los dos últimos. Normalmente se recomienda usar `CachingHeaders`.
+La implementación interna incluye tres manejadores (`Handler`): `CachingHeaders`, `Modified` y `ETag`. `CachingHeaders` es una combinación de los dos últimos. En condiciones normales, se recomienda utilizar `CachingHeaders`.
 
 - `Modified`: Proporciona validación de caché basada en la última fecha de modificación del recurso.
 - `ETag`: Utiliza etiquetas de entidad (Entity Tag) para ofrecer un mecanismo de validación de recursos más preciso.
-- `CachingHeaders`: Combina ambos mecanismos anteriores, brindando soporte completo para el control de caché.
+- `CachingHeaders`: Combina ambos mecanismos anteriores para brindar un soporte completo de control de caché.
 
-_**Código de ejemplo**_
+_**Código de Ejemplo**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
-import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CachingHeadersCode/>
+  ```rust file="<root>/codes/caching-headers/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CachingHeadersCargoCode/>
+  ```toml file="<root>/codes/caching-headers/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}
+{/* 本行由工具自动生成,原文哈希值:08699e65af0ef5c9fac56f0fb8d73153 */}

@@ -1,6 +1,6 @@
 # ライター
 
-`Writer` は `Response` にコンテンツを書き込むために使用されます：
+`Writer`はコンテンツを`Response`に書き込むために使用されます：
 
 ```rust
 #[async_trait]
@@ -9,7 +9,7 @@ pub trait Writer {
 }
 ```
 
-`Handler` と比較すると：
+ハンドラーとの比較：
 
 ```rust
 #[async_trait]
@@ -18,13 +18,13 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-両者の主な違いは：
-- 用途が異なります。`Writer` は具体的なコンテンツ（文字列、エラーメッセージなど）を `Response` に書き込むことを表し、`Handler` はリクエスト全体を処理するために使用されます。
-- `Writer` は `Handler` 内で作成され、`write` 関数が呼び出されると自身を消費するため、1回限りの呼び出しです。一方、`Handler` はすべてのリクエストで共有されます。
-- `Writer` は `Handler` が返す `Result` の内容として使用できます。
-- `Writer` には `FlowCtrl` パラメータが存在せず、リクエストの実行フローを制御することはできません。
+主な相違点：
+- 用途が異なります。`Writer`は具体的なコンテンツ（文字列、エラーメッセージなど）を`Response`に書き込むことを表し、`Handler`はリクエスト全体を処理するために使用されます。
+- `Writer`は`Handler`内で作成され、`write`関数呼び出し時に自身を消費するため、一回限りの呼び出しです。一方、`Handler`はすべてのリクエストで共有されます。
+- `Writer`は`Handler`が返す`Result`内のコンテンツとして使用できます。
+- `Writer`には`FlowCtrl`パラメータが存在せず、リクエスト全体の実行フローを制御できません。
 
-`Scribe` は `Writer` を実装していますが、`Writer` よりも機能が制限されています：
+`Scribe`は`Writer`を実装していますが、`Writer`よりも実現可能な機能が限定されています：
 
 ```rust
 pub trait Scribe {
@@ -32,5 +32,5 @@ pub trait Scribe {
 }
 ```
 
-`Scribe` のレンダリング関数は単にデータを `Response` に書き込むだけで、この処理中に `Request` や `Depot` から情報を取得することはできません。
+`Scribe`のレンダリング関数は単にデータを`Response`に書き込むだけで、この処理中に`Request`や`Depot`から情報を取得することはできません。
 {/* 本行由工具自动生成,原文哈希值:a88019b69f080567caf2af39cb1d17e5 */}

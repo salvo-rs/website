@@ -1,1 +1,10 @@
-["processing-flow","handle-error","send-file","working-with-database","use-template-engine","graceful-shutdown","testing","deployment"]
+[
+    "processing-flow",
+    "handle-error",
+    "send-file",
+    "working-with-database",
+    "use-template-engine",
+    "graceful-shutdown",
+    "testing",
+    "deployment"
+]

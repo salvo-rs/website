@@ -2,11 +2,7 @@
 
 Salvo 可以通过以下一些方式发送文件:
 
-import { Tab, Tabs } from 'rspress/theme';
-import StaticDirListCode from '../../../../codes_md/static-dir-list/src/main.mdx';
-import StaticDirListCargoCode from '../../../../codes_md/static-dir-list/Cargo.mdx';
-import StaticEmbedFilesCode from '../../../../codes_md/static-embed-files/src/main.mdx';
-import StaticEmbedFilesCargoCode from '../../../../codes_md/static-embed-files/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 ### NamedFile
 
@@ -39,10 +35,12 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 - `StaticDir` 提供了对静态本地文件夹的支持. 可以将多个文件夹的列表作为参数. 比如:
 <Tabs>
   <Tab label="main.rs">
-        <StaticDirListCode />
+  ```rust file="<root>/codes/static-dir-list/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticDirListCargoCode />
+  ```toml file="<root>/codes/static-dir-list/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
   如果在第一个文件夹中找不到对应的文件, 则会到第二个文件夹中找.
@@ -50,10 +48,12 @@ async fn send_file(req: &mut Request, res: &mut Response) {
 - 提供了对 `rust-embed` 的支持, 比如:
 <Tabs>
   <Tab label="main.rs">
-        <StaticEmbedFilesCode />
+  ```rust file="<root>/codes/static-embed-files/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-        <StaticEmbedFilesCargoCode />
+  ```toml file="<root>/codes/static-embed-files/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
   `with_fallback` 可以设置在文件找不到时, 用这里设置的文件代替, 这个对应某些单页网站应用来还是有用的.

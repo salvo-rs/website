@@ -1,34 +1,34 @@
-# Contrôle interdomaine (CORS)
+# Contrôle interdomaine
 
-Le CORS (Cross-Origin Resource Sharing, partage des ressources entre origines multiples) est un mécanisme qui permet aux navigateurs d'effectuer des requêtes vers des serveurs d'origines différentes, surmontant ainsi les restrictions de la politique de même origine des navigateurs.
+CORS (Cross-Origin Resource Sharing, partage des ressources entre origines multiples) est un mécanisme qui permet aux navigateurs d'envoyer des requêtes à des serveurs d'origines différentes, surmontant ainsi les restrictions de la politique de même origine du navigateur.
 
 ## Qu'est-ce que la politique de même origine ?
 
-La politique de même origine est une fonctionnalité de sécurité des navigateurs qui limite la manière dont un document ou un script chargé depuis une origine peut interagir avec des ressources provenant d'une autre origine. Par "même origine", on entend le même protocole, domaine et numéro de port.
+La politique de même origine est une fonctionnalité de sécurité des navigateurs qui limite la manière dont un document ou un script chargé depuis une origine peut interagir avec des ressources provenant d'une autre origine. Par "même origine", on entend le même protocole, le même nom de domaine et le même numéro de port.
 
-## Pourquoi avons-nous besoin du CORS ?
+## Pourquoi CORS est-il nécessaire ?
 
-Lorsqu'une application frontale a besoin d'accéder à des API d'origines différentes, le CORS devient nécessaire. Par exemple :
-- L'application frontale est déployée sur `https://frontend.com`
+Lorsqu'une application front-end doit accéder à des API d'origines différentes, le support CORS est requis. Par exemple :
+- L'application front-end est déployée sur `https://frontend.com`
 - Le service API est déployé sur `https://api.backend.com`
 
-Sans CORS, le navigateur empêcherait l'application frontale d'accéder au service API.
+Sans CORS, le navigateur empêcherait l'application front-end d'accéder au service API.
 
-## Fonctionnement du CORS
+## Fonctionnement de CORS
 
-Le CORS utilise une série d'en-têtes HTTP pour contrôler l'accès interdomaine :
-- Requête simple : envoyée directement, le serveur contrôle l'autorisation via les en-têtes de réponse
-- Requête préliminaire (preflight) : le navigateur envoie d'abord une requête OPTIONS pour demander l'autorisation, puis envoie la requête réelle après approbation
+CORS implémente le contrôle d'accès interdomaine via une série d'en-têtes HTTP :
+- **Requête simple** : envoyée directement, le serveur contrôle l'autorisation via les en-têtes de réponse
+- **Requête préalable (preflight)** : le navigateur envoie d'abord une requête OPTIONS pour demander l'autorisation d'accès interdomaine, puis envoie la requête réelle après obtention de l'autorisation
 
-Comme le navigateur envoie une requête préliminaire `Method::OPTIONS`, il faut ajouter un traitement pour ce type de requête en ajoutant le middleware CORS au `Service`.
+Étant donné que le navigateur envoie une requête préalable `Method::OPTIONS`, il est nécessaire d'ajouter un traitement pour ce type de requête. Le middleware CORS doit être ajouté au `Service`.
 
-## Utilisation du CORS dans Salvo
+## Utilisation de CORS dans Salvo
 
-Salvo fournit un middleware CORS intégré, facile à configurer et utiliser. Voici un exemple de code :
+Salvo fournit un middleware CORS intégré, facile à configurer et à utiliser. Voici un exemple de code :
 
 :::warning
-Remarque. Le middleware .hoop(cors) s'applique au `Service`, le middleware .hoop(cors) s'applique au `Service`. Le middleware .hoop(cors) s'applique au `Service`, et non au `Router`.
-Cela permet de gérer automatiquement les requêtes préliminaires OPTIONS.
+Remarque. Le middleware `.hoop(cors)` s'applique au `Service`. Le middleware `.hoop(cors)` s'applique au `Service`. Le middleware `.hoop(cors)` s'applique au `Service`, et non au `Router`.
+Cela permet de traiter automatiquement les requêtes préalables OPTIONS.
 ```rust
 let cors = Cors::new()
     .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
@@ -44,29 +44,29 @@ let service = Service::new(router).hoop(cors);
 
 _**Exemple de code**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import CorsCode from '../../../../codes_md/cors/src/main.mdx';
-import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CorsCode/>
+  ```rust file="<root>/codes/cors/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CorsCargoCode/>
+  ```toml file="<root>/codes/cors/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-## Options de configuration principales
+## Principales options de configuration
 
 Le middleware CORS offre plusieurs options de configuration :
 
 - **Origines autorisées** : contrôle quels domaines peuvent accéder aux ressources
-- **Méthodes autorisées** : spécifie les méthodes HTTP permises (GET, POST, etc.)
+- **Méthodes autorisées** : spécifie les méthodes HTTP autorisées (GET, POST, etc.)
 - **En-têtes autorisés** : spécifie les en-têtes de requête autorisés
-- **En-têtes exposés** : spécifie quels en-têtes de réponse peuvent être accessibles par le client
-- **Autorisation des informations d'identification** : si les requêtes peuvent inclure des cookies ou autres informations d'authentification
-- **Durée de cache des requêtes préliminaires** : durée de mise en cache des résultats des requêtes préliminaires
+- **En-têtes exposés** : spécifie quels en-têtes de réponse peuvent être accessibles au client
+- **Informations d'identification autorisées** : indique si les requêtes peuvent inclure des informations d'identification telles que des cookies
+- **Durée de cache des requêtes préalables** : durée de mise en cache des résultats des requêtes préalables
 
-Une configuration appropriée du CORS permet d'assurer à la fois la sécurité et les besoins d'accès interdomaine.
-{/* 本行由工具自动生成,原文哈希值:0b191eacd5af64466fceaea928dec4d4 */}
+En configurant correctement CORS, il est possible de garantir à la fois la sécurité et de répondre aux besoins d'accès interdomaine.
+{/* 本行由工具自动生成,原文哈希值:cf229c3c39be32658130e3590ea819e7 */}

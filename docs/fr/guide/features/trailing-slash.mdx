@@ -1,33 +1,33 @@
 # Barre oblique finale
 
-Un middleware pour ajouter ou supprimer automatiquement la barre oblique `/` à la fin des URLs.
+Un middleware pour ajouter ou supprimer automatiquement la barre oblique `/` à la fin des URL.
 
 ## Cas d'utilisation
 
-Le middleware Trailing Slash est particulièrement utile dans les situations suivantes :
+Le middleware Barre oblique finale est particulièrement utile dans les situations suivantes :
 
-- **Normalisation des URLs** : Garantit que toutes les URLs suivent un format cohérent (en ajoutant ou supprimant systématiquement la barre oblique finale), ce qui améliore le référencement naturel (SEO) et évite les problèmes de contenu dupliqué.
+- **Normalisation des URL** : Garantit que toutes les URL suivent un format cohérent (en ajoutant ou supprimant systématiquement la barre oblique finale), ce qui améliore le référencement (SEO) et évite les problèmes de contenu dupliqué.
 
-- **Simplification du routage** : Évite d'avoir à écrire une logique de routage distincte pour les URLs avec ou sans barre oblique finale, le middleware gère automatiquement cette conversion.
+- **Simplification du traitement des routes** : Élimine la nécessité d'écrire une logique de routage distincte pour les URL avec ou sans barre oblique finale, car le middleware gère automatiquement cette conversion.
 
-- **Compatibilité** : Certains clients peuvent automatiquement ajouter ou supprimer la barre oblique finale des URLs, ce middleware assure que les requêtes sont correctement routées.
+- **Compatibilité** : Certains clients peuvent ajouter ou supprimer automatiquement la barre oblique finale des URL. Ce middleware garantit que les requêtes sont correctement acheminées.
 
-- **Gestion des redirections** : Peut être configuré pour rediriger automatiquement les URLs avec barre oblique vers celles sans barre oblique (ou vice versa), améliorant ainsi l'expérience utilisateur.
+- **Gestion des redirections** : Peut être configuré pour rediriger automatiquement les URL avec une barre oblique finale vers celles sans barre oblique (ou inversement), améliorant ainsi l'expérience utilisateur.
 
-- **Prévention des conflits de routage** : Dans de nombreux frameworks web, `/path` et `/path/` peuvent être considérés comme des routes différentes, ce middleware permet de les traiter de manière unifiée.
+- **Éviter les conflits de routage** : Dans de nombreux frameworks web, `/chemin` et `/chemin/` peuvent être traités comme des routes différentes. Ce middleware permet de les unifier.
 
-import { Tab, Tabs } from 'rspress/theme';
-import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
-import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 _**Exemple de code**_
 
 <Tabs>
-<Tab label="main.rs">
-<TrailingMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TrailingCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/trailing-slash/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/trailing-slash/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:1ddfc902f9b5b3eb92e88432c8bd1795 */}
+{/* 本行由工具自动生成,原文哈希值:7bb4e1e210c23aa687c6aa13c130a763 */}

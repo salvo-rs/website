@@ -1,40 +1,40 @@
 # WebSocket
 
-import { Tab, Tabs } from 'rspress/theme';
-import WebsocketMainCode from '../../../../codes_md/websocket/src/main.mdx';
-import WebsocketCargoCode from '../../../../codes_md/websocket/Cargo.mdx';
-import WebsocketChatMainCode from '../../../../codes_md/websocket-chat/src/main.mdx';
-import WebsocketChatCargoCode from '../../../../codes_md/websocket-chat/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-`WebSocket` をサポートするミドルウェアを提供します。
+`WebSocket` サポートを提供するミドルウェア。
 
-## WebSocket の概要
+## WebSocket 概要
 
-WebSocket は、単一の TCP 接続上で全二重通信を行うプロトコルです。WebSocket により、クライアントとサーバー間のデータ交換がより簡単になり、サーバーからクライアントへのデータプッシュが可能になります。WebSocket プロトコルでは、ブラウザとサーバーは一度のハンドシェイクを行うだけで、永続的な接続を確立し、双方向のデータ転送を行うことができます。
+WebSocket は、単一の TCP 接続上で全二重通信を行うプロトコルです。WebSocket により、クライアントとサーバー間のデータ交換がより簡素化され、サーバーからクライアントへの能動的なデータプッシュが可能になります。WebSocket プロトコルでは、ブラウザとサーバーは一度のハンドシェイクを完了するだけで、持続的な接続を確立し、双方向のデータ転送を行うことができます。
 
-従来の HTTP リクエストとは異なり、WebSocket 接続は確立後に開いたまま維持されるため、頻繁な接続の確立と切断を回避し、通信オーバーヘッドを大幅に削減します。これにより、WebSocket はオンラインゲーム、チャットアプリケーション、株価情報など、リアルタイムの更新が必要なアプリケーションに特に適しています。
+従来の HTTP リクエストとは異なり、WebSocket 接続は確立後に開いたまま維持されるため、頻繁な接続の確立と切断を回避し、通信オーバーヘッドを大幅に削減します。これにより、WebSocket はオンラインゲーム、チャットアプリケーション、株価情報など、リアルタイム更新が必要なアプリケーションに特に適しています。
 
-Salvo は WebSocket ミドルウェアを通じて、シンプルで強力な API を提供し、開発者がアプリケーションに簡単に WebSocket 機能を統合できるようにします。
+Salvo は WebSocket ミドルウェアを通じて、簡潔で強力な API を提供し、開発者がアプリケーションに簡単に WebSocket 機能を統合できるようにします。
 
 _**サンプルコード**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<WebsocketMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WebsocketCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/websocket/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/websocket/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
 ### チャットプログラムの例
 
 <Tabs>
-<Tab label="main.rs">
-<WebsocketChatMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<WebsocketChatCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/websocket-chat/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/websocket-chat/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:3fb844d4872fe26a4a4923b5dcb4e68a */}
+{/* 本行由工具自动生成,原文哈希值:48f49024e0e641fc20ac341c7e824a5a */}

@@ -1,35 +1,27 @@
 ---
-title: Cadre de sérialisation Rust
+title: Framework de sérialisation Rust
 ---
 
-# Serde : Cadre de sérialisation et désérialisation Rust
+# Serde : Framework de sérialisation et désérialisation Rust
 
-import { LinkCard } from '@theme';
+[Serde](https://docs.rs/serde/latest/serde/) est une bibliothèque fondamentale de l'écosystème Rust, offrant un framework de sérialisation et désérialisation à la fois performant et universel. Son nom provient de la contraction de "**Ser**ialization" et "**De**serialization".
 
-<LinkCard
-  href="https://docs.rs/serde/latest/serde/"
-  title="serde"
-  description="serde"
-/>
+## Caractéristiques principales
 
-Serde est une bibliothèque centrale de l'écosystème Rust, offrant un cadre de sérialisation et désérialisation performant et universel. Son nom provient de la combinaison de "**Ser**ialization" et "**De**serialization".
-
-## Principales caractéristiques
-
-- **Universalité** : Prend en charge de multiples formats de données comme JSON, YAML, TOML, MessagePack, etc.
-- **Abstraction sans coût** : Le code généré à la compilation est aussi efficace qu'un code écrit manuellement
-- **Flexibilité** : Permet de personnaliser les comportements de sérialisation et désérialisation
-- **Typage fort** : Utilise le système de types de Rust pour garantir l'intégrité des données
-- **Large adoption** : Devenue la bibliothèque standard pour les échanges de données dans l'écosystème Rust
+- **Universalité** : Prend en charge de nombreux formats de données tels que JSON, YAML, TOML, MessagePack, etc.
+- **Abstraction sans coût** : Le code généré à la compilation est aussi efficace qu'un code écrit manuellement.
+- **Flexibilité** : Permet de personnaliser les comportements de sérialisation et désérialisation.
+- **Typage fort** : Utilise le système de types de Rust pour garantir l'intégrité des données.
+- **Large adoption** : Devenue la bibliothèque standard de l'écosystème Rust pour les échanges de données.
 
 ## Fonctionnement
 
-Le cœur de Serde repose sur son design de représentation intermédiaire (Intermediate Representation), qui divise le processus en deux étapes :
+Le cœur de Serde repose sur son concept de représentation intermédiaire (Intermediate Representation), qui divise les processus de sérialisation et désérialisation en deux étapes :
 
-1. **Sérialisation** : Convertit les structures Rust en représentation intermédiaire, puis vers le format cible
-2. **Désérialisation** : Convertit le format d'entrée en représentation intermédiaire, puis vers des structures Rust
+1. **Sérialisation** : Convertit une structure de données Rust en une représentation intermédiaire universelle, puis dans le format cible.
+2. **Désérialisation** : Convertit un format d'entrée en représentation intermédiaire universelle, puis en structure de données Rust.
 
-Cette conception permet d'ajouter de nouveaux formats sans modifier les applications utilisant Serde.
+Cette conception permet d'ajouter de nouveaux formats de données sans modifier les applications utilisant Serde.
 
 ## Utilisation de base
 
@@ -38,12 +30,12 @@ Cette conception permet d'ajouter de nouveaux formats sans modifier les applicat
 ```toml
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0" # ou d'autres bibliothèques comme serde_yaml, toml, etc.
+serde_json = "1.0" # ou une autre bibliothèque de format comme serde_yaml, toml, etc.
 ```
 
 ### Utilisation des macros dérivées
 
-L'usage le plus courant consiste à utiliser les macros dérivées pour implémenter automatiquement les traits Serialize et Deserialize :
+L'usage le plus courant consiste à utiliser les macros dérivées pour implémenter automatiquement les traits `Serialize` et `Deserialize` sur une structure :
 
 ```rust
 use serde::{Serialize, Deserialize};
@@ -57,19 +49,19 @@ struct Point {
 fn main() {
     let point = Point { x: 1, y: 2 };
 
-    // Conversion du Point en chaîne JSON
+    // Convertit Point en chaîne JSON
     let serialized = serde_json::to_string(&point).unwrap();
     println!("Résultat sérialisé : {}", serialized); // Sortie : {"x":1,"y":2}
 
-    // Reconversion de la chaîne JSON en Point
+    // Reconstitue Point à partir de la chaîne JSON
     let deserialized: Point = serde_json::from_str(&serialized).unwrap();
     println!("Résultat désérialisé : {:?}", deserialized); // Sortie : Point { x: 1, y: 2 }
 }
 ```
 
-### Personnalisation par attributs
+### Personnalisation via attributs
 
-Serde offre de riches attributs pour personnaliser le comportement :
+Serde propose de nombreux attributs pour personnaliser le comportement de sérialisation :
 
 ```rust
 #[derive(Serialize, Deserialize, Debug)]
@@ -88,24 +80,24 @@ struct User {
 }
 ```
 
-### Formats supportés
+### Formats de données pris en charge
 
-Serde s'intègre avec de nombreux formats, chacun ayant son propre crate :
+Serde s'intègre avec de nombreux formats de données, chacun ayant son propre crate :
 
 - **serde_json** : Format JSON
 - **serde_yaml** : Format YAML
 - **toml** : Format TOML
 - **bincode** : Format binaire
-- **postcard** : Format binaire optimisé
+- **postcard** : Format binaire optimisé pour l'espace
 - **rmp/rmp-serde** : Format MessagePack
 - **ciborium** : Format CBOR
-- ...et d'autres formats
+- ... et bien d'autres.
 
 ## Utilisation avancée
 
 ### Implémentation manuelle des traits
 
-Pour des besoins spécifiques, on peut implémenter manuellement les traits `Serialize` et `Deserialize` :
+Pour des besoins spécifiques, il est possible d'implémenter manuellement les traits `Serialize` et `Deserialize` :
 
 ```rust
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
@@ -133,9 +125,9 @@ impl<'de> Deserialize<'de> for MyType {
 }
 ```
 
-### Correspondance de types
+### Mapping de types
 
-Permet de créer des correspondances entre différentes représentations :
+Il est possible de créer des correspondances entre différentes représentations de données :
 
 ```rust
 #[derive(Serialize, Deserialize)]
@@ -148,12 +140,12 @@ struct DateTimeRef {
 
 ## Apprentissage et ressources
 
-Serde est une bibliothèque riche en fonctionnalités. Pour en tirer pleinement parti :
+Serde est une bibliothèque riche en fonctionnalités ; ce document n'en couvre que les bases. Pour exploiter pleinement Serde, il est recommandé de :
 
-1. Consultez la [documentation officielle](https://serde.rs/) pour des API détaillées et des exemples
-2. Visitez le [dépôt GitHub](https://github.com/serde-rs/serde) pour le code source et les mises à jour
+1. Consulter la [documentation officielle de Serde](https://serde.rs/) pour découvrir les API détaillées et des exemples.
+2. Explorer le [dépôt GitHub](https://github.com/serde-rs/serde) pour accéder au code source et aux dernières mises à jour.
 
 ## Conclusion
 
-Serde, en tant que bibliothèque fondamentale de l'écosystème Rust, fournit des outils puissants et flexibles pour les échanges de données. En maîtrisant Serde, vous pouvez facilement gérer divers formats d'échange, rendant vos applications plus robustes et interopérables.
-{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}
+En tant que bibliothèque fondamentale de l'écosystème Rust, Serde fournit des outils puissants et flexibles pour les échanges de données. En maîtrisant Serde, vous pouvez facilement répondre à divers besoins d'échange de données dans différents formats, rendant vos applications plus robustes et interopérables.
+{/* 本行由工具自动生成,原文哈希值:02cf744a3fbae09d654887c13e131157 */}

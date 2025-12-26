@@ -16,17 +16,17 @@ Trailing Slash 中间件在以下场景中特别有用：
 
 - **避免路由冲突**：在许多 Web 框架中，`/path` 和 `/path/` 可能被视为不同的路由，此中间件可以统一处理。
 
-import { Tab, Tabs } from 'rspress/theme';
-import TrailingMainCode from '../../../../codes_md/trailing-slash/src/main.mdx';
-import TrailingCargoCode from '../../../../codes_md/trailing-slash/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 _**示例代码**_
 
 <Tabs>
-<Tab label="main.rs">
-<TrailingMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TrailingCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/trailing-slash/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/trailing-slash/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>

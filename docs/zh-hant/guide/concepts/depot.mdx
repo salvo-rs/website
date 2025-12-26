@@ -1,46 +1,47 @@
 # Depot
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/use-depot/src/main.mdx';
-import CargoCode from '../../../../codes_md/use-depot/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) 是用於保存一次請求中涉及到的臨時數據。中介軟體可以將自己處理的臨時數據放入 Depot，供後續程序使用。
+[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) 用於儲存單次請求處理過程中的臨時資料。中介軟體可將自身處理的臨時資料存入 Depot，供後續程式使用。
 
-當一個伺服器接收到一個客戶瀏覽器發來的請求後會創建一個 `Depot` 的實例。這個實例會在所有的中介軟體和 `Handler` 處理完請求後被銷毀。
+當伺服器接收來自客戶端瀏覽器的請求時，會建立一個 `Depot` 實例。此實例將在所有中介軟體與 `Handler` 完成請求處理後被銷毀。
 
-比如說，我們可以在登入的中介軟體中設置 `current_user`，然後在後續的中介軟體或者 `Handler` 中讀取當前用戶資訊。
+舉例而言，我們可在登入中介軟體中設定 `current_user`，並在後續中介軟體或 `Handler` 中讀取當前使用者資訊。
 
 ## 快速理解
 
-`Depot` 用於在請求處理過程中存儲和共享數據。它實現了一個類型安全的數據容器，支援兩種主要使用模式：
+`Depot` 用於在請求處理過程中儲存與共享資料。它實作了型別安全的資料容器，支援兩種主要使用模式：
 
-1. **鍵值存儲**：通過 `insert`/`get` 方法存取字符串鍵關聯的值
-2. **類型注入**：通過 `inject`/`obtain` 方法基於類型存取值
+1. **鍵值儲存**：透過 `insert`/`get` 方法存取與字串鍵關聯的值
+2. **型別注入**：透過 `inject`/`obtain` 方法基於型別存取值
 
-如示例所示，`Depot` 特別適用於在中介軟體和處理程序之間傳遞數據。中介軟體可以在 `Depot` 中設置值（如用戶資訊、認證狀態），後續處理程序可以獲取這些值，無需重複計算或查詢。`Depot` 的設計確保了在整個請求處理鏈中數據的一致性和可訪問性，是構建複雜 Web 應用的核心工具。
+如範例所示，`Depot` 特別適用於在中介軟體與處理程式之間傳遞資料。中介軟體可在 `Depot` 中設定值（如使用者資訊、認證狀態），後續處理程式可取得這些值，無需重複計算或查詢。`Depot` 的設計確保了在整個請求處理鏈中資料的一致性與可存取性，是建構複雜 Web 應用的核心工具。
+
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/use-depot/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/use-depot/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-## 通過 `insert` 和 `get` 設置和取出數據
+## 透過 `insert` 與 `get` 設定及取出資料
 
-如上所示，可以通過 `insert` 把 `key` 和 `value` 插入到 `Depot` 中。對於這一類型的值，直接用 `get` 取出。
+如上所示，可透過 `insert` 將 `key` 與 `value` 插入 `Depot`。對此類型的值，可直接使用 `get` 取出。
 
 ```rust
 depot.insert("a", "b");
 assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 ```
 
-如果不存在這個 `key`，或者 `key` 存在，但是類型不匹配，則返回 `None`。
+若指定的 `key` 不存在，或 `key` 存在但型別不符，則回傳 `None`。
 
-## 通過 `inject` 和 `obtain` 設置和取出數據
+## 透過 `inject` 與 `obtain` 設定及取出資料
 
-有時，存在一些不需要關係具體 `key`，對於這種類型也存在唯一實例的情況。可以使用 `inject` 插入數據，然後使用 `obtain` 取出數據。它們不需要你提供 `key`。
+有時存在某些不需關聯具體 `key`，且該型別僅需唯一實例的情況。此時可使用 `inject` 插入資料，並以 `obtain` 取出資料。此方法無需提供 `key`。
 
 ```rust
 depot.inject(Config::new());
@@ -51,19 +52,19 @@ depot.obtain::<Config>();
 
 | 類別 | 方法 | 描述 |
 |------|------|------|
-| **創建/容量** | `new()` | 創建空 Depot |
-| | `with_capacity(capacity)` | 創建指定容量的 Depot |
-| | `capacity()` | 獲取容量 |
-| | `inner()` | 獲取內部 HashMap 引用 |
-| **類型注入/獲取** | `inject<V>(value)` | 按類型注入值 |
-| | `obtain<T>()` | 獲取注入值引用 |
-| | `obtain_mut<T>()` | 獲取注入值可變引用 |
-| | `contains<T>()` | 檢查是否包含特定類型 |
-| | `scrape<T>()` | 移除並返回注入值 |
+| **建立/容量** | `new()` | 建立空 Depot |
+| | `with_capacity(capacity)` | 建立指定容量的 Depot |
+| | `capacity()` | 取得容量 |
+| | `inner()` | 取得內部 HashMap 參考 |
+| **型別注入/取得** | `inject<V>(value)` | 依型別注入值 |
+| | `obtain<T>()` | 取得注入值的參考 |
+| | `obtain_mut<T>()` | 取得注入值的可變參考 |
+| | `contains<T>()` | 檢查是否包含特定型別 |
+| | `scrape<T>()` | 移除並回傳注入值 |
 | **鍵值操作** | `insert(key, value)` | 插入鍵值對 |
-| | `get<V>(key)` | 獲取鍵對應值引用 |
-| | `get_mut<V>(key)` | 獲取鍵對應值可變引用 |
+| | `get<V>(key)` | 取得鍵對應值的參考 |
+| | `get_mut<V>(key)` | 取得鍵對應值的可變參考 |
 | | `contains_key(key)` | 檢查是否包含特定鍵 |
-| | `remove<V>(key)` | 移除鍵並返回值 |
+| | `remove<V>(key)` | 移除鍵並回傳值 |
 | | `delete(key)` | 刪除鍵值對 |
-{/* 本行由工具自动生成,原文哈希值:0a5fdeaf8cc44da931db5a32298e6afe */}
+{/* 本行由工具自动生成,原文哈希值:11bf72b48a504b8ce6ae390caf56080c */}

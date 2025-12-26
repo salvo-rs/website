@@ -1,39 +1,31 @@
 ---
-title: Marco de serialización Rust
+title: Marco de Serialización de Rust
 ---
 
-# Serde: Marco de serialización y deserialización en Rust
+# Serde: Marco de Serialización y Deserialización de Rust
 
-import { LinkCard } from '@theme';
+[Serde](https://docs.rs/serde/latest/serde/) es una biblioteca fundamental en el ecosistema de Rust que proporciona un marco de serialización y deserialización eficiente y versátil. Su nombre proviene de la combinación de "**Ser**ialization" y "**De**serialization".
 
-<LinkCard
-  href="https://docs.rs/serde/latest/serde/"
-  title="serde"
-  description="serde"
-/>
+## Características Principales
 
-Serde es una biblioteca fundamental en el ecosistema de Rust que proporciona un marco eficiente y versátil para serialización y deserialización. Su nombre proviene de la combinación de "**Ser**ialización" y "**De**serialización".
-
-## Características principales
-
-- **Versatilidad**: Soporta múltiples formatos como JSON, YAML, TOML, MessagePack, etc.
-- **Abstracción sin coste**: Genera código en tiempo de compilación tan eficiente como si estuviera escrito manualmente
-- **Flexibilidad**: Permite personalizar el comportamiento de serialización/deserialización
-- **Tipado fuerte**: Aprovecha el sistema de tipos de Rust para garantizar integridad de datos
-- **Amplia adopción**: Se ha convertido en la biblioteca estándar para intercambio de datos en el ecosistema Rust
+- **Versatilidad**: Compatible con múltiples formatos de datos como JSON, YAML, TOML, MessagePack, etc.
+- **Abstracción de costo cero**: El código generado en tiempo de compilación es tan eficiente como el escrito manualmente.
+- **Flexibilidad**: Permite personalizar el comportamiento de serialización y deserialización.
+- **Tipado fuerte**: Aprovecha el sistema de tipos de Rust para garantizar la integridad de los datos.
+- **Amplia adopción**: Se ha convertido en la biblioteca estándar para el intercambio de datos en el ecosistema de Rust.
 
 ## Funcionamiento
 
-El núcleo de Serde es su diseño de Representación Intermedia (Intermediate Representation), que divide el proceso en dos etapas:
+El núcleo de Serde es su diseño de Representación Intermedia (Intermediate Representation), que divide el proceso de serialización y deserialización en dos pasos:
 
-1. **Serialización**: Convierte estructuras Rust a una representación intermedia, luego al formato objetivo
-2. **Deserialización**: Transforma el formato de entrada a representación intermedia, luego a estructuras Rust
+1. **Serialización**: Convierte estructuras de datos de Rust en una representación intermedia universal, luego en el formato objetivo.
+2. **Deserialización**: Convierte el formato de entrada en la representación intermedia universal, luego en estructuras de datos de Rust.
 
-Este diseño permite añadir nuevos formatos sin modificar las aplicaciones que usan Serde.
+Este diseño permite agregar nuevos formatos de datos sin modificar las aplicaciones que utilizan Serde.
 
-## Uso básico
+## Uso Básico
 
-### Configuración de dependencias
+### Configuración de Dependencias
 
 ```toml
 [dependencies]
@@ -41,56 +33,56 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0" # u otras bibliotecas de formato como serde_yaml, toml, etc.
 ```
 
-### Uso de macros derivadas
+### Uso de Macros Derivadas
 
-El uso más común es implementar automáticamente los traits con macros derivadas:
+El uso más común es emplear macros derivadas para implementar automáticamente los traits de serialización y deserialización para estructuras:
 
 ```rust
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
-struct Punto {
+struct Point {
     x: i32,
     y: i32,
 }
 
 fn main() {
-    let punto = Punto { x: 1, y: 2 };
+    let point = Point { x: 1, y: 2 };
 
-    // Convertir Punto a cadena JSON
-    let serializado = serde_json::to_string(&punto).unwrap();
-    println!("Resultado serializado: {}", serializado); // Salida: {"x":1,"y":2}
+    // Convertir Point a una cadena JSON
+    let serialized = serde_json::to_string(&point).unwrap();
+    println!("Resultado serializado: {}", serialized); // Salida: {"x":1,"y":2}
 
-    // Convertir cadena JSON de vuelta a Punto
-    let deserializado: Punto = serde_json::from_str(&serializado).unwrap();
-    println!("Resultado deserializado: {:?}", deserializado); // Salida: Punto { x: 1, y: 2 }
+    // Convertir la cadena JSON de vuelta a Point
+    let deserialized: Point = serde_json::from_str(&serialized).unwrap();
+    println!("Resultado deserializado: {:?}", deserialized); // Salida: Point { x: 1, y: 2 }
 }
 ```
 
-### Personalización con atributos
+### Personalización con Atributos
 
-Serde ofrece numerosos atributos para personalizar el comportamiento:
+Serde proporciona atributos ricos para personalizar el comportamiento de serialización:
 
 ```rust
 #[derive(Serialize, Deserialize, Debug)]
-struct Usuario {
+struct User {
     #[serde(rename = "user_id")]
     id: u64,
     
     #[serde(default)]
-    nombre: String,
+    name: String,
     
     #[serde(skip_serializing_if = "Option::is_none")]
-    correo: Option<String>,
+    email: Option<String>,
     
     #[serde(skip)]
-    datos_temporales: usize,
+    temporary_data: usize,
 }
 ```
 
-### Formatos soportados
+### Formatos de Datos Soportados
 
-Serde se integra con múltiples formatos, cada uno con su propio crate:
+Serde se integra con múltiples formatos de datos, cada uno con su propio crate:
 
 - **serde_json**: Formato JSON
 - **serde_yaml**: Formato YAML
@@ -101,39 +93,39 @@ Serde se integra con múltiples formatos, cada uno con su propio crate:
 - **ciborium**: Formato CBOR
 - ...y otros formatos
 
-## Uso avanzado
+## Uso Avanzado
 
-### Implementación manual de traits
+### Implementación Manual de Traits
 
-Para necesidades especiales, se pueden implementar manualmente los traits:
+Para necesidades especiales, se pueden implementar manualmente los traits `Serialize` y `Deserialize`:
 
 ```rust
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
 
-struct MiTipo {
+struct MyType {
     // campos...
 }
 
-impl Serialize for MiTipo {
+impl Serialize for MyType {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        // lógica personalizada de serialización
+        // Lógica personalizada de serialización
     }
 }
 
-impl<'de> Deserialize<'de> for MiTipo {
+impl<'de> Deserialize<'de> for MyType {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: Deserializer<'de>,
     {
-        // lógica personalizada de deserialización
+        // Lógica personalizada de deserialización
     }
 }
 ```
 
-### Mapeo de tipos
+### Mapeo de Tipos
 
 Se pueden crear mapeos entre diferentes representaciones de datos:
 
@@ -146,14 +138,14 @@ struct DateTimeRef {
 }
 ```
 
-## Aprendizaje y recursos
+## Aprendizaje y Recursos
 
-Serde es una biblioteca muy completa. Para aprovecharla al máximo:
+Serde es una biblioteca rica en funciones; este documento solo cubre los conceptos básicos. Para aprovechar al máximo Serde, se recomienda:
 
-1. Consulta la [documentación oficial](https://serde.rs/) para detalles y ejemplos
-2. Visita el [repositorio GitHub](https://github.com/serde-rs/serde) para el código fuente y actualizaciones
+1. Visitar la [documentación oficial de Serde](https://serde.rs/) para conocer las API detalladas y ejemplos.
+2. Consultar el [repositorio de GitHub](https://github.com/serde-rs/serde) para obtener el código fuente y las últimas actualizaciones.
 
 ## Conclusión
 
-Como biblioteca fundamental en Rust, Serde proporciona herramientas poderosas y flexibles para intercambio de datos. Dominar Serde permite manejar fácilmente diversos formatos, haciendo las aplicaciones más robustas e interoperables.
-{/* 本行由工具自动生成,原文哈希值:f62ebd137ce8379fa5c4fd3535d9340f */}
+Serde, como biblioteca fundamental en el ecosistema de Rust, proporciona herramientas poderosas y flexibles para el intercambio de datos. Al dominar Serde, puede manejar fácilmente las necesidades de intercambio de datos en varios formatos, haciendo que sus aplicaciones sean más robustas e interoperables.
+{/* 本行由工具自动生成,原文哈希值:02cf744a3fbae09d654887c13e131157 */}

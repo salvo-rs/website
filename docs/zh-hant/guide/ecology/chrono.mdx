@@ -1,70 +1,60 @@
 ---
-title: Rust 日期與時間庫
+title: Rust 日期與時間函式庫
 ---
 
-# Chrono: Rust 日期與時間庫
+# Chrono：Rust 日期與時間函式庫
 
+[Chrono](https://docs.rs/chrono/latest/chrono/) 旨在提供在公曆格里高利曆中執行正確日期與時間操作所需的所有功能：
 
-import { LinkCard } from '@theme';
-
-
-<LinkCard
-  href="https://docs.rs/chrono/latest/chrono/"
-  title="chrono"
-  description="chrono"
-/>
-
-Chrono旨在提供在公曆格里高利曆中執行正確日期和時間操作所需的所有功能：
-
-- `DateTime`類型預設是時區感知的，同時提供單獨的時區無關類型。
-- 可能產生無效或模糊日期和時間的操作會返回`Option`或`MappedLocalTime`。
-- 可配置的解析和格式化，具有受strftime啟發的日期和時間格式化語法。
-- `Local`時區可以與操作系統的當前時區一起工作。
-- 類型和操作的實現考慮了合理的效率。
-- 為了限制二進制大小，Chrono預設不附帶時區數據。使用配套的crate `Chrono-TZ`或`tzfile`獲取完整的時區支援。
+- `DateTime` 類型預設具備時區感知能力，同時提供獨立的時區無關類型。
+- 可能產生無效或模糊日期與時間的操作會回傳 `Option` 或 `MappedLocalTime`。
+- 可配置的解析與格式化功能，採用受 strftime 啟發的日期時間格式化語法。
+- `Local` 時區可與作業系統的當前時區協同運作。
+- 類型與操作的實作充分考量了合理的執行效率。
+- 為限制二進位檔案大小，Chrono 預設不附帶時區資料。請使用配套套件 `Chrono-TZ` 或 `tzfile` 以獲得完整的時區支援。
 
 ## 功能特性
 
-Chrono支援各種運行時環境和操作系統，並具有幾個可啟用或禁用的功能。
+[Chrono](https://docs.rs/chrono/latest/chrono/) 支援多種執行環境與作業系統，並提供數個可啟用或停用的功能選項。
 
 ### 預設功能：
 
-- `alloc`：啟用依賴於記憶體分配的功能（主要是字串格式化）。
-- `std`：啟用依賴於標準庫的功能。這是`alloc`的超集，增加了與標準庫類型和特徵的互操作。
-- `clock`：啟用讀取本地時區（`Local`）的功能。這是`now`的超集。
+- `alloc`：啟用依賴記憶體配置的功能（主要用於字串格式化）。
+- `std`：啟用依賴標準函式庫的功能。此為 `alloc` 的超集，增加了與標準函式庫類型及特徵的互通性。
+- `clock`：啟用讀取本地時區（`Local`）的功能。此為 `now` 的超集。
 - `now`：啟用讀取系統時間（`now`）的功能。
-- `wasmbind`：為wasm32目標提供與JS Date API的介面。
+- `wasmbind`：為 wasm32 目標提供與 JS Date API 的介面。
 
 ### 可選功能：
 
-- `serde`：通過serde啟用序列化/反序列化。
-- `rkyv`：已棄用，使用`rkyv-*`功能。
-- `rkyv-16`、`rkyv-32`、`rkyv-64`：通過rkyv啟用序列化/反序列化，分別使用16位、32位或64位整數。
-- `rkyv-validation`：使用bytecheck啟用rkyv驗證支援。
-- `arbitrary`：使用Arbitrary crate構造類型的任意實例。
-- `unstable-locales`：啟用本地化。這添加了帶有`_localized`後綴的各種方法。
+- `serde`：透過 serde 啟用序列化/反序列化。
+- `rkyv`：已棄用，請改用 `rkyv-*` 功能。
+- `rkyv-16`、`rkyv-32`、`rkyv-64`：透過 rkyv 啟用序列化/反序列化，分別使用 16 位元、32 位元或 64 位元整數。
+- `rkyv-validation`：使用 bytecheck 啟用 rkyv 驗證支援。
+- `arbitrary`：使用 Arbitrary 套件建構類型的任意實例。
+- `unstable-locales`：啟用本地化功能。此功能會新增帶有 `_localized` 後綴的多種方法。
 
 ## 概述
 
 ### 時間差/持續時間
 
-Chrono提供了`TimeDelta`類型來表示時間跨度的大小。這是一個以秒和納秒表示的"精確"持續時間，不表示如天或月等"名義"組件。
+Chrono 提供 `TimeDelta` 類型來表示時間跨度的長度。這是以秒與奈秒表示的「精確」持續時間，不包含如天或月等「名義」單位。
 
-`TimeDelta`類型以前命名為`Duration`（仍作為類型別名提供）。與類似的`core::time::Duration`的一個顯著區別是它是有符號值而不是無符號值。
+`TimeDelta` 類型先前命名為 `Duration`（仍作為類型別名提供）。與類似的 `core::time::Duration` 的主要區別在於它是有符號值而非無符號值。
 
-### 日期和時間
+### 日期與時間
 
-Chrono提供了`DateTime`類型來表示時區中的日期和時間。
+Chrono 提供 `DateTime` 類型來表示特定時區中的日期與時間。
 
-`DateTime`是時區感知的，必須從`TimeZone`對象構造，該對象定義了本地日期如何轉換為UTC日期並返回。有三個眾所周知的`TimeZone`實現：
+`DateTime` 具備時區感知能力，必須從 `TimeZone` 物件建構，該物件定義了本地日期如何轉換為 UTC 日期並反向轉換。有三種廣為人知的 `TimeZone` 實作：
 
-- `Utc`指定UTC時區。它最高效。
-- `Local`指定系統本地時區。
-- `FixedOffset`指定任意固定時區，如UTC+09:00或UTC-10:30。
+- `Utc` 指定 UTC 時區。其效率最高。
+- `Local` 指定系統本地時區。
+- `FixedOffset` 指定任意固定時區，例如 UTC+09:00 或 UTC-10:30。
 
-不同`TimeZone`類型的`DateTime`是不同的，不能混用，但可以使用`DateTime::with_timezone`方法相互轉換。
+不同 `TimeZone` 類型的 `DateTime` 是互異的，不能混合使用，但可使用 `DateTime::with_timezone` 方法相互轉換。
 
-您可以在UTC時區（`Utc::now()`）或本地時區（`Local::now()`）獲取當前日期和時間。
+您可以在 UTC 時區（`Utc::now()`）或本地時區（`Local::now()`）取得當前日期與時間。
 
 ```rust
 use chrono::prelude::*;
@@ -73,7 +63,7 @@ let utc: DateTime<Utc> = Utc::now(); // 例如 `2014-11-28T12:45:59.324310806Z`
 let local: DateTime<Local> = Local::now(); // 例如 `2014-11-28T21:45:59.324310806+09:00`
 ```
 
-此外，您還可以創建自己的日期和時間：
+此外，您也可以自行建立日期與時間：
 
 ```rust
 use chrono::offset::MappedLocalTime;
@@ -82,13 +72,13 @@ use chrono::prelude::*;
 let dt = Utc.with_ymd_and_hms(2014, 7, 8, 9, 10, 11).unwrap(); // `2014-07-08T09:10:11Z`
 ```
 
-### 格式化和解析
+### 格式化與解析
 
-格式化通過`format`方法完成，其格式等同於熟悉的strftime格式。
+格式化透過 `format` 方法完成，其格式等同於熟悉的 strftime 格式。
 
-預設的`to_string`方法和`{:?}`說明符也提供了合理的表示。Chrono還提供了`to_rfc2822`和`to_rfc3339`方法用於常見格式。
+預設的 `to_string` 方法與 `{:?}` 格式說明符也提供了合理的表示方式。Chrono 還提供 `to_rfc2822` 與 `to_rfc3339` 方法用於常見格式。
 
-Chrono現在還提供幾乎任何語言的日期格式化功能，無需額外的C庫。此功能在`unstable-locales`特性下提供：
+Chrono 現在還提供幾乎任何語言的日期格式化功能，無需額外的 C 函式庫。此功能在 `unstable-locales` 特性下提供：
 
 ```rust
 use chrono::prelude::*;
@@ -99,10 +89,10 @@ assert_eq!(dt.format_localized("%A %e %B %Y, %T", Locale::fr_BE).to_string(),
            "vendredi 28 novembre 2014, 12:00:09");
 ```
 
-解析可以通過兩種方法完成：
+解析可透過兩種方法完成：
 
-1. 標準的`FromStr`特性（以及字串上的`parse`方法）可用於解析`DateTime<FixedOffset>`、`DateTime<Utc>`和`DateTime<Local>`值。
-2. `DateTime::parse_from_str`解析帶偏移量的日期和時間，並返回`DateTime<FixedOffset>`。
+1. 標準的 `FromStr` 特徵（以及字串上的 `parse` 方法）可用於解析 `DateTime<FixedOffset>`、`DateTime<Utc>` 與 `DateTime<Local>` 值。
+2. `DateTime::parse_from_str` 解析帶有偏移量的日期與時間，並回傳 `DateTime<FixedOffset>`。
 
 ```rust
 use chrono::prelude::*;
@@ -111,20 +101,20 @@ let dt = "2014-11-28T12:00:09Z".parse::<DateTime<Utc>>().unwrap();
 let fixed_dt = DateTime::parse_from_str("2014-11-28 21:00:09 +09:00", "%Y-%m-%d %H:%M:%S %z").unwrap();
 ```
 
-### 與EPOCH時間戳的轉換
+### 與 EPOCH 時間戳的轉換
 
-使用`DateTime::from_timestamp(seconds, nanoseconds)`從UNIX時間戳構建`DateTime<Utc>`。
+使用 `DateTime::from_timestamp(seconds, nanoseconds)` 從 UNIX 時間戳建構 `DateTime<Utc>`。
 
-使用`DateTime.timestamp`從`DateTime`獲取時間戳（以秒為單位）。此外，您可以使用`DateTime.timestamp_subsec_nanos`獲取額外的納秒數。
+使用 `DateTime.timestamp` 從 `DateTime` 取得時間戳（以秒為單位）。此外，您可以使用 `DateTime.timestamp_subsec_nanos` 取得額外的奈秒數。
 
 ```rust
 use chrono::{DateTime, Utc};
 
-// 從epoch構建datetime：
+// 從 epoch 建構 datetime：
 let dt: DateTime<Utc> = DateTime::from_timestamp(1_500_000_000, 0).unwrap();
 assert_eq!(dt.to_rfc2822(), "Fri, 14 Jul 2017 02:40:00 +0000");
 
-// 從datetime獲取epoch值：
+// 從 datetime 取得 epoch 值：
 let dt = DateTime::parse_from_rfc2822("Fri, 14 Jul 2017 02:40:00 +0000").unwrap();
 assert_eq!(dt.timestamp(), 1_500_000_000);
 ```
@@ -132,7 +122,7 @@ assert_eq!(dt.timestamp(), 1_500_000_000);
 ## 限制
 
 - 僅支援向前推算的格里高利曆（即擴展以支援更早的日期）。
-- 日期類型限制為從公元紀元前後約262,000年。
-- 時間類型限制為納秒精度。
-- 可以表示閏秒，但Chrono不完全支援它們。
-{/* 本行由工具自动生成,原文哈希值:8f29ad63efca7d455f7ca1249d2f7dfd */}
+- 日期類型限制在公元紀元前後約 262,000 年內。
+- 時間類型限制為奈秒精度。
+- 可表示閏秒，但 Chrono 不完全支援它們。
+{/* 本行由工具自动生成,原文哈希值:67733bfd2ba618b44f19c1449b096c42 */}

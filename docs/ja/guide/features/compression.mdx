@@ -1,29 +1,29 @@
-# レスポンスの圧縮
+# レスポンス圧縮
 
 `Response` の内容を圧縮処理するミドルウェアです。
 
-以下の3つの圧縮形式に対応しています: `br`, `gzip`, `deflate`。各圧縮方式の優先度などを設定可能です。
+3つの圧縮形式に対応しています：`br`、`gzip`、`deflate`。必要に応じて各圧縮方式の優先度などを設定できます。
 
-## HTTPプロトコルにおけるデータ圧縮
+## HTTP プロトコルにおけるデータ圧縮
 
 1. ファイル形式レベル：特定のファイルタイプに特化した圧縮アルゴリズムを使用
-2. HTTPプロトコルレベル：コンテンツエンコーディングによるエンドツーエンドのリソース圧縮転送
-3. コネクションレベル：HTTP接続のノード間でデータ圧縮を実施
+2. HTTP プロトコルレベル：コンテンツエンコーディングによるエンドツーエンドのリソース圧縮転送
+3. 接続レベル：HTTP 接続のノード間でのデータ圧縮
 
-HTTP圧縮に関する詳細は [Mozilla Developer Networkのドキュメント](https://developer.mozilla.org/ja/docs/Web/HTTP/Compression) を参照してください。
+HTTP圧縮に関する詳細は [Mozilla デベロッパーネットワークのドキュメント](https://developer.mozilla.org/ja/docs/Web/HTTP/Guides/Compression) をご参照ください。
 
 ## サンプルコード
 
-import { Tab, Tabs } from 'rspress/theme';
-import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
-import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CompressionCode/>
+  ```rust file="<root>/codes/compression/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CompressionCargoCode/>
+  ```toml file="<root>/codes/compression/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:677ccdf714de83f86788e88c306cf8e4 */}
+{/* 本行由工具自动生成,原文哈希值:adfd8752c21601fac83a31d329cf6dae */}

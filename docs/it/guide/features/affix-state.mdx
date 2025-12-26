@@ -1,50 +1,50 @@
-# Stato Affix - Condivisione Dati nelle Richieste
+# Stato Affix Dati condivisi nelle richieste
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/affix-state/src/main.mdx';
-import CargoCode from '../../../../codes_md/affix-state/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-Il middleware Affix State permette di aggiungere dati condivisi al Depot.
+Il middleware Affix State viene utilizzato per aggiungere dati condivisi al Depot.
 Per utilizzare la funzionalità Affix State, è necessario abilitare la feature `affix-state` in Cargo.toml.
 
-## Analisi Funzionale
-Affix State offre un modo semplice per condividere dati durante l'elaborazione delle richieste. Consente di:
+## Analisi delle funzionalità
+Affix State fornisce un modo semplice per condividere dati durante l'elaborazione delle richieste. Ti permette di:
 
 Iniettare configurazioni globali o dati condivisi durante la fase di configurazione delle route
-Accedere a questi dati tramite Depot in qualsiasi handler
+Accedere a questi dati tramite il Depot in qualsiasi handler
 Supportare qualsiasi tipo clonabile come dati di stato
 
-## Confronto con Altri Framework - Comprensione Rapida dei Concetti
-| Framework | Linguaggio | Gestione dello Stato |
-|-----------|------------|----------------------|
+## Confronto con altri framework per una rapida comprensione del concetto
+| Framework | Linguaggio | Metodo di gestione dello stato |
+|------|------|-------------|
 | Salvo (Affix State) | Rust | Memorizzazione e accesso tramite Depot, supporta vari tipi |
-| Axum | Rust | Stato memorizzato tramite Extension, simile ma con approccio diverso |
+| Axum | Rust | Memorizzazione dello stato tramite Extension, simile ma con utilizzo diverso |
 | Actix-web | Rust | Utilizza App Data e Web::Data per condividere lo stato |
-| Gin | Go | Usa context.Set e context.Get per accedere ai dati |
-| Echo | Go | Gestisce lo stato condiviso con context.Set e context.Get |
-| Spring | Java | Gestisce le dipendenze con ApplicationContext o annotazione @Bean |
+| Gin | Go | Utilizza context.Set e context.Get per memorizzare e recuperare dati |
+| Echo | Go | Utilizza context.Set e context.Get per gestire lo stato condiviso |
+| Spring | Java | Utilizza ApplicationContext o annotazioni @Bean per gestire le dipendenze |
 | Quarkus | Java | Utilizza CDI e meccanismi di dependency injection |
-| Express.js | JavaScript | Memorizza lo stato globale in app.locals o req.app.locals |
-| Nest.js | JavaScript | Gestisce servizi condivisi con sistema di dependency injection |
-| Koa.js | JavaScript | Memorizza lo stato a livello di richiesta in ctx.state |
+| Express.js | JavaScript | Utilizza app.locals o req.app.locals per memorizzare lo stato globale |
+| Nest.js | JavaScript | Utilizza un sistema di dependency injection per gestire servizi condivisi |
+| Koa.js | JavaScript | Utilizza ctx.state per memorizzare lo stato a livello di richiesta |
 
-## Scenari d'Uso Comuni
+## Casi d'uso comuni
 
 - Condivisione pool di connessioni al database
-- Configurazioni applicative condivise
-- Istanza di cache condivisa
-- Client API condivisi
-- Contatori globali o tracciamento dello stato
+- Condivisione configurazioni dell'applicazione
+- Condivisione istanze di cache
+- Condivisione client API
+- Tracciamento di contatori o stati globali
 
-Il vantaggio di Affix State risiede nella sua semplicità e flessibilità, permettendo di condividere facilmente dati di qualsiasi tipo tra diverse route e handler senza necessità di codice ripetitivo.
-_**Codice di Esempio**_
+Il vantaggio di Affix State risiede nella sua semplicità e flessibilità, permettendo di condividere facilmente dati di qualsiasi tipo tra diverse route e handler, senza la necessità di scrivere molto codice boilerplate.
+_**Codice di esempio**_
 
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/affix-state/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/affix-state/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:983c6e0b4ca9ff5e194da5a41d8d46f7 */}
+{/* 本行由工具自动生成,原文哈希值:5dfff8f8a8238344561f9f829341312c */}

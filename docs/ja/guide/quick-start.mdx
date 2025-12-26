@@ -1,49 +1,39 @@
-```javascript
-import { Tab, Tabs } from 'rspress/theme';
-import CargoCode from '../../../codes_md/hello/Cargo.mdx';
-import HelloCode from '../../../codes_md/hello/src/main.mdx';
-import HelloH3CargoCode from '../../../codes_md/hello-h3/Cargo.mdx';
-import HelloH3Code from '../../../codes_md/hello-h3/src/main.mdx';
-import { LinkCard } from '@theme';
-import { Steps } from '@theme';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # クイックスタート
 
 ## Rustのインストール
-Rustがまだインストールされていない場合、公式提供の`rustup`を使ってRustをインストールできます。
+Rustがまだインストールされていない場合は、公式が提供する（`rustup`）[https://doc.rust-lang.org/book/ch01-01-installation.html]を使用してRustをインストールできます。
 
-<LinkCard
-  href="https://doc.rust-lang.org/book/ch01-01-installation.html"
-  title="Rust公式チュートリアル"
-  description="Rustのインストール方法を詳しく解説"
-/>
 :::tip
-現在SalvoがサポートするRustの最低バージョンは1.85です。`rustup update`を実行して、要件を満たすRustがインストールされていることを確認してください。
+現在、Salvoがサポートする最低Rustバージョンは1.85です。`rustup update`を実行して、要件を満たすRustがインストールされていることを確認してください。
 :::
 
-## 最初のSalvoプログラムを作成
+## 最初のSalvoプログラムを作成する
 
-新しいプロジェクトを作成:
+新しいプロジェクトを作成します：
 
 ```bash
 cargo new hello --bin
 ```
 
-`Cargo.toml`に依存関係を追加:
+依存関係を`Cargo.toml`に追加します：
 
-<CargoCode/>
+```toml file="<root>/codes/hello/Cargo.toml"
+```
 
-`main.rs`にシンプルな関数ハンドラ`hello`を作成。この関数は単に「Hello world」というテキストを表示します。
+`main.rs`に、`hello`という名前のシンプルな関数ハンドラを作成します。この関数は単にテキスト`"Hello world"`を出力します。
 
-<HelloCode/>
+```rust file="<root>/codes/hello/src/main.rs"
+```
 
-おめでとうございます！これで最初のSalvoプログラムが完成しました。コマンドラインで`cargo run`を実行し、ブラウザで`http://127.0.0.1:5800`を開いてください。
+おめでとうございます！あなたの最初のSalvoプログラムが完成しました。コマンドラインで`cargo run`を実行し、ブラウザで`http://127.0.0.1:5800`を開くだけです。
 
-## 詳細解説
+## 詳細な解説
 
-ここで`hello_world`は`Handler`で、ユーザーリクエストを処理します。`#[handler]`を使うと、関数が簡単に`Handler`トレイトを実装できます。また、関数の引数をさまざまな方法で簡潔に記述できます。
+ここでの`hello_world`は、ユーザーリクエストを処理するための`Handler`です。`#[handler]`を使用すると、関数が簡単に`Handler`トレイトを実装できるようになります。また、関数のパラメータをさまざまな方法で簡潔に記述することができます。
 
-- 基本形:
+- 元の形式：
 
     ```rust
     #[handler]
@@ -52,7 +42,7 @@ cargo new hello --bin
     }
     ```
 
-- 使用しない引数は省略可能。例えば`_req`、`_depot`、`_ctrl`が使用されていない場合:
+- 使用されていないパラメータは省略できます。例えば、ここでは`_req`、`_depot`、`_ctrl`が使用されていないため、直接記述を省略できます：
 
     ```rust
     #[handler]
@@ -61,7 +51,7 @@ cargo new hello --bin
     }
     ```
 
-- `Writer`トレイトを実装する任意の型を戻り値として使用可能。例えば`&str`は`Writer`を実装しており、戻り値として使用するとプレーンテキストを出力:
+- `Writer`トレイトを実装している任意の型を関数の戻り値の型として使用できます。例えば、`&str`は`Writer`を実装しており、戻り値として使用されるときはプレーンテキストとして出力されます：
 
     ```rust
     #[handler]
@@ -70,8 +60,8 @@ cargo new hello --bin
     }
     ```
 
-- より一般的には、関数実行中のエラー処理のために`Result<T, E>`を戻り値型として使用。`T`と`E`が両方`Writer`を実装している場合、`Result<T, E>`を戻り値として使用可能:
-  
+- より一般的なケースでは、関数の実行中にエラーを処理できるように、戻り値の型として`Result<T, E>`を使用する必要があります。`T`と`E`の両方が`Writer`を実装している場合、`Result<T, E>`を戻り値として使用できます：
+
     ```rust
     #[handler]
     async fn hello(res: &mut Response) -> Result<&'static str, ()> {
@@ -79,49 +69,49 @@ cargo new hello --bin
     }
     ```
 
-## 先進的なHTTP3
+## 軽やかなHTTP3
 
-HTTP3は軽量で高速と言われ、多くのプログラマーが憧れる技術です。Salvoを使えば、簡単にHTTP3の素晴らしいサービスを利用できます！
+HTTP3は軽やかで素早いと言われており、多くのプログラマーが憧れています。今回、Salvoはその願いを叶え、HTTP3が提供する素晴らしいサービスを簡単に楽しめるようにします！
 
-まず`Cargo.toml`でHTTP3機能を有効にし、`main.rs`を以下のように変更:
+まず、`Cargo.toml`でHTTP3機能を有効にし、`main.rs`を次のように変更します：
 <Tabs>
   <Tab label="main.rs">
-  <HelloH3Code/>
+  ```rust file="<root>/codes/hello-h3/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-  <HelloH3CargoCode/>
+  ```toml file="<root>/codes/hello-h3/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
 ## Salvo CLIツール 🛠️
 
-[Salvo CLI](https://github.com/salvo-rs/salvo-cli)はSalvoウェブフレームワーク向けのツールで、クリーンで読みやすいコードを作成し、あなたの貴重な時間を節約します。
+[Salvo CLI](https://github.com/salvo-rs/salvo-cli)は、Salvo Webフレームワーク向けに設計されたツールで、整理された読みやすいコードを作成し、あなたの貴重な時間を人生のより楽しいことに使えるようにします。
 
-CLIの改善アイデアや問題を見つけた場合は、遠慮なくissueを提出してください。あなたの意見を歓迎します。
+CLIの改善アイデアや、解決すべき問題を見つけた場合は、ぜひ遠慮なくissueを提出してください。あなたの意見を歓迎します。
 
-<Steps>
-  ### ステップ1
+### ステップ1
 
-  CLIツールをインストール:
-  
-  ```bash
-  cargo install salvo-cli
-  ```
+CLIツールをインストールします：
 
-  ### ステップ2
+```bash
+cargo install salvo-cli
+```
 
-  > 新しいSalvoプロジェクトを作成するには、`new`コマンドの後にプロジェクト名を指定:
-  >
-  > ```bash
-  > salvo new project_name
-  > ```
-</Steps>
+### ステップ2
 
-このシンプルなCLIツールを使えば、Salvoプロジェクトを素早く開始でき、プロジェクト構造の構築ではなくビジネスロジックの実装に集中できます。 ✨
+> 新しいSalvoプロジェクトを作成するには、`new`コマンドの後にプロジェクト名を指定します：
+>
+> ```bash
+> salvo new project_name
+> ```
+
+このシンプルなCLIツールを使用して、Salvoプロジェクトを迅速に開始し、プロジェクト構造の構築ではなく、ビジネスロジックの実装に集中できます。 ✨
 
 ## その他の例
 
-Salvoリポジトリをクローンし、examplesディレクトリのサンプルを実行することをお勧めします。例えば以下のコマンドで`hello`の例を実行できます:
+Salvoリポジトリを直接クローンし、examplesディレクトリ内のサンプルを実行することをお勧めします。例えば、次のコマンドで`hello`の例を実行できます：
 
 ```sh
 git clone https://github.com/salvo-rs/salvo
@@ -129,6 +119,5 @@ cd salvo/examples
 cargo run --bin example-hello
 ```
 
-examplesディレクトリには多くのサンプルがあります。`cargo run --bin example-<name>`のようなコマンドで実行可能です。
-```
-{/* 本行由工具自动生成,原文哈希值:65dfa5fd9de64b383478b1da835dcf15 */}
+examplesディレクトリには多くのサンプルがあります。これらはすべて、`cargo run --bin example-<name>`のようなコマンドで実行できます。
+{/* 本行由工具自动生成,原文哈希值:0c4a88ceb8e2d80be891a10caa082999 */}

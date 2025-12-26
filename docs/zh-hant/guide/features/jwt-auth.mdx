@@ -1,32 +1,32 @@
 # JWT 驗證
 
-JWT (JSON Web Token) 是一種開放標準 (RFC 7519)，用於在各方之間安全地傳輸資訊。它是一種緊湊的、URL安全的方式，以JSON物件形式表示聲明，這些聲明通常用於身份驗證和資訊交換。
+JWT（JSON Web Token）是一種開放標準（RFC 7519），用於在各方之間安全地傳輸資訊。它採用緊湊且URL安全的格式，以JSON物件形式承載聲明內容，通常用於身份驗證與資訊交換。
 
 JWT由三部分組成：
-- **頭部(Header)** - 指定令牌類型和使用的簽名演算法
-- **負載(Payload)** - 包含聲明(claims)，如用戶ID、角色、過期時間等
-- **簽名(Signature)** - 用於驗證訊息在傳輸過程中沒有被更改
+- **標頭（Header）** - 指定權杖類型與使用的簽章演算法
+- **載荷（Payload）** - 包含聲明內容，例如使用者ID、角色、過期時間等
+- **簽章（Signature）** - 用於驗證訊息在傳輸過程中是否遭竄改
 
-JWT在身份驗證流程中的典型使用方式：
-1. 用戶登入後，伺服器產生JWT令牌
-2. 令牌返回給客戶端並儲存（通常在localStorage或cookie中）
-3. 後續請求中，客戶端在Authorization頭部攜帶此令牌
-4. 伺服器驗證令牌的有效性並授權存取
+JWT在身份驗證流程中的典型應用方式：
+1. 使用者登入後，伺服器產生JWT權杖
+2. 權杖傳回客戶端並儲存（通常置於localStorage或cookie中）
+3. 後續請求中，客戶端透過Authorization標頭攜帶此權杖
+4. 伺服器驗證權杖有效性並授予存取權限
 
-提供對 JWT Auth 驗證的中介軟體.
+提供JWT身份驗證的中介軟體支援。
 
-_**範例程式碼**_ 
+_**範例程式碼**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import JwtAuthCode from '../../../../codes_md/jwt-auth/src/main.mdx';
-import JwtAuthCargoCode from '../../../../codes_md/jwt-auth/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <JwtAuthCode/>
+  ```rust file="<root>/codes/jwt-auth/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <JwtAuthCargoCode/>
+  ```toml file="<root>/codes/jwt-auth/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:4d9196c8fb1dedaa4b7291d33747b794 */}
+{/* 本行由工具自动生成,原文哈希值:44ba61e41e4c4e0937054ac0328a42ab */}

@@ -8,39 +8,33 @@
   {
     "type": "dir",
     "name": "concepts",
-    "label": "concepts",
+    "label": "核心概念",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "topics",
-    "label": "topics",
+    "label": "专题探讨",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "dir",
     "name": "features",
-    "label": "features",
+    "label": "功能大全",
     "collapsible": true,
     "collapsed": false
-  }, {
+  },
+  {
     "type": "dir",
     "name": "ecology",
-    "label": "ecology",
+    "label": "生态系统",
     "collapsible": true,
     "collapsed": false
   },
   {
     "type": "divider",
     "dashed": false
-  },
-  {
-    "type": "dir",
-    "name": "LLMs",
-    "label": "LLMs",
-    "collapsible": true,
-    "collapsed": false
   }
 ]

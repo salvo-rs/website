@@ -7,7 +7,7 @@ use time::{Duration, OffsetDateTime};
 
 const SECRET_KEY: &str = "YOUR SECRET_KEY";
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JwtClaims {
     username: String,
     exp: i64,
@@ -26,7 +26,7 @@ async fn main() {
             ])
             .force_passed(true);
 
-    let acceptor = TcpListener::new("0.0.0.0:5800").bind().await;
+    let acceptor = TcpListener::new("0.0.0.0:8698").bind().await;
     Server::new(acceptor)
         .serve(Router::with_hoop(auth_handler).goal(index))
         .await;

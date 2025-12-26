@@ -1,6 +1,6 @@
 # 寫入器
 
-`Writer` 用於將內容寫入到 `Response` 中:
+`Writer` 用於將內容寫入 `Response`：
 
 ```rust
 #[async_trait]
@@ -9,7 +9,7 @@ pub trait Writer {
 }
 ```
 
-與 Handler 的比較:
+與處理器相比：
 
 ```rust
 #[async_trait]
@@ -18,13 +18,13 @@ pub trait Handler: Send + Sync + 'static {
 }
 ```
 
-它們的主要區別在於:
-- 用途不同，`Writer` 代表將具體內容寫入 `Response`，由具體內容實現，如字符串、錯誤訊息等。而 `Handler` 是用於處理整個請求的。
-- `Writer` 在 `Handler` 中被創建，會在 `write` 函數調用時消耗自身，屬於一次性調用。而 `Handler` 是所有請求共用的。
-- `Writer` 可以作為 `Handler` 返回的 `Result` 中的內容。
+兩者的主要差異在於：
+- 用途不同：`Writer` 代表將具體內容寫入 `Response`，由特定內容實現，例如字串、錯誤訊息等。而 `Handler` 用於處理整個請求。
+- `Writer` 在 `Handler` 中創建，並在 `write` 函數調用時消耗自身，屬於一次性調用。而 `Handler` 是所有請求共用的。
+- `Writer` 可作為 `Handler` 返回的 `Result` 中的內容。
 - `Writer` 中沒有 `FlowCtrl` 參數，無法控制整個請求的執行流程。
 
-`Scribe` 實現了 `Writer`，但功能比 `Writer` 更有限:
+`Scribe` 實現了 `Writer`，但功能比 `Writer` 更為有限：
 
 ```rust
 pub trait Scribe {
@@ -32,5 +32,5 @@ pub trait Scribe {
 }
 ```
 
-`Scribe` 的渲染函數僅是將數據寫入 `Response`，這個過程無法從 `Request` 或 `Depot` 中獲取資訊。
+`Scribe` 的渲染函數僅將數據寫入 `Response`，此過程無法從 `Request` 或 `Depot` 中獲取資訊。
 {/* 本行由工具自动生成,原文哈希值:a88019b69f080567caf2af39cb1d17e5 */}

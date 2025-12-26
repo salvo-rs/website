@@ -1,31 +1,31 @@
 # WebTransport
 
-WebTransport est un protocole de transport réseau basé sur HTTP/3 qui offre des capacités de communication bidirectionnelle entre client et serveur, tout en combinant faible latence, haut débit et sécurité.
+WebTransport est un protocole de transport réseau basé sur HTTP/3, offrant une communication bidirectionnelle entre client et serveur, tout en garantissant une faible latence, un débit élevé et une sécurité renforcée.
 
 ## Cas d'utilisation
 
 WebTransport est particulièrement adapté aux scénarios suivants :
 
-- **Applications temps réel** : jeux en ligne, outils de collaboration en temps réel, visioconférence nécessitant une faible latence
-- **Transfert de fichiers volumineux** : prise en charge du transfert haute performance pour flux multimédias et fichiers lourds
-- **Communication multiplexée** : permet d'établir simultanément plusieurs flux de données unidirectionnels et bidirectionnels
-- **Communication par datagrammes** : supporte les datagrammes sans garantie d'ordre ni de fiabilité, idéal pour les applications ultra-sensibles à la latence
+- **Applications en temps réel** : Jeux en ligne, outils de collaboration instantanée, visioconférences nécessitant une communication à faible latence
+- **Transfert de fichiers volumineux** : Prise en charge de transmissions à haut débit, idéal pour les flux multimédias et les transferts de fichiers lourds
+- **Communication multiplexée** : Permet d'établir simultanément plusieurs flux de données bidirectionnels et unidirectionnels
+- **Communication par datagrammes** : Supporte les datagrammes sans garantie d'ordre ni de fiabilité, adapté aux scénarios exigeant une extrême réactivité
 
 Comparé à WebSocket, WebTransport offre une latence réduite et des modes de communication plus flexibles, particulièrement performants dans des environnements réseau instables.
 
 ## Implémentation Salvo
 
-Le framework Salvo fournit un support natif pour WebTransport, permettant aux développeurs de construire facilement des applications basées sur ce protocole. Principales fonctionnalités :
+Le framework Salvo intègre nativement le support de WebTransport, permettant aux développeurs de créer facilement des applications basées sur ce protocole. Les principales fonctionnalités incluent :
 
-- Prise en charge des sessions WebTransport
+- Établissement de sessions WebTransport
 - Communication par flux bidirectionnels (Bidirectional Streams)
 - Communication par flux unidirectionnels (Unidirectional Streams)
-- Transfert de datagrammes
-- Capacité pour le serveur d'initier des flux de communication
+- Transmission de datagrammes
+- Capacité du serveur à initier des flux de communication
 
-### Exemple simple
+### Exemple simplifié
 
-Voici un exemple simplifié de serveur WebTransport avec Salvo :
+Voici un exemple minimaliste de serveur WebTransport implémenté avec Salvo :
 
 ```rust
 #[handler]
@@ -34,7 +34,7 @@ async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
     
     // Traitement des datagrammes
     if let Ok(Some((_, datagram))) = session.accept_datagram().await {
-        // Traiter le datagramme reçu
+        // Traitement du datagramme reçu
         let mut resp = BytesMut::from(&b"Response: "[..]);
         resp.put(datagram);
         session.send_datagram(resp.freeze())?;
@@ -43,7 +43,7 @@ async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
     // Traitement des flux bidirectionnels
     if let Ok(Some(webtransport::server::AcceptedBi::BidiStream(_, stream))) = session.accept_bi().await {
         let (send, recv) = salvo::proto::quic::BidiStream::split(stream);
-        // Traiter les données du flux bidirectionnel
+        // Traitement des données du flux bidirectionnel
     }
     
     Ok(())
@@ -52,13 +52,13 @@ async fn connect(req: &mut Request) -> Result<(), salvo::Error> {
 
 ### Configuration et démarrage
 
-Pour démarrer une application Salvo avec WebTransport, configurer un certificat TLS et un écouteur QUIC :
+Le démarrage d'une application Salvo avec WebTransport nécessite la configuration d'un certificat TLS et d'un écouteur QUIC :
 
 ```rust
 let cert = include_bytes!("../certs/cert.pem").to_vec();
 let key = include_bytes!("../certs/key.pem").to_vec();
 
-// Configuration du routeur
+// Configuration du routage
 let router = Router::new().push(Router::with_path("counter").goal(connect));
 
 // Configuration TLS
@@ -80,5 +80,5 @@ Server::new(acceptor).serve(router).await;
 Pour approfondir l'utilisation de WebTransport avec Salvo, consultez l'exemple complet sur GitHub :
 [https://github.com/salvo-rs/salvo/blob/main/examples/webtransport](https://github.com/salvo-rs/salvo/blob/main/examples/webtransport)
 
-Cet exemple inclut des implémentations complètes côté serveur et client, illustrant les différents types de communication WebTransport.
+Cet exemple inclut des implémentations complètes côté serveur et client, démontrant la gestion des différents types de communication WebTransport.
 {/* 本行由工具自动生成,原文哈希值:56518c15094059054cd812ca62f2a97c */}

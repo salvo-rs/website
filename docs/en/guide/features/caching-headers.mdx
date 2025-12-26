@@ -1,27 +1,27 @@
-# Cache Headers
+# Caching Headers
 
-Middleware providing support for cache header configuration.
+A middleware that provides support for configuring caching headers.
 
-Cache control is an essential part of web performance optimization. By correctly setting cache headers, you can reduce unnecessary network requests and improve application performance. [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) is an HTTP response header directive used to specify browser caching policies, controlling who can cache responses under what conditions and for how long.
+Cache control is a crucial part of web performance optimization. By correctly setting caching headers, unnecessary network requests can be reduced, thereby improving application performance. [Cache-Control](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control) is an HTTP response header used to specify browser caching policies. It controls who can cache responses, under what conditions, and for how long.
 
-The implementation actually includes three `Handler` implementations: `CachingHeaders`, `Modified`, and `ETag`. `CachingHeaders` is a combination of the latter two. Under normal circumstances, you should use `CachingHeaders`.
+Internally, it includes implementations of three `Handler`s: `CachingHeaders`, `Modified`, and `ETag`. `CachingHeaders` is a combination of the latter two. Under normal circumstances, `CachingHeaders` is used.
 
-- `Modified`: Provides cache validation based on the resource's last modification time
-- `ETag`: Uses Entity Tags to provide more precise resource validation mechanisms
-- `CachingHeaders`: Combines both mechanisms above to provide comprehensive cache control support
+- `Modified`: Provides cache validation based on the resource's last modified time.
+- `ETag`: Uses Entity Tags to offer a more precise resource validation mechanism.
+- `CachingHeaders`: Combines the above two mechanisms to provide comprehensive cache control support.
 
 _**Example Code**_ 
 
-import { Tab, Tabs } from 'rspress/theme';
-import CachingHeadersCode from '../../../../codes_md/caching-headers/src/main.mdx';
-import CachingHeadersCargoCode from '../../../../codes_md/caching-headers/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CachingHeadersCode/>
+  ```rust file="<root>/codes/caching-headers/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CachingHeadersCargoCode/>
+  ```toml file="<root>/codes/caching-headers/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:f7a2843a95a942653fa6c85eeacab142 */}
+{/* 本行由工具自动生成,原文哈希值:08699e65af0ef5c9fac56f0fb8d73153 */}

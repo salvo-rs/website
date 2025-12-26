@@ -1,46 +1,47 @@
 # Depot
 
-import { Tab, Tabs } from 'rspress/theme';
-import MainCode from '../../../../codes_md/use-depot/src/main.mdx';
-import CargoCode from '../../../../codes_md/use-depot/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
-[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) is used to store temporary data involved in a single request. Middleware can place processed temporary data into the Depot for use by subsequent handlers.
+[Depot](https://docs.rs/salvo_core/latest/salvo_core/struct.Depot.html) is used to store temporary data involved in a single request. Middleware can place the temporary data it processes into the Depot for use by subsequent programs.
 
-When a server receives a request from a client browser, it creates a `Depot` instance. This instance is destroyed after all middleware and `Handler` have finished processing the request.
+When a server receives a request from a client browser, it creates an instance of `Depot`. This instance is destroyed after all middleware and `Handler` have finished processing the request.
 
-For example, we can set `current_user` in authentication middleware, then read the current user information in subsequent middleware or handlers.
+For example, we can set `current_user` in a login middleware and then read the current user information in subsequent middleware or `Handler`.
 
 ## Quick Understanding
 
-`Depot` is used for storing and sharing data during request processing. It implements a type-safe data container supporting two primary usage patterns:
+`Depot` is used to store and share data during request processing. It implements a type-safe data container that supports two main usage patterns:
 
-1. **Key-Value Storage**: Access values associated with string keys via `insert`/`get` methods
-2. **Type Injection**: Store and retrieve values based on type through `inject`/`obtain` methods
+1. **Key-Value Storage**: Access values associated with string keys via `insert`/`get` methods.
+2. **Type Injection**: Store and retrieve values based on type via `inject`/`obtain` methods.
 
-As shown in examples, `Depot` is particularly useful for passing data between middleware and handlers. Middleware can set values (like user info, authentication status) in `Depot`, which subsequent handlers can access without recomputation or repeated queries. `Depot`'s design ensures data consistency and accessibility throughout the request processing chain, making it a core tool for building complex web applications.
+As shown in the examples, `Depot` is particularly useful for passing data between middleware and handlers. Middleware can set values in `Depot` (such as user information, authentication status), and subsequent handlers can retrieve these values without redundant calculations or queries. The design of `Depot` ensures data consistency and accessibility throughout the entire request processing chain, making it a core tool for building complex web applications.
+
 <Tabs>
   <Tab label="main.rs">
-    <MainCode/>
+  ```rust file="<root>/codes/use-depot/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CargoCode/>
+  ```toml file="<root>/codes/use-depot/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
 ## Setting and Retrieving Data via `insert` and `get`
 
-As shown above, you can insert key-value pairs into `Depot` using `insert`. For such values, simply use `get` to retrieve them.
+As shown above, you can insert `key` and `value` into `Depot` using `insert`. For values of this type, you can directly retrieve them using `get`.
 
 ```rust
 depot.insert("a", "b");
 assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 ```
 
-Returns `None` if the key doesn't exist or if the type doesn't match the stored value.
+If the `key` does not exist, or if the `key` exists but the type does not match, it returns `None`.
 
 ## Setting and Retrieving Data via `inject` and `obtain`
 
-For cases where values don't need specific keys and only one instance per type exists, you can use `inject` to insert data and `obtain` to retrieve it. These methods don't require keys.
+Sometimes, there are scenarios where a unique instance exists for a type without needing to relate to a specific `key`. You can use `inject` to insert data and then use `obtain` to retrieve it. These methods do not require you to provide a `key`.
 
 ```rust
 depot.inject(Config::new());
@@ -50,20 +51,20 @@ depot.obtain::<Config>();
 # Overview of Depot Struct Methods
 
 | Category | Method | Description |
-|------|------|------|
-| **Creation/Capacity** | `new()` | Creates empty Depot |
-| | `with_capacity(capacity)` | Creates Depot with specified capacity |
-| | `capacity()` | Gets current capacity |
-| | `inner()` | Gets reference to internal HashMap |
-| **Type Injection/Retrieval** | `inject<V>(value)` | Injects value by type |
-| | `obtain<T>()` | Gets reference to injected value |
-| | `obtain_mut<T>()` | Gets mutable reference to injected value |
-| | `contains<T>()` | Checks if type exists |
-| | `scrape<T>()` | Removes and returns injected value |
-| **Key-Value Operations** | `insert(key, value)` | Inserts key-value pair |
-| | `get<V>(key)` | Gets reference to value by key |
-| | `get_mut<V>(key)` | Gets mutable reference to value by key |
-| | `contains_key(key)` | Checks if key exists |
-| | `remove<V>(key)` | Removes and returns value by key |
-| | `delete(key)` | Deletes key-value pair |
-{/* 本行由工具自动生成,原文哈希值:0a5fdeaf8cc44da931db5a32298e6afe */}
+|----------|--------|-------------|
+| **Creation/Capacity** | `new()` | Creates an empty Depot |
+| | `with_capacity(capacity)` | Creates a Depot with the specified capacity |
+| | `capacity()` | Gets the capacity |
+| | `inner()` | Gets a reference to the internal HashMap |
+| **Type Injection/Retrieval** | `inject<V>(value)` | Injects a value by type |
+| | `obtain<T>()` | Retrieves a reference to the injected value |
+| | `obtain_mut<T>()` | Retrieves a mutable reference to the injected value |
+| | `contains<T>()` | Checks if a specific type is contained |
+| | `scrape<T>()` | Removes and returns the injected value |
+| **Key-Value Operations** | `insert(key, value)` | Inserts a key-value pair |
+| | `get<V>(key)` | Retrieves a reference to the value associated with the key |
+| | `get_mut<V>(key)` | Retrieves a mutable reference to the value associated with the key |
+| | `contains_key(key)` | Checks if a specific key is contained |
+| | `remove<V>(key)` | Removes the key and returns the value |
+| | `delete(key)` | Deletes the key-value pair |
+{/* 本行由工具自动生成,原文哈希值:11bf72b48a504b8ce6ae390caf56080c */}

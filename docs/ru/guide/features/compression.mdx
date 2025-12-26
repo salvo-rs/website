@@ -2,28 +2,28 @@
 
 Промежуточное ПО для обработки сжатия содержимого `Response`.
 
-Поддерживает три формата сжатия: `br`, `gzip`, `deflate`. Возможна настройка приоритетов различных методов сжатия в соответствии с требованиями.
+Поддерживает три формата сжатия: `br`, `gzip`, `deflate`. Можно настроить приоритет каждого метода сжатия в соответствии с требованиями.
 
 ## Сжатие данных в протоколе HTTP
 
-1. На уровне форматов файлов: специальные алгоритмы сжатия для определенных типов файлов
-2. На уровне протокола HTTP: сквозное сжатие ресурсов при передаче через кодирование содержимого
-3. На уровне соединения: сжатие данных между узлами HTTP-соединения
+1. На уровне формата файла: определённые типы файлов используют специализированные алгоритмы сжатия.
+2. На уровне протокола HTTP: сжатие ресурсов от конца к концу реализуется через кодирование содержимого.
+3. На уровне соединения: сжатие данных между узлами HTTP-соединения.
 
-Подробнее о сжатии в HTTP можно узнать в [документации Mozilla Developer Network](https://developer.mozilla.org/ru/docs/Web/HTTP/Compression).
+Больше информации о сжатии HTTP можно найти в [документации Mozilla Developer Network](https://developer.mozilla.org/ru/docs/Web/HTTP/Guides/Compression).
 
 ## Пример кода
 
-import { Tab, Tabs } from 'rspress/theme';
-import CompressionCode from '../../../../codes_md/compression/src/main.mdx';
-import CompressionCargoCode from '../../../../codes_md/compression/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CompressionCode/>
+  ```rust file="<root>/codes/compression/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CompressionCargoCode/>
+  ```toml file="<root>/codes/compression/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:677ccdf714de83f86788e88c306cf8e4 */}
+{/* 本行由工具自动生成,原文哈希值:adfd8752c21601fac83a31d329cf6dae */}

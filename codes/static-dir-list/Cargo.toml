@@ -3,10 +3,10 @@ name = "example-static-dir-list"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true
-
+rust-version.workspace = true
 
 [dependencies]
-salvo = { workspace = true, features=["serve-static"] }
+salvo = { workspace = true, features = ["serve-static"] }
 tokio = { workspace = true, features = ["macros"] }
 tracing.workspace = true
 tracing-subscriber.workspace = true

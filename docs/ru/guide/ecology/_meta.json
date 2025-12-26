@@ -1,1 +1,7 @@
-["chrono","jemallocator","reqwest","serde","error"]
+[
+    "chrono",
+    "jemallocator",
+    "reqwest",
+    "serde",
+    "error"
+]

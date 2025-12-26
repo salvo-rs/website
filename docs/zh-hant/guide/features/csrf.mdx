@@ -2,7 +2,7 @@
 
 ## 什麼是CSRF？
 
-CSRF (Cross-Site Request Forgery，跨站請求偽造) 是一種網路安全漏洞，攻擊者誘導已認證使用者在不知情的情況下執行非本意操作。簡單來說，攻擊者利用使用者已登入的身份，以使用者的名義發送惡意請求。
+CSRF（跨站請求偽造）是一種網路安全漏洞，攻擊者誘導已認證使用者在不知情的情況下執行非本意操作。簡單來說，攻擊者利用使用者已登入的身分，以使用者的名義發送惡意請求。
 
 ## CSRF攻擊原理
 
@@ -16,44 +16,44 @@ CSRF (Cross-Site Request Forgery，跨站請求偽造) 是一種網路安全漏�
 
 Salvo提供CSRF中介軟體保護您的應用免受此類攻擊：
 
-- 在表單中添加隱藏的CSRF令牌
+- 在表單中加入隱藏的CSRF令牌
 - 驗證使用者提交的請求中是否包含有效的CSRF令牌
 - 預設驗證POST、PATCH、DELETE和PUT請求
 
 ## Salvo中的CSRF實現
 
-`Csrf` 是實現了 `Handler` 的結構體，內部還有一個 `skipper` 欄位，可以指定跳過某些不需要驗證的請求。預設情況下，驗證 `Method::POST`，`Method::PATCH`，`Method::DELETE`，`Method::PUT` 請求。
+`Csrf` 是實現了 `Handler` 的結構體，內部還有一個 `skipper` 欄位，可以指定跳過某些不需要驗證的請求。預設情況下，驗證 `Method::POST`、`Method::PATCH`、`Method::DELETE`、`Method::PUT` 請求。
 
 Salvo支援兩種CSRF令牌儲存方式：
 
-1. **CookieStore**：將令牌儲存在Cookie中，驗證請求頭或表單中的`csrf-token`與Cookie值是否匹配
-2. **SessionStore**：將令牌儲存在Session中，要求與session中介軟體一起使用
+1. **CookieStore**：將令牌儲存在Cookie中，驗證請求標頭或表單中的 `csrf-token` 與Cookie值是否匹配
+2. **SessionStore**：將令牌儲存在Session中，需與session中介軟體一起使用
 
-_**範例程式碼**_ (cookie store)
+_**範例程式碼**_（cookie store）
 
-import { Tab, Tabs } from 'rspress/theme';
-import CsrfCookieStoreCode from '../../../../codes_md/csrf-cookie-store/src/main.mdx';
-import CsrfCookieStoreCargoCode from '../../../../codes_md/csrf-cookie-store/Cargo.mdx';
-import CsrfSessionStoreCode from '../../../../codes_md/csrf-session-store/src/main.mdx';
-import CsrfSessionStoreCargoCode from '../../../../codes_md/csrf-session-store/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfCookieStoreCode/>
+  ```rust file="<root>/codes/csrf-cookie-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfCookieStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-cookie-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 
-_**範例程式碼**_ (session store)
+_**範例程式碼**_（session store）
 
 <Tabs>
   <Tab label="main.rs">
-    <CsrfSessionStoreCode/>
+  ```rust file="<root>/codes/csrf-session-store/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CsrfSessionStoreCargoCode/>
+  ```toml file="<root>/codes/csrf-session-store/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
-{/* 本行由工具自动生成,原文哈希值:b6e191d0fb6f25b84764f3de28171886 */}
+{/* 本行由工具自动生成,原文哈希值:2eb072bb663695f226b56a34f14cdbb0 */}

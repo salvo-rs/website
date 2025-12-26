@@ -26,7 +26,6 @@ CORS通过一系列HTTP头实现跨域访问控制：
 
 Salvo提供了内置的CORS中间件，可以轻松配置和使用。以下是示例代码：
 
-
 :::warning
 注意.hoop(cors)中间件是作用在 `Service` 上的,注意.hoop(cors)中间件是作用在 `Service` 上的.注意.hoop(cors)中间件是作用在 `Service` 上的，而不是 `Router` 上的.
 这样可以自动处理option预检.
@@ -43,19 +42,18 @@ let service = Service::new(router).hoop(cors);
 ```
 :::
 
-
 _**示例代码**_
 
-import { Tab, Tabs } from 'rspress/theme';
-import CorsCode from '../../../../codes_md/cors/src/main.mdx';
-import CorsCargoCode from '../../../../codes_md/cors/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 <Tabs>
   <Tab label="main.rs">
-    <CorsCode/>
+  ```rust file="<root>/codes/cors/src/main.rs"
+  ```
   </Tab>
   <Tab label="Cargo.toml">
-    <CorsCargoCode/>
+  ```toml file="<root>/codes/cors/Cargo.toml"
+  ```
   </Tab>
 </Tabs>
 

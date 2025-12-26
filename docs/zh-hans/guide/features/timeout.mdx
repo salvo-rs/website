@@ -1,6 +1,4 @@
-import { Tab, Tabs } from 'rspress/theme';
-import TimeoutMainCode from '../../../../codes_md/timeout/src/main.mdx';
-import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
+import { Tab, Tabs } from '@rspress/core/theme';
 
 # 超时中间件
 
@@ -13,12 +11,14 @@ import TimeoutCargoCode from '../../../../codes_md/timeout/Cargo.mdx';
 _**示例代码**_ 
 
 <Tabs>
-<Tab label="main.rs">
-<TimeoutMainCode/>
-</Tab>
-<Tab label="Cargo.toml">
-<TimeoutCargoCode/>
-</Tab>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/timeout/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/timeout/Cargo.toml"
+  ```
+  </Tab>
 </Tabs>
 
 在上面的示例中，我们创建了两个处理函数：一个快速响应的 `fast` 和一个延迟 6 秒才响应的 `slow`。通过 `Timeout::new(Duration::from_secs(5))` 为所有请求设置了 5 秒的超时限制。当访问 `/slow` 路径时，由于处理时间超过了 5 秒的限制，请求将会超时；而访问 `/fast` 路径时，请求会正常处理并返回结果。

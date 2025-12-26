@@ -4,76 +4,66 @@ title: Libreria di Data e Ora per Rust
 
 # Chrono: Libreria di Data e Ora per Rust
 
+[Chrono](https://docs.rs/chrono/latest/chrono/) mira a fornire tutte le funzionalità necessarie per eseguire operazioni corrette su data e ora nel calendario gregoriano prolettico:
 
-import { LinkCard } from '@theme';
-
-
-<LinkCard
-  href="https://docs.rs/chrono/latest/chrono/"
-  title="chrono"
-  description="chrono"
-/>
-
-Chrono mira a fornire tutte le funzionalità necessarie per manipolare correttamente date e orari nel calendario gregoriano:
-
-- Il tipo `DateTime` è consapevole del fuso orario per impostazione predefinita, pur offrendo tipi indipendenti dal fuso.
-- Operazioni che potrebbero generare date o orari non validi o ambigui restituiscono `Option` o `MappedLocalTime`.
-- Parsing e formattazione configurabili, con una sintassi ispirata a strftime.
-- Il fuso orario `Local` funziona con quello attuale del sistema operativo.
-- Tipi e operazioni sono implementati con un'attenzione ragionevole all'efficienza.
-- Per limitare le dimensioni del binario, Chrono non include dati sui fusi orari per default. Utilizza le crate `Chrono-TZ` o `tzfile` per supporto completo.
+- Il tipo `DateTime` è consapevole del fuso orario per impostazione predefinita, fornendo anche tipi indipendenti dal fuso orario.
+- Le operazioni che potrebbero produrre date o orari non validi o ambigui restituiscono `Option` o `MappedLocalTime`.
+- Parsing e formattazione configurabili, con una sintassi di formattazione di data e ora ispirata a strftime.
+- Il fuso orario `Local` può funzionare con il fuso orario corrente del sistema operativo.
+- Le implementazioni di tipi e operazioni tengono conto di un'efficienza ragionevole.
+- Per limitare la dimensione del binario, Chrono non include dati sui fusi orari per impostazione predefinita. Utilizza le crate complementari `Chrono-TZ` o `tzfile` per il supporto completo ai fusi orari.
 
 ## Caratteristiche
 
-Chrono supporta vari ambienti runtime e sistemi operativi, con diverse funzionalità attivabili o disattivabili.
+[Chrono](https://docs.rs/chrono/latest/chrono/) supporta vari ambienti di runtime e sistemi operativi, con diverse funzionalità che possono essere abilitate o disabilitate.
 
 ### Funzionalità predefinite:
 
-- `alloc`: Abilita funzioni che richiedono allocazione di memoria (principalmente formattazione di stringhe).
-- `std`: Abilita funzioni dipendenti dalla libreria standard. Sovrainsieme di `alloc`, aggiunge interoperabilità con tipi e tratti standard.
-- `clock`: Abilita la lettura del fuso orario locale (`Local`). Sovrainsieme di `now`.
-- `now`: Abilita la lettura dell'orario di sistema (`now`).
-- `wasmbind`: Fornisce un'interfaccia con l'API JS Date per target wasm32.
+- `alloc`: Abilita le funzionalità che dipendono dall'allocazione di memoria (principalmente formattazione di stringhe).
+- `std`: Abilita le funzionalità che dipendono dalla libreria standard. Questo è un sovrainsieme di `alloc`, aggiungendo l'interoperabilità con tipi e tratti della libreria standard.
+- `clock`: Abilita la lettura del fuso orario locale (`Local`). Questo è un sovrainsieme di `now`.
+- `now`: Abilita la lettura dell'ora di sistema (`now`).
+- `wasmbind`: Fornisce un'interfaccia con l'API JS Date per i target wasm32.
 
 ### Funzionalità opzionali:
 
-- `serde`: Abilita serializzazione/deserializzazione via serde.
-- `rkyv`: Deprecato, usa le funzionalità `rkyv-*`.
-- `rkyv-16`, `rkyv-32`, `rkyv-64`: Abilita serializzazione/deserializzazione via rkyv, con interi a 16, 32 o 64 bit rispettivamente.
-- `rkyv-validation`: Abilita supporto alla validazione rkyv con bytecheck.
-- `arbitrary`: Costruisce istanze arbitrarie di tipi con la crate Arbitrary.
-- `unstable-locales`: Abilita localizzazione. Aggiunge metodi con suffisso `_localized`.
+- `serde`: Abilita la serializzazione/deserializzazione tramite serde.
+- `rkyv`: Deprecato, utilizzare le funzionalità `rkyv-*`.
+- `rkyv-16`, `rkyv-32`, `rkyv-64`: Abilita la serializzazione/deserializzazione tramite rkyv, utilizzando rispettivamente interi a 16, 32 o 64 bit.
+- `rkyv-validation`: Abilita il supporto alla validazione rkyv utilizzando bytecheck.
+- `arbitrary`: Costruisce istanze arbitrarie di tipi utilizzando la crate Arbitrary.
+- `unstable-locales`: Abilita la localizzazione. Aggiunge vari metodi con suffisso `_localized`.
 
 ## Panoramica
 
-### Differenza temporale/Durata
+### Differenze temporali/Durate
 
-Chrono fornisce il tipo `TimeDelta` per rappresentare intervalli temporali. È una durata "precisa" in secondi e nanosecondi, senza componenti "nominali" come giorni o mesi.
+Chrono fornisce il tipo `TimeDelta` per rappresentare l'entità di un intervallo di tempo. Si tratta di una durata "esatta" espressa in secondi e nanosecondi, che non rappresenta componenti "nominali" come giorni o mesi.
 
-Precedentemente chiamato `Duration` (ancora disponibile come alias), si distingue da `core::time::Duration` per essere con segno anziché senza.
+Il tipo `TimeDelta` era precedentemente chiamato `Duration` (ancora disponibile come alias di tipo). Una differenza significativa rispetto al simile `core::time::Duration` è che è un valore con segno anziché senza segno.
 
 ### Date e Orari
 
-Chrono offre il tipo `DateTime` per rappresentare date e orari con fuso orario.
+Chrono fornisce il tipo `DateTime` per rappresentare data e ora in un fuso orario.
 
-`DateTime` è consapevole del fuso e deve essere costruito da un oggetto `TimeZone`, che definisce la conversione da/verso UTC. Tre implementazioni note:
+`DateTime` è consapevole del fuso orario e deve essere costruito da un oggetto `TimeZone`, che definisce come convertire le date locali in date UTC e viceversa. Esistono tre implementazioni note di `TimeZone`:
 
-- `Utc`: Specifica il fuso UTC. Il più efficiente.
-- `Local`: Specifica il fuso locale del sistema.
-- `FixedOffset`: Specifica un fuso fisso arbitrario, come UTC+09:00 o UTC-10:30.
+- `Utc` specifica il fuso orario UTC. È il più efficiente.
+- `Local` specifica il fuso orario locale del sistema.
+- `FixedOffset` specifica un fuso orario fisso arbitrario, come UTC+09:00 o UTC-10:30.
 
-`DateTime` con diversi `TimeZone` sono tipi distinti, ma convertibili tramite `DateTime::with_timezone`.
+I `DateTime` di diversi tipi di `TimeZone` sono distinti e non possono essere mescolati, ma possono essere convertiti l'uno nell'altro utilizzando il metodo `DateTime::with_timezone`.
 
-Puoi ottenere la data e l'ora corrente in UTC (`Utc::now()`) o locale (`Local::now()`).
+È possibile ottenere la data e l'ora correnti nel fuso orario UTC (`Utc::now()`) o nel fuso orario locale (`Local::now()`).
 
 ```rust
 use chrono::prelude::*;
 
-let utc: DateTime<Utc> = Utc::now(); // Es. `2014-11-28T12:45:59.324310806Z`
-let local: DateTime<Local> = Local::now(); // Es. `2014-11-28T21:45:59.324310806+09:00`
+let utc: DateTime<Utc> = Utc::now(); // ad esempio `2014-11-28T12:45:59.324310806Z`
+let local: DateTime<Local> = Local::now(); // ad esempio `2014-11-28T21:45:59.324310806+09:00`
 ```
 
-Inoltre, puoi creare date e orari personalizzati:
+Inoltre, è possibile creare date e orari personalizzati:
 
 ```rust
 use chrono::offset::MappedLocalTime;
@@ -84,11 +74,11 @@ let dt = Utc.with_ymd_and_hms(2014, 7, 8, 9, 10, 11).unwrap(); // `2014-07-08T09
 
 ### Formattazione e Parsing
 
-La formattazione avviene tramite il metodo `format`, con sintassi simile a strftime.
+La formattazione avviene tramite il metodo `format`, il cui formato è equivalente al familiare formato strftime.
 
-Anche `to_string` e `{:?}` forniscono rappresentazioni leggibili. Chrono include anche `to_rfc2822` e `to_rfc3339` per formati comuni.
+Anche il metodo predefinito `to_string` e lo specificatore `{:?}` forniscono una rappresentazione ragionevole. Chrono fornisce inoltre i metodi `to_rfc2822` e `to_rfc3339` per formati comuni.
 
-Ora Chrono supporta la formattazione localizzata in quasi tutte le lingue senza librerie C aggiuntive (funzionalità `unstable-locales`):
+Chrono ora fornisce anche la formattazione delle date in quasi tutte le lingue, senza bisogno di librerie C aggiuntive. Questa funzionalità è disponibile sotto la caratteristica `unstable-locales`:
 
 ```rust
 use chrono::prelude::*;
@@ -99,10 +89,10 @@ assert_eq!(dt.format_localized("%A %e %B %Y, %T", Locale::fr_BE).to_string(),
            "vendredi 28 novembre 2014, 12:00:09");
 ```
 
-Il parsing può avvenire in due modi:
+Il parsing può essere eseguito in due modi:
 
-1. Il tratto standard `FromStr` (e il metodo `parse` sulle stringhe) può analizzare `DateTime<FixedOffset>`, `DateTime<Utc>` e `DateTime<Local>`.
-2. `DateTime::parse_from_str` analizza data e ora con offset, restituendo `DateTime<FixedOffset>`.
+1. Il tratto standard `FromStr` (e il metodo `parse` sulle stringhe) può essere utilizzato per analizzare valori `DateTime<FixedOffset>`, `DateTime<Utc>` e `DateTime<Local>`.
+2. `DateTime::parse_from_str` analizza data e ora con offset e restituisce `DateTime<FixedOffset>`.
 
 ```rust
 use chrono::prelude::*;
@@ -113,9 +103,9 @@ let fixed_dt = DateTime::parse_from_str("2014-11-28 21:00:09 +09:00", "%Y-%m-%d 
 
 ### Conversione con timestamp EPOCH
 
-Usa `DateTime::from_timestamp(secondi, nanosecondi)` per costruire `DateTime<Utc>` da un timestamp UNIX.
+Utilizza `DateTime::from_timestamp(seconds, nanoseconds)` per costruire `DateTime<Utc>` da un timestamp UNIX.
 
-Usa `DateTime.timestamp` per ottenere il timestamp (in secondi) da un `DateTime`. Inoltre, `DateTime.timestamp_subsec_nanos` fornisce i nanosecondi aggiuntivi.
+Utilizza `DateTime.timestamp` per ottenere il timestamp (in secondi) da un `DateTime`. Inoltre, puoi utilizzare `DateTime.timestamp_subsec_nanos` per ottenere i nanosecondi aggiuntivi.
 
 ```rust
 use chrono::{DateTime, Utc};
@@ -124,15 +114,15 @@ use chrono::{DateTime, Utc};
 let dt: DateTime<Utc> = DateTime::from_timestamp(1_500_000_000, 0).unwrap();
 assert_eq!(dt.to_rfc2822(), "Fri, 14 Jul 2017 02:40:00 +0000");
 
-// Ottieni valore epoch da datetime:
+// Ottieni il valore epoch dal datetime:
 let dt = DateTime::parse_from_rfc2822("Fri, 14 Jul 2017 02:40:00 +0000").unwrap();
 assert_eq!(dt.timestamp(), 1_500_000_000);
 ```
 
 ## Limitazioni
 
-- Supporta solo il calendario gregoriano prolettico (esteso per date precedenti).
-- I tipi data sono limitati a circa ±262.000 anni dall'era comune.
-- I tipi ora hanno precisione al nanosecondo.
-- Supporta i secondi intercalari, ma non completamente.
-{/* 本行由工具自动生成,原文哈希值:8f29ad63efca7d455f7ca1249d2f7dfd */}
+- Supporta solo il calendario gregoriano prolettico (cioè esteso per supportare date precedenti).
+- I tipi di data sono limitati a circa ±262.000 anni dall'era comune.
+- I tipi di ora sono limitati alla precisione del nanosecondo.
+- I secondi intercalari possono essere rappresentati, ma Chrono non li supporta completamente.
+{/* 本行由工具自动生成,原文哈希值:67733bfd2ba618b44f19c1449b096c42 */}

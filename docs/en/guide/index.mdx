@@ -1,31 +1,30 @@
-# To Master This Art  
+# To Master This Art
 
-## Why Build This Framework  
+## Why Build This Framework
 
-As a beginner, I found myself struggling to grasp existing frameworks like actix-web and Rocket. When I attempted to rewrite a Go web service in Rust, every framework seemed more complex than those in Go. Rust already has a steep learning curve—why make web frameworks even more convoluted?  
+As a beginner, I found myself struggling to grasp existing frameworks like actix-web and Rocket. When I attempted to rewrite a previous Go web service in Rust, each framework seemed more complex than those available in Go. Given Rust's already steep learning curve, why complicate web frameworks further?
 
-When Tokio released Axum, I was thrilled, thinking I could finally stop maintaining my own web framework. However, in practice, Axum's apparent simplicity masked excessive type gymnastics and generic definitions. Writing even a simple middleware required deep Rust expertise and verbose, obscure boilerplate code.  
+When Tokio introduced the Axum framework, I was thrilled, thinking I could finally stop maintaining my own web framework. However, I soon realized that while Axum appeared simple, it required extensive type gymnastics and generic definitions. Crafting even a basic middleware demanded deep Rust expertise and writing copious amounts of obscure boilerplate code.
 
-Thus, I decided to continue maintaining my own framework—one that's intuitive, feature-rich, and beginner-friendly.  
+Thus, I decided to continue maintaining my unique web framework—one that is intuitive, feature-rich, and beginner-friendly.
 
-## Is Salvo Right for You?  
+## Is Salvo Right for You?
 
-Salvo is simple yet powerful, arguably the most capable in the Rust ecosystem. Despite its strength, it remains easy to learn and use, sparing you the pain of unnecessary complexity.  
+Salvo is simple yet comprehensive and powerful, arguably the strongest in the Rust ecosystem. Despite its capabilities, it remains easy to learn and use, sparing you any "self-castration" pains.
 
-- **For Rust beginners**: CRUD operations are commonplace, and with Salvo, they feel as straightforward as in frameworks like Express, Koa, Gin, or Flask—sometimes even more abstract and concise.  
-- **For production use**: Though not yet at version 1.0, Salvo's core features have been refined over years of iteration, ensuring stability and timely fixes for robust, high-performance servers.  
-- **For the thinning-haired developer**: A framework that won’t add to your hair loss.  
+- **Ideal for Rust beginners**: CRUD operations are commonplace, and with Salvo, such tasks feel as straightforward as with frameworks in other languages (e.g., Express, Koa, Gin, Flask). In some aspects, Salvo is even more abstract and concise.
 
-## How Salvo Achieves Simplicity  
+- **Suitable for production**: If you aim to deploy Rust in production for robust, high-speed servers, Salvo fits the bill. Although not yet at version 1.0, its core features have undergone years of iteration, ensuring stability and timely issue resolution.
 
-Hyper handles much of the low-level work, making it a solid foundation. Salvo builds on this with a powerful, flexible routing system and essential features like Acme, OpenAPI, and JWT Auth.  
+- **Perfect for you**, especially if your hair is thinning and shedding daily.
 
-Salvo unifies **Handlers** and **Middleware**: Middleware *is* a Handler, attached via `hoop` to a `Router`. Both process `Request` and may write to `Response`. Handlers take three parameters:  
-- `Request`: The incoming request.  
-- `Depot`: Temporary data storage during processing.  
-- `Response`: The outgoing response.  
+## Achieving Simplicity
 
-For brevity, unused parameters can be omitted or reordered:  
+Hyper handles many low-level implementations, making it a reliable foundation for general needs. Salvo follows this approach, offering a powerful and flexible routing system alongside essential features like Acme, OpenAPI, and JWT authentication.
+
+Salvo unifies Handlers and Middleware: Middleware *is* a Handler. Both are attached to the Router via `hoop`. Essentially, they process `Request` and may write data to `Response`. A Handler receives three parameters: `Request`, `Depot` (for temporary data during request processing), and `Response`.
+
+For convenience, you can omit unnecessary parameters or ignore their order.
 
 ```rust
 use salvo::prelude::*;
@@ -40,29 +39,29 @@ async fn hello_world(res: &mut Response) {
 }
 ```
 
-The routing API is equally simple yet powerful. Typically, you only need to focus on the `Router` type.  
+The routing API is exceptionally simple yet powerful. For typical use cases, you only need to focus on the `Router` type.
 
-Salvo also automates OpenAPI documentation, parameter extraction, and error handling. Writing handlers feels as natural as writing plain functions. Here’s an example:  
+Additionally, if a struct implements relevant traits, Salvo can automatically generate OpenAPI documentation, extract parameters, handle errors gracefully, and return user-friendly messages. This makes writing handlers as intuitive as writing ordinary functions. We'll explore these features in detail later. Here’s an example:
 
 ```rust
 #[endpoint(tags("message_logs"))]
 pub async fn create_message_log_handler(
     input: JsonBody<CreateOrUpdateMessageLog>,
     depot: &mut Depot,
-) -> AppResult<Json<MessageLog>> {
+) -> APPResult<Json<MessageLog>> {
     let db = utils::get_db(depot)?;
     let log = create_message_log(&input, db).await?;
     Ok(Json(log))
 }
-```  
+```
 
-Here, `JsonBody<CreateOrUpdateMessageLog>` automatically parses JSON (supporting nested types and multi-source data), while `#[endpoint]` generates OpenAPI docs and streamlines error handling.  
+In this example, `JsonBody<CreateOrUpdateMessageLog>` automatically parses JSON from the request body into the `CreateOrUpdateMessageLog` type (supporting multiple data sources and nested types). The `#[endpoint]` macro generates OpenAPI documentation for this endpoint, simplifying parameter extraction and error handling.
 
-## The Routing System  
+## Routing System
 
-Salvo’s routing stands apart. `Router`s can be flat or nested into trees, decoupling *business logic trees* from *URL paths*.  
+I believe Salvo’s routing system stands out. Routers can be flat or tree-like, distinguishing between *business logic trees* and *access directory trees*. The business logic tree organizes routers based on business needs, which may not align with the access directory tree.
 
-A typical setup:  
+Typically, routes are written like this:
 
 ```rust
 Router::new().path("articles").get(list_articles).post(create_article);
@@ -71,26 +70,28 @@ Router::new()
     .get(show_article)
     .patch(edit_article)
     .delete(delete_article);
-```  
+```
 
-Public routes (e.g., listing/viewing articles) and private routes (e.g., editing/deleting) can be grouped separately, with middleware enforcing auth:  
+Often, viewing articles and listing them don’t require user login, but creating, editing, or deleting articles does. Salvo’s nested routing system elegantly handles this. We can group public routes together:
 
 ```rust
-// Public routes  
 Router::new()
     .path("articles")
     .get(list_articles)
     .push(Router::new().path("{id}").get(show_article));
+```
 
-// Private routes  
+Then, group protected routes with middleware for authentication:
+
+```rust
 Router::new()
     .path("articles")
     .hoop(auth_check)
     .post(create_article)
     .push(Router::new().path("{id}").patch(edit_article).delete(delete_article));
-```  
+```
 
-Both can coexist under a parent router, forming this structure:  
+Even though both routers share the same `path("articles")`, they can be added to the same parent router, resulting in:
 
 ```rust
 Router::new()
@@ -107,7 +108,7 @@ Router::new()
             .post(create_article)
             .push(Router::new().path("{id}").patch(edit_article).delete(delete_article)),
     );
-```  
+```
 
-`{id}` matches a path segment. To restrict it to digits, use a regex: `r"{id:/\d+/}"`.
+`{id}` matches a path segment. Typically, an article `id` is numeric, so we can restrict matching with a regex: `r"{id:/\d+/}"`.
 {/* 本行由工具自动生成,原文哈希值:bd1fc4c816e814fa9f1d5c39301ad59a */}
