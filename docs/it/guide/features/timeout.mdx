@@ -2,13 +2,13 @@ import { Tab, Tabs } from '@rspress/core/theme';
 
 # Middleware di Timeout
 
-Fornisce un middleware per la gestione dei timeout.
+Fornisce supporto middleware per la gestione dei timeout.
 
-## Casi d'uso
+## Casi d'Uso
 
-Nei servizi web, alcune richieste potrebbero richiedere tempi di elaborazione prolungati per vari motivi (come query di database lente, risposte lente da servizi esterni, ecc.). Per evitare che queste richieste a lunga esecuzione occupino risorse del server e influenzino l'elaborazione di altre richieste, è possibile utilizzare il middleware di timeout per impostare un limite massimo di tempo di elaborazione per le richieste. Superato questo limite temporale, la richiesta verrà interrotta automaticamente e verrà restituito un errore di timeout.
+Nei servizi web, alcune richieste potrebbero richiedere troppo tempo per essere elaborate a causa di vari motivi (come query di database lente, risposte ritardate da servizi esterni, ecc.). Per evitare che queste richieste a lunga esecuzione consumino risorse del server e influenzino l'elaborazione di altre richieste, è possibile utilizzare un middleware di timeout per impostare un limite massimo di tempo di elaborazione per le richieste. Se questo limite temporale viene superato, la richiesta verrà automaticamente interrotta e verrà restituito un errore di timeout.
 
-_**Codice di esempio**_ 
+_**Codice di Esempio**_ 
 
 <Tabs>
   <Tab label="main.rs">
@@ -21,5 +21,5 @@ _**Codice di esempio**_
   </Tab>
 </Tabs>
 
-Nell'esempio sopra, abbiamo creato due funzioni di gestione: una `fast` che risponde rapidamente e una `slow` che risponde con un ritardo di 6 secondi. Utilizzando `Timeout::new(Duration::from_secs(5))`, abbiamo impostato un limite di timeout di 5 secondi per tutte le richieste. Quando si accede al percorso `/slow`, poiché il tempo di elaborazione supera il limite di 5 secondi, la richiesta andrà in timeout; mentre quando si accede al percorso `/fast`, la richiesta verrà elaborata normalmente e restituirà il risultato.
-{/* Auto generated, origin file hash:f830ce34e2005274bbd246ff55e7c47e */}
+Nell'esempio sopra, abbiamo creato due funzioni di gestione: una `fast` a risposta rapida e una `slow` che ritarda di 6 secondi prima di rispondere. È stato impostato un limite di timeout di 5 secondi per tutte le richieste utilizzando `Timeout::new(Duration::from_secs(5))`. Quando si accede al percorso `/slow`, la richiesta scadrà perché il tempo di elaborazione supera il limite di 5 secondi. Al contrario, quando si accede al percorso `/fast`, la richiesta verrà elaborata normalmente e restituirà un risultato.
+{/* Auto generated, origin file hash:6b1b3f8e371841e4b0fca9bc07d59eec */}
