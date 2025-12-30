@@ -12,26 +12,15 @@ Das Salvo-Framework bietet Middleware für Reverse-Proxy-Funktionalität.
 
 _**Beispielcode**_
 
-```rust
-use salvo::prelude::*;
-use salvo::proxy::Proxy;
+import { Tab, Tabs } from '@rspress/core/theme';
 
-#[tokio::main]
-async fn main() {
-    tracing_subscriber::fmt().init();
-    
-    let router = Router::new()
-        .push(
-            Router::new()
-                .path("google/{**rest}")
-                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.google.com"])),
-        )
-        .push(
-            Router::new()
-                .path("baidu/{**rest}")
-                .handle(Proxy::<Vec<&str>>::new(vec!["https://www.baidu.com"])),
-        );
-    let acceptor = TcpListener::new("127.0.0.1:5800").bind().await; Server::new(acceptor).serve(router).await;
-}
-```
-{/* Auto generated, origin file hash:594583a2fd3f2a79edbb906b0b80aa56 */}
+<Tabs>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/proxy-simple/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/proxy-simple/Cargo.toml"
+  ```
+  </Tab>
+</Tabs>
