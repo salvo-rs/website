@@ -31,7 +31,7 @@ Salvoは組み込みのCORSミドルウェアを提供しており、簡単に�
 これにより、OPTIONSプリフライトが自動的に処理されます。
 ```rust
 let cors = Cors::new()
-    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_origin(["http://127.0.0.1:8698", "http://localhost:8698"])
     .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
     .allow_headers("authorization")
     .into_handler();

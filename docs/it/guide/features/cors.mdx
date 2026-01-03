@@ -30,7 +30,7 @@ Salvo fornisce un middleware CORS integrato che può essere facilmente configura
 Nota: Il middleware `.hoop(cors)` viene applicato al `Service`, non al `Router`. Ciò garantisce la gestione automatica delle richieste preflight OPTIONS.
 ```rust
 let cors = Cors::new()
-    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_origin(["http://127.0.0.1:8698", "http://localhost:8698"])
     .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
     .allow_headers("authorization")
     .into_handler();

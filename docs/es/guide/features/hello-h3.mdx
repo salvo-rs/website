@@ -48,11 +48,11 @@ async fn main() {
     // Configurar ajustes TLS usando Rustls
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // Crear un oyente TCP cifrado con TLS en el puerto 5800
-    let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+    // Crear un oyente TCP cifrado con TLS en el puerto 8698
+    let listener = TcpListener::new(("0.0.0.0", 8698)).rustls(config.clone());
 
     // Crear un oyente QUIC y combinarlo con el oyente TCP
-    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 8698))
         .join(listener)
         .bind()
         .await;
@@ -77,10 +77,10 @@ Dado que HTTP/3 se basa en el protocolo QUIC, que requiere TLS 1.3 para cifrado,
 
 ```rust
 // Crear un oyente TCP cifrado con TLS
-let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+let listener = TcpListener::new(("0.0.0.0", 8698)).rustls(config.clone());
 
 // Crear un oyente QUIC y combinarlo con el oyente TCP
-let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 8698))
     .join(listener)
     .bind()
     .await;

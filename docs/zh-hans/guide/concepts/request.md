@@ -263,7 +263,7 @@ async fn test_de_request_with_form_json_str() {
         p2: &'a str,
         user: User<'a>,
     }
-    let mut req = TestClient::get("http://127.0.0.1:5800/test/1234/param2v")
+    let mut req = TestClient::get("http://127.0.0.1:8698/test/1234/param2v")
         .raw_form(r#"user={"name": "chris", "age": 20}"#)
         .build();
     req.params.insert("p2".into(), "921".into());

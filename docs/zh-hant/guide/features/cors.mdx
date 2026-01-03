@@ -31,7 +31,7 @@ Salvo提供內建的CORS中介軟體，可輕鬆配置與使用。以下是範�
 這樣可以自動處理OPTIONS預檢請求。
 ```rust
 let cors = Cors::new()
-    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_origin(["http://127.0.0.1:8698", "http://localhost:8698"])
     .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
     .allow_headers("authorization")
     .into_handler();

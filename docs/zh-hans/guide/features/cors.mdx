@@ -31,7 +31,7 @@ Salvo提供了内置的CORS中间件，可以轻松配置和使用。以下是�
 这样可以自动处理option预检.
 ```rust
 let cors = Cors::new()
-    .allow_origin(["http://127.0.0.1:5800", "http://localhost:5800"])
+    .allow_origin(["http://127.0.0.1:8698", "http://localhost:8698"])
     .allow_methods(vec![Method::GET, Method::POST, Method::DELETE])
     .allow_headers("authorization")
     .into_handler();

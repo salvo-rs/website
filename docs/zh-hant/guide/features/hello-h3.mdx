@@ -48,11 +48,11 @@ async fn main() {
     // 使用 Rustls 設定 TLS 配置
     let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_slice()));
 
-    // 建立帶有 TLS 加密的 TCP 監聽器，監聽 5800 埠
-    let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+    // 建立帶有 TLS 加密的 TCP 監聽器，監聽 8698 埠
+    let listener = TcpListener::new(("0.0.0.0", 8698)).rustls(config.clone());
 
     // 建立 QUIC 監聽器並與 TCP 監聽器組合
-    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+    let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 8698))
         .join(listener)
         .bind()
         .await;
@@ -77,10 +77,10 @@ let config = RustlsConfig::new(Keycert::new().cert(cert.as_slice()).key(key.as_s
 
 ```rust
 // 建立帶有 TLS 加密的 TCP 監聽器
-let listener = TcpListener::new(("0.0.0.0", 5800)).rustls(config.clone());
+let listener = TcpListener::new(("0.0.0.0", 8698)).rustls(config.clone());
 
 // 建立 QUIC 監聽器並與 TCP 監聽器組合
-let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 5800))
+let acceptor = QuinnListener::new(config.build_quinn_config().unwrap(), ("0.0.0.0", 8698))
     .join(listener)
     .bind()
     .await;
