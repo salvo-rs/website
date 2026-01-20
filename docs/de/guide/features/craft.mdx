@@ -127,64 +127,16 @@ Mit dieser Konfiguration ist die API-Dokumentation unter dem Endpunkt `/api-doc/
 
 Nachfolgend ein vollständiges Beispiel, das zeigt, wie die Craft-Funktion verwendet wird, um drei verschiedene Typen von Endpunkten zu erstellen:
 
-```rust
-use salvo::oapi::extract::*;
-use salvo::prelude::*;
-use std::sync::Arc;
+import { Tab, Tabs } from '@rspress/core/theme';
 
-#[derive(Clone)]
-pub struct Opts {
-    state: i64,
-}
-
-#[craft]
-impl Opts {
-    fn new(state: i64) -> Self {
-        Self { state }
-    }
-
-    #[craft(handler)]
-    fn add1(&self, left: QueryParam<i64>, right: QueryParam<i64>) -> String {
-        (self.state + *left + *right).to_string()
-    }
-
-    #[craft(endpoint)]
-    pub(crate) fn add2(
-        self: ::std::sync::Arc<Self>,
-        left: QueryParam<i64>,
-        right: QueryParam<i64>,
-    ) -> String {
-        (self.state + *left + *right).to_string()
-    }
-
-    #[craft(endpoint(responses((status_code = 400, description = "Falsche Anfrageparameter."))))]
-    pub fn add3(left: QueryParam<i64>, right: QueryParam<i64>) -> String {
-        (*left + *right).to_string()
-    }
-}
-
-#[tokio::main]
-async fn main() {
-    // Gemeinsamen Status mit einem Anfangswert von 1 erstellen
-    let opts = Arc::new(Opts::new(1));
-
-    // Routen für drei Endpunkte konfigurieren
-    let router = Router::new()
-        .push(Router::with_path("add1").get(opts.add1()))
-        .push(Router::with_path("add2").get(opts.add2()))
-        .push(Router::with_path("add3").get(Opts::add3()));
-
-    // OpenAPI-Dokumentation generieren
-    let doc = OpenApi::new("Beispiel-API", "0.0.1").merge_router(&router);
-    
-    // OpenAPI-Dokumentation und Swagger-UI-Routen hinzufügen
-    let router = router
-        .push(doc.into_router("/api-doc/openapi.json"))
-        .push(SwaggerUi::new("/api-doc/openapi.json").into_router("swagger-ui"));
-
-    // Server auf localhost:8698 starten
-    let acceptor = TcpListener::new("127.0.0.1:8698").bind().await;
-    Server::new(acceptor).serve(router).await;
-}
+<Tabs>
+<Tab label="main.rs">
+```rust file="<root>/codes/craft/src/main.rs"
 ```
+</Tab>
+<Tab label="Cargo.toml">
+```toml file="<root>/codes/craft/Cargo.toml"
+```
+</Tab>
+</Tabs>
 {/* Auto generated, origin file hash:f2d903755c5dbbd89c656ef1599cc869 */}

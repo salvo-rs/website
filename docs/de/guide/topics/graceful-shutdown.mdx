@@ -10,23 +10,18 @@ Salvo unterstützt Graceful Shutdown über die `handle`-Methode des `Server`, di
 
 Hier ein einfaches Beispiel:
 
-```rust
-use salvo_core::prelude::*;
+import { Tab, Tabs } from '@rspress/core/theme';
 
-#[tokio::main]
-async fn main() {
-    let acceptor = TcpListener::new("127.0.0.1:8698").bind().await;
-    let server = Server::new(acceptor);
-    let handle = server.handle();
-
-    // Server ordnungsgemäß herunterfahren
-    tokio::spawn(async move {
-        tokio::time::sleep(std::time::Duration::from_secs(60)).await;
-        handle.stop_graceful(None);
-    });
-    server.serve(Router::new()).await;
-}
+<Tabs>
+<Tab label="main.rs">
+```rust file="<root>/codes/graceful-shutdown/src/main.rs"
 ```
+</Tab>
+<Tab label="Cargo.toml">
+```toml file="<root>/codes/graceful-shutdown/Cargo.toml"
+```
+</Tab>
+</Tabs>
 
 Im obigen Beispiel:
 
