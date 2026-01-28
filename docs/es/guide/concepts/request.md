@@ -168,6 +168,60 @@ fn search_user(id: QueryParam<i64,true>) -> String {
 }
 ```
 
+### Extracción desde Depot
+
+Puedes extraer datos de `Depot` que fueron inyectados por middleware. Esto es útil para acceder a información de usuario autenticado u otros datos del ámbito de la solicitud.
+
+```rust
+/// Middleware que inyecta datos de usuario en depot
+#[handler]
+async fn inject_user(depot: &mut Depot) {
+    depot.insert("user_id", 123i64);
+    depot.insert("username", "alice".to_string());
+    depot.insert("is_admin", true);
+}
+
+/// Extraer contexto de usuario desde depot
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[salvo(extract(default_source(from = "depot")))]
+struct UserContext {
+    user_id: i64,
+    username: String,
+    is_admin: bool,
+}
+
+#[handler]
+async fn protected_handler(user: UserContext) -> String {
+    format!("Hola {}, tu ID es {}", user.username, user.user_id)
+}
+
+// Configuración del router con middleware
+let router = Router::new()
+    .hoop(inject_user)
+    .push(Router::with_path("protected").get(protected_handler));
+```
+
+La extracción de Depot soporta los siguientes tipos:
+- `String` y `&'static str`
+- Enteros con signo: `i8`, `i16`, `i32`, `i64`, `i128`, `isize`
+- Enteros sin signo: `u8`, `u16`, `u32`, `u64`, `u128`, `usize`
+- Punto flotante: `f32`, `f64`
+- `bool`
+
+También puedes mezclar depot con otras fuentes:
+
+```rust
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+struct RequestData {
+    #[salvo(extract(source(from = "depot")))]
+    user_id: i64,
+    #[salvo(extract(source(from = "query")))]
+    page: i64,
+    #[salvo(extract(source(from = "body")))]
+    content: String,
+}
+```
+
 ### Uso Avanzado
 Puedes combinar múltiples fuentes de datos para analizar un tipo específico. Primero, define un tipo personalizado, por ejemplo:
 

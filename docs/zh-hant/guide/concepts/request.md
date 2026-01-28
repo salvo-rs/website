@@ -168,6 +168,60 @@ fn search_user(id: QueryParam<i64,true>) -> String {
 }
 ```
 
+### 從 Depot 提取資料
+
+你可以從 `Depot` 中提取由中介軟體注入的資料。這對於存取已認證的使用者資訊或其他請求範圍內的資料非常有用。
+
+```rust
+/// 將使用者資料注入到 depot 的中介軟體
+#[handler]
+async fn inject_user(depot: &mut Depot) {
+    depot.insert("user_id", 123i64);
+    depot.insert("username", "alice".to_string());
+    depot.insert("is_admin", true);
+}
+
+/// 從 depot 提取使用者上下文
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[salvo(extract(default_source(from = "depot")))]
+struct UserContext {
+    user_id: i64,
+    username: String,
+    is_admin: bool,
+}
+
+#[handler]
+async fn protected_handler(user: UserContext) -> String {
+    format!("你好 {}, 你的 ID 是 {}", user.username, user.user_id)
+}
+
+// 帶中介軟體的路由設定
+let router = Router::new()
+    .hoop(inject_user)
+    .push(Router::with_path("protected").get(protected_handler));
+```
+
+Depot 提取支援以下型別：
+- `String` 和 `&'static str`
+- 有符號整數：`i8`、`i16`、`i32`、`i64`、`i128`、`isize`
+- 無符號整數：`u8`、`u16`、`u32`、`u64`、`u128`、`usize`
+- 浮點數：`f32`、`f64`
+- `bool`
+
+你也可以將 depot 與其他資料來源混合使用：
+
+```rust
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+struct RequestData {
+    #[salvo(extract(source(from = "depot")))]
+    user_id: i64,
+    #[salvo(extract(source(from = "query")))]
+    page: i64,
+    #[salvo(extract(source(from = "body")))]
+    content: String,
+}
+```
+
 ### 進階用法
 可以合併多個資料來源，解析出特定型別。可以先定義一個自訂的型別，例如：
 

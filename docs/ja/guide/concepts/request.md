@@ -168,6 +168,60 @@ fn search_user(id: QueryParam<i64,true>) -> String {
 }
 ```
 
+### Depotからの抽出
+
+ミドルウェアによって注入された`Depot`からデータを抽出できます。これは認証されたユーザー情報やその他のリクエストスコープのデータにアクセスする際に便利です。
+
+```rust
+/// ユーザーデータをdepotに注入するミドルウェア
+#[handler]
+async fn inject_user(depot: &mut Depot) {
+    depot.insert("user_id", 123i64);
+    depot.insert("username", "alice".to_string());
+    depot.insert("is_admin", true);
+}
+
+/// depotからユーザーコンテキストを抽出
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[salvo(extract(default_source(from = "depot")))]
+struct UserContext {
+    user_id: i64,
+    username: String,
+    is_admin: bool,
+}
+
+#[handler]
+async fn protected_handler(user: UserContext) -> String {
+    format!("こんにちは {}、あなたのIDは {}", user.username, user.user_id)
+}
+
+// ミドルウェア付きのルーター設定
+let router = Router::new()
+    .hoop(inject_user)
+    .push(Router::with_path("protected").get(protected_handler));
+```
+
+Depot抽出は以下の型をサポートしています：
+- `String`と`&'static str`
+- 符号付き整数：`i8`、`i16`、`i32`、`i64`、`i128`、`isize`
+- 符号なし整数：`u8`、`u16`、`u32`、`u64`、`u128`、`usize`
+- 浮動小数点数：`f32`、`f64`
+- `bool`
+
+depotを他のソースと組み合わせることもできます：
+
+```rust
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+struct RequestData {
+    #[salvo(extract(source(from = "depot")))]
+    user_id: i64,
+    #[salvo(extract(source(from = "query")))]
+    page: i64,
+    #[salvo(extract(source(from = "body")))]
+    content: String,
+}
+```
+
 ### 高度な使用法
 複数のデータソースを統合して特定の型を解析できます。まず、カスタム型を定義します：
 

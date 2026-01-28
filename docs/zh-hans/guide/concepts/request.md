@@ -168,8 +168,62 @@ fn search_user(id: QueryParam<i64,true>) -> String {
     format!("正在搜索ID为 {} 的用户", id.into_inner())
 }
 ```
-### 高阶用法 
-可以合并多个数据源, 解析出特定类型, 可以先定义一个自定义的类型, 比如: 
+### 从 Depot 提取数据
+
+你可以从 `Depot` 中提取由中间件注入的数据。这对于访问已认证的用户信息或其他请求范围内的数据非常有用。
+
+```rust
+/// 将用户数据注入到 depot 的中间件
+#[handler]
+async fn inject_user(depot: &mut Depot) {
+    depot.insert("user_id", 123i64);
+    depot.insert("username", "alice".to_string());
+    depot.insert("is_admin", true);
+}
+
+/// 从 depot 提取用户上下文
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+#[salvo(extract(default_source(from = "depot")))]
+struct UserContext {
+    user_id: i64,
+    username: String,
+    is_admin: bool,
+}
+
+#[handler]
+async fn protected_handler(user: UserContext) -> String {
+    format!("你好 {}, 你的 ID 是 {}", user.username, user.user_id)
+}
+
+// 带中间件的路由设置
+let router = Router::new()
+    .hoop(inject_user)
+    .push(Router::with_path("protected").get(protected_handler));
+```
+
+Depot 提取支持以下类型：
+- `String` 和 `&'static str`
+- 有符号整数：`i8`、`i16`、`i32`、`i64`、`i128`、`isize`
+- 无符号整数：`u8`、`u16`、`u32`、`u64`、`u128`、`usize`
+- 浮点数：`f32`、`f64`
+- `bool`
+
+你也可以将 depot 与其他数据源混合使用：
+
+```rust
+#[derive(Serialize, Deserialize, Extractible, Debug)]
+struct RequestData {
+    #[salvo(extract(source(from = "depot")))]
+    user_id: i64,
+    #[salvo(extract(source(from = "query")))]
+    page: i64,
+    #[salvo(extract(source(from = "body")))]
+    content: String,
+}
+```
+
+### 高阶用法
+可以合并多个数据源, 解析出特定类型, 可以先定义一个自定义的类型, 比如:
 
 ```rust
 #[derive(Serialize, Deserialize, Extractible, Debug)]
