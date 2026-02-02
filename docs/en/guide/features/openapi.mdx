@@ -382,6 +382,68 @@ struct Query {
 
 - `default`: You can use the `Default` implementation of the structure to fill all fields with default values.
 
+## Best Practices for Automatic Documentation
+
+### Use Function Parameter Extractors Instead of Manual Extraction
+
+**IMPORTANT**: For OpenAPI documentation to be generated automatically, use function parameter extractors instead of manually extracting from `Request`.
+
+```rust
+// ❌ BAD: Manual extraction - NO OpenAPI documentation generated
+#[endpoint]
+async fn get_user(req: &mut Request) -> Json<User> {
+    let id = req.param::<i64>("id").unwrap();  // Not documented!
+    let page = req.query::<i32>("page");        // Not documented!
+    // ...
+}
+
+// ✅ GOOD: Parameter extractors - OpenAPI documentation auto-generated
+#[endpoint]
+async fn get_user(
+    id: PathParam<i64>,           // Documented as path parameter
+    page: QueryParam<i32, false>, // Documented as optional query parameter
+) -> Json<User> {
+    // ...
+}
+```
+
+When you use extractors like `PathParam`, `QueryParam`, `JsonBody`, the OpenAPI generator can:
+- Automatically detect parameter names and types
+- Mark parameters as required or optional
+- Generate proper schema definitions
+
+### Return Result with impl Writer Types
+
+**IMPORTANT**: Return `Result<T, E>` where both `T` and `E` implement `Writer` and `EndpointOutRegister`. This enables automatic documentation of both success and error responses.
+
+```rust
+// ❌ LIMITED: Only success response documented
+#[endpoint]
+async fn get_user(id: PathParam<i64>) -> Json<User> {
+    Json(User { /* ... */ })
+}
+
+// ✅ BETTER: Both success and error responses documented
+#[endpoint]
+async fn get_user(id: PathParam<i64>) -> Result<Json<User>, StatusError> {
+    let id = id.into_inner();
+    if id <= 0 {
+        return Err(StatusError::bad_request().brief("Invalid ID"));
+    }
+    Ok(Json(User { id, name: "John".into(), email: "john@example.com".into() }))
+}
+```
+
+### Summary of Documentation Requirements
+
+| Pattern | Parameters Documented | Response Documented |
+|---------|----------------------|---------------------|
+| `req.param()` / `req.query()` | ❌ No | - |
+| `PathParam<T>` / `QueryParam<T>` | ✅ Yes | - |
+| `-> Json<T>` | - | ✅ Success only |
+| `-> Result<Json<T>, StatusError>` | - | ✅ Success + Error |
+| `-> Result<Json<T>, CustomError>` | - | ✅ Full control |
+
 ### Error Handling
 
 For general applications, we will define a global error type (AppError) and implement `Writer` or `Scribe` for `AppError` so that errors can be sent to the client as web page information.

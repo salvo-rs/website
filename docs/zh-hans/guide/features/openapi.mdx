@@ -382,6 +382,68 @@ struct Query {
 
 - `default`: 可以使用结构体的 `Default` 实现来为所有字段填充默认值.
 
+## 自动生成文档的最佳实践
+
+### 使用函数参数提取器而非手动提取
+
+**重要**: 为了让 OpenAPI 文档能够自动生成，请使用函数参数提取器，而不是手动从 `Request` 中提取数据。
+
+```rust
+// ❌ 错误做法: 手动提取 - 不会生成 OpenAPI 文档
+#[endpoint]
+async fn get_user(req: &mut Request) -> Json<User> {
+    let id = req.param::<i64>("id").unwrap();  // 不会被文档化!
+    let page = req.query::<i32>("page");        // 不会被文档化!
+    // ...
+}
+
+// ✅ 正确做法: 使用参数提取器 - 自动生成 OpenAPI 文档
+#[endpoint]
+async fn get_user(
+    id: PathParam<i64>,           // 自动文档化为路径参数
+    page: QueryParam<i32, false>, // 自动文档化为可选查询参数
+) -> Json<User> {
+    // ...
+}
+```
+
+当您使用 `PathParam`、`QueryParam`、`JsonBody` 等提取器时，OpenAPI 生成器可以：
+- 自动检测参数名称和类型
+- 标记参数是必需的还是可选的
+- 生成正确的 schema 定义
+
+### 返回 Result 类型以获取完整的响应文档
+
+**重要**: 返回 `Result<T, E>`，其中 `T` 和 `E` 都实现了 `Writer` 和 `EndpointOutRegister`。这样可以自动生成成功响应和错误响应的文档。
+
+```rust
+// ❌ 受限: 只有成功响应被文档化
+#[endpoint]
+async fn get_user(id: PathParam<i64>) -> Json<User> {
+    Json(User { /* ... */ })
+}
+
+// ✅ 更好: 成功和错误响应都会被文档化
+#[endpoint]
+async fn get_user(id: PathParam<i64>) -> Result<Json<User>, StatusError> {
+    let id = id.into_inner();
+    if id <= 0 {
+        return Err(StatusError::bad_request().brief("Invalid ID"));
+    }
+    Ok(Json(User { id, name: "John".into(), email: "john@example.com".into() }))
+}
+```
+
+### 文档生成要求总结
+
+| 模式 | 参数是否被文档化 | 响应是否被文档化 |
+|------|-----------------|-----------------|
+| `req.param()` / `req.query()` | ❌ 否 | - |
+| `PathParam<T>` / `QueryParam<T>` | ✅ 是 | - |
+| `-> Json<T>` | - | ✅ 仅成功响应 |
+| `-> Result<Json<T>, StatusError>` | - | ✅ 成功 + 错误 |
+| `-> Result<Json<T>, CustomError>` | - | ✅ 完全控制 |
+
 ### 错误处理方式
 
 对于一般的应用, 我们会定义一个全局的错误类型 (AppError), 为 AppError 实现 `Writer` 或者 `Scribe`, 以便可以将错误作为网页信息发送给客户端.
