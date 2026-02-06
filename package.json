@@ -2,6 +2,7 @@
   "name": "salvo_website",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "rspress build",
     "dev": "rspress dev",
@@ -11,17 +12,17 @@
   "devDependencies": {
     "@google/genai": "^1.34.0",
     "openai": "^6.15.0",
-    "@rspress/core": "2.0.0-rc.3",
-    "@rspress/plugin-llms": "2.0.0-rc.3",
-    "@rspress/plugin-preview": "2.0.0-rc.3",
-    "@rspress/plugin-sitemap": "2.0.0-rc.3",
-    "@rspress/plugin-twoslash": "2.0.0-rc.3",
+    "@rspress/core": "2.0.2",
+    "@rspress/plugin-llms": "2.0.2",
+    "@rspress/plugin-preview": "2.0.2",
+    "@rspress/plugin-sitemap": "2.0.2",
+    "@rspress/plugin-twoslash": "2.0.2",
     "@types/node": "^24.10.4",
     "prettier": "^3.7.4",
     "@types/react": "^19.2.7",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "rsbuild-plugin-google-analytics": "^1.0.4",
-    "rsbuild-plugin-open-graph": "^1.1.0"
+    "rsbuild-plugin-google-analytics": "^1.0.5",
+    "rsbuild-plugin-open-graph": "^1.1.2"
   }
 }
