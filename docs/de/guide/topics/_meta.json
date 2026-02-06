@@ -6,5 +6,6 @@
     "use-template-engine",
     "graceful-shutdown",
     "testing",
-    "deployment"
+    "deployment",
+    "ai-skills"
 ]

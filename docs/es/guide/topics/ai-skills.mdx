@@ -1,0 +1,113 @@
+# AI Skills
+
+[Salvo Skills](https://github.com/salvo-rs/salvo-skills) es una colección de 27 habilidades especializadas de agentes de IA diseñadas para el framework web Salvo. Estas habilidades siguen el estándar abierto [Agent Skills](https://agent-skills.github.io/) y ayudan a los asistentes de programación con IA a comprender y generar código Salvo de manera más precisa y eficiente.
+
+## ¿Qué son los AI Skills?
+
+Los AI Skills son módulos de conocimiento estructurados que proporcionan a los asistentes de programación con IA un conocimiento profundo y específico del framework. Una vez integrados en tu entorno de desarrollo, las herramientas de IA pueden:
+
+- Generar código Salvo preciso e idiomático
+- Comprender la arquitectura y convenciones de Salvo (por ejemplo, macro `#[handler]`, Router, Depot)
+- Proporcionar orientación contextual sobre enrutamiento, middleware, autenticación, WebSocket y más
+
+## Habilidades disponibles (27 en total)
+
+| Categoría | Habilidades |
+| --- | --- |
+| **Framework central** | `salvo-basic-app`, `salvo-routing`, `salvo-middleware`, `salvo-error-handling` |
+| **Manejo de datos** | `salvo-data-extraction`, `salvo-database`, `salvo-file-handling`, `salvo-static-files`, `salvo-caching` |
+| **Seguridad** | `salvo-auth`, `salvo-session`, `salvo-csrf`, `salvo-cors`, `salvo-rate-limiter`, `salvo-tls-acme` |
+| **Tiempo real** | `salvo-realtime`, `salvo-websocket`, `salvo-sse` |
+| **Rendimiento y operaciones** | `salvo-compression`, `salvo-timeout`, `salvo-concurrency-limiter`, `salvo-graceful-shutdown`, `salvo-logging` |
+| **Avanzado** | `salvo-openapi`, `salvo-proxy`, `salvo-flash`, `salvo-testing` |
+
+## Guía de configuración
+
+### Claude Code
+
+Copia las habilidades en el directorio `.claude/skills/` de tu proyecto:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+cp -r salvo-skills/skills .claude/skills/
+```
+
+Claude Code carga automáticamente las habilidades al trabajar con tu proyecto Salvo.
+
+### GitHub Copilot (VS Code)
+
+1. Copia las habilidades en `.github/skills/`:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+cp -r salvo-skills/skills .github/skills/
+```
+
+2. Habilita las habilidades de agente en la configuración de VS Code:
+
+```json
+{
+  "chat.useAgentSkills": true
+}
+```
+
+Las habilidades se activan automáticamente cuando discutes temas de Salvo con Copilot.
+
+### Cursor
+
+Añade las habilidades como contexto de documentación en Cursor:
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+```
+
+2. Crea o edita el archivo `.cursor/rules` en la raíz del proyecto y añade:
+
+```
+Read and follow the skill files in .cursor/skills/ directory for Salvo framework guidance.
+```
+
+3. Copia los archivos de habilidades:
+
+```bash
+cp -r salvo-skills/skills .cursor/skills/
+```
+
+Cursor referenciará estos archivos al generar código relacionado con Salvo.
+
+### Windsurf
+
+Configura las habilidades como contexto de conocimiento en Windsurf:
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+```
+
+2. Crea o edita el archivo `.windsurfrules` en la raíz del proyecto y añade:
+
+```
+Read and follow the skill files in .windsurf/skills/ directory for Salvo framework guidance.
+```
+
+3. Copia los archivos de habilidades:
+
+```bash
+cp -r salvo-skills/skills .windsurf/skills/
+```
+
+### Otras herramientas de IA
+
+Para cualquier asistente de programación con IA que soporte instrucciones personalizadas o archivos de contexto:
+
+1. Clona el repositorio: `git clone https://github.com/salvo-rs/salvo-skills.git`
+2. Coloca la carpeta `skills/` en el directorio de tu proyecto
+3. Configura tu herramienta de IA para que referencie estos archivos como contexto
+
+## Enlaces
+
+- **Repositorio GitHub**: [https://github.com/salvo-rs/salvo-skills](https://github.com/salvo-rs/salvo-skills)
+- **Estándar Agent Skills**: [https://agent-skills.github.io/](https://agent-skills.github.io/)
