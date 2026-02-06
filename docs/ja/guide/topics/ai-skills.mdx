@@ -1,0 +1,113 @@
+# AI Skills
+
+[Salvo Skills](https://github.com/salvo-rs/salvo-skills) は、Salvo Web フレームワーク向けに設計された 27 個の専門 AI エージェントスキルのコレクションです。これらのスキルは [Agent Skills](https://agent-skills.github.io/) オープンスタンダードに準拠しており、AI コーディングアシスタントが Salvo コードをより正確かつ効率的に理解・生成できるようサポートします。
+
+## AI Skills とは?
+
+AI Skills は構造化されたナレッジモジュールで、AI コーディングアシスタントにフレームワーク固有の深い専門知識を提供します。開発環境に統合すると、AI ツールは以下のことが可能になります:
+
+- 正確で慣用的な Salvo コードの生成
+- Salvo のアーキテクチャと規約の理解 (例: `#[handler]` マクロ、Router、Depot)
+- ルーティング、ミドルウェア、認証、WebSocket などのトピックに関するコンテキストガイダンス
+
+## 利用可能なスキル (全 27 個)
+
+| カテゴリ | スキル |
+| --- | --- |
+| **コアフレームワーク** | `salvo-basic-app`, `salvo-routing`, `salvo-middleware`, `salvo-error-handling` |
+| **データ処理** | `salvo-data-extraction`, `salvo-database`, `salvo-file-handling`, `salvo-static-files`, `salvo-caching` |
+| **セキュリティ** | `salvo-auth`, `salvo-session`, `salvo-csrf`, `salvo-cors`, `salvo-rate-limiter`, `salvo-tls-acme` |
+| **リアルタイム** | `salvo-realtime`, `salvo-websocket`, `salvo-sse` |
+| **パフォーマンス & 運用** | `salvo-compression`, `salvo-timeout`, `salvo-concurrency-limiter`, `salvo-graceful-shutdown`, `salvo-logging` |
+| **高度な機能** | `salvo-openapi`, `salvo-proxy`, `salvo-flash`, `salvo-testing` |
+
+## セットアップガイド
+
+### Claude Code
+
+スキルをプロジェクトの `.claude/skills/` ディレクトリにコピーします:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+cp -r salvo-skills/skills .claude/skills/
+```
+
+Claude Code は Salvo プロジェクトで作業する際にスキルを自動的にロードします。
+
+### GitHub Copilot (VS Code)
+
+1. スキルを `.github/skills/` にコピーします:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+cp -r salvo-skills/skills .github/skills/
+```
+
+2. VS Code の設定でエージェントスキルを有効にします:
+
+```json
+{
+  "chat.useAgentSkills": true
+}
+```
+
+Copilot で Salvo 関連のトピックについて議論すると、スキルが自動的に有効になります。
+
+### Cursor
+
+Cursor でスキルをドキュメントコンテキストとして追加します:
+
+1. リポジトリをクローンします:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+```
+
+2. プロジェクトルートの `.cursor/rules` ファイルを作成または編集し、以下を追加します:
+
+```
+Read and follow the skill files in .cursor/skills/ directory for Salvo framework guidance.
+```
+
+3. スキルファイルをコピーします:
+
+```bash
+cp -r salvo-skills/skills .cursor/skills/
+```
+
+Cursor は Salvo 関連のコードを生成する際にこれらのスキルファイルを参照します。
+
+### Windsurf
+
+Windsurf でスキルをナレッジコンテキストとして設定します:
+
+1. リポジトリをクローンします:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+```
+
+2. プロジェクトルートの `.windsurfrules` ファイルを作成または編集し、以下を追加します:
+
+```
+Read and follow the skill files in .windsurf/skills/ directory for Salvo framework guidance.
+```
+
+3. スキルファイルをコピーします:
+
+```bash
+cp -r salvo-skills/skills .windsurf/skills/
+```
+
+### その他の AI ツール
+
+カスタム指示やコンテキストファイルをサポートする AI コーディングアシスタントであれば、以下の手順で利用できます:
+
+1. リポジトリをクローン: `git clone https://github.com/salvo-rs/salvo-skills.git`
+2. `skills/` フォルダをプロジェクトディレクトリに配置
+3. AI ツールでこれらのファイルをコンテキストとして参照するよう設定
+
+## 関連リンク
+
+- **GitHub リポジトリ**: [https://github.com/salvo-rs/salvo-skills](https://github.com/salvo-rs/salvo-skills)
+- **Agent Skills 標準**: [https://agent-skills.github.io/](https://agent-skills.github.io/)

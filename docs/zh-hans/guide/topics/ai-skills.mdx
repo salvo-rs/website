@@ -1,0 +1,113 @@
+# AI Skills
+
+[Salvo Skills](https://github.com/salvo-rs/salvo-skills) 是一套为 Salvo Web 框架设计的 27 个专业 AI 代理技能集合。这些技能遵循 [Agent Skills](https://agent-skills.github.io/) 开放标准, 帮助 AI 编程助手更准确高效地理解和生成 Salvo 代码。
+
+## 什么是 AI Skills?
+
+AI Skills 是结构化的知识模块, 为 AI 编程助手提供深度的框架专业知识。集成到开发环境后, AI 工具可以:
+
+- 生成准确、地道的 Salvo 代码
+- 理解 Salvo 的架构和约定 (如 `#[handler]` 宏、Router、Depot 等)
+- 提供路由、中间件、认证、WebSocket 等主题的上下文指导
+
+## 可用技能 (共 27 个)
+
+| 类别 | 技能 |
+| --- | --- |
+| **核心框架** | `salvo-basic-app`, `salvo-routing`, `salvo-middleware`, `salvo-error-handling` |
+| **数据处理** | `salvo-data-extraction`, `salvo-database`, `salvo-file-handling`, `salvo-static-files`, `salvo-caching` |
+| **安全** | `salvo-auth`, `salvo-session`, `salvo-csrf`, `salvo-cors`, `salvo-rate-limiter`, `salvo-tls-acme` |
+| **实时通信** | `salvo-realtime`, `salvo-websocket`, `salvo-sse` |
+| **性能与运维** | `salvo-compression`, `salvo-timeout`, `salvo-concurrency-limiter`, `salvo-graceful-shutdown`, `salvo-logging` |
+| **高级功能** | `salvo-openapi`, `salvo-proxy`, `salvo-flash`, `salvo-testing` |
+
+## 配置指南
+
+### Claude Code
+
+将技能复制到项目的 `.claude/skills/` 目录:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+cp -r salvo-skills/skills .claude/skills/
+```
+
+Claude Code 在处理你的 Salvo 项目时会自动加载这些技能。
+
+### GitHub Copilot (VS Code)
+
+1. 将技能复制到 `.github/skills/`:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+cp -r salvo-skills/skills .github/skills/
+```
+
+2. 在 VS Code 设置中启用代理技能:
+
+```json
+{
+  "chat.useAgentSkills": true
+}
+```
+
+当你与 Copilot 讨论 Salvo 相关话题时, 技能会自动激活。
+
+### Cursor
+
+在 Cursor 中将技能添加为文档上下文:
+
+1. 克隆仓库:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+```
+
+2. 在项目根目录创建或编辑 `.cursor/rules` 文件, 添加:
+
+```
+Read and follow the skill files in .cursor/skills/ directory for Salvo framework guidance.
+```
+
+3. 复制技能文件:
+
+```bash
+cp -r salvo-skills/skills .cursor/skills/
+```
+
+Cursor 在生成 Salvo 相关代码时会参考这些技能文件。
+
+### Windsurf
+
+在 Windsurf 中配置技能作为知识上下文:
+
+1. 克隆仓库:
+
+```bash
+git clone https://github.com/salvo-rs/salvo-skills.git
+```
+
+2. 在项目根目录创建或编辑 `.windsurfrules` 文件, 添加:
+
+```
+Read and follow the skill files in .windsurf/skills/ directory for Salvo framework guidance.
+```
+
+3. 复制技能文件:
+
+```bash
+cp -r salvo-skills/skills .windsurf/skills/
+```
+
+### 其他 AI 工具
+
+对于任何支持自定义指令或上下文文件的 AI 编程助手, 你可以:
+
+1. 克隆仓库: `git clone https://github.com/salvo-rs/salvo-skills.git`
+2. 将 `skills/` 文件夹放置到你的项目目录中
+3. 配置你的 AI 工具引用这些文件作为上下文
+
+## 相关链接
+
+- **GitHub 仓库**: [https://github.com/salvo-rs/salvo-skills](https://github.com/salvo-rs/salvo-skills)
+- **Agent Skills 标准**: [https://agent-skills.github.io/](https://agent-skills.github.io/)
