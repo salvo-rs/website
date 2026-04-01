@@ -83,6 +83,97 @@ struct Pet {
 }
 ```
 
+`#[derive(ToSchema)]` also supports enum types. Here are various enum usage patterns:
+
+_**Simple Enum**_ — When all variants are unit types, generates a string enum:
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+/// Pet kind
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+enum PetKind {
+    /// Dog
+    Dog,
+    /// Cat
+    Cat,
+    /// Bird
+    Bird,
+}
+```
+
+Generated OpenAPI schema:
+```json
+{
+  "type": "string",
+  "enum": ["dog", "cat", "bird"]
+}
+```
+
+_**Complex Enum**_ — When variants contain data, uses `oneOf` by default:
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+enum PaymentMethod {
+    /// Cash payment
+    Cash,
+    /// Card payment
+    Card { card_number: String, cvv: String },
+    /// E-wallet
+    Wallet(String),
+}
+```
+
+_**Tagged Enums**_ — Supports `tag`, `tag` + `content`, `untagged` serde enum representations:
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+// Internally tagged
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(tag = "type")]
+enum Event {
+    Click { x: i32, y: i32 },
+    KeyPress { key: String },
+}
+
+// Adjacently tagged
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(tag = "type", content = "data")]
+enum Message {
+    Text(String),
+    Image { url: String, width: u32 },
+}
+```
+
+_**Using enum fields in structs**_ :
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+enum Status {
+    Active,
+    Inactive,
+    Pending,
+}
+
+#[derive(Serialize, Deserialize, ToSchema)]
+struct User {
+    name: String,
+    status: Status,
+}
+```
+
 You can use `#[salvo(schema(...))]` to define optional settings:
 
 - `example = ...` can be `json!(...)`. `json!(...)` will be parsed by `serde_json::json!` as `serde_json::Value`.

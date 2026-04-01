@@ -83,6 +83,97 @@ struct Pet {
 }
 ```
 
+`#[derive(ToSchema)]` 同样支持枚举类型。以下是各种枚举的使用方式：
+
+_**简单枚举（Simple Enum）**_ — 所有变体都是 Unit 类型时，生成字符串枚举：
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+/// 宠物类型
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+enum PetKind {
+    /// 狗
+    Dog,
+    /// 猫
+    Cat,
+    /// 鸟
+    Bird,
+}
+```
+
+生成的 OpenAPI schema：
+```json
+{
+  "type": "string",
+  "enum": ["dog", "cat", "bird"]
+}
+```
+
+_**带数据的枚举（Complex Enum）**_ — 变体包含数据时，默认使用 `oneOf`：
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+enum PaymentMethod {
+    /// 现金支付
+    Cash,
+    /// 银行卡支付
+    Card { card_number: String, cvv: String },
+    /// 电子钱包
+    Wallet(String),
+}
+```
+
+_**使用 serde 标签的枚举**_ — 支持 `tag`、`tag` + `content`、`untagged` 等 serde 枚举表示：
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+// 内部标签
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(tag = "type")]
+enum Event {
+    Click { x: i32, y: i32 },
+    KeyPress { key: String },
+}
+
+// 相邻标签
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(tag = "type", content = "data")]
+enum Message {
+    Text(String),
+    Image { url: String, width: u32 },
+}
+```
+
+_**在结构体中使用枚举字段**_ ：
+
+```rust
+use salvo_oapi::ToSchema;
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, ToSchema)]
+#[serde(rename_all = "snake_case")]
+enum Status {
+    Active,
+    Inactive,
+    Pending,
+}
+
+#[derive(Serialize, Deserialize, ToSchema)]
+struct User {
+    name: String,
+    status: Status,
+}
+```
+
 可以使用 `#[salvo(schema(...))]` 定义可选的设置:
 
 - `example = ...` 可以是 `json!(...)`. `json!(...)` 会被 `serde_json::json!` 解析为`serde_json::Value`.
