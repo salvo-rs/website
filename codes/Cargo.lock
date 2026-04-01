@@ -2272,6 +2272,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "example-oapi-oauth2-password"
+version = "0.1.0"
+dependencies = [
+ "jsonwebtoken",
+ "salvo",
+ "serde",
+ "time",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "example-oapi-todos"
 version = "0.1.0"
 dependencies = [

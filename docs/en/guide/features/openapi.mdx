@@ -535,6 +535,31 @@ async fn get_user(id: PathParam<i64>) -> Result<Json<User>, StatusError> {
 | `-> Result<Json<T>, StatusError>` | - | ✅ Success + Error |
 | `-> Result<Json<T>, CustomError>` | - | ✅ Full control |
 
+## Swagger UI Authentication
+
+If you want protected endpoints to appear in Swagger UI's **Authorize** dialog, you need to wire the OpenAPI metadata explicitly:
+
+- Register a security scheme with `OpenApi::add_security_scheme(...)`.
+- Attach a security requirement with `#[endpoint(security(...))]` or, if the route is protected by middleware, with router metadata such as `.oapi_security(...)`.
+- Optionally pass Swagger UI OAuth client settings with `SwaggerUi::oauth(...)`.
+
+_**Example Code**_
+
+<Tabs>
+<Tab label="main.rs">
+```rust file="<root>/codes/oapi-oauth2-password/src/main.rs"
+```
+</Tab>
+<Tab label="Cargo.toml">
+```toml file="<root>/codes/oapi-oauth2-password/Cargo.toml"
+```
+</Tab>
+</Tabs>
+
+In this example, the `/api/profile` route is protected by `JwtAuth` middleware, while the OpenAPI security declaration is attached manually with `.oapi_security(...)`.
+
+Salvo does not currently infer Swagger/OpenAPI security declarations from middleware automatically. Middleware and documentation metadata are separate today, so when authentication is added through middleware you still need to declare the matching OpenAPI security scheme and requirement yourself.
+
 ### Error Handling
 
 For general applications, we will define a global error type (AppError) and implement `Writer` or `Scribe` for `AppError` so that errors can be sent to the client as web page information.

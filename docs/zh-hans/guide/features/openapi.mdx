@@ -535,6 +535,31 @@ async fn get_user(id: PathParam<i64>) -> Result<Json<User>, StatusError> {
 | `-> Result<Json<T>, StatusError>` | - | ✅ 成功 + 错误 |
 | `-> Result<Json<T>, CustomError>` | - | ✅ 完全控制 |
 
+## Swagger UI 鉴权
+
+如果你希望受保护的接口出现在 Swagger UI 的 **Authorize** 弹窗里，需要显式把 OpenAPI 元数据接上：
+
+- 用 `OpenApi::add_security_scheme(...)` 注册安全方案。
+- 用 `#[endpoint(security(...))]` 给接口声明安全需求；如果鉴权是通过中间件挂到路由上的，则使用 `.oapi_security(...)` 这类路由元数据来补上声明。
+- 如果 Swagger UI 还需要 OAuth 客户端侧配置，可以再通过 `SwaggerUi::oauth(...)` 传入。
+
+_**示例代码**_
+
+<Tabs>
+  <Tab label="main.rs">
+  ```rust file="<root>/codes/oapi-oauth2-password/src/main.rs"
+  ```
+  </Tab>
+  <Tab label="Cargo.toml">
+  ```toml file="<root>/codes/oapi-oauth2-password/Cargo.toml"
+  ```
+  </Tab>
+</Tabs>
+
+这个示例里，`/api/profile` 由 `JwtAuth` 中间件保护，而 OpenAPI 的安全声明则通过 `.oapi_security(...)` 手工附加到路由上。
+
+Salvo 目前还不能根据 middleware 自动推导 Swagger/OpenAPI 的 security declaration。也就是说，鉴权中间件和文档元数据现在仍然是两套信息；如果鉴权是通过 middleware 接入的，就需要你手工补上对应的 OpenAPI security scheme 和 security requirement。
+
 ### 错误处理方式
 
 对于一般的应用, 我们会定义一个全局的错误类型 (AppError), 为 AppError 实现 `Writer` 或者 `Scribe`, 以便可以将错误作为网页信息发送给客户端.
