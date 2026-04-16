@@ -20,11 +20,30 @@ Salvo提供CSRF中间件保护您的应用免受此类攻击：
 - 验证用户提交的请求中是否包含有效的CSRF令牌
 - 默认验证POST、PATCH、DELETE和PUT请求
 
+## 常见的 Token 轮换策略
+
+CSRF token 常见有两种轮换策略：
+
+1. **per-session**：在 token 过期或从可信存储中移除之前，整个会话复用同一个 token。它对页面刷新、多标签页以及浏览器前进后退更友好。
+2. **per-request**：每个被接受的请求之后都签发新的 token。这样可以缩短单个 token 的有效窗口，但客户端必须始终提交最近一次响应里的最新 token。
+
+在 Salvo 中，token 的轮换频率和存储位置是两套独立配置：
+
+- 存储方式决定可信 token 放在哪里：`CookieStore` 或 `SessionStore`
+- 轮换策略决定 token 多久变化一次：`CsrfRotationPolicy::PerSession` 或 `CsrfRotationPolicy::PerRequest`
+
+Salvo 默认使用 `CsrfRotationPolicy::PerSession`。如果你想启用更严格的请求级轮换，可以显式设置为 `PerRequest`：
+
+```rust
+let csrf = bcrypt_cookie_csrf(FormFinder::new("csrf_token"))
+    .rotation_policy(CsrfRotationPolicy::PerRequest);
+```
+
 ## Salvo中的CSRF实现
 
 `Csrf` 是实现了 `Handler` 的结构体，内部还有一个 `skipper` 字段，可以指定跳过某些不需要验证的请求。默认情况下，验证 `Method::POST`，`Method::PATCH`，`Method::DELETE`，`Method::PUT` 请求。
 
-Salvo支持两种CSRF令牌存储方式：
+Salvo支持两种CSRF令牌存储方式。存储方式和轮换策略可以自由组合：
 
 1. **CookieStore**：将令牌存储在Cookie中，验证请求头或表单中的`csrf-token`与Cookie值是否匹配
 2. **SessionStore**：将令牌存储在Session中，要求与session中间件一起使用

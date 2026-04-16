@@ -20,11 +20,30 @@ Salvo provides CSRF middleware to protect your applications from such attacks:
 - Verify that user-submitted requests contain a valid CSRF token.
 - By default, validate POST, PATCH, DELETE, and PUT requests.
 
+## Common Token Rotation Strategies
+
+CSRF token systems commonly use one of two rotation strategies:
+
+1. **Per-session**: Reuse the same token until it expires or is removed from the trusted store. This works well with page refreshes, multiple tabs, and browser back or forward navigation.
+2. **Per-request**: Issue a fresh token after every accepted request. This shortens the lifetime of each token, but clients must always submit the latest token from the most recent response.
+
+In Salvo, token rotation is configured separately from storage:
+
+- Storage decides where the trusted token lives: `CookieStore` or `SessionStore`.
+- Rotation decides how often the token changes: `CsrfRotationPolicy::PerSession` or `CsrfRotationPolicy::PerRequest`.
+
+Salvo defaults to `CsrfRotationPolicy::PerSession`. If you want stricter request-level rotation, opt into `PerRequest` explicitly:
+
+```rust
+let csrf = bcrypt_cookie_csrf(FormFinder::new("csrf_token"))
+    .rotation_policy(CsrfRotationPolicy::PerRequest);
+```
+
 ## CSRF Implementation in Salvo
 
 `Csrf` is a struct that implements the `Handler` trait and includes an internal `skipper` field to specify requests that should skip validation. By default, it validates `Method::POST`, `Method::PATCH`, `Method::DELETE`, and `Method::PUT` requests.
 
-Salvo supports two CSRF token storage methods:
+Salvo supports two CSRF token storage methods. Storage and rotation are independent choices:
 
 1. **CookieStore**: Stores the token in a cookie and verifies whether the `csrf-token` in the request headers or form matches the cookie value.
 2. **SessionStore**: Stores the token in the session and requires the use of session middleware.
