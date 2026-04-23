@@ -23,6 +23,13 @@ CORS implements cross-origin access control through a series of HTTP headers:
 Since the browser sends preflight requests with `Method::OPTIONS`, it is necessary to handle such requests. The CORS middleware must be added to the `Service`.
 
 ## Using CORS in Salvo
+{/* add cors in Salvo with cargo */}
+:::info
+this is how to install cors in Salvo
+```rust
+cargo add salvo --features cors
+```
+:::
 
 Salvo provides built-in CORS middleware that can be easily configured and used. Here is an example code snippet:
 
