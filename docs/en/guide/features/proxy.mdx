@@ -10,6 +10,27 @@ Key advantages of reverse proxies:
 
 The Salvo framework provides middleware for reverse proxy functionality.
 
+## Path forwarding and normalization
+
+When you mount a proxy with a wildcard route such as `Router::with_path("api/{**rest}")`, the default proxy path is the captured tail. For example, `/api/users` is forwarded as `/users` when the upstream is `http://backend`. If the backend also expects the `/api` prefix, include that prefix in the upstream URL:
+
+```rust
+let router = Router::with_path("api/{**rest}").goal(
+    Proxy::use_hyper_client("http://backend/api")
+);
+```
+
+`Proxy` normalizes literal `.` and `..` path segments before forwarding. If the proxy is used as an access-control boundary and the backend may perform another URL decode pass, enable strict path normalization:
+
+```rust
+let router = Router::with_path("api/{**rest}").goal(
+    Proxy::use_hyper_client("http://backend/api")
+        .strict_path_normalization(true)
+);
+```
+
+Strict path normalization rejects ambiguous percent-encoded path characters such as `%2e`, `%2f`, `%5c`, and encoded percent signs that can become those sequences after another decode pass. The backend should still validate and normalize its own routes and file paths; strict mode helps avoid proxy/backend path interpretation mismatches.
+
 _**Example Code**_ 
 
 import { Tab, Tabs } from '@rspress/core/theme';
