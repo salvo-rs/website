@@ -52,7 +52,7 @@ jsonwebtoken = "10.2.0"
 parking_lot = "0.12.5"
 password-hash = "0.5.0"
 reqwest = "0.13.1"
-salvo = { version = "0.91", default-features = true }
+salvo = { version = "0.92.2", default-features = true }
 serde = "1.0.228"
 serde_json = "1.0.148"
 thiserror = "2.0.17"
@@ -72,5 +72,5 @@ async-std = "1.13.2"
 juniper = { version = "0.17.0"}
 tower = "0.5.2"
 
-salvo_core = { version = "0.91"}
-salvo-oapi = { version = "0.91"}
+salvo_core = { version = "0.92.2"}
+salvo-oapi = { version = "0.92.2"}

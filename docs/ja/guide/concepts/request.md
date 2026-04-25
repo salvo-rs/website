@@ -95,7 +95,7 @@ assert_eq!(user.ids, vec![123, 234]);
 :::tip
 使用するには、`Cargo.toml`に`"oapi" feature`を追加する必要があります。
 ```rust
-salvo = {version = "*", features = ["oapi"]}
+salvo = { version = "0.92.2", features = ["oapi"] }
 ```
 :::
 

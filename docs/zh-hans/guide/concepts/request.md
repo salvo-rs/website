@@ -98,7 +98,7 @@ assert_eq!(user.ids, vec![123, 234]);
 :::tip
 要使用您需要添加的提取器 `"oapi" feature` in your `Cargo.toml`
 ```rust
-salvo = {version = "*", features = ["oapi"]}
+salvo = { version = "0.92.2", features = ["oapi"] }
 ```
 :::
 

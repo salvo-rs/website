@@ -95,7 +95,7 @@ The framework includes built-in request parameter extractors. These extractors c
 :::tip
 To use them, you need to add the `"oapi" feature` in your `Cargo.toml`
 ```rust
-salvo = {version = "*", features = ["oapi"]}
+salvo = { version = "0.92.2", features = ["oapi"] }
 ```
 :::
 

@@ -95,7 +95,7 @@ O framework inclui extratores de parâmetros de pedido integrados. Estes extrato
 :::tip
 Para usá-los, precisa adicionar a funcionalidade `"oapi"` no seu `Cargo.toml`
 ```rust
-salvo = {version = "*", features = ["oapi"]}
+salvo = { version = "0.92.2", features = ["oapi"] }
 ```
 :::
 

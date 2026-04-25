@@ -10,6 +10,27 @@
 
 Salvo 框架提供反向代理功能的中间件.
 
+## 路径转发与规范化
+
+当你使用 `Router::with_path("api/{**rest}")` 这类通配路由挂载代理时，默认转发路径是被捕获到的剩余路径。例如 upstream 配置为 `http://backend` 时，客户端请求 `/api/users` 会转发为 `http://backend/users`。如果后端服务本身也期望收到 `/api` 前缀，应该把前缀写进 upstream：
+
+```rust
+let router = Router::with_path("api/{**rest}").goal(
+    Proxy::use_hyper_client("http://backend/api")
+);
+```
+
+`Proxy` 在转发前会规范化字面量 `.` 和 `..` 路径段。如果你把代理作为访问控制边界，并且后端可能再次 URL decode 路径，可以启用严格路径规范化：
+
+```rust
+let router = Router::with_path("api/{**rest}").goal(
+    Proxy::use_hyper_client("http://backend/api")
+        .strict_path_normalization(true)
+);
+```
+
+严格模式会拒绝容易产生二次解释差异的 percent-encoded 路径字符，例如 `%2e`、`%2f`、`%5c`，以及再次 decode 后可能变成这些序列的 encoded percent。后端仍然应该自己验证并规范化路由和文件路径；严格模式的作用是减少代理和后端对同一路径理解不一致的风险。
+
 _**示例代码**_ 
 
 import { Tab, Tabs } from '@rspress/core/theme';
