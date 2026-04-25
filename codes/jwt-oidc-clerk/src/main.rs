@@ -17,7 +17,7 @@ pub struct JwtClaims {
 async fn main() {
     tracing_subscriber::fmt().init();
 
-    let decoder = OidcDecoder::new(ISSUER_URL.to_owned()).await.unwrap();
+    let decoder = OidcDecoder::builder(ISSUER_URL).build().await.unwrap();
     let auth_handler: JwtAuth<JwtClaims, OidcDecoder> = JwtAuth::new(decoder)
         .finders(vec![Box::new(HeaderFinder::new())])
         .force_passed(true);
