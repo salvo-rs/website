@@ -295,7 +295,14 @@ For a concrete example, see: [extract-nested](https://github.com/salvo-rs/salvo/
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-If in the above example Nested<'a> does not have fields with the same names as the parent, you can use `#[serde(flatten)]`. Otherwise, you need to use `#[salvo(extract(flatten))]`.
+To flatten an extractible sub-struct, use `#[salvo(extract(flatten))]`. Its fields
+are extracted from the same request sources as the parent, so they may even share
+field names with the parent.
+
+`#[serde(flatten)]` is **not supported** on `#[derive(Extractible)]` fields: it
+drives serde's own flattening, which conflicts with Salvo's extraction and used to
+surface as confusing "missing field" errors at request time. Salvo now rejects it
+at compile time with a message pointing you to `#[salvo(extract(flatten))]`.
 
 ### `#[salvo(extract(source(parse)))]`
 

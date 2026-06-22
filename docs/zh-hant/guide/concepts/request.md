@@ -295,7 +295,9 @@ struct Nested<'a> {
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-如果在上面的例子中，Nested<'a> 沒有與父層相同的欄位，可以使用 `#[serde(flatten)]`，否則需要使用 `#[salvo(extract(flatten))]`。
+要展平一個可提取的子結構體，請使用 `#[salvo(extract(flatten))]`。它的欄位會從與父結構體相同的請求來源中提取，因此甚至可以與父結構體有同名欄位。
+
+`#[salvo(extract(flatten))]` 欄位上**不支援** `#[serde(flatten)]`：後者會觸發 serde 自己的展平邏輯，與 Salvo 的提取機制衝突，過去會在請求時表現為令人困惑的 “missing field” 錯誤。現在 Salvo 會在**編譯期**直接報錯，並提示改用 `#[salvo(extract(flatten))]`。
 
 ### `#[salvo(extract(source(parse)))]`
 
