@@ -298,7 +298,7 @@ struct Nested<'a> {
 
 要展平一个可提取的子结构体，请使用 `#[salvo(extract(flatten))]`。它的字段会从与父结构体相同的请求来源中提取，因此甚至可以与父结构体有同名字段。
 
-`#[salvo(extract(flatten))]` 字段上**不支持** `#[serde(flatten)]`：后者会触发 serde 自己的展平逻辑，与 Salvo 的提取机制冲突，过去会在请求时表现为令人困惑的 “missing field” 错误。现在 Salvo 会在**编译期**直接报错，并提示改用 `#[salvo(extract(flatten))]`。
+`#[derive(Extractible)]` 结构体的字段上**不支持** `#[serde(flatten)]`：后者会触发 serde 自己的展平逻辑，与 Salvo 的提取机制冲突，过去会在请求时表现为令人困惑的 “missing field” 错误。现在 Salvo 会在**编译期**直接报错，并提示改用 `#[salvo(extract(flatten))]`。
 
 ### `#[salvo(extract(source(parse)))]`
 
