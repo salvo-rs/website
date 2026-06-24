@@ -295,7 +295,9 @@ struct Nested<'a> {
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-如果在上面的例子中，Nested<'a> 沒有與父層相同的欄位，可以使用 `#[serde(flatten)]`，否則需要使用 `#[salvo(extract(flatten))]`。
+要展平一個可提取的子結構體，請使用 `#[salvo(extract(flatten))]`。它的欄位會從與父結構體相同的請求來源中提取，因此甚至可以與父結構體有同名欄位。
+
+`#[derive(Extractible)]` 結構體的欄位上**不支援** `#[serde(flatten)]`：後者會觸發 serde 自己的展平邏輯，與 Salvo 的提取機制衝突，過去會在請求時表現為令人困惑的 “missing field” 錯誤。現在 Salvo 會在**編譯期**直接報錯，並提示改用 `#[salvo(extract(flatten))]`。
 
 ### `#[salvo(extract(source(parse)))]`
 
@@ -362,4 +364,4 @@ async fn test_de_request_with_form_json_str() {
 | **特殊功能** | `cookies()/cookie()` | Cookie 操作（需 cookie feature） |
 | | `extensions()/extensions_mut()` | 擴充資料儲存 |
 | | `set_secure_max_size()` | 設定安全大小限制 |
-{/* Auto generated, origin file hash:6b654f79df08ba1dc5cc1c070780def0 */}
+{/* Auto generated, origin file hash:cb75a2ba6a8df09df0e05203e5c8d215 */}
