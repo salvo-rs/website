@@ -98,7 +98,7 @@ assert_eq!(user.ids, vec![123, 234]);
 :::tip
 要使用您需要添加的提取器 `"oapi" feature` in your `Cargo.toml`
 ```rust
-salvo = { version = "0.92.2", features = ["oapi"] }
+salvo = { version = "0.94.0", features = ["oapi"] }
 ```
 :::
 
@@ -244,8 +244,8 @@ struct GoodMan<'a> {
 
 ```rust
 #[handler]
-async fn edit(req: &mut Request) {
-    let good_man: GoodMan<'_> = req.extract().await.unwrap();
+async fn edit(req: &mut Request, depot: &mut Depot) {
+    let good_man: GoodMan<'_> = req.extract(depot).await.unwrap();
 }
 ```
 
@@ -323,7 +323,8 @@ async fn test_de_request_with_form_json_str() {
         .raw_form(r#"user={"name": "chris", "age": 20}"#)
         .build();
     req.params.insert("p2".into(), "921".into());
-    let data: RequestData = req.extract().await.unwrap();
+    let mut depot = Depot::new();
+    let data: RequestData = req.extract(&mut depot).await.unwrap();
     assert_eq!(
         data,
         RequestData {

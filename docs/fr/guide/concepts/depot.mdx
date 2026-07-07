@@ -13,7 +13,7 @@ Par exemple, nous pouvons définir `current_user` dans un intergiciel de connexi
 `Depot` est utilisé pour stocker et partager des données pendant le traitement des requêtes. Il implémente un conteneur de données type-safe qui prend en charge deux principaux modes d'utilisation :
 
 1. **Stockage Clé-Valeur** : Accéder aux valeurs associées à des clés de chaîne via les méthodes `insert`/`get`.
-2. **Injection de type** : Stocker et récupérer des valeurs basées sur le type via les méthodes `inject`/`obtain`.
+2. **Injection de type** : Stocker et récupérer des valeurs basées sur le type via les méthodes `insert_typed`/`get_typed`.
 
 Comme le montrent les exemples, `Depot` est particulièrement utile pour transmettre des données entre les intergiciels et les gestionnaires. Les intergiciels peuvent définir des valeurs dans `Depot` (telles que les informations utilisateur, l'état d'authentification), et les gestionnaires ultérieurs peuvent récupérer ces valeurs sans calculs ou requêtes redondants. La conception de `Depot` garantit la cohérence et l'accessibilité des données tout au long de la chaîne de traitement des requêtes, ce qui en fait un outil central pour construire des applications web complexes.
 
@@ -39,13 +39,13 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 
 Si la `clé` n'existe pas, ou si la `clé` existe mais que le type ne correspond pas, cela retourne `None`.
 
-## Définition et récupération de données via `inject` et `obtain`
+## Définition et récupération de données via `insert_typed` et `get_typed`
 
-Parfois, il existe des scénarios où une instance unique existe pour un type sans avoir besoin de la relier à une `clé` spécifique. Vous pouvez utiliser `inject` pour insérer des données, puis utiliser `obtain` pour les récupérer. Ces méthodes ne nécessitent pas que vous fournissiez une `clé`.
+Parfois, il existe des scénarios où une instance unique existe pour un type sans avoir besoin de la relier à une `clé` spécifique. Vous pouvez utiliser `insert_typed` pour insérer des données, puis utiliser `get_typed` pour les récupérer. Ces méthodes ne nécessitent pas que vous fournissiez une `clé`.
 
 ```rust
-depot.inject(Config::new());
-depot.obtain::<Config>();
+depot.insert_typed(Config::new());
+depot.get_typed::<Config>();
 ```
 
 # Aperçu des méthodes de la structure Depot
@@ -56,15 +56,15 @@ depot.obtain::<Config>();
 | | `with_capacity(capacity)` | Crée un Depot avec la capacité spécifiée |
 | | `capacity()` | Obtient la capacité |
 | | `inner()` | Obtient une référence au HashMap interne |
-| **Injection/Récupération par type** | `inject<V>(value)` | Injecte une valeur par type |
-| | `obtain<T>()` | Récupère une référence à la valeur injectée |
-| | `obtain_mut<T>()` | Récupère une référence mutable à la valeur injectée |
-| | `contains<T>()` | Vérifie si un type spécifique est contenu |
-| | `scrape<T>()` | Supprime et retourne la valeur injectée |
+| **Injection/Récupération par type** | `insert_typed<V>(value)` | Injecte une valeur par type |
+| | `get_typed<T>()` | Récupère une référence à la valeur injectée |
+| | `get_typed_mut<T>()` | Récupère une référence mutable à la valeur injectée |
+| | `contains_typed<T>()` | Vérifie si un type spécifique est contenu |
+| | `remove_typed<T>()` | Supprime et retourne la valeur injectée |
 | **Opérations Clé-Valeur** | `insert(key, value)` | Insère une paire clé-valeur |
 | | `get<V>(key)` | Récupère une référence à la valeur associée à la clé |
 | | `get_mut<V>(key)` | Récupère une référence mutable à la valeur associée à la clé |
 | | `contains_key(key)` | Vérifie si une clé spécifique est contenue |
 | | `remove<V>(key)` | Supprime la clé et retourne la valeur |
-| | `delete(key)` | Supprime la paire clé-valeur |
+| | `remove(key).is_some()` | Supprime la paire clé-valeur |
 {/* Auto generated, origin file hash:b95d84ad7fe6f9c1aae94fbe8ca18072 */}

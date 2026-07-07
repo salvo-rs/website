@@ -7,6 +7,7 @@ rust-version.workspace = true
 
 [dependencies]
 anyhow.workspace = true
+certon-ring.workspace = true
 futures-util.workspace = true
 salvo = { workspace = true, features = [
     "acme",

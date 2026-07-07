@@ -13,7 +13,7 @@ Por exemplo, podemos definir `current_user` em um middleware de login e, em segu
 O `Depot` é usado para armazenar e compartilhar dados durante o processamento da requisição. Ele implementa um contêiner de dados com segurança de tipos que suporta dois padrões principais de uso:
 
 1. **Armazenamento Chave-Valor**: Acessa valores associados a chaves de string através dos métodos `insert`/`get`.
-2. **Injeção de Tipo**: Armazena e recupera valores com base no tipo através dos métodos `inject`/`obtain`.
+2. **Injeção de Tipo**: Armazena e recupera valores com base no tipo através dos métodos `insert_typed`/`get_typed`.
 
 Como mostrado nos exemplos, o `Depot` é particularmente útil para passar dados entre middleware e handlers. O middleware pode definir valores no `Depot` (como informações do usuário, status de autenticação), e handlers subsequentes podem recuperar esses valores sem cálculos ou consultas redundantes. O design do `Depot` garante a consistência e acessibilidade dos dados em toda a cadeia de processamento da requisição, tornando-o uma ferramenta central para construir aplicações web complexas.
 
@@ -39,13 +39,13 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 
 Se a `chave` não existir, ou se a `chave` existir mas o tipo não corresponder, ele retorna `None`.
 
-## Configurando e Recuperando Dados via `inject` e `obtain`
+## Configurando e Recuperando Dados via `insert_typed` e `get_typed`
 
-Às vezes, há cenários em que existe uma instância única para um tipo sem necessidade de relacioná-la a uma `chave` específica. Você pode usar `inject` para inserir dados e, em seguida, usar `obtain` para recuperá-los. Esses métodos não exigem que você forneça uma `chave`.
+Às vezes, há cenários em que existe uma instância única para um tipo sem necessidade de relacioná-la a uma `chave` específica. Você pode usar `insert_typed` para inserir dados e, em seguida, usar `get_typed` para recuperá-los. Esses métodos não exigem que você forneça uma `chave`.
 
 ```rust
-depot.inject(Config::new());
-depot.obtain::<Config>();
+depot.insert_typed(Config::new());
+depot.get_typed::<Config>();
 ```
 
 # Visão Geral dos Métodos da Struct Depot
@@ -56,15 +56,15 @@ depot.obtain::<Config>();
 | | `with_capacity(capacity)` | Cria um Depot com a capacidade especificada |
 | | `capacity()` | Obtém a capacidade |
 | | `inner()` | Obtém uma referência ao HashMap interno |
-| **Injeção/Recuperação por Tipo** | `inject<V>(value)` | Injeta um valor por tipo |
-| | `obtain<T>()` | Recupera uma referência ao valor injetado |
-| | `obtain_mut<T>()` | Recupera uma referência mutável ao valor injetado |
-| | `contains<T>()` | Verifica se um tipo específico está contido |
-| | `scrape<T>()` | Remove e retorna o valor injetado |
+| **Injeção/Recuperação por Tipo** | `insert_typed<V>(value)` | Injeta um valor por tipo |
+| | `get_typed<T>()` | Recupera uma referência ao valor injetado |
+| | `get_typed_mut<T>()` | Recupera uma referência mutável ao valor injetado |
+| | `contains_typed<T>()` | Verifica se um tipo específico está contido |
+| | `remove_typed<T>()` | Remove e retorna o valor injetado |
 | **Operações Chave-Valor** | `insert(key, value)` | Insere um par chave-valor |
 | | `get<V>(key)` | Recupera uma referência ao valor associado à chave |
 | | `get_mut<V>(key)` | Recupera uma referência mutável ao valor associado à chave |
 | | `contains_key(key)` | Verifica se uma chave específica está contida |
 | | `remove<V>(key)` | Remove a chave e retorna o valor |
-| | `delete(key)` | Exclui o par chave-valor |
+| | `remove(key).is_some()` | Exclui o par chave-valor |
 {/* Auto generated, origin file hash:b95d84ad7fe6f9c1aae94fbe8ca18072 */}

@@ -26,7 +26,7 @@ struct AppState {
 #[handler]
 async fn create(req: &mut Request, depot: &mut Depot, res: &mut Response) -> Result<()> {
     let state = depot
-        .obtain::<AppState>()
+        .get_typed::<AppState>()
         .map_err(|_| StatusError::internal_server_error())?;
     // Parse form data into post model
     let form = req
@@ -51,7 +51,7 @@ async fn create(req: &mut Request, depot: &mut Depot, res: &mut Response) -> Res
 #[handler]
 async fn list(req: &mut Request, depot: &mut Depot) -> Result<Text<String>> {
     let state = depot
-        .obtain::<AppState>()
+        .get_typed::<AppState>()
         .map_err(|_| StatusError::internal_server_error())?;
     // Get pagination parameters from query
     let page = req.query("page").unwrap_or(1);
@@ -94,7 +94,7 @@ async fn list(req: &mut Request, depot: &mut Depot) -> Result<Text<String>> {
 #[handler]
 async fn new(depot: &mut Depot) -> Result<Text<String>> {
     let state = depot
-        .obtain::<AppState>()
+        .get_typed::<AppState>()
         .map_err(|_| StatusError::internal_server_error())?;
     let ctx = tera::Context::new();
     let body = state
@@ -108,7 +108,7 @@ async fn new(depot: &mut Depot) -> Result<Text<String>> {
 #[handler]
 async fn edit(req: &mut Request, depot: &mut Depot) -> Result<Text<String>> {
     let state = depot
-        .obtain::<AppState>()
+        .get_typed::<AppState>()
         .map_err(|_| StatusError::internal_server_error())?;
     // Get post ID from path parameters
     let id = req.param::<i32>("id").unwrap_or_default();
@@ -134,7 +134,7 @@ async fn edit(req: &mut Request, depot: &mut Depot) -> Result<Text<String>> {
 #[handler]
 async fn update(req: &mut Request, depot: &mut Depot, res: &mut Response) -> Result<()> {
     let state = depot
-        .obtain::<AppState>()
+        .get_typed::<AppState>()
         .map_err(|_| StatusError::internal_server_error())?;
     // Get post ID and form data
     let id = req.param::<i32>("id").unwrap_or_default();
@@ -160,7 +160,7 @@ async fn update(req: &mut Request, depot: &mut Depot, res: &mut Response) -> Res
 #[handler]
 async fn delete(req: &mut Request, depot: &mut Depot, res: &mut Response) -> Result<()> {
     let state = depot
-        .obtain::<AppState>()
+        .get_typed::<AppState>()
         .map_err(|_| StatusError::internal_server_error())?;
     // Get post ID and find post
     let id = req.param::<i32>("id").unwrap_or_default();

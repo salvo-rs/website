@@ -52,7 +52,7 @@ Das Schreiben von Daten in eine `Response` ist unkompliziert:
     ```
 
 :::warning
-Wenn die `render`-Methode mehrmals aufgerufen wird, um JSON-Daten zu schreiben, werden diese Daten nicht zu einem einzigen JSON-Objekt zusammengeführt. Stattdessen werden sie sequenziell als unabhängige Textfragmente verkettet, was möglicherweise zu einem ungültigen JSON-Format führt. Wenn mehrere Datenelemente zurückgegeben werden müssen, sollten sie vor der Serialisierung zu einem einzigen Objekt kombiniert oder die Logik manuell behandelt werden.
+`Json<T>` rendert ein vollstaendiges JSON-Dokument. In Salvo 0.94 und spaeter ersetzt das Rendern von `Json` bereits in `Response` gepufferte Body-Bytes, statt sie anzuhängen. Um mehrere JSON-Datensaetze auszugeben, serialisieren Sie jeden Datensatz selbst und haengen ihn mit `write_body` an, zum Beispiel fuer NDJSON.
 :::
 
 - Schreiben von HTML
@@ -109,7 +109,7 @@ Der von Response zurückgegebene Body-Typ ist `ResBody`, eine Enumeration. Im Fe
 | **Cookie-Verwaltung** | `cookies()/cookie()` | Cookies abrufen / Bestimmtes Cookie abrufen |
 | | `add_cookie()/remove_cookie()` | Cookie hinzufügen/entfernen |
 | **Inhaltsantwort** | `render()` | Inhalt darstellen |
-| | `stuff()` | Statuscode setzen und Inhalt darstellen |
+| | `render_with_status()` | Statuscode setzen und Inhalt darstellen |
 | | `send_file()` | Datei senden |
 | **Statusabfrage** | `is_stamped()` | Prüfen, ob die Antwort bereit zum Zurückschreiben ist |
 {/* Auto generated, origin file hash:a24d0c508656d4d8ca4ecde0ef7d9534 */}

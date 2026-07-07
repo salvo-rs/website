@@ -75,7 +75,7 @@ Para usar o recurso anyhow, habilite o recurso `anyhow` do Salvo em Cargo.toml:
 
 ```toml
 [dependencies]
-salvo = { version = "0.92.2", features = ["anyhow"] }
+salvo = { version = "0.94.0", features = ["anyhow"] }
 anyhow = "1.0"
 ```
 
@@ -97,7 +97,7 @@ Como mostrado, no método `write`, podemos acessar referências a `Request` e `D
 #[async_trait]
 impl Writer for AppError {
     async fn write(mut self, _req: &mut Request, depot: &mut Depot, res: &mut Response) {
-        let user = depot.obtain::<User>();
+        let user = depot.get_typed::<User>();
         if user.is_admin {
             res.render(Text::Plain(e.to_string()));
         } else {

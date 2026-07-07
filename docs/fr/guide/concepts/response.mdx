@@ -52,7 +52,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ```
 
 :::warning
-Si la méthode `render` est appelée plusieurs fois pour écrire des données JSON, ces données ne seront pas fusionnées en un seul objet JSON. Au lieu de cela, elles seront concaténées séquentiellement en tant que fragments de texte indépendants, ce qui pourrait entraîner un format JSON invalide. Si plusieurs éléments de données doivent être retournés, ils doivent être combinés en un seul objet avant la sérialisation, ou la logique doit être gérée manuellement.
+`Json<T>` rend un document JSON complet. Dans Salvo 0.94 et versions suivantes, rendre `Json` remplace les octets de corps deja mis en tampon dans `Response` au lieu de les ajouter. Pour emettre plusieurs enregistrements JSON, serialisez chaque enregistrement vous-meme et ajoutez-le avec `write_body`, par exemple pour produire du NDJSON.
 :::
 
 - Écrire du HTML
@@ -109,7 +109,7 @@ Le type de corps retourné par Response est `ResBody`, qui est une énumération
 | **Gestion des cookies** | `cookies()/cookie()` | Obtenir les cookies / Obtenir un cookie spécifique |
 | | `add_cookie()/remove_cookie()` | Ajouter/Supprimer un cookie |
 | **Réponse de contenu** | `render()` | Rendre le contenu |
-| | `stuff()` | Définir le code d'état et rendre le contenu |
+| | `render_with_status()` | Définir le code d'état et rendre le contenu |
 | | `send_file()` | Envoyer un fichier |
 | **Requête d'état** | `is_stamped()` | Vérifier si la réponse est prête à être renvoyée |
 {/* Auto generated, origin file hash:a24d0c508656d4d8ca4ecde0ef7d9534 */}

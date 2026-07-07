@@ -6,6 +6,7 @@ publish.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+certon-ring.workspace = true
 salvo = { workspace = true, features = ["acme", "quinn"] }
 tokio = { workspace = true, features = ["macros"] }
 tracing.workspace = true

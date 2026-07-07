@@ -13,7 +13,7 @@ For example, we can set `current_user` in a login middleware and then read the c
 `Depot` is used to store and share data during request processing. It implements a type-safe data container that supports two main usage patterns:
 
 1. **Key-Value Storage**: Access values associated with string keys via `insert`/`get` methods.
-2. **Type Injection**: Store and retrieve values based on type via `inject`/`obtain` methods.
+2. **Type Injection**: Store and retrieve values based on type via `insert_typed`/`get_typed` methods.
 
 As shown in the examples, `Depot` is particularly useful for passing data between middleware and handlers. Middleware can set values in `Depot` (such as user information, authentication status), and subsequent handlers can retrieve these values without redundant calculations or queries. The design of `Depot` ensures data consistency and accessibility throughout the entire request processing chain, making it a core tool for building complex web applications.
 
@@ -39,13 +39,13 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 
 If the `key` does not exist, or if the `key` exists but the type does not match, it returns `None`.
 
-## Setting and Retrieving Data via `inject` and `obtain`
+## Setting and Retrieving Data via `insert_typed` and `get_typed`
 
-Sometimes, there are scenarios where a unique instance exists for a type without needing to relate to a specific `key`. You can use `inject` to insert data and then use `obtain` to retrieve it. These methods do not require you to provide a `key`.
+Sometimes, there are scenarios where a unique instance exists for a type without needing to relate to a specific `key`. You can use `insert_typed` to insert data and then use `get_typed` to retrieve it. These methods do not require you to provide a `key`.
 
 ```rust
-depot.inject(Config::new());
-depot.obtain::<Config>();
+depot.insert_typed(Config::new());
+depot.get_typed::<Config>();
 ```
 
 # Overview of Depot Struct Methods
@@ -56,14 +56,14 @@ depot.obtain::<Config>();
 | | `with_capacity(capacity)` | Creates a Depot with the specified capacity |
 | | `capacity()` | Gets the capacity |
 | | `inner()` | Gets a reference to the internal HashMap |
-| **Type Injection/Retrieval** | `inject<V>(value)` | Injects a value by type |
-| | `obtain<T>()` | Retrieves a reference to the injected value |
-| | `obtain_mut<T>()` | Retrieves a mutable reference to the injected value |
-| | `contains<T>()` | Checks if a specific type is contained |
-| | `scrape<T>()` | Removes and returns the injected value |
+| **Type Injection/Retrieval** | `insert_typed<V>(value)` | Injects a value by type |
+| | `get_typed<T>()` | Retrieves a reference to the injected value |
+| | `get_typed_mut<T>()` | Retrieves a mutable reference to the injected value |
+| | `contains_typed<T>()` | Checks if a specific type is contained |
+| | `remove_typed<T>()` | Removes and returns the injected value |
 | **Key-Value Operations** | `insert(key, value)` | Inserts a key-value pair |
 | | `get<V>(key)` | Retrieves a reference to the value associated with the key |
 | | `get_mut<V>(key)` | Retrieves a mutable reference to the value associated with the key |
 | | `contains_key(key)` | Checks if a specific key is contained |
 | | `remove<V>(key)` | Removes the key and returns the value |
-| | `delete(key)` | Deletes the key-value pair |
+| | `remove(key).is_some()` | Deletes the key-value pair |
