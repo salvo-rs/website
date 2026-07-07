@@ -52,7 +52,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ```
 
 :::warning
-`render` メソッドを複数回呼び出して JSON データを書き込む場合、これらのデータは単一の JSON オブジェクトにマージされず、独立したテキストフラグメントとして順番に連結されるため、無効な JSON フォーマットになる可能性があります。複数のデータを返す必要がある場合は、それらを一つのオブジェクトに組み合わせてから一度にシリアライズするか、ロジックを自身で処理する必要があります。
+`Json<T>` は完全な JSON ドキュメントを 1 つ描画します。Salvo 0.94 以降では、`Json` を描画すると `Response` に既にバッファされたボディバイトを追記せず置き換えます。複数の JSON レコードを出力する場合は、各レコードを自分でシリアライズし、NDJSON などとして `write_body` で追記してください。
 :::
 
 
@@ -114,7 +114,7 @@ Response が返す Body の型は `ResBody` です。これは列挙型であり
 | **Cookie 処理** | `cookies()/cookie()` | cookies/指定した cookie を取得 |
 | | `add_cookie()/remove_cookie()` | cookie を追加/削除 |
 | **コンテンツレスポンス** | `render()` | コンテンツをレンダリング |
-| | `stuff()` | ステータスコードを設定し、コンテンツをレンダリング |
+| | `render_with_status()` | ステータスコードを設定し、コンテンツをレンダリング |
 | | `send_file()` | ファイルを送信 |
 | **状態確認** | `is_stamped()` | レスポンスが書き戻し準備完了かどうかを確認 |
 {/* Auto generated, origin file hash:44c6af44c98679e79e0828f210a61cd0 */}

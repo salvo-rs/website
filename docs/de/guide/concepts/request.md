@@ -95,7 +95,7 @@ Das Framework enthält integrierte Anfrageparameter-Extractor. Diese Extractor k
 :::tip
 Um sie zu verwenden, müssen Sie das `"oapi"-Feature` in Ihrer `Cargo.toml` hinzufügen
 ```rust
-salvo = { version = "0.92.2", features = ["oapi"] }
+salvo = { version = "0.94.0", features = ["oapi"] }
 ```
 :::
 
@@ -244,8 +244,8 @@ Dann können Sie in einem `Handler` die Daten wie folgt abrufen:
 
 ```rust
 #[handler]
-async fn edit(req: &mut Request) {
-    let good_man: GoodMan<'_> = req.extract().await.unwrap();
+async fn edit(req: &mut Request, depot: &mut Depot) {
+    let good_man: GoodMan<'_> = req.extract(depot).await.unwrap();
 }
 ```
 
@@ -295,7 +295,7 @@ Ein konkretes Beispiel finden Sie unter: [extract-nested](https://github.com/sal
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-Wenn im obigen Beispiel Nested<'a> keine Felder mit denselben Namen wie das Elternobjekt hat, können Sie `#[serde(flatten)]` verwenden. Andernfalls müssen Sie `#[salvo(extract(flatten))]` verwenden.
+Zum Flatten eines extrahierbaren Unter-Structs verwenden Sie `#[salvo(extract(flatten))]`. `#[serde(flatten)]` wird auf Feldern von `#[derive(Extractible)]` nicht unterstützt und sollte durch `#[salvo(extract(flatten))]` ersetzt werden.
 
 ### `#[salvo(extract(source(parse)))]`
 
@@ -320,7 +320,8 @@ async fn test_de_request_with_form_json_str() {
         .raw_form(r#"user={"name": "chris", "age": 20}"#)
         .build();
     req.params.insert("p2".into(), "921".into());
-    let data: RequestData = req.extract().await.unwrap();
+    let mut depot = Depot::new();
+    let data: RequestData = req.extract(&mut depot).await.unwrap();
     assert_eq!(
         data,
         RequestData {

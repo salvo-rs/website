@@ -52,7 +52,7 @@ async fn hello_world(res: &mut Response, ctrl: &mut FlowCtrl) {
     ```
 
 :::warning
-如果多次调用 `render` 方法写入 JSON 数据，这些数据不会被合并成一个 JSON 对象，而是作为独立的文本片段按顺序拼接在一起，可能导致无效的 JSON 格式。如果需要返回多个数据，应该将它们组合成一个对象后再一次性序列化，或自行处理逻辑。
+`Json<T>` 会渲染一个完整的 JSON 文档。Salvo 0.94 及之后版本中，渲染 `Json` 会替换 `Response` 中已经缓冲的响应体字节，而不是追加到后面。如果需要输出多条 JSON 记录，请自行序列化每条记录并用 `write_body` 追加，例如生成 NDJSON。
 :::
 
 
@@ -114,6 +114,6 @@ Response 返回的 Body 类型是 `ResBody`, 它是一个枚举，在出错时�
 | **Cookie 处理** | `cookies()/cookie()` | 获取 cookies/指定 cookie |
 | | `add_cookie()/remove_cookie()` | 添加/移除 cookie |
 | **内容响应** | `render()` | 渲染内容 |
-| | `stuff()` | 设置状态码并渲染内容 |
+| | `render_with_status()` | 设置状态码并渲染内容 |
 | | `send_file()` | 发送文件 |
 | **状态查询** | `is_stamped()` | 检查响应是否准备好写回 |

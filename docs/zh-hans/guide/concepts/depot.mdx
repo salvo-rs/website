@@ -13,7 +13,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 `Depot` 用于在请求处理过程中存储和共享数据。它实现了一个类型安全的数据容器，支持两种主要使用模式：
 
 1. **键值存储**：通过 `insert`/`get` 方法存取字符串键关联的值
-2. **类型注入**：通过 `inject`/`obtain` 方法基于类型存取值
+2. **类型注入**：通过 `insert_typed`/`get_typed` 方法基于类型存取值
 
 如示例所示，`Depot` 特别适用于在中间件和处理程序之间传递数据。中间件可以在 `Depot` 中设置值（如用户信息、认证状态），后续处理程序可以获取这些值，无需重复计算或查询。`Depot` 的设计确保了在整个请求处理链中数据的一致性和可访问性，是构建复杂 Web 应用的核心工具。
 <Tabs>
@@ -38,13 +38,13 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 
  如果不存在这个 `key`, 或者 `key` 存在, 但是类型不匹配, 则返回 `None`.
 
-## 通过 `inject` 和 `obtain` 设置和取出数据
+## 通过 `insert_typed` 和 `get_typed` 设置和取出数据
 
-有时, 存在一些不需要关系具体 `key`, 对于这种类型也存在唯一实例的情况. 可以使用 `inject` 插入数据, 然后使用 `obtain` 取出数据. 它们不需要你提供 `key`.
+有时, 存在一些不需要关系具体 `key`, 对于这种类型也存在唯一实例的情况. 可以使用 `insert_typed` 插入数据, 然后使用 `get_typed` 取出数据. 它们不需要你提供 `key`.
 
 ```rust
-depot.inject(Config::new());
-depot.obtain::<Config>();
+depot.insert_typed(Config::new());
+depot.get_typed::<Config>();
 ```
 
 # Depot 结构体方法概览
@@ -55,14 +55,14 @@ depot.obtain::<Config>();
 | | `with_capacity(capacity)` | 创建指定容量的 Depot |
 | | `capacity()` | 获取容量 |
 | | `inner()` | 获取内部 HashMap 引用 |
-| **类型注入/获取** | `inject<V>(value)` | 按类型注入值 |
-| | `obtain<T>()` | 获取注入值引用 |
-| | `obtain_mut<T>()` | 获取注入值可变引用 |
-| | `contains<T>()` | 检查是否包含特定类型 |
-| | `scrape<T>()` | 移除并返回注入值 |
+| **类型注入/获取** | `insert_typed<V>(value)` | 按类型注入值 |
+| | `get_typed<T>()` | 获取注入值引用 |
+| | `get_typed_mut<T>()` | 获取注入值可变引用 |
+| | `contains_typed<T>()` | 检查是否包含特定类型 |
+| | `remove_typed<T>()` | 移除并返回注入值 |
 | **键值操作** | `insert(key, value)` | 插入键值对 |
 | | `get<V>(key)` | 获取键对应值引用 |
 | | `get_mut<V>(key)` | 获取键对应值可变引用 |
 | | `contains_key(key)` | 检查是否包含特定键 |
 | | `remove<V>(key)` | 移除键并返回值 |
-| | `delete(key)` | 删除键值对 |
+| | `remove(key).is_some()` | 删除键值对 |

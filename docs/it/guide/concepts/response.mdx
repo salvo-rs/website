@@ -52,7 +52,7 @@ Scrivere dati in una `Response` è semplice:
     ```
 
 :::warning
-Se il metodo `render` viene chiamato più volte per scrivere dati JSON, questi dati non verranno uniti in un singolo oggetto JSON. Invece, verranno concatenati sequenzialmente come frammenti di testo indipendenti, potenzialmente risultando in un formato JSON non valido. Se è necessario restituire più elementi di dati, dovrebbero essere combinati in un singolo oggetto prima della serializzazione, oppure la logica dovrebbe essere gestita manualmente.
+`Json<T>` renderizza un documento JSON completo. In Salvo 0.94 e versioni successive, renderizzare `Json` sostituisce i byte del corpo gia presenti in `Response` invece di accodarli. Per emettere piu record JSON, serializza manualmente ogni record e accodalo con `write_body`, ad esempio producendo NDJSON.
 :::
 
 - Scrittura HTML
@@ -109,7 +109,7 @@ Il tipo Body restituito da Response è `ResBody`, che è un'enumerazione. In cas
 | **Gestione Cookie** | `cookies()/cookie()` | Ottieni i cookie / Ottieni un cookie specifico |
 | | `add_cookie()/remove_cookie()` | Aggiungi/Rimuovi un cookie |
 | **Risposta Contenuto** | `render()` | Renderizza il contenuto |
-| | `stuff()` | Imposta il codice di stato e renderizza il contenuto |
+| | `render_with_status()` | Imposta il codice di stato e renderizza il contenuto |
 | | `send_file()` | Invia un file |
 | **Verifica Stato** | `is_stamped()` | Controlla se la risposta è pronta per essere riscritta |
 {/* Auto generated, origin file hash:a24d0c508656d4d8ca4ecde0ef7d9534 */}

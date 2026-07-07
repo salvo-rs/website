@@ -13,7 +13,7 @@ Beispielsweise können wir in einer Login-Middleware `current_user` setzen und d
 `Depot` dient der Speicherung und dem Austausch von Daten während der Anfrageverarbeitung. Es implementiert einen typsicheren Datencontainer, der zwei Hauptnutzungsmuster unterstützt:
 
 1. **Schlüssel-Wert-Speicher**: Zugriff auf Werte über Zeichenfolgenschlüssel mittels `insert`/`get`-Methoden.
-2. **Typinjektion**: Speichern und Abrufen von Werten basierend auf ihrem Typ mittels `inject`/`obtain`-Methoden.
+2. **Typinjektion**: Speichern und Abrufen von Werten basierend auf ihrem Typ mittels `insert_typed`/`get_typed`-Methoden.
 
 Wie die Beispiele zeigen, ist `Depot` besonders nützlich für die Datenweitergabe zwischen Middleware und Handlern. Middleware kann Werte im `Depot` setzen (wie Benutzerinformationen, Authentifizierungsstatus), und nachfolgende Handler können diese Werte abrufen, ohne redundante Berechnungen oder Abfragen durchführen zu müssen. Das Design von `Depot` gewährleistet Datenkonsistenz und -zugänglichkeit über die gesamte Anfrageverarbeitungskette hinweg und macht es zu einem Kernwerkzeug für den Aufbau komplexer Webanwendungen.
 
@@ -39,13 +39,13 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 
 Wenn der `Schlüssel` nicht existiert oder der `Schlüssel` existiert, aber der Typ nicht übereinstimmt, wird `None` zurückgegeben.
 
-## Setzen und Abrufen von Daten über `inject` und `obtain`
+## Setzen und Abrufen von Daten über `insert_typed` und `get_typed`
 
-Manchmal gibt es Szenarien, in denen für einen Typ eine eindeutige Instanz existiert, ohne dass diese einem spezifischen `Schlüssel` zugeordnet werden muss. Sie können `inject` verwenden, um Daten einzufügen, und dann `obtain`, um sie abzurufen. Diese Methoden erfordern keine Angabe eines `Schlüssels`.
+Manchmal gibt es Szenarien, in denen für einen Typ eine eindeutige Instanz existiert, ohne dass diese einem spezifischen `Schlüssel` zugeordnet werden muss. Sie können `insert_typed` verwenden, um Daten einzufügen, und dann `get_typed`, um sie abzurufen. Diese Methoden erfordern keine Angabe eines `Schlüssels`.
 
 ```rust
-depot.inject(Config::new());
-depot.obtain::<Config>();
+depot.insert_typed(Config::new());
+depot.get_typed::<Config>();
 ```
 
 # Übersicht der Depot-Struct-Methoden
@@ -56,15 +56,15 @@ depot.obtain::<Config>();
 | | `with_capacity(capacity)` | Erstellt ein Depot mit angegebener Kapazität |
 | | `capacity()` | Ruft die Kapazität ab |
 | | `inner()` | Ruft eine Referenz auf die interne HashMap ab |
-| **Typinjektion/-abruf** | `inject<V>(value)` | Injiziert einen Wert nach Typ |
-| | `obtain<T>()` | Ruft eine Referenz auf den injizierten Wert ab |
-| | `obtain_mut<T>()` | Ruft eine mutable Referenz auf den injizierten Wert ab |
-| | `contains<T>()` | Prüft, ob ein bestimmter Typ enthalten ist |
-| | `scrape<T>()` | Entfernt und gibt den injizierten Wert zurück |
+| **Typinjektion/-abruf** | `insert_typed<V>(value)` | Injiziert einen Wert nach Typ |
+| | `get_typed<T>()` | Ruft eine Referenz auf den injizierten Wert ab |
+| | `get_typed_mut<T>()` | Ruft eine mutable Referenz auf den injizierten Wert ab |
+| | `contains_typed<T>()` | Prüft, ob ein bestimmter Typ enthalten ist |
+| | `remove_typed<T>()` | Entfernt und gibt den injizierten Wert zurück |
 | **Schlüssel-Wert-Operationen** | `insert(key, value)` | Fügt ein Schlüssel-Wert-Paar ein |
 | | `get<V>(key)` | Ruft eine Referenz auf den zum Schlüssel gehörenden Wert ab |
 | | `get_mut<V>(key)` | Ruft eine mutable Referenz auf den zum Schlüssel gehörenden Wert ab |
 | | `contains_key(key)` | Prüft, ob ein bestimmter Schlüssel enthalten ist |
 | | `remove<V>(key)` | Entfernt den Schlüssel und gibt den Wert zurück |
-| | `delete(key)` | Löscht das Schlüssel-Wert-Paar |
+| | `remove(key).is_some()` | Löscht das Schlüssel-Wert-Paar |
 {/* Auto generated, origin file hash:b95d84ad7fe6f9c1aae94fbe8ca18072 */}

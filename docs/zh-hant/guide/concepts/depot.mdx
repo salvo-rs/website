@@ -13,7 +13,7 @@ import { Tab, Tabs } from '@rspress/core/theme';
 `Depot` 用於在請求處理過程中儲存與共享資料。它實作了型別安全的資料容器，支援兩種主要使用模式：
 
 1. **鍵值儲存**：透過 `insert`/`get` 方法存取與字串鍵關聯的值
-2. **型別注入**：透過 `inject`/`obtain` 方法基於型別存取值
+2. **型別注入**：透過 `insert_typed`/`get_typed` 方法基於型別存取值
 
 如範例所示，`Depot` 特別適用於在中介軟體與處理程式之間傳遞資料。中介軟體可在 `Depot` 中設定值（如使用者資訊、認證狀態），後續處理程式可取得這些值，無需重複計算或查詢。`Depot` 的設計確保了在整個請求處理鏈中資料的一致性與可存取性，是建構複雜 Web 應用的核心工具。
 
@@ -39,13 +39,13 @@ assert_eq!(depot.get::<&str>("a").copied().unwrap(), "b")
 
 若指定的 `key` 不存在，或 `key` 存在但型別不符，則回傳 `None`。
 
-## 透過 `inject` 與 `obtain` 設定及取出資料
+## 透過 `insert_typed` 與 `get_typed` 設定及取出資料
 
-有時存在某些不需關聯具體 `key`，且該型別僅需唯一實例的情況。此時可使用 `inject` 插入資料，並以 `obtain` 取出資料。此方法無需提供 `key`。
+有時存在某些不需關聯具體 `key`，且該型別僅需唯一實例的情況。此時可使用 `insert_typed` 插入資料，並以 `get_typed` 取出資料。此方法無需提供 `key`。
 
 ```rust
-depot.inject(Config::new());
-depot.obtain::<Config>();
+depot.insert_typed(Config::new());
+depot.get_typed::<Config>();
 ```
 
 # Depot 結構體方法概覽
@@ -56,15 +56,15 @@ depot.obtain::<Config>();
 | | `with_capacity(capacity)` | 建立指定容量的 Depot |
 | | `capacity()` | 取得容量 |
 | | `inner()` | 取得內部 HashMap 參考 |
-| **型別注入/取得** | `inject<V>(value)` | 依型別注入值 |
-| | `obtain<T>()` | 取得注入值的參考 |
-| | `obtain_mut<T>()` | 取得注入值的可變參考 |
-| | `contains<T>()` | 檢查是否包含特定型別 |
-| | `scrape<T>()` | 移除並回傳注入值 |
+| **型別注入/取得** | `insert_typed<V>(value)` | 依型別注入值 |
+| | `get_typed<T>()` | 取得注入值的參考 |
+| | `get_typed_mut<T>()` | 取得注入值的可變參考 |
+| | `contains_typed<T>()` | 檢查是否包含特定型別 |
+| | `remove_typed<T>()` | 移除並回傳注入值 |
 | **鍵值操作** | `insert(key, value)` | 插入鍵值對 |
 | | `get<V>(key)` | 取得鍵對應值的參考 |
 | | `get_mut<V>(key)` | 取得鍵對應值的可變參考 |
 | | `contains_key(key)` | 檢查是否包含特定鍵 |
 | | `remove<V>(key)` | 移除鍵並回傳值 |
-| | `delete(key)` | 刪除鍵值對 |
+| | `remove(key).is_some()` | 刪除鍵值對 |
 {/* Auto generated, origin file hash:11bf72b48a504b8ce6ae390caf56080c */}

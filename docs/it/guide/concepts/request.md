@@ -95,7 +95,7 @@ Il framework include estrattori integrati per i parametri della richiesta. Quest
 :::tip
 Per utilizzarli, è necessario aggiungere la feature `"oapi"` nel tuo `Cargo.toml`
 ```rust
-salvo = { version = "0.92.2", features = ["oapi"] }
+salvo = { version = "0.94.0", features = ["oapi"] }
 ```
 :::
 
@@ -244,8 +244,8 @@ Poi in un `Handler`, puoi ottenere i dati in questo modo:
 
 ```rust
 #[handler]
-async fn edit(req: &mut Request) {
-    let good_man: GoodMan<'_> = req.extract().await.unwrap();
+async fn edit(req: &mut Request, depot: &mut Depot) {
+    let good_man: GoodMan<'_> = req.extract(depot).await.unwrap();
 }
 ```
 
@@ -295,7 +295,7 @@ Per un esempio concreto, vedi: [extract-nested](https://github.com/salvo-rs/salv
 
 ### `#[salvo(extract(flatten))]` VS `#[serde(flatten)]`
 
-Se nell'esempio sopra Nested<'a> non ha campi con gli stessi nomi del genitore, puoi usare `#[serde(flatten)]`. Altrimenti, devi usare `#[salvo(extract(flatten))]`.
+Per appiattire una sotto-struttura estraibile, usa `#[salvo(extract(flatten))]`. `#[serde(flatten)]` non è supportato sui campi di `#[derive(Extractible)]` e deve essere sostituito con `#[salvo(extract(flatten))]`.
 
 ### `#[salvo(extract(source(parse)))]`
 
@@ -320,7 +320,8 @@ async fn test_de_request_with_form_json_str() {
         .raw_form(r#"user={"name": "chris", "age": 20}"#)
         .build();
     req.params.insert("p2".into(), "921".into());
-    let data: RequestData = req.extract().await.unwrap();
+    let mut depot = Depot::new();
+    let data: RequestData = req.extract(&mut depot).await.unwrap();
     assert_eq!(
         data,
         RequestData {

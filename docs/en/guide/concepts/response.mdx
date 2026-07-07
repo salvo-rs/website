@@ -52,7 +52,7 @@ Writing data to a `Response` is straightforward:
     ```
 
 :::warning
-If the `render` method is called multiple times to write JSON data, these pieces of data will not be merged into a single JSON object. Instead, they will be concatenated sequentially as independent text fragments, potentially resulting in invalid JSON format. If multiple data items need to be returned, they should be combined into a single object before serialization, or the logic should be handled manually.
+`Json<T>` renders one complete JSON document. In Salvo 0.94 and later, rendering `Json` replaces any body bytes already buffered on the `Response` instead of appending to them. To emit multiple JSON records, serialize each record yourself and append it with `write_body`, for example when producing NDJSON.
 :::
 
 - Writing HTML
@@ -109,6 +109,6 @@ The Body type returned by Response is `ResBody`, which is an enum. In case of an
 | **Cookie Handling** | `cookies()/cookie()` | Get cookies / Get a specific cookie |
 | | `add_cookie()/remove_cookie()` | Add/Remove a cookie |
 | **Content Response** | `render()` | Render content |
-| | `stuff()` | Set status code and render content |
+| | `render_with_status()` | Set status code and render content |
 | | `send_file()` | Send a file |
 | **Status Query** | `is_stamped()` | Check if the response is ready to be written back |
