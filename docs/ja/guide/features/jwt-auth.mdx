@@ -15,6 +15,27 @@ JWTは以下の3つの部分で構成されます：
 
 JWT認証機能を提供するミドルウェアを実装しています。
 
+## 暗号プロバイダーの選択
+
+Salvo 0.95 には、2 つの選択可能な JWT feature があります。
+
+- `jwt-auth` は AWS-LC provider を使用します。
+- `jwt-auth-ring` は RustCrypto provider を使用します。
+
+通常のビルドでは、どちらか一方だけを有効にしてください。独立した `ring`
+feature は Salvo の rustls 統合用に ring provider を選択するもので、JWT
+認証を有効にはしません。以下の例では `jwt-auth` を使用しています。
+RustCrypto を使用する場合は、次のように設定します。
+
+```toml
+salvo = { version = "0.95", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
+```
+
+Cargo の feature 統合によって両方の JWT provider が有効になった場合は、
+`main` の先頭で、`jsonwebtoken` の直接操作や JWT middleware の初期化より
+前に `salvo::jwt_auth::install_crypto_provider()` を呼び出してください。
+以下の例でも、provider の選択を確定的にするためにこの初期化を行っています。
+
 _**サンプルコード**_ 
 
 import { Tab, Tabs } from '@rspress/core/theme';

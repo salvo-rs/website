@@ -95,7 +95,7 @@ El framework incluye extractores de parámetros de solicitud integrados. Estos e
 :::tip
 Para usarlos, necesitas agregar la característica `"oapi"` en tu `Cargo.toml`
 ```rust
-salvo = { version = "0.94.0", features = ["oapi"] }
+salvo = { version = "0.95.0", features = ["oapi"] }
 ```
 :::
 

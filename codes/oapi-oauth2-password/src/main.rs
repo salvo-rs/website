@@ -42,9 +42,15 @@ struct UserProfile {
 }
 
 #[endpoint]
-async fn issue_token(form: FormBody<PasswordGrantForm>) -> Result<Json<TokenResponse>, StatusError> {
+async fn issue_token(
+    form: FormBody<PasswordGrantForm>,
+) -> Result<Json<TokenResponse>, StatusError> {
     let form = form.into_inner();
-    if form.grant_type.as_deref().is_some_and(|grant_type| grant_type != "password") {
+    if form
+        .grant_type
+        .as_deref()
+        .is_some_and(|grant_type| grant_type != "password")
+    {
         return Err(StatusError::bad_request());
     }
     if form.username != "root" || form.password != "pwd" {
@@ -85,6 +91,8 @@ async fn profile(depot: &mut Depot) -> Result<Json<UserProfile>, StatusError> {
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt().init();
+    salvo::jwt_auth::install_crypto_provider()
+        .expect("install the JWT crypto provider before first use");
 
     let auth: JwtAuth<Claims, _> = JwtAuth::new(ConstDecoder::from_secret(SECRET_KEY))
         .finders(vec![Box::new(HeaderFinder::new())])

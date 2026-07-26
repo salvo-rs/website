@@ -15,6 +15,26 @@ JWT在身份验证流程中的典型使用方式：
 
 提供对 JWT Auth 验证的中间件.
 
+## 选择加密提供程序
+
+Salvo 0.95 提供两个可选的 JWT feature：
+
+- `jwt-auth` 使用 AWS-LC provider。
+- `jwt-auth-ring` 使用 RustCrypto provider。
+
+正常构建只应启用其中一个。独立的 `ring` feature 用于选择 Salvo rustls
+集成的 ring provider，并不会启用 JWT 验证。下面的示例使用 `jwt-auth`；
+如果希望改用 RustCrypto，可以这样配置：
+
+```toml
+salvo = { version = "0.95", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
+```
+
+如果 Cargo feature 合并导致两个 JWT provider 同时启用，请在 `main` 的最前面、
+任何直接的 `jsonwebtoken` 操作或 JWT 中间件初始化之前调用
+`salvo::jwt_auth::install_crypto_provider()`。下面的示例已经这样处理，以确保
+provider 的选择是确定的。
+
 _**示例代码**_ 
 
 import { Tab, Tabs } from '@rspress/core/theme';
