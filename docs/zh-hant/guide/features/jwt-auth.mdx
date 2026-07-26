@@ -15,6 +15,26 @@ JWT在身份驗證流程中的典型應用方式：
 
 提供JWT身份驗證的中介軟體支援。
 
+## 選擇加密提供者
+
+Salvo 0.95 提供兩個可選的 JWT feature：
+
+- `jwt-auth` 使用 AWS-LC provider。
+- `jwt-auth-ring` 使用 RustCrypto provider。
+
+一般建置只應啟用其中一個。獨立的 `ring` feature 用於選擇 Salvo rustls
+整合的 ring provider，並不會啟用 JWT 驗證。下方範例使用 `jwt-auth`；
+若要改用 RustCrypto，可使用以下設定：
+
+```toml
+salvo = { version = "0.95", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
+```
+
+如果 Cargo feature 合併導致兩個 JWT provider 同時啟用，請在 `main` 的最前面、
+任何直接的 `jsonwebtoken` 操作或 JWT 中介軟體初始化之前呼叫
+`salvo::jwt_auth::install_crypto_provider()`。下方範例已如此處理，以確保
+provider 的選擇是確定的。
+
 _**範例程式碼**_
 
 import { Tab, Tabs } from '@rspress/core/theme';

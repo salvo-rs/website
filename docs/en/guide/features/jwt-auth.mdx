@@ -15,6 +15,26 @@ Typical usage of JWT in authentication flow:
 
 Provides middleware for JWT Auth authentication.
 
+## Choosing a crypto provider
+
+Salvo 0.95 provides two alternative JWT features:
+
+- `jwt-auth` uses the AWS-LC provider.
+- `jwt-auth-ring` uses the RustCrypto provider.
+
+Enable only one in normal builds. The separate `ring` feature selects ring for
+Salvo's rustls integration; it does not enable JWT authentication. The example
+below uses `jwt-auth`. To use RustCrypto instead:
+
+```toml
+salvo = { version = "0.95", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
+```
+
+If Cargo feature unification enables both JWT providers, call
+`salvo::jwt_auth::install_crypto_provider()` at the very start of `main`, before
+any direct `jsonwebtoken` operation or JWT middleware setup. The example below
+does this so provider selection remains deterministic.
+
 _**Example Code**_ 
 
 import { Tab, Tabs } from '@rspress/core/theme';

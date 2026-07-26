@@ -16,6 +16,8 @@ pub struct JwtClaims {
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt().init();
+    salvo::jwt_auth::install_crypto_provider()
+        .expect("install the JWT crypto provider before first use");
 
     let auth_handler: JwtAuth<JwtClaims, _> =
         JwtAuth::new(ConstDecoder::from_secret(SECRET_KEY.as_bytes()))

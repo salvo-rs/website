@@ -95,7 +95,7 @@ Le framework inclut des extracteurs de paramètres de requête intégrés. Ces e
 :::tip
 Pour les utiliser, vous devez ajouter la fonctionnalité `"oapi"` dans votre `Cargo.toml`
 ```rust
-salvo = { version = "0.94.0", features = ["oapi"] }
+salvo = { version = "0.95.0", features = ["oapi"] }
 ```
 :::
 

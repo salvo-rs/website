@@ -95,7 +95,7 @@ Das Framework enthält integrierte Anfrageparameter-Extractor. Diese Extractor k
 :::tip
 Um sie zu verwenden, müssen Sie das `"oapi"-Feature` in Ihrer `Cargo.toml` hinzufügen
 ```rust
-salvo = { version = "0.94.0", features = ["oapi"] }
+salvo = { version = "0.95.0", features = ["oapi"] }
 ```
 :::
 
