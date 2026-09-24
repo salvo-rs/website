@@ -17,7 +17,7 @@ JWT認証機能を提供するミドルウェアを実装しています。
 
 ## 暗号プロバイダーの選択
 
-Salvo 0.95 には、2 つの選択可能な JWT feature があります。
+Salvo 1.0 には、2 つの選択可能な JWT feature があります。
 
 - `jwt-auth` は AWS-LC provider を使用します。
 - `jwt-auth-ring` は RustCrypto provider を使用します。
@@ -28,7 +28,7 @@ feature は Salvo の rustls 統合用に ring provider を選択するもので
 RustCrypto を使用する場合は、次のように設定します。
 
 ```toml
-salvo = { version = "0.95", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
+salvo = { version = "1.0.0", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
 ```
 
 Cargo の feature 統合によって両方の JWT provider が有効になった場合は、
