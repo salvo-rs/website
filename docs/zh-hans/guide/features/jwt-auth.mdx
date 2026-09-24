@@ -17,7 +17,7 @@ JWT在身份验证流程中的典型使用方式：
 
 ## 选择加密提供程序
 
-Salvo 0.95 提供两个可选的 JWT feature：
+Salvo 1.0 提供两个可选的 JWT feature：
 
 - `jwt-auth` 使用 AWS-LC provider。
 - `jwt-auth-ring` 使用 RustCrypto provider。
@@ -27,7 +27,7 @@ Salvo 0.95 提供两个可选的 JWT feature：
 如果希望改用 RustCrypto，可以这样配置：
 
 ```toml
-salvo = { version = "0.95", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
+salvo = { version = "1.0.0", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
 ```
 
 如果 Cargo feature 合并导致两个 JWT provider 同时启用，请在 `main` 的最前面、

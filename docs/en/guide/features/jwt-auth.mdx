@@ -17,7 +17,7 @@ Provides middleware for JWT Auth authentication.
 
 ## Choosing a crypto provider
 
-Salvo 0.95 provides two alternative JWT features:
+Salvo 1.0 provides two alternative JWT features:
 
 - `jwt-auth` uses the AWS-LC provider.
 - `jwt-auth-ring` uses the RustCrypto provider.
@@ -27,7 +27,7 @@ Salvo's rustls integration; it does not enable JWT authentication. The example
 below uses `jwt-auth`. To use RustCrypto instead:
 
 ```toml
-salvo = { version = "0.95", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
+salvo = { version = "1.0.0", default-features = false, features = ["server", "http1", "ring", "jwt-auth-ring"] }
 ```
 
 If Cargo feature unification enables both JWT providers, call

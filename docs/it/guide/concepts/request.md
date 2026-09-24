@@ -95,7 +95,7 @@ Il framework include estrattori integrati per i parametri della richiesta. Quest
 :::tip
 Per utilizzarli, è necessario aggiungere la feature `"oapi"` nel tuo `Cargo.toml`
 ```rust
-salvo = { version = "0.95.0", features = ["oapi"] }
+salvo = { version = "1.0.0", features = ["oapi"] }
 ```
 :::
 
