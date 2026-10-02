@@ -1,6 +1,6 @@
 [
   {
-    "text": "开发指南",
+    "text": "開發指南",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
@@ -15,11 +15,11 @@
     "activeMatch": "/guide/features/"
   },
   {
-    "text": "文档参考",
+    "text": "文檔參考",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "资助项目",
+    "text": "資助項目",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }
