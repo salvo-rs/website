@@ -15,7 +15,7 @@
   {
     "type": "dir",
     "name": "topics",
-    "label": "专题探讨",
+    "label": "專題探討",
     "collapsible": true,
     "collapsed": false
   },
@@ -29,7 +29,7 @@
   {
     "type": "dir",
     "name": "ecology",
-    "label": "生态系统",
+    "label": "生態系統",
     "collapsible": true,
     "collapsed": false
   },

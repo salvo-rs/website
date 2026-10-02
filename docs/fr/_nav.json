@@ -5,21 +5,21 @@
     "activeMatch": "/guide/"
   },
   {
-    "text": "Concepts",
+    "text": "Concepts Fondamentaux",
     "link": "/guide/concepts/",
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Features",
+    "text": "Fonctionnalités",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
   {
-    "text": "API-Docs",
+    "text": "Documentation API",
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "Donate",
+    "text": "Faire un don",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }

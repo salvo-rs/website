@@ -1,16 +1,16 @@
 [
   {
-    "text": "Guide",
+    "text": "Manual",
     "link": "/guide/",
     "activeMatch": "/guide/"
   },
   {
-    "text": "Concepts",
+    "text": "Conceptos",
     "link": "/guide/concepts/",
     "activeMatch": "/guide/concepts/"
   },
   {
-    "text": "Features",
+    "text": "Características",
     "link": "/guide/features/",
     "activeMatch": "/guide/features/"
   },
@@ -19,7 +19,7 @@
     "link": "https://docs.rs/salvo/latest/salvo/"
   },
   {
-    "text": "Donate",
+    "text": "Donar",
     "link": "/donate/",
     "activeMatch": "/donate/"
   }
