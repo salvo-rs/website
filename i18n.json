@@ -1,4 +1,268 @@
 {
+  "languagesText": {
+    "en": "Languages",
+    "zh-hans": "语言",
+    "zh-hant": "語言",
+    "fr": "Langues",
+    "es": "Idiomas",
+    "ja": "言語",
+    "de": "Sprachen",
+    "pt": "Idiomas",
+    "it": "Lingue"
+  },
+  "themeText": {
+    "en": "Theme",
+    "zh-hans": "主题",
+    "zh-hant": "主題",
+    "fr": "Thème",
+    "es": "Tema",
+    "ja": "テーマ",
+    "de": "Design",
+    "pt": "Tema",
+    "it": "Tema"
+  },
+  "versionsText": {
+    "en": "Versions",
+    "zh-hans": "版本",
+    "zh-hant": "版本",
+    "fr": "Versions",
+    "es": "Versiones",
+    "ja": "バージョン",
+    "de": "Versionen",
+    "pt": "Versões",
+    "it": "Versioni"
+  },
+  "menuTitle": {
+    "en": "Menu",
+    "zh-hans": "菜单",
+    "zh-hant": "選單",
+    "fr": "Menu",
+    "es": "Menú",
+    "ja": "メニュー",
+    "de": "Menü",
+    "pt": "Menu",
+    "it": "Menu"
+  },
+  "outlineTitle": {
+    "en": "ON THIS PAGE",
+    "zh-hans": "本页目录",
+    "zh-hant": "本頁目錄",
+    "fr": "SUR CETTE PAGE",
+    "es": "EN ESTA PÁGINA",
+    "ja": "目次",
+    "de": "AUF DIESER SEITE",
+    "pt": "NESTA PÁGINA",
+    "it": "IN QUESTA PAGINA"
+  },
+  "scrollToTopText": {
+    "en": "Back to top",
+    "zh-hans": "回到顶部",
+    "zh-hant": "回到頂部",
+    "fr": "Retour en haut",
+    "es": "Volver arriba",
+    "ja": "トップに戻る",
+    "de": "Nach oben",
+    "pt": "Voltar ao topo",
+    "it": "Torna su"
+  },
+  "lastUpdatedText": {
+    "en": "Last Updated",
+    "zh-hans": "最后更新",
+    "zh-hant": "最後更新",
+    "fr": "Dernière mise à jour",
+    "es": "Última actualización",
+    "ja": "最終更新",
+    "de": "Zuletzt aktualisiert",
+    "pt": "Última atualização",
+    "it": "Ultimo aggiornamento"
+  },
+  "prevPageText": {
+    "en": "Previous page",
+    "zh-hans": "上一页",
+    "zh-hant": "上一頁",
+    "fr": "Page précédente",
+    "es": "Página anterior",
+    "ja": "前のページ",
+    "de": "Vorherige Seite",
+    "pt": "Página anterior",
+    "it": "Pagina precedente"
+  },
+  "nextPageText": {
+    "en": "Next page",
+    "zh-hans": "下一页",
+    "zh-hant": "下一頁",
+    "fr": "Page suivante",
+    "es": "Página siguiente",
+    "ja": "次のページ",
+    "de": "Nächste Seite",
+    "pt": "Próxima página",
+    "it": "Pagina successiva"
+  },
+  "sourceCodeText": {
+    "en": "Source Code",
+    "zh-hans": "源码",
+    "zh-hant": "原始碼",
+    "fr": "Code source",
+    "es": "Código fuente",
+    "ja": "ソースコード",
+    "de": "Quellcode",
+    "pt": "Código-fonte",
+    "it": "Codice sorgente"
+  },
+  "searchPlaceholderText": {
+    "en": "Search",
+    "zh-hans": "搜索文档",
+    "zh-hant": "搜尋文檔",
+    "fr": "Rechercher dans la documentation",
+    "es": "Buscar en la documentación",
+    "ja": "ドキュメントを検索",
+    "de": "Dokumentation durchsuchen",
+    "pt": "Pesquisar na documentação",
+    "it": "Cerca nella documentazione"
+  },
+  "searchPanelCancelText": {
+    "en": "Cancel",
+    "zh-hans": "取消",
+    "zh-hant": "取消",
+    "fr": "Annuler",
+    "es": "Cancelar",
+    "ja": "キャンセル",
+    "de": "Abbrechen",
+    "pt": "Cancelar",
+    "it": "Annulla"
+  },
+  "searchNoResultsText": {
+    "en": "No matching results",
+    "zh-hans": "未找到结果",
+    "zh-hant": "未找到結果",
+    "fr": "Aucun résultat trouvé",
+    "es": "No se encontraron resultados",
+    "ja": "一致する結果が見つかりません",
+    "de": "Keine Ergebnisse gefunden",
+    "pt": "Nenhum resultado encontrado",
+    "it": "Nessun risultato trovato"
+  },
+  "searchSuggestedQueryText": {
+    "en": "Try searching for different keywords",
+    "zh-hans": "尝试搜索其他关键词",
+    "zh-hant": "嘗試搜尋其他關鍵詞",
+    "fr": "Essayez avec d'autres mots-clés",
+    "es": "Intente buscar otras palabras clave",
+    "ja": "別のキーワードで検索してみてください",
+    "de": "Versuchen Sie es mit anderen Suchbegriffen",
+    "pt": "Tente pesquisar por outras palavras-chave",
+    "it": "Prova a cercare altre parole chiave"
+  },
+  "overview.filterNameText": {
+    "en": "Filter",
+    "zh-hans": "筛选",
+    "zh-hant": "篩選",
+    "fr": "Filtrer",
+    "es": "Filtrar",
+    "ja": "フィルター",
+    "de": "Filter",
+    "pt": "Filtrar",
+    "it": "Filtra"
+  },
+  "overview.filterPlaceholderText": {
+    "en": "Search API",
+    "zh-hans": "搜索 API",
+    "zh-hant": "搜尋 API",
+    "fr": "Rechercher une API",
+    "es": "Buscar API",
+    "ja": "API を検索",
+    "de": "API suchen",
+    "pt": "Pesquisar API",
+    "it": "Cerca API"
+  },
+  "overview.filterNoResultText": {
+    "en": "No matching API found",
+    "zh-hans": "未找到匹配的 API",
+    "zh-hant": "未找到匹配的 API",
+    "fr": "Aucune API correspondante trouvée",
+    "es": "No se encontró ninguna API coincidente",
+    "ja": "一致する API が見つかりません",
+    "de": "Keine passende API gefunden",
+    "pt": "Nenhuma API correspondente encontrada",
+    "it": "Nessuna API corrispondente trovata"
+  },
+  "openInText": {
+    "en": "Open in {{name}}",
+    "zh-hans": "在 {{name}} 中打开",
+    "zh-hant": "在 {{name}} 中開啟",
+    "fr": "Ouvrir dans {{name}}",
+    "es": "Abrir en {{name}}",
+    "ja": "{{name}} で開く",
+    "de": "In {{name}} öffnen",
+    "pt": "Abrir em {{name}}",
+    "it": "Apri in {{name}}"
+  },
+  "copyMarkdownText": {
+    "en": "Copy Markdown",
+    "zh-hans": "复制 Markdown",
+    "zh-hant": "複製 Markdown",
+    "fr": "Copier le Markdown",
+    "es": "Copiar Markdown",
+    "ja": "Markdown をコピー",
+    "de": "Markdown kopieren",
+    "pt": "Copiar Markdown",
+    "it": "Copia Markdown"
+  },
+  "copyMarkdownLinkText": {
+    "en": "Copy Markdown link",
+    "zh-hans": "复制 Markdown 链接",
+    "zh-hant": "複製 Markdown 連結",
+    "fr": "Copier le lien Markdown",
+    "es": "Copiar enlace Markdown",
+    "ja": "Markdown リンクをコピー",
+    "de": "Markdown-Link kopieren",
+    "pt": "Copiar link Markdown",
+    "it": "Copia link Markdown"
+  },
+  "editLinkText": {
+    "en": "📝 Edit this page on GitHub",
+    "zh-hans": "📝 在 GitHub 上编辑此页",
+    "zh-hant": "📝 在 GitHub 上編輯此頁",
+    "fr": "📝 Éditer cette page sur GitHub",
+    "es": "📝 Editar esta página en GitHub",
+    "ja": "📝 GitHub でこのページを編集する",
+    "de": "📝 Diese Seite auf GitHub bearbeiten",
+    "pt": "📝 Editar esta página no GitHub",
+    "it": "📝 Modifica questa pagina su GitHub"
+  },
+  "codeButtonGroupCopyButtonText": {
+    "en": "Copy code",
+    "zh-hans": "复制代码",
+    "zh-hant": "複製程式碼",
+    "fr": "Copier le code",
+    "es": "Copiar código",
+    "ja": "コードをコピー",
+    "de": "Code kopieren",
+    "pt": "Copiar código",
+    "it": "Copia codice"
+  },
+  "notFoundText": {
+    "en": "PAGE NOT FOUND",
+    "zh-hans": "页面未找到",
+    "zh-hant": "頁面未找到",
+    "fr": "PAGE INTROUVABLE",
+    "es": "PÁGINA NO ENCONTRADA",
+    "ja": "ページが見つかりません",
+    "de": "SEITE NICHT GEFUNDEN",
+    "pt": "PÁGINA NÃO ENCONTRADA",
+    "it": "PAGINA NON TROVATA"
+  },
+  "takeMeHomeText": {
+    "en": "Take me home",
+    "zh-hans": "返回首页",
+    "zh-hant": "返回首頁",
+    "fr": "Retour à l'accueil",
+    "es": "Ir al inicio",
+    "ja": "ホームへ戻る",
+    "de": "Zur Startseite",
+    "pt": "Voltar ao início",
+    "it": "Torna alla home"
+  },
   "Features": {
     "en": "Features",
     "zh-hans": "功能大全",
@@ -112,4 +376,3 @@
     "ru": "Руководство"
   }
 }
-
